@@ -1,0 +1,217 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: Build and inspect release artifacts
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.13"
+      - uses: dtolnay/rust-toolchain@1.88.0
+      - name: Install native build tools and release frontends
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y cmake nasm
+          python -m pip install --upgrade pip maturin==1.9.6 twine==7.0.0
+      - name: Validate immutable tagged source
+        run: |
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          test "$(git describe --tags --exact-match)" = "$GITHUB_REF_NAME"
+          test -z "$(git status --short --untracked-files=no)"
+          python scripts/validate_release.py --tag "$GITHUB_REF_NAME"
+      - name: Build candidates once into an empty directory
+        run: |
+          test ! -e release-dist
+          mkdir release-dist
+          maturin sdist --manifest-path rust/pyext/Cargo.toml --out release-dist
+          maturin build --release --locked --compatibility pypi --out release-dist
+      - name: Check metadata and package contents
+        run: |
+          twine check --strict release-dist/*
+          python scripts/validate_release.py \
+            --tag "$GITHUB_REF_NAME" --dist-dir release-dist
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: release-artifacts
+          path: release-dist/
+          if-no-files-found: error
+          retention-days: 90
+
+  wheel:
+    name: Exact wheel / CPython ${{ matrix.python }}
+    needs: build
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ["3.10", "3.11", "3.12", "3.13"]
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: ${{ matrix.python }}
+      - uses: dtolnay/rust-toolchain@1.88.0
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: release-artifacts
+          path: release-dist
+      - name: Install the exact candidate wheel
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install release-dist/*.whl
+      - name: Test base, optional Torch, and catalog contracts
+        run: |
+          python scripts/smoke_release.py --expected-version "${GITHUB_REF_NAME#v}"
+          python -m pip install pillow
+          python -m pip install torch --index-url https://download.pytorch.org/whl/cpu
+          python scripts/smoke_release.py --expected-version "${GITHUB_REF_NAME#v}" --torch
+          python -m unittest discover -s tests
+          python benchmarks/run_catalog_audit.py
+      - name: Record tested wheel provenance
+        run: >-
+          python scripts/release_evidence.py
+          --artifact $(find release-dist -maxdepth 1 -name '*.whl' -print -quit)
+          --expected-revision "$GITHUB_SHA"
+          --output release-evidence/python-${{ matrix.python }}.json
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: release-evidence-python-${{ matrix.python }}
+          path: release-evidence/
+          if-no-files-found: error
+          retention-days: 90
+
+  sdist:
+    name: Locked rebuild from the exact sdist
+    needs: build
+    runs-on: ubuntu-24.04
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.13"
+      - uses: dtolnay/rust-toolchain@1.88.0
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: release-artifacts
+          path: release-dist
+      - name: Install native build tools and frontend
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y cmake nasm
+          python -m pip install --upgrade pip maturin==1.9.6
+      - name: Rebuild the exact sdist against its locked graph
+        run: |
+          mkdir release-src sdist-wheel
+          python - <<'PY'
+          import tarfile
+          from pathlib import Path
+
+          source = next(Path("release-dist").glob("*.tar.gz"))
+          with tarfile.open(source) as archive:
+              archive.extractall("release-src", filter="data")
+          PY
+          cd "release-src/variopinta-${GITHUB_REF_NAME#v}"
+          maturin build --release --locked --compatibility pypi --out ../../sdist-wheel
+      - name: Test the independently rebuilt wheel
+        run: |
+          test "$(find sdist-wheel -maxdepth 1 -name '*.whl' | wc -l)" -eq 1
+          python -m pip install sdist-wheel/*.whl
+          python scripts/smoke_release.py --expected-version "${GITHUB_REF_NAME#v}"
+          python -m pip install pillow
+          python -m pip install torch --index-url https://download.pytorch.org/whl/cpu
+          python scripts/smoke_release.py --expected-version "${GITHUB_REF_NAME#v}" --torch
+          python -m unittest discover -s tests
+          python benchmarks/run_catalog_audit.py
+      - name: Record sdist and rebuilt-wheel provenance
+        run: >-
+          python scripts/release_evidence.py
+          --artifact $(find release-dist -maxdepth 1 -name '*.tar.gz' -print -quit)
+          --artifact $(find sdist-wheel -maxdepth 1 -name '*.whl' -print -quit)
+          --expected-revision "$GITHUB_SHA"
+          --output release-evidence/sdist-rebuild.json
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: release-evidence-sdist
+          path: release-evidence/
+          if-no-files-found: error
+          retention-days: 90
+
+  publish:
+    name: Publish approved artifacts to PyPI
+    needs: [build, wheel, sdist]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    environment:
+      name: pypi
+      url: https://pypi.org/p/variopinta
+    permissions:
+      actions: read
+      id-token: write
+    steps:
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: release-artifacts
+          path: release-dist
+      - uses: pypa/gh-action-pypi-publish@dc37677b2e1c63e2034f94d8a5b11f265b73ba33 # v1.14.2
+        with:
+          packages-dir: release-dist/
+
+  github-release:
+    name: Create GitHub release from approved artifacts
+    needs: publish
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      actions: read
+      contents: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: release-artifacts
+          path: release-dist
+      - name: Extract release notes from the changelog
+        env:
+          VERSION: ${{ github.ref_name }}
+        run: |
+          python - <<'PY'
+          import os
+          from pathlib import Path
+
+          version = os.environ["VERSION"].removeprefix("v")
+          changelog = Path("CHANGELOG.md").read_text()
+          heading = f"## {version}\n"
+          if heading not in changelog:
+              raise SystemExit(f"missing changelog entry for {version}")
+          notes = changelog.split(heading, 1)[1].split("\n## ", 1)[0].strip()
+          Path("release-notes.md").write_text(f"# Variopinta {version}\n\n{notes}\n")
+          PY
+      - name: Create the release with the published files
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: >-
+          gh release create "$GITHUB_REF_NAME" release-dist/*
+          --verify-tag
+          --title "Variopinta ${GITHUB_REF_NAME#v}"
+          --notes-file release-notes.md

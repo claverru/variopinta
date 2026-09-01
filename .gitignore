@@ -1,0 +1,64 @@
+# Python
+__pycache__/
+*.py[cod]
+*.so
+.venv/
+.venvs/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.hypothesis/
+.nox/
+.tox/
+.coverage
+coverage.xml
+htmlcov/
+.env
+.env.*
+!.env.example
+*.log
+
+# Builds and packages
+build/
+dist/
+release-dist/
+release-evidence/
+sdist-wheel/
+unsafe-evidence/
+*.egg-info/
+wheelhouse/
+
+# Rust
+target/
+rust/target/
+
+# Generated benchmark artifacts
+results/baseline/
+results/benchmark-quick.md
+results/csv/*-quick.csv
+results/layers/maintenance-probe.json
+results/layers/raw/*.json
+!results/layers/raw/all-runs.json
+results/layers/raw/quick-runs/
+results/layers/raw/runs/
+results/plots/quick/
+results/raw/benchmark-albumentations.json
+results/raw/benchmark-albumentationsx.json
+results/raw/benchmark-rust.json
+results/raw/benchmark-torchvision.json
+results/raw/*-quick.json
+results/raw/*-quick-runs.json
+results/raw/catalog-benchmark-quick-runs/
+results/raw/catalog-benchmark-runs/
+results/raw/catalog-runs/
+results/raw/environment-*.txt
+results/raw/fair-stability-*.json
+results/raw/images/
+results/raw/metadata*.json
+results/raw/quick-runs/
+results/raw/runs/
+
+# Editors and operating systems
+.idea/
+.vscode/
+.DS_Store

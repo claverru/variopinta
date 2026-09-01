@@ -1,0 +1,24 @@
+[package]
+name = "augment-pyext"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+publish = false
+
+[lib]
+name = "_variopinta"
+crate-type = ["cdylib"]
+
+[features]
+default = ["extension-module"]
+extension-module = ["pyo3/extension-module"]
+
+[dependencies]
+augment-core = { path = "../core" }
+augment-io = { path = "../io" }
+numpy = "0.24.0"
+pyo3 = { version = "0.24.1", features = ["abi3-py310"] }
+
+[lints]
+workspace = true

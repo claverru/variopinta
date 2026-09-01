@@ -1,0 +1,5 @@
+maturin==1.9.6
+matplotlib==3.10.8
+pillow==12.2.0
+psutil==7.0.0
+ruff==0.12.12

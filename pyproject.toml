@@ -1,0 +1,49 @@
+[build-system]
+requires = ["maturin>=1.9.3,<2"]
+build-backend = "maturin"
+
+[project]
+name = "variopinta"
+version = "0.1.0"
+description = "CPU image-augmentation pipelines compiled from Python and executed by optimized Rust kernels"
+readme = "README.md"
+license = "Apache-2.0"
+license-files = ["LICENSE", "THIRD_PARTY_NOTICES"]
+requires-python = ">=3.10,<3.14"
+dependencies = ["numpy>=2.2.6"]
+keywords = ["augmentation", "computer-vision", "image-processing", "machine-learning", "rust"]
+classifiers = [
+    "Development Status :: 2 - Pre-Alpha",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "Operating System :: POSIX :: Linux",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Rust",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: Scientific/Engineering :: Image Processing",
+    "Typing :: Typed",
+]
+
+[project.urls]
+Homepage = "https://github.com/claverru/variopinta"
+Repository = "https://github.com/claverru/variopinta"
+Issues = "https://github.com/claverru/variopinta/issues"
+
+[tool.maturin]
+manifest-path = "rust/pyext/Cargo.toml"
+python-source = "python"
+module-name = "variopinta._variopinta"
+features = ["pyo3/extension-module"]
+exclude = ["variopinta/**/__pycache__/**", "variopinta/**/*.pyc"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["B", "E", "F", "I", "UP"]
+ignore = ["E501"]
