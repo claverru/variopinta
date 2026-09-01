@@ -1,6 +1,6 @@
 # Contributing
 
-Variopinta is pre-release and its public API is still being defined. Open an
+Variopinta is experimental and its public API is still being defined. Open an
 issue before substantial API, dependency, architecture, or benchmark work so
 the intended contract can be agreed before implementation.
 

@@ -1,6 +1,6 @@
 # Security policy
 
-Variopinta is pre-release. Security fixes are provided for the latest patch of
+Variopinta is experimental. Security fixes are provided for the latest patch of
 the current `0.1` release line.
 
 | Version | Supported |

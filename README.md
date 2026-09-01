@@ -9,7 +9,7 @@ report the resulting execution plan.
 > color or appearance,” from Italian *variopinto*, “varied” and “painted.”
 > — [RAE](https://dle.rae.es/variopinto)
 
-Variopinta is image-only and pre-release. The public Python API may change
+Variopinta is image-only and experimental. The public Python API may change
 between `0.y.0` releases; patch releases preserve documented signatures and
 data contracts unless a correctness or security fix requires otherwise.
 
@@ -155,16 +155,19 @@ paths, hardware, and statistical limits. The results support the compiled
 pipeline design; they do not establish a universal Rust speed advantage.
 
 The reproducible harness and committed evidence are available under
-[`benchmarks/`](benchmarks/) and [`results/`](results/).
+[`benchmarks/`](https://github.com/claverru/variopinta/tree/main/benchmarks) and
+[`results/`](https://github.com/claverru/variopinta/tree/main/results).
 
 ## Project information
 
-- [Changelog](CHANGELOG.md)
-- [Contributing](CONTRIBUTING.md)
-- [Security policy](SECURITY.md)
+- [Changelog](https://github.com/claverru/variopinta/blob/main/CHANGELOG.md)
+- [Contributing](https://github.com/claverru/variopinta/blob/main/CONTRIBUTING.md)
+- [Security policy](https://github.com/claverru/variopinta/blob/main/SECURITY.md)
 
 ## License
 
-Variopinta is licensed under the [Apache License 2.0](LICENSE). Native wheels
-contain permissively licensed third-party components; their required
-attributions are in [THIRD_PARTY_NOTICES](THIRD_PARTY_NOTICES).
+Variopinta is licensed under the
+[Apache License 2.0](https://github.com/claverru/variopinta/blob/main/LICENSE).
+Native wheels contain permissively licensed third-party components; their
+required attributions are in
+[THIRD_PARTY_NOTICES](https://github.com/claverru/variopinta/blob/main/THIRD_PARTY_NOTICES).

@@ -6,6 +6,7 @@ build-backend = "maturin"
 name = "variopinta"
 version = "0.1.0"
 description = "CPU image-augmentation pipelines compiled from Python and executed by optimized Rust kernels"
+authors = [{ name = "claverru", email = "claverru@gmail.com" }]
 readme = "README.md"
 license = "Apache-2.0"
 license-files = ["LICENSE", "THIRD_PARTY_NOTICES"]
