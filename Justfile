@@ -70,8 +70,8 @@ check: format-check lint audit-unsafe test
 # Run focused catalog registration and boundary conformance checks.
 catalog-conformance: develop
     cargo test --manifest-path {{ cargo_manifest }} -p augment-core --locked catalog
-    {{ python }} -m unittest tests.test_api.PipelineTests.test_transform_catalog_sets_and_binding_support_are_exact
-    {{ python }} -m unittest tests.test_api.PipelineTests.test_transform_catalog_conformance_matrix
+    {{ python }} -m unittest tests.test_catalog.CatalogTests.test_transform_catalog_sets_and_binding_support_are_exact
+    {{ python }} -m unittest tests.test_catalog.CatalogTests.test_transform_catalog_conformance_matrix
 
 # Run the x86-64 core suite under AddressSanitizer.
 asan:

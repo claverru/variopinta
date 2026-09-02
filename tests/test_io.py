@@ -161,6 +161,27 @@ class ImageIoTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 R.write_image(Path(directory) / "image.data", source)
 
+    def test_read_image_returns_rgb_numpy(self) -> None:
+        source = rgb_image(17, 23)
+        with TemporaryDirectory() as directory:
+            path = Path(directory) / "image.jpg"
+            Image.fromarray(source).save(path, quality=95)
+            output = R.read_image(path)
+            expected = np.asarray(Image.open(path).convert("RGB"))
+        self.assertEqual(output.shape, source.shape)
+        self.assertEqual(output.dtype, np.uint8)
+        self.assertTrue(output.flags.c_contiguous)
+        np.testing.assert_array_equal(output, expected)
+
+    def test_read_image_errors(self) -> None:
+        with self.assertRaises(OSError):
+            R.read_image("missing.jpg")
+        with TemporaryDirectory() as directory:
+            path = Path(directory) / "invalid.jpg"
+            path.write_bytes(b"not a jpeg")
+            with self.assertRaises(ValueError):
+                R.read_image(path)
+
 
 if __name__ == "__main__":
     unittest.main()
