@@ -61,8 +61,7 @@ def validate_native_metadata(
     forbidden = [
         library
         for library in libraries
-        if library not in identifiers
-        and not library.startswith(("/usr/lib/", "/System/Library/"))
+        if library not in identifiers and not library.startswith(("/usr/lib/", "/System/Library/"))
     ]
     if forbidden:
         raise ValueError(f"non-system dynamic libraries: {forbidden}")
