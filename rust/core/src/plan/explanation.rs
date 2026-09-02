@@ -29,7 +29,7 @@ impl TransformPlan {
                 ("geometry", "out-of-place", 2, "workspace-u8", "portable")
             }
             Self::HorizontalFlip { .. } => {
-                ("geometry", "in-place", 1, "none", "runtime-avx2-or-scalar")
+                ("geometry", "in-place", 1, "none", owned_simd_fallback())
             }
             Self::VerticalFlip { .. } => ("geometry", "in-place", 1, "none", "portable-scalar"),
             Self::ColorJitter { hue, .. } => (
@@ -38,7 +38,7 @@ impl TransformPlan {
                 if *hue == [0.0, 0.0] { 2 } else { 5 },
                 "none",
                 if *hue == [0.0, 0.0] {
-                    "runtime-avx2-or-numeric-safety-scalar"
+                    owned_simd_numeric_fallback()
                 } else {
                     "hue-portable-or-numeric-safety-scalar"
                 },
@@ -48,7 +48,7 @@ impl TransformPlan {
                 "out-of-place",
                 1,
                 "workspace-u8",
-                "runtime-avx2-or-scalar",
+                owned_simd_fallback(),
             ),
             Self::GaussianNoise { .. } => (
                 "noise",
@@ -87,20 +87,20 @@ impl TransformPlan {
                 } else {
                     "workspace-u16+sampled-kernel"
                 },
-                "runtime-avx2-or-scalar",
+                owned_simd_fallback(),
             ),
             Self::Grayscale { .. } | Self::Solarize { .. } => {
-                ("color", "in-place", 1, "none", "runtime-avx2-or-scalar")
+                ("color", "in-place", 1, "none", owned_simd_fallback())
             }
             Self::Invert { .. } | Self::Posterize { .. } => {
-                ("color", "in-place", 1, "none", "runtime-avx2-or-scalar")
+                ("color", "in-place", 1, "none", owned_simd_fallback())
             }
             Self::Normalize { .. } => (
                 "dtype",
                 "terminal",
                 1,
                 "owned-f32-output",
-                "runtime-avx2-or-scalar",
+                owned_simd_fallback(),
             ),
             Self::ToTorch => (
                 "layout",

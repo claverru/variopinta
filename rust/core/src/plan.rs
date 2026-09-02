@@ -10,6 +10,44 @@ mod explanation;
 mod sampling;
 mod validation;
 
+pub(crate) const fn owned_simd_fallback() -> &'static str {
+    if cfg!(target_arch = "x86_64") {
+        "runtime-avx2-or-scalar"
+    } else {
+        "portable-scalar"
+    }
+}
+
+pub(crate) const fn owned_simd_numeric_fallback() -> &'static str {
+    if cfg!(target_arch = "x86_64") {
+        "runtime-avx2-or-numeric-safety-scalar"
+    } else {
+        "portable-or-numeric-safety-scalar"
+    }
+}
+
+#[cfg(test)]
+mod target_explanation_tests {
+    use super::{owned_simd_fallback, owned_simd_numeric_fallback};
+
+    #[test]
+    fn owned_simd_fallbacks_match_the_compilation_target() {
+        if cfg!(target_arch = "x86_64") {
+            assert_eq!(owned_simd_fallback(), "runtime-avx2-or-scalar");
+            assert_eq!(
+                owned_simd_numeric_fallback(),
+                "runtime-avx2-or-numeric-safety-scalar"
+            );
+        } else {
+            assert_eq!(owned_simd_fallback(), "portable-scalar");
+            assert_eq!(
+                owned_simd_numeric_fallback(),
+                "portable-or-numeric-safety-scalar"
+            );
+        }
+    }
+}
+
 #[derive(Debug, Clone)]
 pub(crate) enum TransformPlan {
     Resize {

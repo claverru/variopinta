@@ -126,9 +126,9 @@ evidence:
     just layer-experiments
     just benchmark
 
-# Build one wheel and one sdist into a new release-dist directory.
+# Build one host-platform wheel and one sdist into a new release-dist directory.
 release-build:
     test ! -e release-dist
     mkdir release-dist
     {{ maturin }} sdist --manifest-path rust/pyext/Cargo.toml --out release-dist
-    {{ maturin }} build --release --locked --compatibility pypi --out release-dist
+    TURBOJPEG_SOURCE=vendor TURBOJPEG_STATIC=1 TURBOJPEG_BINDING=pregenerated {{ maturin }} build --release --locked --compatibility pypi --out release-dist

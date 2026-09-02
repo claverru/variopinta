@@ -13,17 +13,21 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  build:
-    name: Build and inspect release artifacts
+  build-linux:
+    name: Build Linux x86-64 wheel and sdist
     runs-on: ubuntu-24.04
     timeout-minutes: 20
+    env:
+      TURBOJPEG_SOURCE: vendor
+      TURBOJPEG_STATIC: "1"
+      TURBOJPEG_BINDING: pregenerated
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
       - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         with:
-          python-version: "3.13"
+          python-version: "3.10"
       - uses: dtolnay/rust-toolchain@1.88.0
       - name: Install native build tools and release frontends
         run: |
@@ -36,33 +40,89 @@ jobs:
           test "$(git describe --tags --exact-match)" = "$GITHUB_REF_NAME"
           test -z "$(git status --short --untracked-files=no)"
           python scripts/validate_release.py --tag "$GITHUB_REF_NAME"
-      - name: Build candidates once into an empty directory
+      - name: Build Linux candidates once
         run: |
-          test ! -e release-dist
           mkdir release-dist
           maturin sdist --manifest-path rust/pyext/Cargo.toml --out release-dist
           maturin build --release --locked --compatibility pypi --out release-dist
-      - name: Check metadata and package contents
-        run: |
+          test "$(find release-dist -maxdepth 1 -name '*.whl' | wc -l)" -eq 1
+          test "$(find release-dist -maxdepth 1 -name '*.tar.gz' | wc -l)" -eq 1
           twine check --strict release-dist/*
-          python scripts/validate_release.py \
-            --tag "$GITHUB_REF_NAME" --dist-dir release-dist
+          python scripts/validate_release.py --tag "$GITHUB_REF_NAME" \
+            --artifact $(find release-dist -maxdepth 1 -name '*.whl' -print -quit) \
+            --artifact $(find release-dist -maxdepth 1 -name '*.tar.gz' -print -quit)
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          name: release-artifacts
+          name: candidate-linux-x86-64
+          path: release-dist/
+          if-no-files-found: error
+          retention-days: 90
+
+  build-macos:
+    name: Build and inspect macOS ARM64 wheel
+    runs-on: macos-15
+    timeout-minutes: 30
+    env:
+      MACOSX_DEPLOYMENT_TARGET: "11.0"
+      TURBOJPEG_SOURCE: vendor
+      TURBOJPEG_STATIC: "1"
+      TURBOJPEG_BINDING: pregenerated
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.10"
+      - uses: dtolnay/rust-toolchain@1.88.0
+      - name: Verify native toolchain and install release frontends
+        run: |
+          test "$(uname -m)" = arm64
+          rustc -vV | grep -Fx "host: aarch64-apple-darwin"
+          xcrun clang --version
+          cmake --version
+          python -m pip install --upgrade pip maturin==1.9.6 twine==7.0.0
+      - name: Validate immutable tagged source
+        run: |
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          test "$(git describe --tags --exact-match)" = "$GITHUB_REF_NAME"
+          test -z "$(git status --short --untracked-files=no)"
+          python scripts/validate_release.py --tag "$GITHUB_REF_NAME"
+      - name: Build and inspect the ARM64 candidate once
+        run: |
+          mkdir release-dist
+          maturin build --release --locked --compatibility pypi --out release-dist
+          test "$(find release-dist -maxdepth 1 -name '*.whl' | wc -l)" -eq 1
+          wheel=$(find release-dist -maxdepth 1 -name '*.whl' -print -quit)
+          twine check --strict "$wheel"
+          python scripts/validate_release.py --tag "$GITHUB_REF_NAME" --artifact "$wheel"
+          python scripts/inspect_macos_wheel.py "$wheel"
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: candidate-macos-arm64
           path: release-dist/
           if-no-files-found: error
           retention-days: 90
 
   wheel:
-    name: Exact wheel / CPython ${{ matrix.python }}
-    needs: build
-    runs-on: ubuntu-24.04
-    timeout-minutes: 30
+    name: ${{ matrix.platform }} wheel / CPython ${{ matrix.python }}
+    needs: [build-linux, build-macos]
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 35
     strategy:
       fail-fast: false
       matrix:
         python: ["3.10", "3.11", "3.12", "3.13"]
+        platform: [linux-x86-64, macos-arm64]
+        include:
+          - platform: linux-x86-64
+            runner: ubuntu-24.04
+            artifact: candidate-linux-x86-64
+            wheel_tag: manylinux_2_34_x86_64
+          - platform: macos-arm64
+            runner: macos-15
+            artifact: candidate-macos-arm64
+            wheel_tag: macosx_11_0_arm64
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
@@ -71,38 +131,59 @@ jobs:
       - uses: dtolnay/rust-toolchain@1.88.0
       - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
-          name: release-artifacts
+          name: ${{ matrix.artifact }}
           path: release-dist
       - name: Install the exact candidate wheel
         run: |
+          if [ "${{ matrix.platform }}" = macos-arm64 ]; then test "$(uname -m)" = arm64; fi
+          test "$(find release-dist -maxdepth 1 -name '*-${{ matrix.wheel_tag }}.whl' | wc -l)" -eq 1
+          wheel=$(find release-dist -maxdepth 1 -name '*-${{ matrix.wheel_tag }}.whl' -print -quit)
           python -m pip install --upgrade pip
-          python -m pip install release-dist/*.whl
+          python -m pip install "$wheel"
       - name: Test base, optional Torch, and catalog contracts
         run: |
           python scripts/smoke_release.py --expected-version "${GITHUB_REF_NAME#v}"
           python -m pip install pillow
-          python -m pip install torch --index-url https://download.pytorch.org/whl/cpu
+          if [ "${{ matrix.platform }}" = linux-x86-64 ]; then
+            python -m pip install torch --index-url https://download.pytorch.org/whl/cpu
+          else
+            python -m pip install torch
+          fi
           python scripts/smoke_release.py --expected-version "${GITHUB_REF_NAME#v}" --torch
           python -m unittest discover -s tests
           python benchmarks/run_catalog_audit.py
       - name: Record tested wheel provenance
         run: >-
           python scripts/release_evidence.py
-          --artifact $(find release-dist -maxdepth 1 -name '*.whl' -print -quit)
+          --artifact $(find release-dist -maxdepth 1 -name '*-${{ matrix.wheel_tag }}.whl' -print -quit)
           --expected-revision "$GITHUB_SHA"
-          --output release-evidence/python-${{ matrix.python }}.json
+          --output release-evidence/${{ matrix.platform }}-python-${{ matrix.python }}.json
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          name: release-evidence-python-${{ matrix.python }}
+          name: release-evidence-${{ matrix.platform }}-python-${{ matrix.python }}
           path: release-evidence/
           if-no-files-found: error
           retention-days: 90
 
   sdist:
-    name: Locked rebuild from the exact sdist
-    needs: build
-    runs-on: ubuntu-24.04
-    timeout-minutes: 40
+    name: ${{ matrix.platform }} locked rebuild from exact sdist
+    needs: build-linux
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 45
+    env:
+      TURBOJPEG_SOURCE: vendor
+      TURBOJPEG_STATIC: "1"
+      TURBOJPEG_BINDING: pregenerated
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: linux-x86-64
+            runner: ubuntu-24.04
+            wheel_tag: manylinux_2_34_x86_64
+          - platform: macos-arm64
+            runner: macos-15
+            wheel_tag: macosx_11_0_arm64
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
@@ -111,12 +192,18 @@ jobs:
       - uses: dtolnay/rust-toolchain@1.88.0
       - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
-          name: release-artifacts
+          name: candidate-linux-x86-64
           path: release-dist
       - name: Install native build tools and frontend
         run: |
-          sudo apt-get update
-          sudo apt-get install -y cmake nasm
+          if [ "${{ matrix.platform }}" = linux-x86-64 ]; then
+            sudo apt-get update
+            sudo apt-get install -y cmake nasm
+          else
+            test "$(uname -m)" = arm64
+            cmake --version
+            echo "MACOSX_DEPLOYMENT_TARGET=11.0" >> "$GITHUB_ENV"
+          fi
           python -m pip install --upgrade pip maturin==1.9.6
       - name: Rebuild the exact sdist against its locked graph
         run: |
@@ -131,13 +218,22 @@ jobs:
           PY
           cd "release-src/variopinta-${GITHUB_REF_NAME#v}"
           maturin build --release --locked --compatibility pypi --out ../../sdist-wheel
-      - name: Test the independently rebuilt wheel
+      - name: Inspect and test the independently rebuilt wheel
         run: |
-          test "$(find sdist-wheel -maxdepth 1 -name '*.whl' | wc -l)" -eq 1
-          python -m pip install sdist-wheel/*.whl
+          test "$(find sdist-wheel -maxdepth 1 -name '*-${{ matrix.wheel_tag }}.whl' | wc -l)" -eq 1
+          wheel=$(find sdist-wheel -maxdepth 1 -name '*-${{ matrix.wheel_tag }}.whl' -print -quit)
+          python scripts/validate_release.py --tag "$GITHUB_REF_NAME" --artifact "$wheel"
+          if [ "${{ matrix.platform }}" = macos-arm64 ]; then
+            python scripts/inspect_macos_wheel.py "$wheel"
+          fi
+          python -m pip install "$wheel"
           python scripts/smoke_release.py --expected-version "${GITHUB_REF_NAME#v}"
           python -m pip install pillow
-          python -m pip install torch --index-url https://download.pytorch.org/whl/cpu
+          if [ "${{ matrix.platform }}" = linux-x86-64 ]; then
+            python -m pip install torch --index-url https://download.pytorch.org/whl/cpu
+          else
+            python -m pip install torch
+          fi
           python scripts/smoke_release.py --expected-version "${GITHUB_REF_NAME#v}" --torch
           python -m unittest discover -s tests
           python benchmarks/run_catalog_audit.py
@@ -145,19 +241,51 @@ jobs:
         run: >-
           python scripts/release_evidence.py
           --artifact $(find release-dist -maxdepth 1 -name '*.tar.gz' -print -quit)
-          --artifact $(find sdist-wheel -maxdepth 1 -name '*.whl' -print -quit)
+          --artifact $(find sdist-wheel -maxdepth 1 -name '*-${{ matrix.wheel_tag }}.whl' -print -quit)
           --expected-revision "$GITHUB_SHA"
-          --output release-evidence/sdist-rebuild.json
+          --output release-evidence/sdist-rebuild-${{ matrix.platform }}.json
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          name: release-evidence-sdist
+          name: release-evidence-sdist-${{ matrix.platform }}
           path: release-evidence/
+          if-no-files-found: error
+          retention-days: 90
+
+  assemble:
+    name: Assemble approved immutable artifacts
+    needs: [build-linux, build-macos, wheel, sdist]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.13"
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: candidate-linux-x86-64
+          path: candidate-linux
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: candidate-macos-arm64
+          path: candidate-macos
+      - name: Merge and validate the complete release set
+        run: |
+          python -m pip install twine==7.0.0
+          mkdir release-dist
+          cp candidate-linux/*.whl candidate-linux/*.tar.gz candidate-macos/*.whl release-dist/
+          twine check --strict release-dist/*
+          python scripts/validate_release.py --tag "$GITHUB_REF_NAME" --dist-dir release-dist
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: release-artifacts
+          path: release-dist/
           if-no-files-found: error
           retention-days: 90
 
   publish:
     name: Publish approved artifacts to PyPI
-    needs: [build, wheel, sdist]
+    needs: assemble
     runs-on: ubuntu-24.04
     timeout-minutes: 10
     environment:

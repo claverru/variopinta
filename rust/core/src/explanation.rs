@@ -1,6 +1,6 @@
 use crate::capability::{OutputContract, ReadFootprint};
 use crate::optimization::{BufferSlot, LoweringPlan};
-use crate::plan::TransformPlan;
+use crate::plan::{owned_simd_fallback, TransformPlan};
 use crate::{
     BufferExplanation, CopyExplanation, ExecutionMode, ImageContractExplanation,
     PipelineExplanation,
@@ -48,7 +48,7 @@ pub(crate) fn build(
         steps[selection.first].execution = execution;
         steps[selection.second].execution = execution;
         steps[selection.second].pixel_passes = 0;
-        steps[selection.second].fallback = "runtime-avx2-or-scalar";
+        steps[selection.second].fallback = owned_simd_fallback();
     }
     for step in &mut steps {
         if step.status == "never" {

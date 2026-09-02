@@ -15,10 +15,10 @@ data contracts unless a correctness or security fix requires otherwise.
 
 ## Installation
 
-Version 0.1 supports CPython 3.10–3.13 on 64-bit x86 Linux with glibc 2.34 or
-newer. AVX2 is detected at runtime and is not required. Other Python
-implementations, operating systems, architectures, and 32-bit environments are
-not supported.
+Version 0.2 supports CPython 3.10–3.13 on 64-bit x86 Linux with glibc 2.34 or
+newer and on macOS 11 or newer running natively on Apple Silicon. AVX2 is
+detected at runtime on x86-64 and is not required. Other Python implementations,
+operating systems, architectures, and 32-bit environments are not supported.
 
 Install Variopinta from PyPI:
 
@@ -26,8 +26,8 @@ Install Variopinta from PyPI:
 python -m pip install variopinta
 ```
 
-To build from a source checkout, install Rust 1.87 or newer, a C/C++ toolchain,
-CMake, and NASM. On Ubuntu, the native prerequisites are:
+To build from a source checkout, install Rust 1.87 or newer and CMake. Linux
+x86-64 additionally needs a C/C++ toolchain and NASM:
 
 ```bash
 sudo apt-get update
@@ -35,11 +35,15 @@ sudo apt-get install build-essential cmake nasm
 python -m pip install .
 ```
 
+On Apple Silicon, install Xcode command-line tools and CMake; NASM is not
+required. Source and wheel builds compile the locked vendored libjpeg-turbo
+statically and do not use Homebrew or MacPorts codec libraries.
+
 The build uses Maturin through Python build isolation. NumPy is installed as
 the only required runtime dependency.
 
 `ToTorch` is optional and requires a PyTorch build compatible with the selected
-Python and Linux environment:
+Python and platform:
 
 ```bash
 python -m pip install torch
@@ -153,6 +157,9 @@ Albumentations, and AlbumentationsX on one reference machine. It measures
 equivalent materialized work and records correctness, copies, buffers, kernel
 paths, hardware, and statistical limits. The results support the compiled
 pipeline design; they do not establish a universal Rust speed advantage.
+The published x86-64 results do not claim performance parity on Apple Silicon;
+Variopinta-owned kernels use their portable scalar paths there, while resize
+and JPEG dependencies may independently select upstream ARM64 SIMD.
 
 The reproducible harness and committed evidence are available under
 [`benchmarks/`](https://github.com/claverru/variopinta/tree/main/benchmarks) and

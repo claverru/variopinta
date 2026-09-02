@@ -39,7 +39,12 @@ def main() -> None:
             )
         artifacts.append(evidence)
     payload = {
+        "architecture": platform.machine(),
         "artifacts": artifacts,
+        "os": platform.system(),
+        "os_version": (
+            platform.mac_ver()[0] if platform.system() == "Darwin" else platform.release()
+        ),
         "package": "variopinta",
         "package_version": metadata.version("variopinta"),
         "platform": platform.platform(),

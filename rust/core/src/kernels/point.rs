@@ -32,6 +32,7 @@ fn horizontal_flip_scalar(data: &mut [u8], height: usize, width: usize) {
     }
 }
 
+#[cfg(target_arch = "x86_64")]
 const fn reverse_rgb_mask(out_chunk: usize, in_chunk: usize) -> [i8; 16] {
     let mut mask = [-1i8; 16];
     let mut lane = 0;

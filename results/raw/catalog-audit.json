@@ -7,7 +7,7 @@
       "numpy": "2.5.1",
       "torch": "2.13.0+cu130",
       "torchvision": "0.28.0+cu130",
-      "variopinta": "0.1.0"
+      "variopinta": "0.2.0"
     },
     "platform": "Linux-6.18.33.2-microsoft-standard-WSL2-x86_64-with-glibc2.39",
     "processor": "AMD Ryzen 9 9950X3D 16-Core Processor",

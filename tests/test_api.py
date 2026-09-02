@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import platform
 import unittest
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
@@ -40,6 +41,22 @@ class PipelineTests(unittest.TestCase):
             with self.subTest(name=name):
                 compiled = R.Compose([fixture(1.0)], seed=137).compile()
                 self.assertEqual(compiled.explain()["steps"][0]["name"], name)
+
+    def test_fallback_explanations_match_the_native_architecture(self) -> None:
+        from variopinta.transforms import _TRANSFORM_CATALOG
+
+        explanations = [
+            R.Compose([fixture(1.0)], seed=137).compile().explain()
+            for _, fixture in _TRANSFORM_CATALOG.values()
+        ]
+        explanations.append(R.Compose([R.Normalize(), R.ToTorch()], seed=137).compile().explain())
+        fallbacks = [
+            fallback for explanation in explanations for fallback in explanation["fallbacks"]
+        ]
+        if platform.machine() in {"x86_64", "AMD64"}:
+            self.assertTrue(any("avx2" in fallback for fallback in fallbacks))
+        else:
+            self.assertFalse(any("avx2" in fallback for fallback in fallbacks))
 
     def test_transform_catalog_conformance_matrix(self) -> None:
         from variopinta.transforms import _TRANSFORM_CATALOG
@@ -1201,7 +1218,11 @@ class PipelineTests(unittest.TestCase):
         np.testing.assert_array_equal(brightness.compile()(positive, key=29), expected)
         self.assertEqual(
             brightness.compile().explain()["steps"][0]["fallback"],
-            "runtime-avx2-or-numeric-safety-scalar",
+            (
+                "runtime-avx2-or-numeric-safety-scalar"
+                if platform.machine() in {"x86_64", "AMD64"}
+                else "portable-or-numeric-safety-scalar"
+            ),
         )
 
     def test_gaussian_blur_sigma_range_matches_reference_at_arbitrary_sizes(self) -> None:

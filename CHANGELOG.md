@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.2.0
+
+- Add native Apple Silicon support on macOS 11 or newer, including thin ARM64
+  wheels, target-honest execution introspection, and two-platform release
+  validation.
+
 ## 0.1.0
 
 - Compile immutable image-augmentation pipelines with 22 transforms, explicit

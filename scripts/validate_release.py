@@ -11,6 +11,10 @@ from email.parser import BytesParser
 from pathlib import Path, PurePosixPath
 
 PACKAGE = "variopinta"
+WHEEL_PLATFORMS = {
+    "manylinux_2_34_x86_64": "linux-x86-64",
+    "macosx_11_0_arm64": "macos-arm64",
+}
 PYTHON_FILES = {
     "__init__.py",
     "_validation.py",
@@ -45,8 +49,12 @@ FORBIDDEN_SUFFIXES = {".key", ".pem", ".pyc", ".pyo"}
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Validate release versions and artifacts")
     parser.add_argument("--dist-dir", type=Path)
+    parser.add_argument("--artifact", type=Path, action="append")
     parser.add_argument("--tag")
-    return parser.parse_args()
+    args = parser.parse_args()
+    if args.dist_dir is not None and args.artifact:
+        parser.error("--dist-dir and --artifact are mutually exclusive")
+    return args
 
 
 def toml_value(path: Path, section: str, key: str) -> str:
@@ -89,6 +97,8 @@ def parse_metadata(data: bytes) -> Message:
 
 def validate_metadata(metadata: Message, version: str) -> None:
     expected_classifiers = {
+        "Operating System :: MacOS :: MacOS X",
+        "Operating System :: POSIX :: Linux",
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
         "Programming Language :: Python :: 3.12",
@@ -111,8 +121,15 @@ def validate_metadata(metadata: Message, version: str) -> None:
 
 
 def validate_wheel(path: Path, version: str) -> dict[str, object]:
-    expected_name = f"{PACKAGE}-{version}-cp310-abi3-manylinux_2_34_x86_64.whl"
-    if path.name != expected_name:
+    platform_tag = next(
+        (
+            tag
+            for tag in WHEEL_PLATFORMS
+            if path.name == f"{PACKAGE}-{version}-cp310-abi3-{tag}.whl"
+        ),
+        None,
+    )
+    if platform_tag is None:
         raise ValueError(f"unexpected wheel filename: {path.name}")
     dist_info = f"{PACKAGE}-{version}.dist-info"
     with zipfile.ZipFile(path) as archive:
@@ -142,9 +159,16 @@ def validate_wheel(path: Path, version: str) -> dict[str, object]:
             raise ValueError(f"wheel is missing: {sorted(required - set(names))}")
         validate_metadata(parse_metadata(archive.read(f"{dist_info}/METADATA")), version)
         wheel_metadata = parse_metadata(archive.read(f"{dist_info}/WHEEL"))
-        if "cp310-abi3-manylinux_2_34_x86_64" not in wheel_metadata.get_all("Tag", []):
+        expected_tag = f"cp310-abi3-{platform_tag}"
+        if expected_tag not in wheel_metadata.get_all("Tag", []):
             raise ValueError("wheel metadata does not contain the supported ABI tag")
-    return {"filename": path.name, "files": len(names), "kind": "wheel"}
+    return {
+        "filename": path.name,
+        "files": len(names),
+        "kind": "wheel",
+        "platform": WHEEL_PLATFORMS[platform_tag],
+        "tag": expected_tag,
+    }
 
 
 def validate_sdist(path: Path, version: str) -> dict[str, object]:
@@ -200,19 +224,43 @@ def validate_sdist(path: Path, version: str) -> dict[str, object]:
 
 def validate_artifacts(dist_dir: Path, version: str) -> list[dict[str, object]]:
     artifacts = sorted(path for path in dist_dir.iterdir() if path.is_file())
-    wheels = [path for path in artifacts if path.suffix == ".whl"]
-    sdists = [path for path in artifacts if path.name.endswith(".tar.gz")]
-    if len(artifacts) != 2 or len(wheels) != 1 or len(sdists) != 1:
+    expected = {
+        f"{PACKAGE}-{version}-cp310-abi3-{platform_tag}.whl" for platform_tag in WHEEL_PLATFORMS
+    }
+    expected.add(f"{PACKAGE}-{version}.tar.gz")
+    actual = {path.name for path in artifacts}
+    if actual != expected or len(artifacts) != len(expected):
         raise ValueError(
-            f"expected one wheel and one sdist, found {[path.name for path in artifacts]}"
+            "release artifact set mismatch: "
+            f"missing={sorted(expected - actual)}, unexpected={sorted(actual - expected)}"
         )
-    return [validate_wheel(wheels[0], version), validate_sdist(sdists[0], version)]
+    return validate_selected_artifacts(artifacts, version)
+
+
+def validate_selected_artifacts(paths: list[Path], version: str) -> list[dict[str, object]]:
+    names = [path.name for path in paths]
+    if len(names) != len(set(names)):
+        raise ValueError(f"duplicate artifacts: {names}")
+    validated = []
+    for path in sorted(paths):
+        if path.suffix == ".whl":
+            validated.append(validate_wheel(path, version))
+        elif path.name.endswith(".tar.gz"):
+            validated.append(validate_sdist(path, version))
+        else:
+            raise ValueError(f"unexpected release artifact: {path.name}")
+    return validated
 
 
 def main() -> None:
     args = parse_args()
     version = source_version(args.tag)
-    artifacts = validate_artifacts(args.dist_dir, version) if args.dist_dir else []
+    if args.dist_dir:
+        artifacts = validate_artifacts(args.dist_dir, version)
+    elif args.artifact:
+        artifacts = validate_selected_artifacts(args.artifact, version)
+    else:
+        artifacts = []
     print(json.dumps({"artifacts": artifacts, "package": PACKAGE, "version": version}))
 
 
