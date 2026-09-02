@@ -6,9 +6,10 @@ the intended contract can be agreed before implementation.
 
 ## Development workflow
 
-Use CPython 3.10–3.13, Rust 1.87 or newer, `just`, a C/C++ toolchain, CMake, and
-NASM. Create an ordinary virtual environment and install the development
-dependencies:
+Use CPython 3.10–3.13, Rust 1.87 or newer, `just`, a C/C++ toolchain, and CMake.
+Linux x86-64 also requires NASM; native Apple Silicon builds use Xcode
+command-line tools and do not require NASM. Create an ordinary virtual
+environment and install the development dependencies:
 
 ```bash
 python3.12 -m venv .venv

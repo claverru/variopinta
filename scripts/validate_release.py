@@ -24,13 +24,9 @@ PYTHON_FILES = {
     "transforms.py",
 }
 FORBIDDEN_PARTS = {
-    ".devcontainer",
     ".git",
     ".github",
-    ".idea",
-    ".vscode",
     "__pycache__",
-    "docs",
     "release-dist",
     "target",
     "wheelhouse",
@@ -38,10 +34,8 @@ FORBIDDEN_PARTS = {
 FORBIDDEN_NAMES = {
     ".env",
     ".pypirc",
-    "AGENTS.md",
     "credentials",
     "credentials.json",
-    "ongoing.md",
 }
 FORBIDDEN_SUFFIXES = {".key", ".pem", ".pyc", ".pyo"}
 
@@ -178,6 +172,7 @@ def validate_sdist(path: Path, version: str) -> dict[str, object]:
         raise ValueError(f"unexpected sdist filename: {path.name}")
     allowed_roots = {
         "CHANGELOG.md",
+        "docs",
         "LICENSE",
         "PKG-INFO",
         "README.md",

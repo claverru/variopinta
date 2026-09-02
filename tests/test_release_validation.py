@@ -126,8 +126,8 @@ class ReleaseValidationTests(unittest.TestCase):
             wheel = build_wheel(root, "macosx_11_0_arm64", extra=f"{PACKAGE}/debug.py")
             with self.assertRaisesRegex(ValueError, "unexpected package files"):
                 validate_wheel(wheel, VERSION)
-            sdist = build_sdist(root, extra="docs/internal.md")
-            with self.assertRaisesRegex(ValueError, "forbidden archive path"):
+            sdist = build_sdist(root, extra="private/internal.md")
+            with self.assertRaisesRegex(ValueError, "unexpected sdist content"):
                 validate_sdist(sdist, VERSION)
 
 

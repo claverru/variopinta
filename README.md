@@ -15,7 +15,7 @@ data contracts unless a correctness or security fix requires otherwise.
 
 ## Installation
 
-Version 0.2 supports CPython 3.10–3.13 on 64-bit x86 Linux with glibc 2.34 or
+Variopinta supports CPython 3.10–3.13 on 64-bit x86 Linux with glibc 2.34 or
 newer and on macOS 11 or newer running natively on Apple Silicon. AVX2 is
 detected at runtime on x86-64 and is not required. Other Python implementations,
 operating systems, architectures, and 32-bit environments are not supported.
@@ -41,6 +41,9 @@ statically and do not use Homebrew or MacPorts codec libraries.
 
 The build uses Maturin through Python build isolation. NumPy is installed as
 the only required runtime dependency.
+
+The default branch documents its source checkout. Each package release embeds
+the README that applies to that release; see the changelog when comparing them.
 
 `ToTorch` is optional and requires a PyTorch build compatible with the selected
 Python and platform:
@@ -74,13 +77,18 @@ print(pipeline.explain())
 
 `Compose` provides the semantic reference path; `.compile()` selects the
 optimized execution plan. `explain()` reports operations, pixel passes,
-buffers, copies, dtype and layout changes, fusion, and portable fallbacks. Its
-schema version is `2`: each step has an `always`, `conditional`, or `never`
-status, and exact `p=0` routes report only work that can execute.
+buffers, copies, dtype and layout changes, fusion, and portable fallbacks. Each
+step has an `always`, `conditional`, or `never` status, and exact `p=0` routes
+report only work that can execute.
 
 Use an explicit unsigned 64-bit `key` when a result must be independent of call
 order or worker assignment. Omitting it advances the sequence associated with
 the pipeline seed.
+
+## Documentation
+
+- [Transform reference](https://github.com/claverru/variopinta/blob/main/docs/transforms.md)
+- [Pipelines and image I/O](https://github.com/claverru/variopinta/blob/main/docs/pipelines-and-io.md)
 
 ## Data contract
 
@@ -115,6 +123,9 @@ Variopinta defines its own rounding, sampling, and border semantics; it does
 not promise pixel or random-stream identity with another library. `Affine` and
 `RandomRotation` reject an input axis above 16,777,216 before rasterization.
 
+Constructor parameters, defaults, and transform-specific behavior are in the
+[transform reference](https://github.com/claverru/variopinta/blob/main/docs/transforms.md).
+
 ## Image I/O
 
 `read_image` and `decode_image` accept JPEG or static PNG and return owned,
@@ -138,26 +149,12 @@ vp.write_image("output.png", decoded, compression=6)
 Format detection uses file contents when decoding. EXIF orientation, metadata
 preservation, and animated PNG are not supported.
 
-`decode_image` and `read_image` also accept `max_encoded_bytes`; it is checked
-before the encoded buffer snapshot or complete file read. Both functions use a
-100,000,000-pixel decoded-image limit by default. Set either limit to `None` to
-disable that limit.
-
 ## Native pipeline I/O
 
 Pipeline source and sink policy can be fixed when `Compose` is built. The
-default remains `ArrayInput()` plus `ReturnOutput()`, preserving the NumPy and
-optional Torch behavior above. The three inputs and three outputs form nine
-explicit routes:
-
-| Configuration | Call value or result |
-|---|---|
-| `ArrayInput()` | NumPy HWC RGB `uint8` source |
-| `EncodedInput(...)` | complete JPEG or static PNG in `bytes`, `bytearray`, or `memoryview` |
-| `PathInput(...)` | local `str` or `os.PathLike[str]` source |
-| `ReturnOutput()` | owned NumPy array or terminal Torch tensor |
-| `EncodedOutput(...)` | encoded Python `bytes` |
-| `PathOutput(...)` | writes `destination` and returns `None` |
+default remains array input plus a returned NumPy array or optional Torch
+tensor. Encoded-buffer and local-path routes can keep decode, augmentation,
+encode, and file I/O inside one native call.
 
 ```python
 from pathlib import Path
@@ -172,34 +169,11 @@ pipeline = vp.Compose(
 ).compile()
 
 pipeline(Path("input.png"), destination=Path("output.jpg"), key=7)
-
-service_pipeline = vp.Compose(
-    [vp.Resize(224, 224)],
-    input=vp.EncodedInput(max_encoded_bytes=32 * 1024 * 1024),
-    output=vp.EncodedOutput(format="png", compression=6),
-).compile()
-response_bytes = service_pipeline(request_bytes, key=7)
 ```
 
-Encoded and path inputs are detected from their contents and decoded to RGB
-without creating a Python array. Mutable encoded carriers are snapshotted at
-call entry. Encoded sinks require a statically HWC RGB `uint8` pipeline, so a
-pipeline containing executable `Normalize` or any `ToTorch` is rejected when
-constructed. JPEG quality is 1–100 (default 95); PNG compression is 0–9
-(default 6).
-
-`PathOutput` requires `destination`. A recognized `.jpg`, `.jpeg`, or `.png`
-suffix must agree with its configured format; extensionless and other suffixes
-are allowed. Parent directories must already exist and existing files are
-replaced directly. The source is fully read, decoded, and augmented before the
-destination is opened, including when both paths are the same. File writes are
-not atomic and concurrent writes to one destination are not coordinated.
-
-Owned encoded and path routes release the GIL during read, decode,
-augmentation, encode, and write. Array-backed augmentation keeps the GIL while
-borrowing NumPy input. `explain()` reports the configured source and sink,
-limits, codec options, materialized buffers, copies, and stage-specific GIL
-state without touching a source or destination.
+The complete route matrix, service examples, resource limits, file semantics,
+ownership, and GIL behavior are documented in
+[pipelines and image I/O](https://github.com/claverru/variopinta/blob/main/docs/pipelines-and-io.md).
 
 ## Reproducibility and limits
 
@@ -224,7 +198,7 @@ The published x86-64 results do not claim performance parity on Apple Silicon;
 Variopinta-owned kernels use their portable scalar paths there, while resize
 and JPEG dependencies may independently select upstream ARM64 SIMD.
 
-The reproducible harness and committed evidence are available under
+The reproducible harness and archived raw evidence are available under
 [`benchmarks/`](https://github.com/claverru/variopinta/tree/main/benchmarks) and
 [`results/`](https://github.com/claverru/variopinta/tree/main/results).
 
