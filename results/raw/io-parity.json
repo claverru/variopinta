@@ -1,4 +1,29 @@
 {
+  "metadata": {
+    "architecture": "x86_64",
+    "backend": "rust-io-parity",
+    "cpu_count": 32,
+    "packages": {
+      "albucore": "0.0.24",
+      "albumentations": "2.0.8",
+      "numpy": "2.2.6",
+      "opencv-python-headless": "5.0.0.93",
+      "torch": "2.13.0+cu130",
+      "torchvision": "0.28.0+cu130"
+    },
+    "platform": "Linux-6.18.33.2-microsoft-standard-WSL2-x86_64-with-glibc2.39",
+    "processor": "AMD Ryzen 9 9950X3D 16-Core Processor",
+    "python": "3.12.3",
+    "thread_control": {},
+    "torch": "2.13.0+cu130",
+    "torchvision": "0.28.0+cu130"
+  },
+  "provenance": {
+    "benchmark_fingerprint": "a2c65cf8167db49ba5f3e40abf71e76365bfe5779b2aac9db755b52995e56cf7",
+    "schema_version": 1,
+    "source_dirty": false,
+    "source_revision": "4573d79136ebc35d1f3a18254e886e1d2547b8a4"
+  },
   "rows": [
     {
       "actual_dtype": "uint8",
@@ -31185,6 +31210,7 @@
       "valid": true
     }
   ],
+  "schema_version": 1,
   "summary": {
     "by_operation": {
       "decode": {

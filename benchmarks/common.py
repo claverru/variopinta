@@ -1,10 +1,13 @@
 from __future__ import annotations
 
+import hashlib
 import json
 import math
 import os
 import platform
+import re
 import statistics
+import subprocess
 import time
 from collections.abc import Callable
 from pathlib import Path
@@ -34,6 +37,38 @@ TRANSFORMS = (
 SEED = 137
 MEAN = (0.485, 0.456, 0.406)
 STD = (0.229, 0.224, 0.225)
+EVIDENCE_PATTERNS = (
+    "benchmarks/*.py",
+    "pyproject.toml",
+    "python/variopinta/*.py",
+    "requirements/*.txt",
+    "rust/Cargo.lock",
+    "rust/Cargo.toml",
+    "rust/core/Cargo.toml",
+    "rust/core/src/**/*.rs",
+    "rust/io/Cargo.toml",
+    "rust/io/src/**/*.rs",
+    "rust/pyext/Cargo.toml",
+    "rust/pyext/src/**/*.rs",
+    "scripts/setup_benchmark_envs.py",
+)
+EVIDENCE_EXCLUDES = {
+    Path("benchmarks/check_evidence.py"),
+    Path("benchmarks/plot_results.py"),
+}
+EVIDENCE_STATUS_PATHS = (
+    "benchmarks",
+    "pyproject.toml",
+    "python/variopinta",
+    "requirements",
+    "rust/Cargo.lock",
+    "rust/Cargo.toml",
+    "rust/core",
+    "rust/io",
+    "rust/pyext",
+    "scripts/setup_benchmark_envs.py",
+)
+LOCAL_CRATES = {"augment-core", "augment-io", "augment-pyext"}
 
 
 def control_cpu(pin_process: bool = True) -> dict[str, Any]:
@@ -284,6 +319,90 @@ def output_facts(value: Any) -> dict[str, Any]:
         "finite": finite,
         "c_contiguous": bool(arr.flags.c_contiguous),
     }
+
+
+def _normalize_section_version(text: str, section: str) -> str:
+    current = ""
+    output = []
+    for line in text.splitlines(keepends=True):
+        stripped = line.strip()
+        if stripped.startswith("[") and stripped.endswith("]"):
+            current = stripped[1:-1]
+        if current == section and re.fullmatch(r'version\s*=\s*"[^"]+"', stripped):
+            ending = "\n" if line.endswith("\n") else ""
+            line = f'version = "<package-version>"{ending}'
+        output.append(line)
+    return "".join(output)
+
+
+def _normalize_lock_versions(text: str) -> str:
+    package = None
+    output = []
+    for line in text.splitlines(keepends=True):
+        stripped = line.strip()
+        if stripped == "[[package]]":
+            package = None
+        elif match := re.fullmatch(r'name\s*=\s*"([^"]+)"', stripped):
+            package = match.group(1)
+        elif package in LOCAL_CRATES and re.fullmatch(r'version\s*=\s*"[^"]+"', stripped):
+            ending = "\n" if line.endswith("\n") else ""
+            line = f'version = "<package-version>"{ending}'
+        output.append(line)
+    return "".join(output)
+
+
+def normalized_evidence_input(path: Path, data: bytes) -> bytes:
+    relative = path.as_posix()
+    text = data.decode()
+    if relative == "pyproject.toml":
+        text = _normalize_section_version(text, "project")
+    elif relative == "rust/Cargo.toml":
+        text = _normalize_section_version(text, "workspace.package")
+    elif relative == "rust/Cargo.lock":
+        text = _normalize_lock_versions(text)
+    return text.encode()
+
+
+def benchmark_fingerprint(root: Path = ROOT) -> str:
+    paths = {
+        path.relative_to(root)
+        for pattern in EVIDENCE_PATTERNS
+        for path in root.glob(pattern)
+        if path.is_file() and path.relative_to(root) not in EVIDENCE_EXCLUDES
+    }
+    digest = hashlib.sha256()
+    for relative in sorted(paths):
+        digest.update(relative.as_posix().encode())
+        digest.update(b"\0")
+        digest.update(normalized_evidence_input(relative, (root / relative).read_bytes()))
+        digest.update(b"\0")
+    return digest.hexdigest()
+
+
+def evidence_provenance(root: Path = ROOT) -> dict[str, Any]:
+    def git(*arguments: str) -> str | None:
+        result = subprocess.run(
+            ["git", *arguments], cwd=root, text=True, capture_output=True, check=False
+        )
+        return result.stdout.strip() if result.returncode == 0 else None
+
+    dirty = git("status", "--short", "--untracked-files=all", "--", *EVIDENCE_STATUS_PATHS)
+    return {
+        "schema_version": 1,
+        "benchmark_fingerprint": benchmark_fingerprint(root),
+        "source_revision": git("rev-parse", "HEAD"),
+        "source_dirty": None if dirty is None else bool(dirty),
+    }
+
+
+def evidence_matches_code(payload: dict[str, Any], root: Path = ROOT) -> bool:
+    provenance = payload.get("provenance", {})
+    if not isinstance(provenance, dict):
+        return False
+    return (
+        provenance.get("benchmark_fingerprint") == benchmark_fingerprint(root)
+        and provenance.get("source_dirty") is False
+    )
 
 
 def metadata(backend: str, cpu: dict[str, Any]) -> dict[str, Any]:

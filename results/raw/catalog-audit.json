@@ -4,10 +4,10 @@
     "backend": "rust-catalog-audit",
     "cpu_count": 32,
     "packages": {
-      "numpy": "2.5.1",
+      "numpy": "2.2.6",
       "torch": "2.13.0+cu130",
       "torchvision": "0.28.0+cu130",
-      "variopinta": "0.2.0"
+      "variopinta": "0.3.0"
     },
     "platform": "Linux-6.18.33.2-microsoft-standard-WSL2-x86_64-with-glibc2.39",
     "processor": "AMD Ryzen 9 9950X3D 16-Core Processor",
@@ -59,6 +59,12 @@
     },
     "torch": "2.13.0+cu130",
     "torchvision": "0.28.0+cu130"
+  },
+  "provenance": {
+    "benchmark_fingerprint": "a2c65cf8167db49ba5f3e40abf71e76365bfe5779b2aac9db755b52995e56cf7",
+    "schema_version": 1,
+    "source_dirty": false,
+    "source_revision": "4573d79136ebc35d1f3a18254e886e1d2547b8a4"
   },
   "rows": [
     {
@@ -141,14 +147,31 @@
         "passes": 1,
         "pixel_passes": 1,
         "python_boundary": {
+          "augmentation": "held",
           "crossings_per_call": 1,
+          "decode": "not-applicable",
+          "delivery": "held-for-Python-output-transfer",
           "gil": "held-during-augmentation",
+          "gil_stages": {
+            "arguments": "held",
+            "augmentation": "held",
+            "decode": "not-applicable",
+            "delivery": "held-for-Python-output-transfer",
+            "source": "held"
+          },
           "input": "NumPy HWC RGB uint8",
           "input_access": "read-only-borrow",
-          "output": "owned contiguous NumPy array"
+          "output": "owned contiguous NumPy array",
+          "source_acquisition": "held"
         },
         "sampling": "native-plan-before-execution",
         "schema_version": 2,
+        "sink": {
+          "type": "return"
+        },
+        "source": {
+          "type": "array"
+        },
         "steps": [
           {
             "allocation": "workspace-u8",
@@ -284,14 +307,31 @@
         "passes": 1,
         "pixel_passes": 1,
         "python_boundary": {
+          "augmentation": "held",
           "crossings_per_call": 1,
+          "decode": "not-applicable",
+          "delivery": "held-for-Python-output-transfer",
           "gil": "held-during-augmentation",
+          "gil_stages": {
+            "arguments": "held",
+            "augmentation": "held",
+            "decode": "not-applicable",
+            "delivery": "held-for-Python-output-transfer",
+            "source": "held"
+          },
           "input": "NumPy HWC RGB uint8",
           "input_access": "read-only-borrow",
-          "output": "owned contiguous NumPy array"
+          "output": "owned contiguous NumPy array",
+          "source_acquisition": "held"
         },
         "sampling": "native-plan-before-execution",
         "schema_version": 2,
+        "sink": {
+          "type": "return"
+        },
+        "source": {
+          "type": "array"
+        },
         "steps": [
           {
             "allocation": "workspace-u8",
@@ -427,14 +467,31 @@
         "passes": 1,
         "pixel_passes": 1,
         "python_boundary": {
+          "augmentation": "held",
           "crossings_per_call": 1,
+          "decode": "not-applicable",
+          "delivery": "held-for-Python-output-transfer",
           "gil": "held-during-augmentation",
+          "gil_stages": {
+            "arguments": "held",
+            "augmentation": "held",
+            "decode": "not-applicable",
+            "delivery": "held-for-Python-output-transfer",
+            "source": "held"
+          },
           "input": "NumPy HWC RGB uint8",
           "input_access": "read-only-borrow",
-          "output": "owned contiguous NumPy array"
+          "output": "owned contiguous NumPy array",
+          "source_acquisition": "held"
         },
         "sampling": "native-plan-before-execution",
         "schema_version": 2,
+        "sink": {
+          "type": "return"
+        },
+        "source": {
+          "type": "array"
+        },
         "steps": [
           {
             "allocation": "workspace-u8",
@@ -573,14 +630,31 @@
         "passes": 1,
         "pixel_passes": 2,
         "python_boundary": {
+          "augmentation": "held",
           "crossings_per_call": 1,
+          "decode": "not-applicable",
+          "delivery": "held-for-Python-output-transfer",
           "gil": "held-during-augmentation",
+          "gil_stages": {
+            "arguments": "held",
+            "augmentation": "held",
+            "decode": "not-applicable",
+            "delivery": "held-for-Python-output-transfer",
+            "source": "held"
+          },
           "input": "NumPy HWC RGB uint8",
           "input_access": "read-only-borrow",
-          "output": "owned contiguous NumPy array"
+          "output": "owned contiguous NumPy array",
+          "source_acquisition": "held"
         },
         "sampling": "native-plan-before-execution",
         "schema_version": 2,
+        "sink": {
+          "type": "return"
+        },
+        "source": {
+          "type": "array"
+        },
         "steps": [
           {
             "allocation": "workspace-u8",
@@ -741,14 +815,31 @@
         "passes": 1,
         "pixel_passes": 2,
         "python_boundary": {
+          "augmentation": "held",
           "crossings_per_call": 1,
+          "decode": "not-applicable",
+          "delivery": "held-for-Python-output-transfer",
           "gil": "held-during-augmentation",
+          "gil_stages": {
+            "arguments": "held",
+            "augmentation": "held",
+            "decode": "not-applicable",
+            "delivery": "held-for-Python-output-transfer",
+            "source": "held"
+          },
           "input": "NumPy HWC RGB uint8",
           "input_access": "read-only-borrow",
-          "output": "owned contiguous NumPy array"
+          "output": "owned contiguous NumPy array",
+          "source_acquisition": "held"
         },
         "sampling": "native-plan-before-execution",
         "schema_version": 2,
+        "sink": {
+          "type": "return"
+        },
+        "source": {
+          "type": "array"
+        },
         "steps": [
           {
             "allocation": "workspace-u8",
@@ -902,14 +993,31 @@
         "passes": 1,
         "pixel_passes": 1,
         "python_boundary": {
+          "augmentation": "held",
           "crossings_per_call": 1,
+          "decode": "not-applicable",
+          "delivery": "held-for-Python-output-transfer",
           "gil": "held-during-augmentation",
+          "gil_stages": {
+            "arguments": "held",
+            "augmentation": "held",
+            "decode": "not-applicable",
+            "delivery": "held-for-Python-output-transfer",
+            "source": "held"
+          },
           "input": "NumPy HWC RGB uint8",
           "input_access": "read-only-borrow",
-          "output": "owned contiguous NumPy array"
+          "output": "owned contiguous NumPy array",
+          "source_acquisition": "held"
         },
         "sampling": "native-plan-before-execution",
         "schema_version": 2,
+        "sink": {
+          "type": "return"
+        },
+        "source": {
+          "type": "array"
+        },
         "steps": [
           {
             "allocation": "workspace-u8",
@@ -1041,14 +1149,31 @@
         "passes": 1,
         "pixel_passes": 1,
         "python_boundary": {
+          "augmentation": "held",
           "crossings_per_call": 1,
+          "decode": "not-applicable",
+          "delivery": "held-for-Python-output-transfer",
           "gil": "held-during-augmentation",
+          "gil_stages": {
+            "arguments": "held",
+            "augmentation": "held",
+            "decode": "not-applicable",
+            "delivery": "held-for-Python-output-transfer",
+            "source": "held"
+          },
           "input": "NumPy HWC RGB uint8",
           "input_access": "read-only-borrow",
-          "output": "owned contiguous NumPy array"
+          "output": "owned contiguous NumPy array",
+          "source_acquisition": "held"
         },
         "sampling": "native-plan-before-execution",
         "schema_version": 2,
+        "sink": {
+          "type": "return"
+        },
+        "source": {
+          "type": "array"
+        },
         "steps": [
           {
             "allocation": "workspace-u8",
@@ -1192,14 +1317,31 @@
         "passes": 1,
         "pixel_passes": 1,
         "python_boundary": {
+          "augmentation": "held",
           "crossings_per_call": 1,
+          "decode": "not-applicable",
+          "delivery": "held-for-Python-output-transfer",
           "gil": "held-during-augmentation",
+          "gil_stages": {
+            "arguments": "held",
+            "augmentation": "held",
+            "decode": "not-applicable",
+            "delivery": "held-for-Python-output-transfer",
+            "source": "held"
+          },
           "input": "NumPy HWC RGB uint8",
           "input_access": "read-only-borrow",
-          "output": "owned contiguous NumPy array"
+          "output": "owned contiguous NumPy array",
+          "source_acquisition": "held"
         },
         "sampling": "native-plan-before-execution",
         "schema_version": 2,
+        "sink": {
+          "type": "return"
+        },
+        "source": {
+          "type": "array"
+        },
         "steps": [
           {
             "allocation": "workspace-u8",
@@ -1341,14 +1483,31 @@
         "passes": 1,
         "pixel_passes": 1,
         "python_boundary": {
+          "augmentation": "held",
           "crossings_per_call": 1,
+          "decode": "not-applicable",
+          "delivery": "held-for-Python-output-transfer",
           "gil": "held-during-augmentation",
+          "gil_stages": {
+            "arguments": "held",
+            "augmentation": "held",
+            "decode": "not-applicable",
+            "delivery": "held-for-Python-output-transfer",
+            "source": "held"
+          },
           "input": "NumPy HWC RGB uint8",
           "input_access": "read-only-borrow",
-          "output": "owned contiguous NumPy array"
+          "output": "owned contiguous NumPy array",
+          "source_acquisition": "held"
         },
         "sampling": "native-plan-before-execution",
         "schema_version": 2,
+        "sink": {
+          "type": "return"
+        },
+        "source": {
+          "type": "array"
+        },
         "steps": [
           {
             "allocation": "sampled-rectangles",
@@ -1498,14 +1657,31 @@
         "passes": 1,
         "pixel_passes": 1,
         "python_boundary": {
+          "augmentation": "held",
           "crossings_per_call": 1,
+          "decode": "not-applicable",
+          "delivery": "held-for-Python-output-transfer",
           "gil": "held-during-augmentation",
+          "gil_stages": {
+            "arguments": "held",
+            "augmentation": "held",
+            "decode": "not-applicable",
+            "delivery": "held-for-Python-output-transfer",
+            "source": "held"
+          },
           "input": "NumPy HWC RGB uint8",
           "input_access": "read-only-borrow",
-          "output": "owned contiguous NumPy array"
+          "output": "owned contiguous NumPy array",
+          "source_acquisition": "held"
         },
         "sampling": "native-plan-before-execution",
         "schema_version": 2,
+        "sink": {
+          "type": "return"
+        },
+        "source": {
+          "type": "array"
+        },
         "steps": [
           {
             "allocation": "none",
@@ -1628,14 +1804,31 @@
         "passes": 1,
         "pixel_passes": 1,
         "python_boundary": {
+          "augmentation": "held",
           "crossings_per_call": 1,
+          "decode": "not-applicable",
+          "delivery": "held-for-Python-output-transfer",
           "gil": "held-during-augmentation",
+          "gil_stages": {
+            "arguments": "held",
+            "augmentation": "held",
+            "decode": "not-applicable",
+            "delivery": "held-for-Python-output-transfer",
+            "source": "held"
+          },
           "input": "NumPy HWC RGB uint8",
           "input_access": "read-only-borrow",
-          "output": "owned contiguous NumPy array"
+          "output": "owned contiguous NumPy array",
+          "source_acquisition": "held"
         },
         "sampling": "native-plan-before-execution",
         "schema_version": 2,
+        "sink": {
+          "type": "return"
+        },
+        "source": {
+          "type": "array"
+        },
         "steps": [
           {
             "allocation": "none",
@@ -1756,14 +1949,31 @@
         "passes": 1,
         "pixel_passes": 2,
         "python_boundary": {
+          "augmentation": "held",
           "crossings_per_call": 1,
+          "decode": "not-applicable",
+          "delivery": "held-for-Python-output-transfer",
           "gil": "held-during-augmentation",
+          "gil_stages": {
+            "arguments": "held",
+            "augmentation": "held",
+            "decode": "not-applicable",
+            "delivery": "held-for-Python-output-transfer",
+            "source": "held"
+          },
           "input": "NumPy HWC RGB uint8",
           "input_access": "read-only-borrow",
-          "output": "owned contiguous NumPy array"
+          "output": "owned contiguous NumPy array",
+          "source_acquisition": "held"
         },
         "sampling": "native-plan-before-execution",
         "schema_version": 2,
+        "sink": {
+          "type": "return"
+        },
+        "source": {
+          "type": "array"
+        },
         "steps": [
           {
             "allocation": "none",
@@ -1907,14 +2117,31 @@
         "passes": 1,
         "pixel_passes": 5,
         "python_boundary": {
+          "augmentation": "held",
           "crossings_per_call": 1,
+          "decode": "not-applicable",
+          "delivery": "held-for-Python-output-transfer",
           "gil": "held-during-augmentation",
+          "gil_stages": {
+            "arguments": "held",
+            "augmentation": "held",
+            "decode": "not-applicable",
+            "delivery": "held-for-Python-output-transfer",
+            "source": "held"
+          },
           "input": "NumPy HWC RGB uint8",
           "input_access": "read-only-borrow",
-          "output": "owned contiguous NumPy array"
+          "output": "owned contiguous NumPy array",
+          "source_acquisition": "held"
         },
         "sampling": "native-plan-before-execution",
         "schema_version": 2,
+        "sink": {
+          "type": "return"
+        },
+        "source": {
+          "type": "array"
+        },
         "steps": [
           {
             "allocation": "none",
@@ -2063,14 +2290,31 @@
         "passes": 1,
         "pixel_passes": 1,
         "python_boundary": {
+          "augmentation": "held",
           "crossings_per_call": 1,
+          "decode": "not-applicable",
+          "delivery": "held-for-Python-output-transfer",
           "gil": "held-during-augmentation",
+          "gil_stages": {
+            "arguments": "held",
+            "augmentation": "held",
+            "decode": "not-applicable",
+            "delivery": "held-for-Python-output-transfer",
+            "source": "held"
+          },
           "input": "NumPy HWC RGB uint8",
           "input_access": "read-only-borrow",
-          "output": "owned contiguous NumPy array"
+          "output": "owned contiguous NumPy array",
+          "source_acquisition": "held"
         },
         "sampling": "native-plan-before-execution",
         "schema_version": 2,
+        "sink": {
+          "type": "return"
+        },
+        "source": {
+          "type": "array"
+        },
         "steps": [
           {
             "allocation": "workspace-u8",
@@ -2227,14 +2471,31 @@
         "passes": 1,
         "pixel_passes": 1,
         "python_boundary": {
+          "augmentation": "held",
           "crossings_per_call": 1,
+          "decode": "not-applicable",
+          "delivery": "held-for-Python-output-transfer",
           "gil": "held-during-augmentation",
+          "gil_stages": {
+            "arguments": "held",
+            "augmentation": "held",
+            "decode": "not-applicable",
+            "delivery": "held-for-Python-output-transfer",
+            "source": "held"
+          },
           "input": "NumPy HWC RGB uint8",
           "input_access": "read-only-borrow",
-          "output": "owned contiguous NumPy array"
+          "output": "owned contiguous NumPy array",
+          "source_acquisition": "held"
         },
         "sampling": "native-plan-before-execution",
         "schema_version": 2,
+        "sink": {
+          "type": "return"
+        },
+        "source": {
+          "type": "array"
+        },
         "steps": [
           {
             "allocation": "workspace-u8",
@@ -2391,14 +2652,31 @@
         "passes": 1,
         "pixel_passes": 1,
         "python_boundary": {
+          "augmentation": "held",
           "crossings_per_call": 1,
+          "decode": "not-applicable",
+          "delivery": "held-for-Python-output-transfer",
           "gil": "held-during-augmentation",
+          "gil_stages": {
+            "arguments": "held",
+            "augmentation": "held",
+            "decode": "not-applicable",
+            "delivery": "held-for-Python-output-transfer",
+            "source": "held"
+          },
           "input": "NumPy HWC RGB uint8",
           "input_access": "read-only-borrow",
-          "output": "owned contiguous NumPy array"
+          "output": "owned contiguous NumPy array",
+          "source_acquisition": "held"
         },
         "sampling": "native-plan-before-execution",
         "schema_version": 2,
+        "sink": {
+          "type": "return"
+        },
+        "source": {
+          "type": "array"
+        },
         "steps": [
           {
             "allocation": "workspace-u8",
@@ -2547,14 +2825,31 @@
         "passes": 1,
         "pixel_passes": 1,
         "python_boundary": {
+          "augmentation": "held",
           "crossings_per_call": 1,
+          "decode": "not-applicable",
+          "delivery": "held-for-Python-output-transfer",
           "gil": "held-during-augmentation",
+          "gil_stages": {
+            "arguments": "held",
+            "augmentation": "held",
+            "decode": "not-applicable",
+            "delivery": "held-for-Python-output-transfer",
+            "source": "held"
+          },
           "input": "NumPy HWC RGB uint8",
           "input_access": "read-only-borrow",
-          "output": "owned contiguous NumPy array"
+          "output": "owned contiguous NumPy array",
+          "source_acquisition": "held"
         },
         "sampling": "native-plan-before-execution",
         "schema_version": 2,
+        "sink": {
+          "type": "return"
+        },
+        "source": {
+          "type": "array"
+        },
         "steps": [
           {
             "allocation": "workspace-u8",
@@ -2696,14 +2991,31 @@
         "passes": 1,
         "pixel_passes": 1,
         "python_boundary": {
+          "augmentation": "held",
           "crossings_per_call": 1,
+          "decode": "not-applicable",
+          "delivery": "held-for-Python-output-transfer",
           "gil": "held-during-augmentation",
+          "gil_stages": {
+            "arguments": "held",
+            "augmentation": "held",
+            "decode": "not-applicable",
+            "delivery": "held-for-Python-output-transfer",
+            "source": "held"
+          },
           "input": "NumPy HWC RGB uint8",
           "input_access": "read-only-borrow",
-          "output": "owned contiguous NumPy array"
+          "output": "owned contiguous NumPy array",
+          "source_acquisition": "held"
         },
         "sampling": "native-plan-before-execution",
         "schema_version": 2,
+        "sink": {
+          "type": "return"
+        },
+        "source": {
+          "type": "array"
+        },
         "steps": [
           {
             "allocation": "sampled-rng-substream",
@@ -2845,14 +3157,31 @@
         "passes": 1,
         "pixel_passes": 1,
         "python_boundary": {
+          "augmentation": "held",
           "crossings_per_call": 1,
+          "decode": "not-applicable",
+          "delivery": "held-for-Python-output-transfer",
           "gil": "held-during-augmentation",
+          "gil_stages": {
+            "arguments": "held",
+            "augmentation": "held",
+            "decode": "not-applicable",
+            "delivery": "held-for-Python-output-transfer",
+            "source": "held"
+          },
           "input": "NumPy HWC RGB uint8",
           "input_access": "read-only-borrow",
-          "output": "owned contiguous NumPy array"
+          "output": "owned contiguous NumPy array",
+          "source_acquisition": "held"
         },
         "sampling": "native-plan-before-execution",
         "schema_version": 2,
+        "sink": {
+          "type": "return"
+        },
+        "source": {
+          "type": "array"
+        },
         "steps": [
           {
             "allocation": "sampled-rng-substream",
@@ -2996,14 +3325,31 @@
         "passes": 1,
         "pixel_passes": 1,
         "python_boundary": {
+          "augmentation": "held",
           "crossings_per_call": 1,
+          "decode": "not-applicable",
+          "delivery": "held-for-Python-output-transfer",
           "gil": "held-during-augmentation",
+          "gil_stages": {
+            "arguments": "held",
+            "augmentation": "held",
+            "decode": "not-applicable",
+            "delivery": "held-for-Python-output-transfer",
+            "source": "held"
+          },
           "input": "NumPy HWC RGB uint8",
           "input_access": "read-only-borrow",
-          "output": "owned contiguous NumPy array"
+          "output": "owned contiguous NumPy array",
+          "source_acquisition": "held"
         },
         "sampling": "native-plan-before-execution",
         "schema_version": 2,
+        "sink": {
+          "type": "return"
+        },
+        "source": {
+          "type": "array"
+        },
         "steps": [
           {
             "allocation": "workspace-u8",
@@ -3147,14 +3493,31 @@
         "passes": 1,
         "pixel_passes": 1,
         "python_boundary": {
+          "augmentation": "held",
           "crossings_per_call": 1,
+          "decode": "not-applicable",
+          "delivery": "held-for-Python-output-transfer",
           "gil": "held-during-augmentation",
+          "gil_stages": {
+            "arguments": "held",
+            "augmentation": "held",
+            "decode": "not-applicable",
+            "delivery": "held-for-Python-output-transfer",
+            "source": "held"
+          },
           "input": "NumPy HWC RGB uint8",
           "input_access": "read-only-borrow",
-          "output": "owned contiguous NumPy array"
+          "output": "owned contiguous NumPy array",
+          "source_acquisition": "held"
         },
         "sampling": "native-plan-before-execution",
         "schema_version": 2,
+        "sink": {
+          "type": "return"
+        },
+        "source": {
+          "type": "array"
+        },
         "steps": [
           {
             "allocation": "sampled-homography+workspace-u8",
@@ -3306,14 +3669,31 @@
         "passes": 1,
         "pixel_passes": 1,
         "python_boundary": {
+          "augmentation": "held",
           "crossings_per_call": 1,
+          "decode": "not-applicable",
+          "delivery": "held-for-Python-output-transfer",
           "gil": "held-during-augmentation",
+          "gil_stages": {
+            "arguments": "held",
+            "augmentation": "held",
+            "decode": "not-applicable",
+            "delivery": "held-for-Python-output-transfer",
+            "source": "held"
+          },
           "input": "NumPy HWC RGB uint8",
           "input_access": "read-only-borrow",
-          "output": "owned contiguous NumPy array"
+          "output": "owned contiguous NumPy array",
+          "source_acquisition": "held"
         },
         "sampling": "native-plan-before-execution",
         "schema_version": 2,
+        "sink": {
+          "type": "return"
+        },
+        "source": {
+          "type": "array"
+        },
         "steps": [
           {
             "allocation": "sampled-homography+workspace-u8",
@@ -3465,14 +3845,31 @@
         "passes": 1,
         "pixel_passes": 1,
         "python_boundary": {
+          "augmentation": "held",
           "crossings_per_call": 1,
+          "decode": "not-applicable",
+          "delivery": "held-for-Python-output-transfer",
           "gil": "held-during-augmentation",
+          "gil_stages": {
+            "arguments": "held",
+            "augmentation": "held",
+            "decode": "not-applicable",
+            "delivery": "held-for-Python-output-transfer",
+            "source": "held"
+          },
           "input": "NumPy HWC RGB uint8",
           "input_access": "read-only-borrow",
-          "output": "owned contiguous NumPy array"
+          "output": "owned contiguous NumPy array",
+          "source_acquisition": "held"
         },
         "sampling": "native-plan-before-execution",
         "schema_version": 2,
+        "sink": {
+          "type": "return"
+        },
+        "source": {
+          "type": "array"
+        },
         "steps": [
           {
             "allocation": "sampled-coordinate-maps+workspace-u8",
@@ -3628,14 +4025,31 @@
         "passes": 1,
         "pixel_passes": 1,
         "python_boundary": {
+          "augmentation": "held",
           "crossings_per_call": 1,
+          "decode": "not-applicable",
+          "delivery": "held-for-Python-output-transfer",
           "gil": "held-during-augmentation",
+          "gil_stages": {
+            "arguments": "held",
+            "augmentation": "held",
+            "decode": "not-applicable",
+            "delivery": "held-for-Python-output-transfer",
+            "source": "held"
+          },
           "input": "NumPy HWC RGB uint8",
           "input_access": "read-only-borrow",
-          "output": "owned contiguous NumPy array"
+          "output": "owned contiguous NumPy array",
+          "source_acquisition": "held"
         },
         "sampling": "native-plan-before-execution",
         "schema_version": 2,
+        "sink": {
+          "type": "return"
+        },
+        "source": {
+          "type": "array"
+        },
         "steps": [
           {
             "allocation": "sampled-coordinate-maps+workspace-u8",
@@ -3796,14 +4210,31 @@
         "passes": 1,
         "pixel_passes": 2,
         "python_boundary": {
+          "augmentation": "held",
           "crossings_per_call": 1,
+          "decode": "not-applicable",
+          "delivery": "held-for-Python-output-transfer",
           "gil": "held-during-augmentation",
+          "gil_stages": {
+            "arguments": "held",
+            "augmentation": "held",
+            "decode": "not-applicable",
+            "delivery": "held-for-Python-output-transfer",
+            "source": "held"
+          },
           "input": "NumPy HWC RGB uint8",
           "input_access": "read-only-borrow",
-          "output": "owned contiguous NumPy array"
+          "output": "owned contiguous NumPy array",
+          "source_acquisition": "held"
         },
         "sampling": "native-plan-before-execution",
         "schema_version": 2,
+        "sink": {
+          "type": "return"
+        },
+        "source": {
+          "type": "array"
+        },
         "steps": [
           {
             "allocation": "workspace-u16",
@@ -3946,14 +4377,31 @@
         "passes": 1,
         "pixel_passes": 2,
         "python_boundary": {
+          "augmentation": "held",
           "crossings_per_call": 1,
+          "decode": "not-applicable",
+          "delivery": "held-for-Python-output-transfer",
           "gil": "held-during-augmentation",
+          "gil_stages": {
+            "arguments": "held",
+            "augmentation": "held",
+            "decode": "not-applicable",
+            "delivery": "held-for-Python-output-transfer",
+            "source": "held"
+          },
           "input": "NumPy HWC RGB uint8",
           "input_access": "read-only-borrow",
-          "output": "owned contiguous NumPy array"
+          "output": "owned contiguous NumPy array",
+          "source_acquisition": "held"
         },
         "sampling": "native-plan-before-execution",
         "schema_version": 2,
+        "sink": {
+          "type": "return"
+        },
+        "source": {
+          "type": "array"
+        },
         "steps": [
           {
             "allocation": "workspace-u16+sampled-kernel",
@@ -4089,14 +4537,31 @@
         "passes": 1,
         "pixel_passes": 1,
         "python_boundary": {
+          "augmentation": "held",
           "crossings_per_call": 1,
+          "decode": "not-applicable",
+          "delivery": "held-for-Python-output-transfer",
           "gil": "held-during-augmentation",
+          "gil_stages": {
+            "arguments": "held",
+            "augmentation": "held",
+            "decode": "not-applicable",
+            "delivery": "held-for-Python-output-transfer",
+            "source": "held"
+          },
           "input": "NumPy HWC RGB uint8",
           "input_access": "read-only-borrow",
-          "output": "owned contiguous NumPy array"
+          "output": "owned contiguous NumPy array",
+          "source_acquisition": "held"
         },
         "sampling": "native-plan-before-execution",
         "schema_version": 2,
+        "sink": {
+          "type": "return"
+        },
+        "source": {
+          "type": "array"
+        },
         "steps": [
           {
             "allocation": "none",
@@ -4228,14 +4693,31 @@
         "passes": 1,
         "pixel_passes": 1,
         "python_boundary": {
+          "augmentation": "held",
           "crossings_per_call": 1,
+          "decode": "not-applicable",
+          "delivery": "held-for-Python-output-transfer",
           "gil": "held-during-augmentation",
+          "gil_stages": {
+            "arguments": "held",
+            "augmentation": "held",
+            "decode": "not-applicable",
+            "delivery": "held-for-Python-output-transfer",
+            "source": "held"
+          },
           "input": "NumPy HWC RGB uint8",
           "input_access": "read-only-borrow",
-          "output": "owned contiguous NumPy array"
+          "output": "owned contiguous NumPy array",
+          "source_acquisition": "held"
         },
         "sampling": "native-plan-before-execution",
         "schema_version": 2,
+        "sink": {
+          "type": "return"
+        },
+        "source": {
+          "type": "array"
+        },
         "steps": [
           {
             "allocation": "none",
@@ -4358,14 +4840,31 @@
         "passes": 1,
         "pixel_passes": 1,
         "python_boundary": {
+          "augmentation": "held",
           "crossings_per_call": 1,
+          "decode": "not-applicable",
+          "delivery": "held-for-Python-output-transfer",
           "gil": "held-during-augmentation",
+          "gil_stages": {
+            "arguments": "held",
+            "augmentation": "held",
+            "decode": "not-applicable",
+            "delivery": "held-for-Python-output-transfer",
+            "source": "held"
+          },
           "input": "NumPy HWC RGB uint8",
           "input_access": "read-only-borrow",
-          "output": "owned contiguous NumPy array"
+          "output": "owned contiguous NumPy array",
+          "source_acquisition": "held"
         },
         "sampling": "native-plan-before-execution",
         "schema_version": 2,
+        "sink": {
+          "type": "return"
+        },
+        "source": {
+          "type": "array"
+        },
         "steps": [
           {
             "allocation": "none",
@@ -4497,14 +4996,31 @@
         "passes": 1,
         "pixel_passes": 1,
         "python_boundary": {
+          "augmentation": "held",
           "crossings_per_call": 1,
+          "decode": "not-applicable",
+          "delivery": "held-for-Python-output-transfer",
           "gil": "held-during-augmentation",
+          "gil_stages": {
+            "arguments": "held",
+            "augmentation": "held",
+            "decode": "not-applicable",
+            "delivery": "held-for-Python-output-transfer",
+            "source": "held"
+          },
           "input": "NumPy HWC RGB uint8",
           "input_access": "read-only-borrow",
-          "output": "owned contiguous NumPy array"
+          "output": "owned contiguous NumPy array",
+          "source_acquisition": "held"
         },
         "sampling": "native-plan-before-execution",
         "schema_version": 2,
+        "sink": {
+          "type": "return"
+        },
+        "source": {
+          "type": "array"
+        },
         "steps": [
           {
             "allocation": "none",
@@ -4639,14 +5155,31 @@
         "passes": 1,
         "pixel_passes": 1,
         "python_boundary": {
+          "augmentation": "held",
           "crossings_per_call": 1,
+          "decode": "not-applicable",
+          "delivery": "held-for-Python-output-transfer",
           "gil": "held-during-augmentation",
+          "gil_stages": {
+            "arguments": "held",
+            "augmentation": "held",
+            "decode": "not-applicable",
+            "delivery": "held-for-Python-output-transfer",
+            "source": "held"
+          },
           "input": "NumPy HWC RGB uint8",
           "input_access": "read-only-borrow",
-          "output": "owned contiguous NumPy array"
+          "output": "owned contiguous NumPy array",
+          "source_acquisition": "held"
         },
         "sampling": "native-plan-before-execution",
         "schema_version": 2,
+        "sink": {
+          "type": "return"
+        },
+        "source": {
+          "type": "array"
+        },
         "steps": [
           {
             "allocation": "owned-f32-output",
@@ -4793,14 +5326,31 @@
         "passes": 1,
         "pixel_passes": 1,
         "python_boundary": {
+          "augmentation": "held",
           "crossings_per_call": 1,
+          "decode": "not-applicable",
+          "delivery": "held-for-Python-output-transfer",
           "gil": "held-during-augmentation",
+          "gil_stages": {
+            "arguments": "held",
+            "augmentation": "held",
+            "decode": "not-applicable",
+            "delivery": "held-for-Python-output-transfer",
+            "source": "held"
+          },
           "input": "NumPy HWC RGB uint8",
           "input_access": "read-only-borrow",
-          "output": "owned contiguous CPU Torch Tensor"
+          "output": "owned contiguous CPU Torch Tensor",
+          "source_acquisition": "held"
         },
         "sampling": "native-plan-before-execution",
         "schema_version": 2,
+        "sink": {
+          "type": "return"
+        },
+        "source": {
+          "type": "array"
+        },
         "steps": [
           {
             "allocation": "owned-chw-output",
@@ -4957,14 +5507,31 @@
         "passes": 2,
         "pixel_passes": 1,
         "python_boundary": {
+          "augmentation": "held",
           "crossings_per_call": 1,
+          "decode": "not-applicable",
+          "delivery": "held-for-Python-output-transfer",
           "gil": "held-during-augmentation",
+          "gil_stages": {
+            "arguments": "held",
+            "augmentation": "held",
+            "decode": "not-applicable",
+            "delivery": "held-for-Python-output-transfer",
+            "source": "held"
+          },
           "input": "NumPy HWC RGB uint8",
           "input_access": "read-only-borrow",
-          "output": "owned contiguous CPU Torch Tensor"
+          "output": "owned contiguous CPU Torch Tensor",
+          "source_acquisition": "held"
         },
         "sampling": "native-plan-before-execution",
         "schema_version": 2,
+        "sink": {
+          "type": "return"
+        },
+        "source": {
+          "type": "array"
+        },
         "steps": [
           {
             "allocation": "owned-f32-output",
@@ -5122,14 +5689,31 @@
         "passes": 1,
         "pixel_passes": 1,
         "python_boundary": {
+          "augmentation": "held",
           "crossings_per_call": 1,
+          "decode": "not-applicable",
+          "delivery": "held-for-Python-output-transfer",
           "gil": "held-during-augmentation",
+          "gil_stages": {
+            "arguments": "held",
+            "augmentation": "held",
+            "decode": "not-applicable",
+            "delivery": "held-for-Python-output-transfer",
+            "source": "held"
+          },
           "input": "NumPy HWC RGB uint8",
           "input_access": "read-only-borrow",
-          "output": "owned contiguous NumPy array"
+          "output": "owned contiguous NumPy array",
+          "source_acquisition": "held"
         },
         "sampling": "native-plan-before-execution",
         "schema_version": 2,
+        "sink": {
+          "type": "return"
+        },
+        "source": {
+          "type": "array"
+        },
         "steps": [
           {
             "allocation": "workspace-u8",
@@ -5265,14 +5849,31 @@
         "passes": 1,
         "pixel_passes": 1,
         "python_boundary": {
+          "augmentation": "held",
           "crossings_per_call": 1,
+          "decode": "not-applicable",
+          "delivery": "held-for-Python-output-transfer",
           "gil": "held-during-augmentation",
+          "gil_stages": {
+            "arguments": "held",
+            "augmentation": "held",
+            "decode": "not-applicable",
+            "delivery": "held-for-Python-output-transfer",
+            "source": "held"
+          },
           "input": "NumPy HWC RGB uint8",
           "input_access": "read-only-borrow",
-          "output": "owned contiguous NumPy array"
+          "output": "owned contiguous NumPy array",
+          "source_acquisition": "held"
         },
         "sampling": "native-plan-before-execution",
         "schema_version": 2,
+        "sink": {
+          "type": "return"
+        },
+        "source": {
+          "type": "array"
+        },
         "steps": [
           {
             "allocation": "workspace-u8",
@@ -5408,14 +6009,31 @@
         "passes": 1,
         "pixel_passes": 1,
         "python_boundary": {
+          "augmentation": "held",
           "crossings_per_call": 1,
+          "decode": "not-applicable",
+          "delivery": "held-for-Python-output-transfer",
           "gil": "held-during-augmentation",
+          "gil_stages": {
+            "arguments": "held",
+            "augmentation": "held",
+            "decode": "not-applicable",
+            "delivery": "held-for-Python-output-transfer",
+            "source": "held"
+          },
           "input": "NumPy HWC RGB uint8",
           "input_access": "read-only-borrow",
-          "output": "owned contiguous NumPy array"
+          "output": "owned contiguous NumPy array",
+          "source_acquisition": "held"
         },
         "sampling": "native-plan-before-execution",
         "schema_version": 2,
+        "sink": {
+          "type": "return"
+        },
+        "source": {
+          "type": "array"
+        },
         "steps": [
           {
             "allocation": "workspace-u8",
@@ -5554,14 +6172,31 @@
         "passes": 1,
         "pixel_passes": 2,
         "python_boundary": {
+          "augmentation": "held",
           "crossings_per_call": 1,
+          "decode": "not-applicable",
+          "delivery": "held-for-Python-output-transfer",
           "gil": "held-during-augmentation",
+          "gil_stages": {
+            "arguments": "held",
+            "augmentation": "held",
+            "decode": "not-applicable",
+            "delivery": "held-for-Python-output-transfer",
+            "source": "held"
+          },
           "input": "NumPy HWC RGB uint8",
           "input_access": "read-only-borrow",
-          "output": "owned contiguous NumPy array"
+          "output": "owned contiguous NumPy array",
+          "source_acquisition": "held"
         },
         "sampling": "native-plan-before-execution",
         "schema_version": 2,
+        "sink": {
+          "type": "return"
+        },
+        "source": {
+          "type": "array"
+        },
         "steps": [
           {
             "allocation": "workspace-u8",
@@ -5722,14 +6357,31 @@
         "passes": 1,
         "pixel_passes": 2,
         "python_boundary": {
+          "augmentation": "held",
           "crossings_per_call": 1,
+          "decode": "not-applicable",
+          "delivery": "held-for-Python-output-transfer",
           "gil": "held-during-augmentation",
+          "gil_stages": {
+            "arguments": "held",
+            "augmentation": "held",
+            "decode": "not-applicable",
+            "delivery": "held-for-Python-output-transfer",
+            "source": "held"
+          },
           "input": "NumPy HWC RGB uint8",
           "input_access": "read-only-borrow",
-          "output": "owned contiguous NumPy array"
+          "output": "owned contiguous NumPy array",
+          "source_acquisition": "held"
         },
         "sampling": "native-plan-before-execution",
         "schema_version": 2,
+        "sink": {
+          "type": "return"
+        },
+        "source": {
+          "type": "array"
+        },
         "steps": [
           {
             "allocation": "workspace-u8",
@@ -5883,14 +6535,31 @@
         "passes": 1,
         "pixel_passes": 1,
         "python_boundary": {
+          "augmentation": "held",
           "crossings_per_call": 1,
+          "decode": "not-applicable",
+          "delivery": "held-for-Python-output-transfer",
           "gil": "held-during-augmentation",
+          "gil_stages": {
+            "arguments": "held",
+            "augmentation": "held",
+            "decode": "not-applicable",
+            "delivery": "held-for-Python-output-transfer",
+            "source": "held"
+          },
           "input": "NumPy HWC RGB uint8",
           "input_access": "read-only-borrow",
-          "output": "owned contiguous NumPy array"
+          "output": "owned contiguous NumPy array",
+          "source_acquisition": "held"
         },
         "sampling": "native-plan-before-execution",
         "schema_version": 2,
+        "sink": {
+          "type": "return"
+        },
+        "source": {
+          "type": "array"
+        },
         "steps": [
           {
             "allocation": "workspace-u8",
@@ -6022,14 +6691,31 @@
         "passes": 1,
         "pixel_passes": 1,
         "python_boundary": {
+          "augmentation": "held",
           "crossings_per_call": 1,
+          "decode": "not-applicable",
+          "delivery": "held-for-Python-output-transfer",
           "gil": "held-during-augmentation",
+          "gil_stages": {
+            "arguments": "held",
+            "augmentation": "held",
+            "decode": "not-applicable",
+            "delivery": "held-for-Python-output-transfer",
+            "source": "held"
+          },
           "input": "NumPy HWC RGB uint8",
           "input_access": "read-only-borrow",
-          "output": "owned contiguous NumPy array"
+          "output": "owned contiguous NumPy array",
+          "source_acquisition": "held"
         },
         "sampling": "native-plan-before-execution",
         "schema_version": 2,
+        "sink": {
+          "type": "return"
+        },
+        "source": {
+          "type": "array"
+        },
         "steps": [
           {
             "allocation": "workspace-u8",
@@ -6173,14 +6859,31 @@
         "passes": 1,
         "pixel_passes": 1,
         "python_boundary": {
+          "augmentation": "held",
           "crossings_per_call": 1,
+          "decode": "not-applicable",
+          "delivery": "held-for-Python-output-transfer",
           "gil": "held-during-augmentation",
+          "gil_stages": {
+            "arguments": "held",
+            "augmentation": "held",
+            "decode": "not-applicable",
+            "delivery": "held-for-Python-output-transfer",
+            "source": "held"
+          },
           "input": "NumPy HWC RGB uint8",
           "input_access": "read-only-borrow",
-          "output": "owned contiguous NumPy array"
+          "output": "owned contiguous NumPy array",
+          "source_acquisition": "held"
         },
         "sampling": "native-plan-before-execution",
         "schema_version": 2,
+        "sink": {
+          "type": "return"
+        },
+        "source": {
+          "type": "array"
+        },
         "steps": [
           {
             "allocation": "workspace-u8",
@@ -6322,14 +7025,31 @@
         "passes": 1,
         "pixel_passes": 1,
         "python_boundary": {
+          "augmentation": "held",
           "crossings_per_call": 1,
+          "decode": "not-applicable",
+          "delivery": "held-for-Python-output-transfer",
           "gil": "held-during-augmentation",
+          "gil_stages": {
+            "arguments": "held",
+            "augmentation": "held",
+            "decode": "not-applicable",
+            "delivery": "held-for-Python-output-transfer",
+            "source": "held"
+          },
           "input": "NumPy HWC RGB uint8",
           "input_access": "read-only-borrow",
-          "output": "owned contiguous NumPy array"
+          "output": "owned contiguous NumPy array",
+          "source_acquisition": "held"
         },
         "sampling": "native-plan-before-execution",
         "schema_version": 2,
+        "sink": {
+          "type": "return"
+        },
+        "source": {
+          "type": "array"
+        },
         "steps": [
           {
             "allocation": "sampled-rectangles",
@@ -6479,14 +7199,31 @@
         "passes": 1,
         "pixel_passes": 1,
         "python_boundary": {
+          "augmentation": "held",
           "crossings_per_call": 1,
+          "decode": "not-applicable",
+          "delivery": "held-for-Python-output-transfer",
           "gil": "held-during-augmentation",
+          "gil_stages": {
+            "arguments": "held",
+            "augmentation": "held",
+            "decode": "not-applicable",
+            "delivery": "held-for-Python-output-transfer",
+            "source": "held"
+          },
           "input": "NumPy HWC RGB uint8",
           "input_access": "read-only-borrow",
-          "output": "owned contiguous NumPy array"
+          "output": "owned contiguous NumPy array",
+          "source_acquisition": "held"
         },
         "sampling": "native-plan-before-execution",
         "schema_version": 2,
+        "sink": {
+          "type": "return"
+        },
+        "source": {
+          "type": "array"
+        },
         "steps": [
           {
             "allocation": "none",
@@ -6609,14 +7346,31 @@
         "passes": 1,
         "pixel_passes": 1,
         "python_boundary": {
+          "augmentation": "held",
           "crossings_per_call": 1,
+          "decode": "not-applicable",
+          "delivery": "held-for-Python-output-transfer",
           "gil": "held-during-augmentation",
+          "gil_stages": {
+            "arguments": "held",
+            "augmentation": "held",
+            "decode": "not-applicable",
+            "delivery": "held-for-Python-output-transfer",
+            "source": "held"
+          },
           "input": "NumPy HWC RGB uint8",
           "input_access": "read-only-borrow",
-          "output": "owned contiguous NumPy array"
+          "output": "owned contiguous NumPy array",
+          "source_acquisition": "held"
         },
         "sampling": "native-plan-before-execution",
         "schema_version": 2,
+        "sink": {
+          "type": "return"
+        },
+        "source": {
+          "type": "array"
+        },
         "steps": [
           {
             "allocation": "none",
@@ -6737,14 +7491,31 @@
         "passes": 1,
         "pixel_passes": 2,
         "python_boundary": {
+          "augmentation": "held",
           "crossings_per_call": 1,
+          "decode": "not-applicable",
+          "delivery": "held-for-Python-output-transfer",
           "gil": "held-during-augmentation",
+          "gil_stages": {
+            "arguments": "held",
+            "augmentation": "held",
+            "decode": "not-applicable",
+            "delivery": "held-for-Python-output-transfer",
+            "source": "held"
+          },
           "input": "NumPy HWC RGB uint8",
           "input_access": "read-only-borrow",
-          "output": "owned contiguous NumPy array"
+          "output": "owned contiguous NumPy array",
+          "source_acquisition": "held"
         },
         "sampling": "native-plan-before-execution",
         "schema_version": 2,
+        "sink": {
+          "type": "return"
+        },
+        "source": {
+          "type": "array"
+        },
         "steps": [
           {
             "allocation": "none",
@@ -6888,14 +7659,31 @@
         "passes": 1,
         "pixel_passes": 5,
         "python_boundary": {
+          "augmentation": "held",
           "crossings_per_call": 1,
+          "decode": "not-applicable",
+          "delivery": "held-for-Python-output-transfer",
           "gil": "held-during-augmentation",
+          "gil_stages": {
+            "arguments": "held",
+            "augmentation": "held",
+            "decode": "not-applicable",
+            "delivery": "held-for-Python-output-transfer",
+            "source": "held"
+          },
           "input": "NumPy HWC RGB uint8",
           "input_access": "read-only-borrow",
-          "output": "owned contiguous NumPy array"
+          "output": "owned contiguous NumPy array",
+          "source_acquisition": "held"
         },
         "sampling": "native-plan-before-execution",
         "schema_version": 2,
+        "sink": {
+          "type": "return"
+        },
+        "source": {
+          "type": "array"
+        },
         "steps": [
           {
             "allocation": "none",
@@ -7044,14 +7832,31 @@
         "passes": 1,
         "pixel_passes": 1,
         "python_boundary": {
+          "augmentation": "held",
           "crossings_per_call": 1,
+          "decode": "not-applicable",
+          "delivery": "held-for-Python-output-transfer",
           "gil": "held-during-augmentation",
+          "gil_stages": {
+            "arguments": "held",
+            "augmentation": "held",
+            "decode": "not-applicable",
+            "delivery": "held-for-Python-output-transfer",
+            "source": "held"
+          },
           "input": "NumPy HWC RGB uint8",
           "input_access": "read-only-borrow",
-          "output": "owned contiguous NumPy array"
+          "output": "owned contiguous NumPy array",
+          "source_acquisition": "held"
         },
         "sampling": "native-plan-before-execution",
         "schema_version": 2,
+        "sink": {
+          "type": "return"
+        },
+        "source": {
+          "type": "array"
+        },
         "steps": [
           {
             "allocation": "workspace-u8",
@@ -7208,14 +8013,31 @@
         "passes": 1,
         "pixel_passes": 1,
         "python_boundary": {
+          "augmentation": "held",
           "crossings_per_call": 1,
+          "decode": "not-applicable",
+          "delivery": "held-for-Python-output-transfer",
           "gil": "held-during-augmentation",
+          "gil_stages": {
+            "arguments": "held",
+            "augmentation": "held",
+            "decode": "not-applicable",
+            "delivery": "held-for-Python-output-transfer",
+            "source": "held"
+          },
           "input": "NumPy HWC RGB uint8",
           "input_access": "read-only-borrow",
-          "output": "owned contiguous NumPy array"
+          "output": "owned contiguous NumPy array",
+          "source_acquisition": "held"
         },
         "sampling": "native-plan-before-execution",
         "schema_version": 2,
+        "sink": {
+          "type": "return"
+        },
+        "source": {
+          "type": "array"
+        },
         "steps": [
           {
             "allocation": "workspace-u8",
@@ -7372,14 +8194,31 @@
         "passes": 1,
         "pixel_passes": 1,
         "python_boundary": {
+          "augmentation": "held",
           "crossings_per_call": 1,
+          "decode": "not-applicable",
+          "delivery": "held-for-Python-output-transfer",
           "gil": "held-during-augmentation",
+          "gil_stages": {
+            "arguments": "held",
+            "augmentation": "held",
+            "decode": "not-applicable",
+            "delivery": "held-for-Python-output-transfer",
+            "source": "held"
+          },
           "input": "NumPy HWC RGB uint8",
           "input_access": "read-only-borrow",
-          "output": "owned contiguous NumPy array"
+          "output": "owned contiguous NumPy array",
+          "source_acquisition": "held"
         },
         "sampling": "native-plan-before-execution",
         "schema_version": 2,
+        "sink": {
+          "type": "return"
+        },
+        "source": {
+          "type": "array"
+        },
         "steps": [
           {
             "allocation": "workspace-u8",
@@ -7528,14 +8367,31 @@
         "passes": 1,
         "pixel_passes": 1,
         "python_boundary": {
+          "augmentation": "held",
           "crossings_per_call": 1,
+          "decode": "not-applicable",
+          "delivery": "held-for-Python-output-transfer",
           "gil": "held-during-augmentation",
+          "gil_stages": {
+            "arguments": "held",
+            "augmentation": "held",
+            "decode": "not-applicable",
+            "delivery": "held-for-Python-output-transfer",
+            "source": "held"
+          },
           "input": "NumPy HWC RGB uint8",
           "input_access": "read-only-borrow",
-          "output": "owned contiguous NumPy array"
+          "output": "owned contiguous NumPy array",
+          "source_acquisition": "held"
         },
         "sampling": "native-plan-before-execution",
         "schema_version": 2,
+        "sink": {
+          "type": "return"
+        },
+        "source": {
+          "type": "array"
+        },
         "steps": [
           {
             "allocation": "workspace-u8",
@@ -7677,14 +8533,31 @@
         "passes": 1,
         "pixel_passes": 1,
         "python_boundary": {
+          "augmentation": "held",
           "crossings_per_call": 1,
+          "decode": "not-applicable",
+          "delivery": "held-for-Python-output-transfer",
           "gil": "held-during-augmentation",
+          "gil_stages": {
+            "arguments": "held",
+            "augmentation": "held",
+            "decode": "not-applicable",
+            "delivery": "held-for-Python-output-transfer",
+            "source": "held"
+          },
           "input": "NumPy HWC RGB uint8",
           "input_access": "read-only-borrow",
-          "output": "owned contiguous NumPy array"
+          "output": "owned contiguous NumPy array",
+          "source_acquisition": "held"
         },
         "sampling": "native-plan-before-execution",
         "schema_version": 2,
+        "sink": {
+          "type": "return"
+        },
+        "source": {
+          "type": "array"
+        },
         "steps": [
           {
             "allocation": "sampled-rng-substream",
@@ -7826,14 +8699,31 @@
         "passes": 1,
         "pixel_passes": 1,
         "python_boundary": {
+          "augmentation": "held",
           "crossings_per_call": 1,
+          "decode": "not-applicable",
+          "delivery": "held-for-Python-output-transfer",
           "gil": "held-during-augmentation",
+          "gil_stages": {
+            "arguments": "held",
+            "augmentation": "held",
+            "decode": "not-applicable",
+            "delivery": "held-for-Python-output-transfer",
+            "source": "held"
+          },
           "input": "NumPy HWC RGB uint8",
           "input_access": "read-only-borrow",
-          "output": "owned contiguous NumPy array"
+          "output": "owned contiguous NumPy array",
+          "source_acquisition": "held"
         },
         "sampling": "native-plan-before-execution",
         "schema_version": 2,
+        "sink": {
+          "type": "return"
+        },
+        "source": {
+          "type": "array"
+        },
         "steps": [
           {
             "allocation": "sampled-rng-substream",
@@ -7977,14 +8867,31 @@
         "passes": 1,
         "pixel_passes": 1,
         "python_boundary": {
+          "augmentation": "held",
           "crossings_per_call": 1,
+          "decode": "not-applicable",
+          "delivery": "held-for-Python-output-transfer",
           "gil": "held-during-augmentation",
+          "gil_stages": {
+            "arguments": "held",
+            "augmentation": "held",
+            "decode": "not-applicable",
+            "delivery": "held-for-Python-output-transfer",
+            "source": "held"
+          },
           "input": "NumPy HWC RGB uint8",
           "input_access": "read-only-borrow",
-          "output": "owned contiguous NumPy array"
+          "output": "owned contiguous NumPy array",
+          "source_acquisition": "held"
         },
         "sampling": "native-plan-before-execution",
         "schema_version": 2,
+        "sink": {
+          "type": "return"
+        },
+        "source": {
+          "type": "array"
+        },
         "steps": [
           {
             "allocation": "workspace-u8",
@@ -8128,14 +9035,31 @@
         "passes": 1,
         "pixel_passes": 1,
         "python_boundary": {
+          "augmentation": "held",
           "crossings_per_call": 1,
+          "decode": "not-applicable",
+          "delivery": "held-for-Python-output-transfer",
           "gil": "held-during-augmentation",
+          "gil_stages": {
+            "arguments": "held",
+            "augmentation": "held",
+            "decode": "not-applicable",
+            "delivery": "held-for-Python-output-transfer",
+            "source": "held"
+          },
           "input": "NumPy HWC RGB uint8",
           "input_access": "read-only-borrow",
-          "output": "owned contiguous NumPy array"
+          "output": "owned contiguous NumPy array",
+          "source_acquisition": "held"
         },
         "sampling": "native-plan-before-execution",
         "schema_version": 2,
+        "sink": {
+          "type": "return"
+        },
+        "source": {
+          "type": "array"
+        },
         "steps": [
           {
             "allocation": "sampled-homography+workspace-u8",
@@ -8287,14 +9211,31 @@
         "passes": 1,
         "pixel_passes": 1,
         "python_boundary": {
+          "augmentation": "held",
           "crossings_per_call": 1,
+          "decode": "not-applicable",
+          "delivery": "held-for-Python-output-transfer",
           "gil": "held-during-augmentation",
+          "gil_stages": {
+            "arguments": "held",
+            "augmentation": "held",
+            "decode": "not-applicable",
+            "delivery": "held-for-Python-output-transfer",
+            "source": "held"
+          },
           "input": "NumPy HWC RGB uint8",
           "input_access": "read-only-borrow",
-          "output": "owned contiguous NumPy array"
+          "output": "owned contiguous NumPy array",
+          "source_acquisition": "held"
         },
         "sampling": "native-plan-before-execution",
         "schema_version": 2,
+        "sink": {
+          "type": "return"
+        },
+        "source": {
+          "type": "array"
+        },
         "steps": [
           {
             "allocation": "sampled-homography+workspace-u8",
@@ -8446,14 +9387,31 @@
         "passes": 1,
         "pixel_passes": 1,
         "python_boundary": {
+          "augmentation": "held",
           "crossings_per_call": 1,
+          "decode": "not-applicable",
+          "delivery": "held-for-Python-output-transfer",
           "gil": "held-during-augmentation",
+          "gil_stages": {
+            "arguments": "held",
+            "augmentation": "held",
+            "decode": "not-applicable",
+            "delivery": "held-for-Python-output-transfer",
+            "source": "held"
+          },
           "input": "NumPy HWC RGB uint8",
           "input_access": "read-only-borrow",
-          "output": "owned contiguous NumPy array"
+          "output": "owned contiguous NumPy array",
+          "source_acquisition": "held"
         },
         "sampling": "native-plan-before-execution",
         "schema_version": 2,
+        "sink": {
+          "type": "return"
+        },
+        "source": {
+          "type": "array"
+        },
         "steps": [
           {
             "allocation": "sampled-coordinate-maps+workspace-u8",
@@ -8609,14 +9567,31 @@
         "passes": 1,
         "pixel_passes": 1,
         "python_boundary": {
+          "augmentation": "held",
           "crossings_per_call": 1,
+          "decode": "not-applicable",
+          "delivery": "held-for-Python-output-transfer",
           "gil": "held-during-augmentation",
+          "gil_stages": {
+            "arguments": "held",
+            "augmentation": "held",
+            "decode": "not-applicable",
+            "delivery": "held-for-Python-output-transfer",
+            "source": "held"
+          },
           "input": "NumPy HWC RGB uint8",
           "input_access": "read-only-borrow",
-          "output": "owned contiguous NumPy array"
+          "output": "owned contiguous NumPy array",
+          "source_acquisition": "held"
         },
         "sampling": "native-plan-before-execution",
         "schema_version": 2,
+        "sink": {
+          "type": "return"
+        },
+        "source": {
+          "type": "array"
+        },
         "steps": [
           {
             "allocation": "sampled-coordinate-maps+workspace-u8",
@@ -8777,14 +9752,31 @@
         "passes": 1,
         "pixel_passes": 2,
         "python_boundary": {
+          "augmentation": "held",
           "crossings_per_call": 1,
+          "decode": "not-applicable",
+          "delivery": "held-for-Python-output-transfer",
           "gil": "held-during-augmentation",
+          "gil_stages": {
+            "arguments": "held",
+            "augmentation": "held",
+            "decode": "not-applicable",
+            "delivery": "held-for-Python-output-transfer",
+            "source": "held"
+          },
           "input": "NumPy HWC RGB uint8",
           "input_access": "read-only-borrow",
-          "output": "owned contiguous NumPy array"
+          "output": "owned contiguous NumPy array",
+          "source_acquisition": "held"
         },
         "sampling": "native-plan-before-execution",
         "schema_version": 2,
+        "sink": {
+          "type": "return"
+        },
+        "source": {
+          "type": "array"
+        },
         "steps": [
           {
             "allocation": "workspace-u16",
@@ -8927,14 +9919,31 @@
         "passes": 1,
         "pixel_passes": 2,
         "python_boundary": {
+          "augmentation": "held",
           "crossings_per_call": 1,
+          "decode": "not-applicable",
+          "delivery": "held-for-Python-output-transfer",
           "gil": "held-during-augmentation",
+          "gil_stages": {
+            "arguments": "held",
+            "augmentation": "held",
+            "decode": "not-applicable",
+            "delivery": "held-for-Python-output-transfer",
+            "source": "held"
+          },
           "input": "NumPy HWC RGB uint8",
           "input_access": "read-only-borrow",
-          "output": "owned contiguous NumPy array"
+          "output": "owned contiguous NumPy array",
+          "source_acquisition": "held"
         },
         "sampling": "native-plan-before-execution",
         "schema_version": 2,
+        "sink": {
+          "type": "return"
+        },
+        "source": {
+          "type": "array"
+        },
         "steps": [
           {
             "allocation": "workspace-u16+sampled-kernel",
@@ -9070,14 +10079,31 @@
         "passes": 1,
         "pixel_passes": 1,
         "python_boundary": {
+          "augmentation": "held",
           "crossings_per_call": 1,
+          "decode": "not-applicable",
+          "delivery": "held-for-Python-output-transfer",
           "gil": "held-during-augmentation",
+          "gil_stages": {
+            "arguments": "held",
+            "augmentation": "held",
+            "decode": "not-applicable",
+            "delivery": "held-for-Python-output-transfer",
+            "source": "held"
+          },
           "input": "NumPy HWC RGB uint8",
           "input_access": "read-only-borrow",
-          "output": "owned contiguous NumPy array"
+          "output": "owned contiguous NumPy array",
+          "source_acquisition": "held"
         },
         "sampling": "native-plan-before-execution",
         "schema_version": 2,
+        "sink": {
+          "type": "return"
+        },
+        "source": {
+          "type": "array"
+        },
         "steps": [
           {
             "allocation": "none",
@@ -9209,14 +10235,31 @@
         "passes": 1,
         "pixel_passes": 1,
         "python_boundary": {
+          "augmentation": "held",
           "crossings_per_call": 1,
+          "decode": "not-applicable",
+          "delivery": "held-for-Python-output-transfer",
           "gil": "held-during-augmentation",
+          "gil_stages": {
+            "arguments": "held",
+            "augmentation": "held",
+            "decode": "not-applicable",
+            "delivery": "held-for-Python-output-transfer",
+            "source": "held"
+          },
           "input": "NumPy HWC RGB uint8",
           "input_access": "read-only-borrow",
-          "output": "owned contiguous NumPy array"
+          "output": "owned contiguous NumPy array",
+          "source_acquisition": "held"
         },
         "sampling": "native-plan-before-execution",
         "schema_version": 2,
+        "sink": {
+          "type": "return"
+        },
+        "source": {
+          "type": "array"
+        },
         "steps": [
           {
             "allocation": "none",
@@ -9339,14 +10382,31 @@
         "passes": 1,
         "pixel_passes": 1,
         "python_boundary": {
+          "augmentation": "held",
           "crossings_per_call": 1,
+          "decode": "not-applicable",
+          "delivery": "held-for-Python-output-transfer",
           "gil": "held-during-augmentation",
+          "gil_stages": {
+            "arguments": "held",
+            "augmentation": "held",
+            "decode": "not-applicable",
+            "delivery": "held-for-Python-output-transfer",
+            "source": "held"
+          },
           "input": "NumPy HWC RGB uint8",
           "input_access": "read-only-borrow",
-          "output": "owned contiguous NumPy array"
+          "output": "owned contiguous NumPy array",
+          "source_acquisition": "held"
         },
         "sampling": "native-plan-before-execution",
         "schema_version": 2,
+        "sink": {
+          "type": "return"
+        },
+        "source": {
+          "type": "array"
+        },
         "steps": [
           {
             "allocation": "none",
@@ -9478,14 +10538,31 @@
         "passes": 1,
         "pixel_passes": 1,
         "python_boundary": {
+          "augmentation": "held",
           "crossings_per_call": 1,
+          "decode": "not-applicable",
+          "delivery": "held-for-Python-output-transfer",
           "gil": "held-during-augmentation",
+          "gil_stages": {
+            "arguments": "held",
+            "augmentation": "held",
+            "decode": "not-applicable",
+            "delivery": "held-for-Python-output-transfer",
+            "source": "held"
+          },
           "input": "NumPy HWC RGB uint8",
           "input_access": "read-only-borrow",
-          "output": "owned contiguous NumPy array"
+          "output": "owned contiguous NumPy array",
+          "source_acquisition": "held"
         },
         "sampling": "native-plan-before-execution",
         "schema_version": 2,
+        "sink": {
+          "type": "return"
+        },
+        "source": {
+          "type": "array"
+        },
         "steps": [
           {
             "allocation": "none",
@@ -9620,14 +10697,31 @@
         "passes": 1,
         "pixel_passes": 1,
         "python_boundary": {
+          "augmentation": "held",
           "crossings_per_call": 1,
+          "decode": "not-applicable",
+          "delivery": "held-for-Python-output-transfer",
           "gil": "held-during-augmentation",
+          "gil_stages": {
+            "arguments": "held",
+            "augmentation": "held",
+            "decode": "not-applicable",
+            "delivery": "held-for-Python-output-transfer",
+            "source": "held"
+          },
           "input": "NumPy HWC RGB uint8",
           "input_access": "read-only-borrow",
-          "output": "owned contiguous NumPy array"
+          "output": "owned contiguous NumPy array",
+          "source_acquisition": "held"
         },
         "sampling": "native-plan-before-execution",
         "schema_version": 2,
+        "sink": {
+          "type": "return"
+        },
+        "source": {
+          "type": "array"
+        },
         "steps": [
           {
             "allocation": "owned-f32-output",
@@ -9774,14 +10868,31 @@
         "passes": 1,
         "pixel_passes": 1,
         "python_boundary": {
+          "augmentation": "held",
           "crossings_per_call": 1,
+          "decode": "not-applicable",
+          "delivery": "held-for-Python-output-transfer",
           "gil": "held-during-augmentation",
+          "gil_stages": {
+            "arguments": "held",
+            "augmentation": "held",
+            "decode": "not-applicable",
+            "delivery": "held-for-Python-output-transfer",
+            "source": "held"
+          },
           "input": "NumPy HWC RGB uint8",
           "input_access": "read-only-borrow",
-          "output": "owned contiguous CPU Torch Tensor"
+          "output": "owned contiguous CPU Torch Tensor",
+          "source_acquisition": "held"
         },
         "sampling": "native-plan-before-execution",
         "schema_version": 2,
+        "sink": {
+          "type": "return"
+        },
+        "source": {
+          "type": "array"
+        },
         "steps": [
           {
             "allocation": "owned-chw-output",
@@ -9938,14 +11049,31 @@
         "passes": 2,
         "pixel_passes": 1,
         "python_boundary": {
+          "augmentation": "held",
           "crossings_per_call": 1,
+          "decode": "not-applicable",
+          "delivery": "held-for-Python-output-transfer",
           "gil": "held-during-augmentation",
+          "gil_stages": {
+            "arguments": "held",
+            "augmentation": "held",
+            "decode": "not-applicable",
+            "delivery": "held-for-Python-output-transfer",
+            "source": "held"
+          },
           "input": "NumPy HWC RGB uint8",
           "input_access": "read-only-borrow",
-          "output": "owned contiguous CPU Torch Tensor"
+          "output": "owned contiguous CPU Torch Tensor",
+          "source_acquisition": "held"
         },
         "sampling": "native-plan-before-execution",
         "schema_version": 2,
+        "sink": {
+          "type": "return"
+        },
+        "source": {
+          "type": "array"
+        },
         "steps": [
           {
             "allocation": "owned-f32-output",
@@ -10103,14 +11231,31 @@
         "passes": 1,
         "pixel_passes": 1,
         "python_boundary": {
+          "augmentation": "held",
           "crossings_per_call": 1,
+          "decode": "not-applicable",
+          "delivery": "held-for-Python-output-transfer",
           "gil": "held-during-augmentation",
+          "gil_stages": {
+            "arguments": "held",
+            "augmentation": "held",
+            "decode": "not-applicable",
+            "delivery": "held-for-Python-output-transfer",
+            "source": "held"
+          },
           "input": "NumPy HWC RGB uint8",
           "input_access": "read-only-borrow",
-          "output": "owned contiguous NumPy array"
+          "output": "owned contiguous NumPy array",
+          "source_acquisition": "held"
         },
         "sampling": "native-plan-before-execution",
         "schema_version": 2,
+        "sink": {
+          "type": "return"
+        },
+        "source": {
+          "type": "array"
+        },
         "steps": [
           {
             "allocation": "workspace-u8",
@@ -10246,14 +11391,31 @@
         "passes": 1,
         "pixel_passes": 1,
         "python_boundary": {
+          "augmentation": "held",
           "crossings_per_call": 1,
+          "decode": "not-applicable",
+          "delivery": "held-for-Python-output-transfer",
           "gil": "held-during-augmentation",
+          "gil_stages": {
+            "arguments": "held",
+            "augmentation": "held",
+            "decode": "not-applicable",
+            "delivery": "held-for-Python-output-transfer",
+            "source": "held"
+          },
           "input": "NumPy HWC RGB uint8",
           "input_access": "read-only-borrow",
-          "output": "owned contiguous NumPy array"
+          "output": "owned contiguous NumPy array",
+          "source_acquisition": "held"
         },
         "sampling": "native-plan-before-execution",
         "schema_version": 2,
+        "sink": {
+          "type": "return"
+        },
+        "source": {
+          "type": "array"
+        },
         "steps": [
           {
             "allocation": "workspace-u8",
@@ -10389,14 +11551,31 @@
         "passes": 1,
         "pixel_passes": 1,
         "python_boundary": {
+          "augmentation": "held",
           "crossings_per_call": 1,
+          "decode": "not-applicable",
+          "delivery": "held-for-Python-output-transfer",
           "gil": "held-during-augmentation",
+          "gil_stages": {
+            "arguments": "held",
+            "augmentation": "held",
+            "decode": "not-applicable",
+            "delivery": "held-for-Python-output-transfer",
+            "source": "held"
+          },
           "input": "NumPy HWC RGB uint8",
           "input_access": "read-only-borrow",
-          "output": "owned contiguous NumPy array"
+          "output": "owned contiguous NumPy array",
+          "source_acquisition": "held"
         },
         "sampling": "native-plan-before-execution",
         "schema_version": 2,
+        "sink": {
+          "type": "return"
+        },
+        "source": {
+          "type": "array"
+        },
         "steps": [
           {
             "allocation": "workspace-u8",
@@ -10535,14 +11714,31 @@
         "passes": 1,
         "pixel_passes": 2,
         "python_boundary": {
+          "augmentation": "held",
           "crossings_per_call": 1,
+          "decode": "not-applicable",
+          "delivery": "held-for-Python-output-transfer",
           "gil": "held-during-augmentation",
+          "gil_stages": {
+            "arguments": "held",
+            "augmentation": "held",
+            "decode": "not-applicable",
+            "delivery": "held-for-Python-output-transfer",
+            "source": "held"
+          },
           "input": "NumPy HWC RGB uint8",
           "input_access": "read-only-borrow",
-          "output": "owned contiguous NumPy array"
+          "output": "owned contiguous NumPy array",
+          "source_acquisition": "held"
         },
         "sampling": "native-plan-before-execution",
         "schema_version": 2,
+        "sink": {
+          "type": "return"
+        },
+        "source": {
+          "type": "array"
+        },
         "steps": [
           {
             "allocation": "workspace-u8",
@@ -10703,14 +11899,31 @@
         "passes": 1,
         "pixel_passes": 2,
         "python_boundary": {
+          "augmentation": "held",
           "crossings_per_call": 1,
+          "decode": "not-applicable",
+          "delivery": "held-for-Python-output-transfer",
           "gil": "held-during-augmentation",
+          "gil_stages": {
+            "arguments": "held",
+            "augmentation": "held",
+            "decode": "not-applicable",
+            "delivery": "held-for-Python-output-transfer",
+            "source": "held"
+          },
           "input": "NumPy HWC RGB uint8",
           "input_access": "read-only-borrow",
-          "output": "owned contiguous NumPy array"
+          "output": "owned contiguous NumPy array",
+          "source_acquisition": "held"
         },
         "sampling": "native-plan-before-execution",
         "schema_version": 2,
+        "sink": {
+          "type": "return"
+        },
+        "source": {
+          "type": "array"
+        },
         "steps": [
           {
             "allocation": "workspace-u8",
@@ -10864,14 +12077,31 @@
         "passes": 1,
         "pixel_passes": 1,
         "python_boundary": {
+          "augmentation": "held",
           "crossings_per_call": 1,
+          "decode": "not-applicable",
+          "delivery": "held-for-Python-output-transfer",
           "gil": "held-during-augmentation",
+          "gil_stages": {
+            "arguments": "held",
+            "augmentation": "held",
+            "decode": "not-applicable",
+            "delivery": "held-for-Python-output-transfer",
+            "source": "held"
+          },
           "input": "NumPy HWC RGB uint8",
           "input_access": "read-only-borrow",
-          "output": "owned contiguous NumPy array"
+          "output": "owned contiguous NumPy array",
+          "source_acquisition": "held"
         },
         "sampling": "native-plan-before-execution",
         "schema_version": 2,
+        "sink": {
+          "type": "return"
+        },
+        "source": {
+          "type": "array"
+        },
         "steps": [
           {
             "allocation": "workspace-u8",
@@ -11003,14 +12233,31 @@
         "passes": 1,
         "pixel_passes": 1,
         "python_boundary": {
+          "augmentation": "held",
           "crossings_per_call": 1,
+          "decode": "not-applicable",
+          "delivery": "held-for-Python-output-transfer",
           "gil": "held-during-augmentation",
+          "gil_stages": {
+            "arguments": "held",
+            "augmentation": "held",
+            "decode": "not-applicable",
+            "delivery": "held-for-Python-output-transfer",
+            "source": "held"
+          },
           "input": "NumPy HWC RGB uint8",
           "input_access": "read-only-borrow",
-          "output": "owned contiguous NumPy array"
+          "output": "owned contiguous NumPy array",
+          "source_acquisition": "held"
         },
         "sampling": "native-plan-before-execution",
         "schema_version": 2,
+        "sink": {
+          "type": "return"
+        },
+        "source": {
+          "type": "array"
+        },
         "steps": [
           {
             "allocation": "workspace-u8",
@@ -11154,14 +12401,31 @@
         "passes": 1,
         "pixel_passes": 1,
         "python_boundary": {
+          "augmentation": "held",
           "crossings_per_call": 1,
+          "decode": "not-applicable",
+          "delivery": "held-for-Python-output-transfer",
           "gil": "held-during-augmentation",
+          "gil_stages": {
+            "arguments": "held",
+            "augmentation": "held",
+            "decode": "not-applicable",
+            "delivery": "held-for-Python-output-transfer",
+            "source": "held"
+          },
           "input": "NumPy HWC RGB uint8",
           "input_access": "read-only-borrow",
-          "output": "owned contiguous NumPy array"
+          "output": "owned contiguous NumPy array",
+          "source_acquisition": "held"
         },
         "sampling": "native-plan-before-execution",
         "schema_version": 2,
+        "sink": {
+          "type": "return"
+        },
+        "source": {
+          "type": "array"
+        },
         "steps": [
           {
             "allocation": "workspace-u8",
@@ -11303,14 +12567,31 @@
         "passes": 1,
         "pixel_passes": 1,
         "python_boundary": {
+          "augmentation": "held",
           "crossings_per_call": 1,
+          "decode": "not-applicable",
+          "delivery": "held-for-Python-output-transfer",
           "gil": "held-during-augmentation",
+          "gil_stages": {
+            "arguments": "held",
+            "augmentation": "held",
+            "decode": "not-applicable",
+            "delivery": "held-for-Python-output-transfer",
+            "source": "held"
+          },
           "input": "NumPy HWC RGB uint8",
           "input_access": "read-only-borrow",
-          "output": "owned contiguous NumPy array"
+          "output": "owned contiguous NumPy array",
+          "source_acquisition": "held"
         },
         "sampling": "native-plan-before-execution",
         "schema_version": 2,
+        "sink": {
+          "type": "return"
+        },
+        "source": {
+          "type": "array"
+        },
         "steps": [
           {
             "allocation": "sampled-rectangles",
@@ -11460,14 +12741,31 @@
         "passes": 1,
         "pixel_passes": 1,
         "python_boundary": {
+          "augmentation": "held",
           "crossings_per_call": 1,
+          "decode": "not-applicable",
+          "delivery": "held-for-Python-output-transfer",
           "gil": "held-during-augmentation",
+          "gil_stages": {
+            "arguments": "held",
+            "augmentation": "held",
+            "decode": "not-applicable",
+            "delivery": "held-for-Python-output-transfer",
+            "source": "held"
+          },
           "input": "NumPy HWC RGB uint8",
           "input_access": "read-only-borrow",
-          "output": "owned contiguous NumPy array"
+          "output": "owned contiguous NumPy array",
+          "source_acquisition": "held"
         },
         "sampling": "native-plan-before-execution",
         "schema_version": 2,
+        "sink": {
+          "type": "return"
+        },
+        "source": {
+          "type": "array"
+        },
         "steps": [
           {
             "allocation": "none",
@@ -11590,14 +12888,31 @@
         "passes": 1,
         "pixel_passes": 1,
         "python_boundary": {
+          "augmentation": "held",
           "crossings_per_call": 1,
+          "decode": "not-applicable",
+          "delivery": "held-for-Python-output-transfer",
           "gil": "held-during-augmentation",
+          "gil_stages": {
+            "arguments": "held",
+            "augmentation": "held",
+            "decode": "not-applicable",
+            "delivery": "held-for-Python-output-transfer",
+            "source": "held"
+          },
           "input": "NumPy HWC RGB uint8",
           "input_access": "read-only-borrow",
-          "output": "owned contiguous NumPy array"
+          "output": "owned contiguous NumPy array",
+          "source_acquisition": "held"
         },
         "sampling": "native-plan-before-execution",
         "schema_version": 2,
+        "sink": {
+          "type": "return"
+        },
+        "source": {
+          "type": "array"
+        },
         "steps": [
           {
             "allocation": "none",
@@ -11718,14 +13033,31 @@
         "passes": 1,
         "pixel_passes": 2,
         "python_boundary": {
+          "augmentation": "held",
           "crossings_per_call": 1,
+          "decode": "not-applicable",
+          "delivery": "held-for-Python-output-transfer",
           "gil": "held-during-augmentation",
+          "gil_stages": {
+            "arguments": "held",
+            "augmentation": "held",
+            "decode": "not-applicable",
+            "delivery": "held-for-Python-output-transfer",
+            "source": "held"
+          },
           "input": "NumPy HWC RGB uint8",
           "input_access": "read-only-borrow",
-          "output": "owned contiguous NumPy array"
+          "output": "owned contiguous NumPy array",
+          "source_acquisition": "held"
         },
         "sampling": "native-plan-before-execution",
         "schema_version": 2,
+        "sink": {
+          "type": "return"
+        },
+        "source": {
+          "type": "array"
+        },
         "steps": [
           {
             "allocation": "none",
@@ -11869,14 +13201,31 @@
         "passes": 1,
         "pixel_passes": 5,
         "python_boundary": {
+          "augmentation": "held",
           "crossings_per_call": 1,
+          "decode": "not-applicable",
+          "delivery": "held-for-Python-output-transfer",
           "gil": "held-during-augmentation",
+          "gil_stages": {
+            "arguments": "held",
+            "augmentation": "held",
+            "decode": "not-applicable",
+            "delivery": "held-for-Python-output-transfer",
+            "source": "held"
+          },
           "input": "NumPy HWC RGB uint8",
           "input_access": "read-only-borrow",
-          "output": "owned contiguous NumPy array"
+          "output": "owned contiguous NumPy array",
+          "source_acquisition": "held"
         },
         "sampling": "native-plan-before-execution",
         "schema_version": 2,
+        "sink": {
+          "type": "return"
+        },
+        "source": {
+          "type": "array"
+        },
         "steps": [
           {
             "allocation": "none",
@@ -12025,14 +13374,31 @@
         "passes": 1,
         "pixel_passes": 1,
         "python_boundary": {
+          "augmentation": "held",
           "crossings_per_call": 1,
+          "decode": "not-applicable",
+          "delivery": "held-for-Python-output-transfer",
           "gil": "held-during-augmentation",
+          "gil_stages": {
+            "arguments": "held",
+            "augmentation": "held",
+            "decode": "not-applicable",
+            "delivery": "held-for-Python-output-transfer",
+            "source": "held"
+          },
           "input": "NumPy HWC RGB uint8",
           "input_access": "read-only-borrow",
-          "output": "owned contiguous NumPy array"
+          "output": "owned contiguous NumPy array",
+          "source_acquisition": "held"
         },
         "sampling": "native-plan-before-execution",
         "schema_version": 2,
+        "sink": {
+          "type": "return"
+        },
+        "source": {
+          "type": "array"
+        },
         "steps": [
           {
             "allocation": "workspace-u8",
@@ -12189,14 +13555,31 @@
         "passes": 1,
         "pixel_passes": 1,
         "python_boundary": {
+          "augmentation": "held",
           "crossings_per_call": 1,
+          "decode": "not-applicable",
+          "delivery": "held-for-Python-output-transfer",
           "gil": "held-during-augmentation",
+          "gil_stages": {
+            "arguments": "held",
+            "augmentation": "held",
+            "decode": "not-applicable",
+            "delivery": "held-for-Python-output-transfer",
+            "source": "held"
+          },
           "input": "NumPy HWC RGB uint8",
           "input_access": "read-only-borrow",
-          "output": "owned contiguous NumPy array"
+          "output": "owned contiguous NumPy array",
+          "source_acquisition": "held"
         },
         "sampling": "native-plan-before-execution",
         "schema_version": 2,
+        "sink": {
+          "type": "return"
+        },
+        "source": {
+          "type": "array"
+        },
         "steps": [
           {
             "allocation": "workspace-u8",
@@ -12353,14 +13736,31 @@
         "passes": 1,
         "pixel_passes": 1,
         "python_boundary": {
+          "augmentation": "held",
           "crossings_per_call": 1,
+          "decode": "not-applicable",
+          "delivery": "held-for-Python-output-transfer",
           "gil": "held-during-augmentation",
+          "gil_stages": {
+            "arguments": "held",
+            "augmentation": "held",
+            "decode": "not-applicable",
+            "delivery": "held-for-Python-output-transfer",
+            "source": "held"
+          },
           "input": "NumPy HWC RGB uint8",
           "input_access": "read-only-borrow",
-          "output": "owned contiguous NumPy array"
+          "output": "owned contiguous NumPy array",
+          "source_acquisition": "held"
         },
         "sampling": "native-plan-before-execution",
         "schema_version": 2,
+        "sink": {
+          "type": "return"
+        },
+        "source": {
+          "type": "array"
+        },
         "steps": [
           {
             "allocation": "workspace-u8",
@@ -12509,14 +13909,31 @@
         "passes": 1,
         "pixel_passes": 1,
         "python_boundary": {
+          "augmentation": "held",
           "crossings_per_call": 1,
+          "decode": "not-applicable",
+          "delivery": "held-for-Python-output-transfer",
           "gil": "held-during-augmentation",
+          "gil_stages": {
+            "arguments": "held",
+            "augmentation": "held",
+            "decode": "not-applicable",
+            "delivery": "held-for-Python-output-transfer",
+            "source": "held"
+          },
           "input": "NumPy HWC RGB uint8",
           "input_access": "read-only-borrow",
-          "output": "owned contiguous NumPy array"
+          "output": "owned contiguous NumPy array",
+          "source_acquisition": "held"
         },
         "sampling": "native-plan-before-execution",
         "schema_version": 2,
+        "sink": {
+          "type": "return"
+        },
+        "source": {
+          "type": "array"
+        },
         "steps": [
           {
             "allocation": "workspace-u8",
@@ -12658,14 +14075,31 @@
         "passes": 1,
         "pixel_passes": 1,
         "python_boundary": {
+          "augmentation": "held",
           "crossings_per_call": 1,
+          "decode": "not-applicable",
+          "delivery": "held-for-Python-output-transfer",
           "gil": "held-during-augmentation",
+          "gil_stages": {
+            "arguments": "held",
+            "augmentation": "held",
+            "decode": "not-applicable",
+            "delivery": "held-for-Python-output-transfer",
+            "source": "held"
+          },
           "input": "NumPy HWC RGB uint8",
           "input_access": "read-only-borrow",
-          "output": "owned contiguous NumPy array"
+          "output": "owned contiguous NumPy array",
+          "source_acquisition": "held"
         },
         "sampling": "native-plan-before-execution",
         "schema_version": 2,
+        "sink": {
+          "type": "return"
+        },
+        "source": {
+          "type": "array"
+        },
         "steps": [
           {
             "allocation": "sampled-rng-substream",
@@ -12807,14 +14241,31 @@
         "passes": 1,
         "pixel_passes": 1,
         "python_boundary": {
+          "augmentation": "held",
           "crossings_per_call": 1,
+          "decode": "not-applicable",
+          "delivery": "held-for-Python-output-transfer",
           "gil": "held-during-augmentation",
+          "gil_stages": {
+            "arguments": "held",
+            "augmentation": "held",
+            "decode": "not-applicable",
+            "delivery": "held-for-Python-output-transfer",
+            "source": "held"
+          },
           "input": "NumPy HWC RGB uint8",
           "input_access": "read-only-borrow",
-          "output": "owned contiguous NumPy array"
+          "output": "owned contiguous NumPy array",
+          "source_acquisition": "held"
         },
         "sampling": "native-plan-before-execution",
         "schema_version": 2,
+        "sink": {
+          "type": "return"
+        },
+        "source": {
+          "type": "array"
+        },
         "steps": [
           {
             "allocation": "sampled-rng-substream",
@@ -12958,14 +14409,31 @@
         "passes": 1,
         "pixel_passes": 1,
         "python_boundary": {
+          "augmentation": "held",
           "crossings_per_call": 1,
+          "decode": "not-applicable",
+          "delivery": "held-for-Python-output-transfer",
           "gil": "held-during-augmentation",
+          "gil_stages": {
+            "arguments": "held",
+            "augmentation": "held",
+            "decode": "not-applicable",
+            "delivery": "held-for-Python-output-transfer",
+            "source": "held"
+          },
           "input": "NumPy HWC RGB uint8",
           "input_access": "read-only-borrow",
-          "output": "owned contiguous NumPy array"
+          "output": "owned contiguous NumPy array",
+          "source_acquisition": "held"
         },
         "sampling": "native-plan-before-execution",
         "schema_version": 2,
+        "sink": {
+          "type": "return"
+        },
+        "source": {
+          "type": "array"
+        },
         "steps": [
           {
             "allocation": "workspace-u8",
@@ -13109,14 +14577,31 @@
         "passes": 1,
         "pixel_passes": 1,
         "python_boundary": {
+          "augmentation": "held",
           "crossings_per_call": 1,
+          "decode": "not-applicable",
+          "delivery": "held-for-Python-output-transfer",
           "gil": "held-during-augmentation",
+          "gil_stages": {
+            "arguments": "held",
+            "augmentation": "held",
+            "decode": "not-applicable",
+            "delivery": "held-for-Python-output-transfer",
+            "source": "held"
+          },
           "input": "NumPy HWC RGB uint8",
           "input_access": "read-only-borrow",
-          "output": "owned contiguous NumPy array"
+          "output": "owned contiguous NumPy array",
+          "source_acquisition": "held"
         },
         "sampling": "native-plan-before-execution",
         "schema_version": 2,
+        "sink": {
+          "type": "return"
+        },
+        "source": {
+          "type": "array"
+        },
         "steps": [
           {
             "allocation": "sampled-homography+workspace-u8",
@@ -13268,14 +14753,31 @@
         "passes": 1,
         "pixel_passes": 1,
         "python_boundary": {
+          "augmentation": "held",
           "crossings_per_call": 1,
+          "decode": "not-applicable",
+          "delivery": "held-for-Python-output-transfer",
           "gil": "held-during-augmentation",
+          "gil_stages": {
+            "arguments": "held",
+            "augmentation": "held",
+            "decode": "not-applicable",
+            "delivery": "held-for-Python-output-transfer",
+            "source": "held"
+          },
           "input": "NumPy HWC RGB uint8",
           "input_access": "read-only-borrow",
-          "output": "owned contiguous NumPy array"
+          "output": "owned contiguous NumPy array",
+          "source_acquisition": "held"
         },
         "sampling": "native-plan-before-execution",
         "schema_version": 2,
+        "sink": {
+          "type": "return"
+        },
+        "source": {
+          "type": "array"
+        },
         "steps": [
           {
             "allocation": "sampled-homography+workspace-u8",
@@ -13427,14 +14929,31 @@
         "passes": 1,
         "pixel_passes": 1,
         "python_boundary": {
+          "augmentation": "held",
           "crossings_per_call": 1,
+          "decode": "not-applicable",
+          "delivery": "held-for-Python-output-transfer",
           "gil": "held-during-augmentation",
+          "gil_stages": {
+            "arguments": "held",
+            "augmentation": "held",
+            "decode": "not-applicable",
+            "delivery": "held-for-Python-output-transfer",
+            "source": "held"
+          },
           "input": "NumPy HWC RGB uint8",
           "input_access": "read-only-borrow",
-          "output": "owned contiguous NumPy array"
+          "output": "owned contiguous NumPy array",
+          "source_acquisition": "held"
         },
         "sampling": "native-plan-before-execution",
         "schema_version": 2,
+        "sink": {
+          "type": "return"
+        },
+        "source": {
+          "type": "array"
+        },
         "steps": [
           {
             "allocation": "sampled-coordinate-maps+workspace-u8",
@@ -13590,14 +15109,31 @@
         "passes": 1,
         "pixel_passes": 1,
         "python_boundary": {
+          "augmentation": "held",
           "crossings_per_call": 1,
+          "decode": "not-applicable",
+          "delivery": "held-for-Python-output-transfer",
           "gil": "held-during-augmentation",
+          "gil_stages": {
+            "arguments": "held",
+            "augmentation": "held",
+            "decode": "not-applicable",
+            "delivery": "held-for-Python-output-transfer",
+            "source": "held"
+          },
           "input": "NumPy HWC RGB uint8",
           "input_access": "read-only-borrow",
-          "output": "owned contiguous NumPy array"
+          "output": "owned contiguous NumPy array",
+          "source_acquisition": "held"
         },
         "sampling": "native-plan-before-execution",
         "schema_version": 2,
+        "sink": {
+          "type": "return"
+        },
+        "source": {
+          "type": "array"
+        },
         "steps": [
           {
             "allocation": "sampled-coordinate-maps+workspace-u8",
@@ -13758,14 +15294,31 @@
         "passes": 1,
         "pixel_passes": 2,
         "python_boundary": {
+          "augmentation": "held",
           "crossings_per_call": 1,
+          "decode": "not-applicable",
+          "delivery": "held-for-Python-output-transfer",
           "gil": "held-during-augmentation",
+          "gil_stages": {
+            "arguments": "held",
+            "augmentation": "held",
+            "decode": "not-applicable",
+            "delivery": "held-for-Python-output-transfer",
+            "source": "held"
+          },
           "input": "NumPy HWC RGB uint8",
           "input_access": "read-only-borrow",
-          "output": "owned contiguous NumPy array"
+          "output": "owned contiguous NumPy array",
+          "source_acquisition": "held"
         },
         "sampling": "native-plan-before-execution",
         "schema_version": 2,
+        "sink": {
+          "type": "return"
+        },
+        "source": {
+          "type": "array"
+        },
         "steps": [
           {
             "allocation": "workspace-u16",
@@ -13908,14 +15461,31 @@
         "passes": 1,
         "pixel_passes": 2,
         "python_boundary": {
+          "augmentation": "held",
           "crossings_per_call": 1,
+          "decode": "not-applicable",
+          "delivery": "held-for-Python-output-transfer",
           "gil": "held-during-augmentation",
+          "gil_stages": {
+            "arguments": "held",
+            "augmentation": "held",
+            "decode": "not-applicable",
+            "delivery": "held-for-Python-output-transfer",
+            "source": "held"
+          },
           "input": "NumPy HWC RGB uint8",
           "input_access": "read-only-borrow",
-          "output": "owned contiguous NumPy array"
+          "output": "owned contiguous NumPy array",
+          "source_acquisition": "held"
         },
         "sampling": "native-plan-before-execution",
         "schema_version": 2,
+        "sink": {
+          "type": "return"
+        },
+        "source": {
+          "type": "array"
+        },
         "steps": [
           {
             "allocation": "workspace-u16+sampled-kernel",
@@ -14051,14 +15621,31 @@
         "passes": 1,
         "pixel_passes": 1,
         "python_boundary": {
+          "augmentation": "held",
           "crossings_per_call": 1,
+          "decode": "not-applicable",
+          "delivery": "held-for-Python-output-transfer",
           "gil": "held-during-augmentation",
+          "gil_stages": {
+            "arguments": "held",
+            "augmentation": "held",
+            "decode": "not-applicable",
+            "delivery": "held-for-Python-output-transfer",
+            "source": "held"
+          },
           "input": "NumPy HWC RGB uint8",
           "input_access": "read-only-borrow",
-          "output": "owned contiguous NumPy array"
+          "output": "owned contiguous NumPy array",
+          "source_acquisition": "held"
         },
         "sampling": "native-plan-before-execution",
         "schema_version": 2,
+        "sink": {
+          "type": "return"
+        },
+        "source": {
+          "type": "array"
+        },
         "steps": [
           {
             "allocation": "none",
@@ -14190,14 +15777,31 @@
         "passes": 1,
         "pixel_passes": 1,
         "python_boundary": {
+          "augmentation": "held",
           "crossings_per_call": 1,
+          "decode": "not-applicable",
+          "delivery": "held-for-Python-output-transfer",
           "gil": "held-during-augmentation",
+          "gil_stages": {
+            "arguments": "held",
+            "augmentation": "held",
+            "decode": "not-applicable",
+            "delivery": "held-for-Python-output-transfer",
+            "source": "held"
+          },
           "input": "NumPy HWC RGB uint8",
           "input_access": "read-only-borrow",
-          "output": "owned contiguous NumPy array"
+          "output": "owned contiguous NumPy array",
+          "source_acquisition": "held"
         },
         "sampling": "native-plan-before-execution",
         "schema_version": 2,
+        "sink": {
+          "type": "return"
+        },
+        "source": {
+          "type": "array"
+        },
         "steps": [
           {
             "allocation": "none",
@@ -14320,14 +15924,31 @@
         "passes": 1,
         "pixel_passes": 1,
         "python_boundary": {
+          "augmentation": "held",
           "crossings_per_call": 1,
+          "decode": "not-applicable",
+          "delivery": "held-for-Python-output-transfer",
           "gil": "held-during-augmentation",
+          "gil_stages": {
+            "arguments": "held",
+            "augmentation": "held",
+            "decode": "not-applicable",
+            "delivery": "held-for-Python-output-transfer",
+            "source": "held"
+          },
           "input": "NumPy HWC RGB uint8",
           "input_access": "read-only-borrow",
-          "output": "owned contiguous NumPy array"
+          "output": "owned contiguous NumPy array",
+          "source_acquisition": "held"
         },
         "sampling": "native-plan-before-execution",
         "schema_version": 2,
+        "sink": {
+          "type": "return"
+        },
+        "source": {
+          "type": "array"
+        },
         "steps": [
           {
             "allocation": "none",
@@ -14459,14 +16080,31 @@
         "passes": 1,
         "pixel_passes": 1,
         "python_boundary": {
+          "augmentation": "held",
           "crossings_per_call": 1,
+          "decode": "not-applicable",
+          "delivery": "held-for-Python-output-transfer",
           "gil": "held-during-augmentation",
+          "gil_stages": {
+            "arguments": "held",
+            "augmentation": "held",
+            "decode": "not-applicable",
+            "delivery": "held-for-Python-output-transfer",
+            "source": "held"
+          },
           "input": "NumPy HWC RGB uint8",
           "input_access": "read-only-borrow",
-          "output": "owned contiguous NumPy array"
+          "output": "owned contiguous NumPy array",
+          "source_acquisition": "held"
         },
         "sampling": "native-plan-before-execution",
         "schema_version": 2,
+        "sink": {
+          "type": "return"
+        },
+        "source": {
+          "type": "array"
+        },
         "steps": [
           {
             "allocation": "none",
@@ -14601,14 +16239,31 @@
         "passes": 1,
         "pixel_passes": 1,
         "python_boundary": {
+          "augmentation": "held",
           "crossings_per_call": 1,
+          "decode": "not-applicable",
+          "delivery": "held-for-Python-output-transfer",
           "gil": "held-during-augmentation",
+          "gil_stages": {
+            "arguments": "held",
+            "augmentation": "held",
+            "decode": "not-applicable",
+            "delivery": "held-for-Python-output-transfer",
+            "source": "held"
+          },
           "input": "NumPy HWC RGB uint8",
           "input_access": "read-only-borrow",
-          "output": "owned contiguous NumPy array"
+          "output": "owned contiguous NumPy array",
+          "source_acquisition": "held"
         },
         "sampling": "native-plan-before-execution",
         "schema_version": 2,
+        "sink": {
+          "type": "return"
+        },
+        "source": {
+          "type": "array"
+        },
         "steps": [
           {
             "allocation": "owned-f32-output",
@@ -14755,14 +16410,31 @@
         "passes": 1,
         "pixel_passes": 1,
         "python_boundary": {
+          "augmentation": "held",
           "crossings_per_call": 1,
+          "decode": "not-applicable",
+          "delivery": "held-for-Python-output-transfer",
           "gil": "held-during-augmentation",
+          "gil_stages": {
+            "arguments": "held",
+            "augmentation": "held",
+            "decode": "not-applicable",
+            "delivery": "held-for-Python-output-transfer",
+            "source": "held"
+          },
           "input": "NumPy HWC RGB uint8",
           "input_access": "read-only-borrow",
-          "output": "owned contiguous CPU Torch Tensor"
+          "output": "owned contiguous CPU Torch Tensor",
+          "source_acquisition": "held"
         },
         "sampling": "native-plan-before-execution",
         "schema_version": 2,
+        "sink": {
+          "type": "return"
+        },
+        "source": {
+          "type": "array"
+        },
         "steps": [
           {
             "allocation": "owned-chw-output",
@@ -14919,14 +16591,31 @@
         "passes": 2,
         "pixel_passes": 1,
         "python_boundary": {
+          "augmentation": "held",
           "crossings_per_call": 1,
+          "decode": "not-applicable",
+          "delivery": "held-for-Python-output-transfer",
           "gil": "held-during-augmentation",
+          "gil_stages": {
+            "arguments": "held",
+            "augmentation": "held",
+            "decode": "not-applicable",
+            "delivery": "held-for-Python-output-transfer",
+            "source": "held"
+          },
           "input": "NumPy HWC RGB uint8",
           "input_access": "read-only-borrow",
-          "output": "owned contiguous CPU Torch Tensor"
+          "output": "owned contiguous CPU Torch Tensor",
+          "source_acquisition": "held"
         },
         "sampling": "native-plan-before-execution",
         "schema_version": 2,
+        "sink": {
+          "type": "return"
+        },
+        "source": {
+          "type": "array"
+        },
         "steps": [
           {
             "allocation": "owned-f32-output",
@@ -15005,5 +16694,6 @@
       "variant": "terminal"
     }
   ],
+  "schema_version": 1,
   "transforms": 22
 }

@@ -59,7 +59,7 @@ python-syntax:
 # Build the extension, run Python tests, and audit catalog correctness.
 python-check: python-syntax develop
     {{ python }} -m unittest discover -s tests
-    {{ python }} benchmarks/run_catalog_audit.py
+    {{ python }} benchmarks/run_catalog_audit.py --output results/raw/catalog-audit-local.json
 
 # Run all ordinary tests.
 test: test-rust python-check
@@ -125,6 +125,10 @@ evidence:
     just catalog-benchmark
     just layer-experiments
     just benchmark
+
+# Check whether canonical benchmark evidence matches the current measured code.
+evidence-status:
+    {{ python }} benchmarks/check_evidence.py
 
 # Build one host-platform wheel and one sdist into a new release-dist directory.
 release-build:

@@ -11,7 +11,14 @@ from collections import defaultdict
 from pathlib import Path
 from typing import Any
 
-from common import ROOT, TRANSFORMS, summarize_observations, write_json
+from common import (
+    ROOT,
+    TRANSFORMS,
+    evidence_matches_code,
+    evidence_provenance,
+    summarize_observations,
+    write_json,
+)
 from environments import python_for, rebuild_variopinta, require_environments
 from run_benchmark import BACKENDS
 
@@ -442,6 +449,8 @@ def main() -> None:
         raw = json.loads(runs_path.read_text())
         if raw.get("schema_version") != 2 or raw.get("quick") is not args.quick:
             raise SystemExit("existing layer evidence is missing the required raw schema")
+        if not evidence_matches_code(raw):
+            raise SystemExit("existing layer evidence does not match the measured code")
         rows = raw["rows"]
         metadata = raw["metadata"]
         repetitions = raw["repetitions"]
@@ -458,6 +467,7 @@ def main() -> None:
                     "quick": args.quick,
                     "repetitions": repetitions,
                 },
+                "provenance": evidence_provenance(),
                 "metadata": metadata,
                 "rows": rows,
             },
@@ -468,9 +478,7 @@ def main() -> None:
     if set(args.backends) == set(BACKENDS):
         text = report(aggregated, metadata["workers"], repetitions, args.quick)
         report_path = (
-            OUTPUT / "layer-experiments-quick.md"
-            if args.quick
-            else ROOT / "docs" / "layer-experiments.md"
+            OUTPUT / "layer-experiments-quick.md" if args.quick else OUTPUT / "layer-experiments.md"
         )
         report_path.parent.mkdir(parents=True, exist_ok=True)
         report_path.write_text(text)

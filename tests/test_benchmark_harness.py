@@ -8,7 +8,13 @@ from tempfile import TemporaryDirectory
 from unittest.mock import patch
 
 from benchmarks import environments
-from benchmarks.common import aggregate_runs, metadata, summarize_observations, time_calls_adaptive
+from benchmarks.common import (
+    aggregate_runs,
+    benchmark_fingerprint,
+    metadata,
+    summarize_observations,
+    time_calls_adaptive,
+)
 
 
 class AdaptiveTimingTests(unittest.TestCase):
@@ -131,6 +137,35 @@ class BenchmarkMetadataTests(unittest.TestCase):
         self.assertEqual(result["torch"], "2.7.0")
         self.assertIsNone(result["torchvision"])
         self.assertNotIn("torchvision", result["packages"])
+
+    def test_fingerprint_ignores_only_local_package_version_fields(self) -> None:
+        with TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "benchmarks").mkdir()
+            (root / "python" / "variopinta").mkdir(parents=True)
+            (root / "requirements").mkdir()
+            (root / "rust").mkdir()
+            (root / "scripts").mkdir()
+            (root / "benchmarks" / "worker.py").write_text("POLICY = 3\n")
+            implementation = root / "python" / "variopinta" / "api.py"
+            implementation.write_text("def measured(): return 1\n")
+            (root / "requirements" / "benchmark.txt").write_text("numpy==2.2.6\n")
+            pyproject = root / "pyproject.toml"
+            pyproject.write_text('[project]\nname = "variopinta"\nversion = "0.2.0"\n')
+            cargo = root / "rust" / "Cargo.toml"
+            cargo.write_text('[workspace.package]\nversion = "0.2.0"\nedition = "2024"\n')
+            lock = root / "rust" / "Cargo.lock"
+            lock.write_text('[[package]]\nname = "augment-core"\nversion = "0.2.0"\n')
+            (root / "scripts" / "setup_benchmark_envs.py").write_text("REPETITIONS = 3\n")
+
+            original = benchmark_fingerprint(root)
+            pyproject.write_text('[project]\nname = "variopinta"\nversion = "0.3.0"\n')
+            cargo.write_text('[workspace.package]\nversion = "0.3.0"\nedition = "2024"\n')
+            lock.write_text('[[package]]\nname = "augment-core"\nversion = "0.3.0"\n')
+            self.assertEqual(benchmark_fingerprint(root), original)
+
+            implementation.write_text("def measured(): return 2\n")
+            self.assertNotEqual(benchmark_fingerprint(root), original)
 
 
 class BenchmarkEnvironmentTests(unittest.TestCase):

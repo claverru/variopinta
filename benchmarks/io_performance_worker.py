@@ -13,7 +13,14 @@ from typing import Any
 import cv2
 import numpy as np
 import variopinta as R
-from common import RESULTS, control_cpu, make_images, summarize_observations
+from common import (
+    RESULTS,
+    control_cpu,
+    evidence_provenance,
+    make_images,
+    metadata,
+    summarize_observations,
+)
 from PIL import Image
 
 
@@ -185,7 +192,12 @@ def main() -> None:
                         **time_operation(function),
                     }
                 )
-    output = {"cpu": cpu, "rows": rows}
+    output = {
+        "schema_version": 1,
+        "metadata": metadata("rust-io-performance", cpu),
+        "provenance": evidence_provenance(),
+        "rows": rows,
+    }
     path = RESULTS / "raw" / "io-performance.json"
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(output, indent=2, sort_keys=True) + "\n")

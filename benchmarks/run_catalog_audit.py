@@ -11,6 +11,7 @@ from common import (
     SEED,
     STD,
     control_cpu,
+    evidence_provenance,
     make_images,
     metadata,
     output_facts,
@@ -201,6 +202,8 @@ def audit_catalog() -> dict[str, Any]:
                 }
             )
     return {
+        "schema_version": 1,
+        "provenance": evidence_provenance(),
         "metadata": metadata("rust-catalog-audit", cpu),
         "transforms": len(registered),
         "rows": rows,

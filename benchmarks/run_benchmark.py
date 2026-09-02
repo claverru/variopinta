@@ -10,7 +10,16 @@ import subprocess
 from pathlib import Path
 from typing import Any
 
-from common import PIPELINES, RESULTS, ROOT, TRANSFORMS, aggregate_runs, write_json
+from common import (
+    PIPELINES,
+    RESULTS,
+    ROOT,
+    TRANSFORMS,
+    aggregate_runs,
+    evidence_matches_code,
+    evidence_provenance,
+    write_json,
+)
 from environments import python_for, require_environments
 from plot_results import BACKENDS, LABELS, generate_plots
 from run_catalog_audit import render_catalog_audit_summary
@@ -22,10 +31,9 @@ def evidence_paths(quick: bool) -> dict[str, Path]:
     return {
         "runs": RESULTS / "raw" / f"benchmark{suffix}-runs.json",
         "metadata": RESULTS / "raw" / f"metadata{suffix}.json",
-        "results": RESULTS / "raw" / f"all-results{suffix}.json",
         "csv": RESULTS / "csv" / f"benchmark-results{suffix}.csv",
         "plots": RESULTS / "plots" / ("quick" if quick else ""),
-        "report": RESULTS / "benchmark-quick.md" if quick else ROOT / "docs" / "benchmarks.md",
+        "report": RESULTS / ("benchmark-quick.md" if quick else "benchmark.md"),
     }
 
 
@@ -81,6 +89,7 @@ def run_workers(backends: list[str], quick: bool, repetitions: int) -> list[dict
                 "materialization": "native contiguous input prepared before timing; output materialized inside timing",
             },
             "execution_order": execution_order,
+            "provenance": evidence_provenance(),
             "metadata": metadata,
             "rows": rows,
         },
@@ -91,7 +100,6 @@ def run_workers(backends: list[str], quick: bool, repetitions: int) -> list[dict
 
 def write_results(rows: list[dict[str, Any]], quick: bool) -> None:
     paths = evidence_paths(quick)
-    write_json(paths["results"], rows)
     fields = sorted(
         {key for row in rows for key in row if key not in {"validation", "worker_observations"}}
     ) + ["validation"]
@@ -120,6 +128,19 @@ def render_benchmark_report(
     run_metadata: dict[str, list[dict[str, Any]]],
 ) -> None:
     reference_run = next(iter(run_metadata.values()))[0]
+    package_names = {
+        "torchvision": "torchvision",
+        "albumentations": "albumentations",
+        "albumentationsx": "albumentationsx",
+        "rust": "variopinta",
+    }
+    compared_backends = []
+    for backend in BACKENDS:
+        if backend not in run_metadata:
+            continue
+        version = run_metadata[backend][0].get("packages", {}).get(package_names[backend])
+        compared_backends.append(f"{LABELS[backend]} {version}" if version else LABELS[backend])
+    backend_summary = ", ".join(compared_backends)
     processor = reference_run["processor"]
     platform = reference_run["platform"]
     affinity = reference_run["thread_control"]["cpu_affinity_after"]
@@ -152,7 +173,7 @@ def render_benchmark_report(
     complete = not quick and repetitions >= 3 and set(BACKENDS) <= {row["backend"] for row in rows}
 
     micro_lines = [
-        "| Transform | Torchvision | Albumentations | AlbumentationsX | Rust | Rust vs AX |",
+        "| Transform | Torchvision | Albumentations | AlbumentationsX | Variopinta | Variopinta vs AX |",
         "|---|---:|---:|---:|---:|---:|",
     ]
     for transform in TRANSFORMS:
@@ -199,7 +220,7 @@ def render_benchmark_report(
         for backend in BACKENDS
     }
     pipeline_lines = [
-        "| Pipeline, 512→224 | Torchvision | Albumentations | AlbumentationsX | Rust |",
+        "| Pipeline, 512→224 | Torchvision | Albumentations | AlbumentationsX | Variopinta |",
         "|---|---:|---:|---:|---:|",
     ]
     for name in PIPELINES:
@@ -219,7 +240,7 @@ def render_benchmark_report(
     }
     antialias_table = "\n".join(
         [
-            "| Resize policy, 512→384 | Torchvision | Albumentations | AlbumentationsX | Rust |",
+            "| Resize policy, 512→384 | Torchvision | Albumentations | AlbumentationsX | Variopinta |",
             "|---|---:|---:|---:|---:|",
             f"| bilinear, antialias=True | {antialias_values['torchvision']:.3f} | — | — | {antialias_values['rust']:.3f} |",
         ]
@@ -296,8 +317,9 @@ def render_benchmark_report(
     )
 
     parity_path = RESULTS / "raw" / "io-parity.json"
-    if parity_path.exists():
-        parity = json.loads(parity_path.read_text())["summary"]
+    parity_payload = json.loads(parity_path.read_text()) if parity_path.exists() else None
+    if parity_payload is not None and evidence_matches_code(parity_payload):
+        parity = parity_payload["summary"]
         operations = ", ".join(
             f"{name} {value['passed']}/{value['checks']}"
             for name, value in parity["by_operation"].items()
@@ -308,13 +330,14 @@ def render_benchmark_report(
             "and a PNG format oracle."
         )
     else:
-        parity_summary = "Codec interoperability has not been run for this checkout."
+        parity_summary = "Current codec interoperability evidence is unavailable."
 
     catalog_path = RESULTS / "raw" / "catalog-audit.json"
+    catalog_payload = json.loads(catalog_path.read_text()) if catalog_path.exists() else None
     catalog_audit_section = (
-        render_catalog_audit_summary(json.loads(catalog_path.read_text()))
-        if catalog_path.exists()
-        else "## Complete catalog correctness audit\n\nThe catalog audit has not been run."
+        render_catalog_audit_summary(catalog_payload)
+        if catalog_payload is not None and evidence_matches_code(catalog_payload)
+        else "## Complete catalog correctness audit\n\nCurrent catalog audit evidence is unavailable."
     )
     catalog_benchmark_path = RESULTS / "raw" / "catalog-benchmark.json"
     catalog_benchmark_payload = (
@@ -324,17 +347,17 @@ def render_benchmark_report(
         render_catalog_benchmark_summary(catalog_benchmark_payload)
         if catalog_benchmark_payload is not None
         and catalog_benchmark_payload.get("schema_version") == 2
-        else "## Catalog performance evidence\n\nThe full catalog benchmark must be regenerated with raw-observation schema 2."
+        and evidence_matches_code(catalog_benchmark_payload)
+        else "## Catalog performance evidence\n\nCurrent full catalog performance evidence is unavailable."
     )
 
     run_label = "quick smoke" if quick else "full"
-    plot_path = "plots/quick/full-pipeline.png" if quick else "../results/plots/full-pipeline.png"
+    plot_path = "plots/quick/full-pipeline.png" if quick else "plots/full-pipeline.png"
     text = f"""# Benchmark evidence
 
 This report is generated by `benchmarks/run_benchmark.py` from the latest
-**{run_label}** run. It compares Torchvision v2, Albumentations 2.0.8,
-AlbumentationsX 2.4.2, and Variopinta on one machine. Results are not
-universal.
+**{run_label}** run. It compares {backend_summary} on one machine. Results are
+not universal.
 
 Each timing is the median of **{repetitions}** independent worker
 {"process" if repetitions == 1 else "processes"} per backend.
@@ -362,7 +385,7 @@ The main `Resize` row uses fixed-kernel bilinear for all four backends.
 
 {pipeline_table}
 
-| JPEG read + RGB decode (512×512) | Torchvision | Albumentations/OpenCV | AlbumentationsX/OpenCV | Rust |
+| JPEG read + RGB decode (512×512) | Torchvision | Albumentations/OpenCV | AlbumentationsX/OpenCV | Variopinta |
 |---|---:|---:|---:|---:|
 | ms/image | {io_values["torchvision"]:.3f} | {io_values["albumentations"]:.3f} | {io_values["albumentationsx"]:.3f} | {io_values["rust"]:.3f} |
 
@@ -399,8 +422,7 @@ The pixel-policy pipeline exposes the cost of materializing `CenterCrop` before
 
 ## Run the benchmark
 
-Prepare the isolated environments as described in
-[development.md](development.md), then run:
+Prepare the isolated environments with `just benchmark-setup`, then run:
 
 ```bash
 just benchmark
@@ -457,20 +479,18 @@ just catalog-benchmark
 - The borrowed NumPy augmentation path holds the GIL. Native codec and file I/O
   release it before returning an owned NumPy array.
 
-## Artifacts
+## Canonical artifacts
 
-- `results/raw/all-results.json`
 - `results/raw/benchmark-runs.json`
 - `results/raw/io-parity.json`
 - `results/raw/io-performance.json`
 - `results/raw/catalog-audit.json`
 - `results/raw/catalog-benchmark.json`
-- `results/csv/io-performance.csv`
-- `results/csv/benchmark-results.csv`
-- `results/plots/`
-- [Layer-separation experiments](layer-experiments.md) (diagnostic; not used for
+- [Layer-separation experiments](layers/layer-experiments.md) (diagnostic; not used for
   headline claims)
-- `results/layers/raw/all-runs.json` and `results/layers/csv/layer-results.csv`
+- `results/layers/raw/all-runs.json`
+
+CSV exports, plots, and this report are derived locally from the raw observations.
 """
     evidence_paths(quick)["report"].write_text(text)
 
@@ -490,6 +510,10 @@ def main() -> None:
         payload = json.loads(evidence_paths(args.quick)["runs"].read_text())
         if payload.get("schema_version") != 2 or payload.get("quick") is not args.quick:
             raise SystemExit("existing evidence is missing the required raw schema")
+        if not evidence_matches_code(payload):
+            raise SystemExit(
+                "existing evidence does not match the measured code; run just evidence-status"
+            )
         rows = aggregate_runs(payload["rows"])
         repetitions = payload["repetitions"]
         run_metadata = payload["metadata"]

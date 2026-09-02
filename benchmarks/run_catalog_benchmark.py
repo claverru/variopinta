@@ -15,6 +15,7 @@ from common import (
     ROOT,
     SEED,
     control_cpu,
+    evidence_provenance,
     make_images,
     metadata,
     summarize_observations,
@@ -269,6 +270,7 @@ def main() -> None:
         if args.worker
         else run_workers(args.quick, repetitions, budget_ms)
     )
+    payload["provenance"] = evidence_provenance()
     write_json(output, payload)
     invalid = [row for row in payload["rows"] if not row["valid"]]
     if invalid:

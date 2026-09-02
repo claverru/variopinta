@@ -16,7 +16,7 @@ import cv2
 import numpy as np
 import torch
 import variopinta as R
-from common import RESULTS
+from common import RESULTS, evidence_provenance, metadata
 from PIL import Image
 from torchvision.io import ImageReadMode
 from torchvision.io import decode_image as torchvision_decode
@@ -490,7 +490,13 @@ def main() -> None:
     encode_checks(rows)
     write_checks(rows)
     summary = summarize(rows)
-    payload = {"summary": summary, "rows": rows}
+    payload = {
+        "schema_version": 1,
+        "metadata": metadata("rust-io-parity", {}),
+        "provenance": evidence_provenance(),
+        "summary": summary,
+        "rows": rows,
+    }
     arguments.output.parent.mkdir(parents=True, exist_ok=True)
     arguments.output.write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n")
     for operation, result in summary["by_operation"].items():
