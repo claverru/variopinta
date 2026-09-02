@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.3.0
+
+- Add immutable array, encoded-buffer, and path pipeline inputs plus returned,
+  encoded-buffer, and path outputs, with native decode/augment/encode routes,
+  size limits, GIL-aware execution, and source/sink introspection.
+- Add `max_encoded_bytes` to `decode_image` and `read_image`.
+
 ## 0.2.0
 
 - Add native Apple Silicon support on macOS 11 or newer, including thin ARM64

@@ -17,7 +17,7 @@ from scripts.validate_release import (
     validate_wheel,
 )
 
-VERSION = "0.2.0"
+VERSION = "0.3.0"
 
 
 def metadata() -> bytes:

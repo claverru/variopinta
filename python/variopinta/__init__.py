@@ -1,4 +1,15 @@
-from .io import decode_image, encode_image, read_image, write_image
+from .io import (
+    ArrayInput,
+    EncodedInput,
+    EncodedOutput,
+    PathInput,
+    PathOutput,
+    ReturnOutput,
+    decode_image,
+    encode_image,
+    read_image,
+    write_image,
+)
 from .pipeline import CompiledCompose, Compose
 from .transforms import (
     Affine,
@@ -31,12 +42,15 @@ from .transforms import (
 
 __all__ = [
     "Affine",
+    "ArrayInput",
     "BorderMode",
     "CenterCrop",
     "CoarseDropout",
     "ColorJitter",
     "CompiledCompose",
     "Compose",
+    "EncodedInput",
+    "EncodedOutput",
     "GaussianBlur",
     "GaussianNoise",
     "Grayscale",
@@ -47,12 +61,15 @@ __all__ = [
     "Normalize",
     "PadIfNeeded",
     "PadPosition",
+    "PathInput",
+    "PathOutput",
     "Perspective",
     "Posterize",
     "RandomCrop",
     "RandomRotation",
     "RandomResizedCrop",
     "Resize",
+    "ReturnOutput",
     "Solarize",
     "Sharpen",
     "ToTorch",

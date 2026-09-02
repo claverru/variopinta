@@ -53,9 +53,30 @@ def smoke_base(expected_version: str) -> np.ndarray:
     assert decoded_jpeg.flags.c_contiguous
 
     with TemporaryDirectory() as directory:
-        path = Path(directory) / "round-trip.png"
+        root = Path(directory)
+        path = root / "round-trip.png"
         V.write_image(path, source)
         np.testing.assert_array_equal(V.read_image(path), source)
+
+        expected = V.Compose([V.Invert()], seed=137)(source, key=11)
+        encoded_pipeline = V.Compose(
+            [V.Invert()],
+            seed=137,
+            input=V.EncodedInput(),
+            output=V.EncodedOutput(format="png"),
+        ).compile()
+        encoded_result = encoded_pipeline(encoded_png, key=11)
+        np.testing.assert_array_equal(V.decode_image(encoded_result), expected)
+
+        path_pipeline = V.Compose(
+            [V.Invert()],
+            seed=137,
+            input=V.PathInput(),
+            output=V.PathOutput(format="png"),
+        ).compile()
+        destination = root / "pipeline.png"
+        assert path_pipeline(path, destination=destination, key=11) is None
+        np.testing.assert_array_equal(V.read_image(destination), expected)
 
     identity = {
         "brightness": (1.0, 1.0),

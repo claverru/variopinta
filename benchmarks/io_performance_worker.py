@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import csv
+import hashlib
 import json
 import time
 from collections.abc import Callable
@@ -36,7 +37,16 @@ def time_operation(
         "block_size": 1,
         "warmup_calls": warmup,
         "output_bytes": len(output) if isinstance(output, bytes) else None,
+        "output_sha256": output_sha256(output),
     }
+
+
+def output_sha256(output: object) -> str | None:
+    if isinstance(output, bytes):
+        return hashlib.sha256(output).hexdigest()
+    if isinstance(output, np.ndarray):
+        return hashlib.sha256(output.tobytes()).hexdigest()
+    return None
 
 
 def pillow_decode(data: bytes) -> np.ndarray:
@@ -76,6 +86,20 @@ def opencv_encode(image: np.ndarray, format: str) -> bytes:
     return output.tobytes()
 
 
+def three_call_encoded(data: bytes, pipeline: R.CompiledCompose, format: str) -> bytes:
+    decoded = R.decode_image(data)
+    transformed = pipeline(decoded, key=11)
+    return R.encode_image(transformed, format=format)
+
+
+def three_call_path(
+    source: Path, destination: Path, pipeline: R.CompiledCompose, format: str
+) -> None:
+    decoded = R.read_image(source)
+    transformed = pipeline(decoded, key=11)
+    R.write_image(destination, transformed, format=format)
+
+
 def main() -> None:
     cpu = control_cpu()
     image = make_images(512, 1)[0]
@@ -86,6 +110,27 @@ def main() -> None:
             encoded = pillow_encode(image, format)
             input_path = root / f"input.{format}"
             input_path.write_bytes(encoded)
+            array_pipeline = R.Compose([R.Resize(448, 448), R.Invert()], seed=137).compile()
+            encoded_input_pipeline = R.Compose(
+                [R.Resize(448, 448), R.Invert()], seed=137, input=R.EncodedInput()
+            ).compile()
+            encoded_output_pipeline = R.Compose(
+                [R.Resize(448, 448), R.Invert()],
+                seed=137,
+                output=R.EncodedOutput(format=format),
+            ).compile()
+            encoded_pipeline = R.Compose(
+                [R.Resize(448, 448), R.Invert()],
+                seed=137,
+                input=R.EncodedInput(),
+                output=R.EncodedOutput(format=format),
+            ).compile()
+            path_pipeline = R.Compose(
+                [R.Resize(448, 448), R.Invert()],
+                seed=137,
+                input=R.PathInput(),
+                output=R.PathOutput(format=format),
+            ).compile()
             functions: dict[tuple[str, str], Callable[[], Any]] = {
                 ("decode", "rust"): lambda data=encoded: R.decode_image(data),
                 ("decode", "pillow"): lambda data=encoded: pillow_decode(data),
@@ -113,6 +158,23 @@ def main() -> None:
                     if fmt == "jpeg"
                     else [cv2.IMWRITE_PNG_COMPRESSION, 6],
                 ),
+                ("pipeline-three-call-encoded", "rust"): lambda data=encoded,
+                pipeline=array_pipeline,
+                fmt=format: three_call_encoded(data, pipeline, fmt),
+                ("pipeline-three-call-path", "rust"): lambda source=input_path,
+                pipeline=array_pipeline,
+                fmt=format: three_call_path(source, root / f"three-call.{fmt}", pipeline, fmt),
+                ("pipeline-encoded-return", "rust"): lambda data=encoded,
+                pipeline=encoded_input_pipeline: pipeline(data, key=11),
+                (
+                    "pipeline-array-encoded",
+                    "rust",
+                ): lambda pipeline=encoded_output_pipeline: pipeline(image, key=11),
+                ("pipeline-encoded-encoded", "rust"): lambda data=encoded,
+                pipeline=encoded_pipeline: pipeline(data, key=11),
+                ("pipeline-path-path", "rust"): lambda source=input_path,
+                pipeline=path_pipeline,
+                fmt=format: pipeline(source, destination=root / f"native.{fmt}", key=11),
             }
             for (operation, backend), function in functions.items():
                 rows.append(
@@ -138,7 +200,7 @@ def main() -> None:
         )
     for row in rows:
         print(
-            f"{row['format']:4} {row['operation']:6} {row['backend']:6} {row['median_ms']:.3f} ms"
+            f"{row['format']:4} {row['operation']:31} {row['backend']:6} {row['median_ms']:.3f} ms"
         )
 
 

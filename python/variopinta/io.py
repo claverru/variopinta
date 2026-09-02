@@ -1,6 +1,8 @@
 from __future__ import annotations
 
-from os import PathLike
+from dataclasses import dataclass
+from glob import has_magic
+from os import PathLike, fspath
 from pathlib import Path
 from typing import Literal
 
@@ -16,14 +18,82 @@ ImageMode = Literal["unchanged", "gray", "rgb", "rgba"]
 DEFAULT_MAX_PIXELS = 100_000_000
 
 
+@dataclass(frozen=True, slots=True)
+class ArrayInput:
+    pass
+
+
+@dataclass(frozen=True, slots=True)
+class EncodedInput:
+    max_pixels: int | None = DEFAULT_MAX_PIXELS
+    max_encoded_bytes: int | None = None
+
+    def __post_init__(self) -> None:
+        _validate_limit("max_pixels", self.max_pixels)
+        _validate_limit("max_encoded_bytes", self.max_encoded_bytes)
+
+
+@dataclass(frozen=True, slots=True)
+class PathInput:
+    max_pixels: int | None = DEFAULT_MAX_PIXELS
+    max_encoded_bytes: int | None = None
+
+    def __post_init__(self) -> None:
+        _validate_limit("max_pixels", self.max_pixels)
+        _validate_limit("max_encoded_bytes", self.max_encoded_bytes)
+
+
+@dataclass(frozen=True, slots=True)
+class ReturnOutput:
+    pass
+
+
+@dataclass(frozen=True, slots=True)
+class EncodedOutput:
+    format: ImageFormat
+    quality: int | None = None
+    compression: int | None = None
+
+    def __post_init__(self) -> None:
+        image_format = _normalize_format(self.format)
+        quality, compression = _validate_encode_options(
+            image_format, self.quality, self.compression
+        )
+        object.__setattr__(self, "format", image_format)
+        object.__setattr__(self, "quality", quality)
+        object.__setattr__(self, "compression", compression)
+
+
+@dataclass(frozen=True, slots=True)
+class PathOutput:
+    format: ImageFormat
+    quality: int | None = None
+    compression: int | None = None
+
+    def __post_init__(self) -> None:
+        image_format = _normalize_format(self.format)
+        quality, compression = _validate_encode_options(
+            image_format, self.quality, self.compression
+        )
+        object.__setattr__(self, "format", image_format)
+        object.__setattr__(self, "quality", quality)
+        object.__setattr__(self, "compression", compression)
+
+
 def read_image(
     path: str | PathLike[str],
     *,
     mode: ImageMode = "rgb",
     max_pixels: int | None = DEFAULT_MAX_PIXELS,
+    max_encoded_bytes: int | None = None,
 ) -> np.ndarray:
     """Decode a JPEG or PNG file into an owned NumPy array."""
-    return _read_image(path, mode, _validate_max_pixels(max_pixels))
+    return _read_image(
+        _path(path, "path"),
+        mode,
+        _validate_limit("max_pixels", max_pixels),
+        _validate_limit("max_encoded_bytes", max_encoded_bytes),
+    )
 
 
 def decode_image(
@@ -31,10 +101,15 @@ def decode_image(
     *,
     mode: ImageMode = "rgb",
     max_pixels: int | None = DEFAULT_MAX_PIXELS,
+    max_encoded_bytes: int | None = None,
 ) -> np.ndarray:
     """Decode JPEG or PNG bytes into an owned NumPy array."""
-    encoded = data if isinstance(data, bytes) else memoryview(data).tobytes()
-    return _decode_image(encoded, mode, _validate_max_pixels(max_pixels))
+    return _decode_image(
+        data,
+        mode,
+        _validate_limit("max_pixels", max_pixels),
+        _validate_limit("max_encoded_bytes", max_encoded_bytes),
+    )
 
 
 def encode_image(
@@ -59,6 +134,7 @@ def write_image(
     compression: int | None = None,
 ) -> None:
     """Encode a NumPy array and write it to a JPEG or PNG file."""
+    path = _path(path, "path")
     inferred = _format_from_path(path)
     image_format = inferred if format is None else _normalize_format(format)
     if image_format is None:
@@ -78,6 +154,8 @@ def _prepare_image(image: np.ndarray) -> np.ndarray:
 
 
 def _normalize_format(value: str) -> ImageFormat:
+    if not isinstance(value, str):
+        raise TypeError("format must be a string")
     normalized = value.lower().removeprefix(".")
     if normalized in ("jpg", "jpeg"):
         return "jpeg"
@@ -115,7 +193,21 @@ def _integer_option(name: str, value: int, minimum: int, maximum: int) -> int:
     return value
 
 
-def _validate_max_pixels(value: int | None) -> int | None:
+def _validate_limit(name: str, value: int | None) -> int | None:
     if value is not None and (type(value) is not int or value <= 0):
-        raise ValueError("max_pixels must be a positive integer or None")
+        raise ValueError(f"{name} must be a positive integer or None")
     return value
+
+
+def _path(value: object, name: str) -> Path:
+    if isinstance(value, bytes):
+        raise TypeError(f"{name} must be str or os.PathLike[str]")
+    try:
+        normalized = fspath(value)
+    except TypeError as error:
+        raise TypeError(f"{name} must be str or os.PathLike[str]") from error
+    if not isinstance(normalized, str):
+        raise TypeError(f"{name} must be str or os.PathLike[str]")
+    if "://" in normalized or normalized.startswith("file:") or has_magic(normalized):
+        raise TypeError(f"{name} must be a local path, not a URL or glob")
+    return Path(normalized)
