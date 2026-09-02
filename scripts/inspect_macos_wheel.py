@@ -35,6 +35,16 @@ def linked_libraries(output: str) -> list[str]:
     ]
 
 
+def dylib_identifiers(load_commands: str) -> set[str]:
+    return set(
+        re.findall(
+            r"cmd LC_ID_DYLIB\b.*?\n\s*name\s+(\S+)",
+            load_commands,
+            flags=re.DOTALL,
+        )
+    )
+
+
 def validate_native_metadata(
     file_output: str, lipo_output: str, load_commands: str, libraries_output: str
 ) -> None:
@@ -47,10 +57,12 @@ def validate_native_metadata(
     if targets != {(11, 0)}:
         raise ValueError(f"unexpected macOS deployment target: {sorted(targets)}")
     libraries = linked_libraries(libraries_output)
+    identifiers = dylib_identifiers(load_commands)
     forbidden = [
         library
         for library in libraries
-        if not library.startswith(("/usr/lib/", "/System/Library/"))
+        if library not in identifiers
+        and not library.startswith(("/usr/lib/", "/System/Library/"))
     ]
     if forbidden:
         raise ValueError(f"non-system dynamic libraries: {forbidden}")

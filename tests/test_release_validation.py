@@ -139,9 +139,14 @@ Load command 8
  platform 1
     minos 11.0
       sdk 15.5
+Load command 9
+          cmd LC_ID_DYLIB
+      cmdsize 80
+         name @rpath/variopinta._variopinta.abi3.so (offset 24)
 """
     LIBRARIES = """
 /tmp/_variopinta.abi3.so:
+\t@rpath/variopinta._variopinta.abi3.so (compatibility version 0.0.0, current version 0.0.0)
 \t/usr/lib/libSystem.B.dylib (compatibility version 1.0.0, current version 1345.120.2)
 \t/System/Library/Frameworks/CoreFoundation.framework/Versions/A/CoreFoundation (compatibility version 150.0.0, current version 3500.0.0)
 """
