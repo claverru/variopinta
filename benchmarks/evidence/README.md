@@ -1,14 +1,9 @@
 # Canonical benchmark evidence
 
-This tree stores one raw JSON shard for every case in the benchmark registry.
-The registry defines the expected paths and completeness matrix; no separate
-artifact manifest is maintained.
+Canonical results are stored as one JSON shard per benchmark case. Each shard contains the case definition, source and environment fingerprints, execution metadata, validation results, and raw timings.
 
-Use `just evidence --case CASE_ID` to renew complete cases, `just evidence
---stale` to renew missing or invalidated cases, and `just evidence-full` before
-publishing release performance evidence. Diagnostic selections and all derived
-reports are written below the ignored `benchmarks/.runs/` directory.
+For a transform change, renew only the cases that include that transform with `just evidence --case CASE_ID`. The recorded revision identifies where a result came from; it does not make unrelated results invalid.
 
-Each shard retains the normalized case definition, scoped fingerprints,
-environment metadata, execution order, validation results, and every timing
-observation. Reports and CSV files must be regenerated from these shards.
+`just evidence --stale` renews every result reported as stale, while `just evidence-full` rebuilds the complete evidence set for a release.
+
+Diagnostic runs and derived reports are written to the ignored `benchmarks/.runs/` directory.
