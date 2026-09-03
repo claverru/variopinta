@@ -70,7 +70,7 @@ class ColorTests(unittest.TestCase):
         self.assertEqual(policies["contrast"], "[0.8,1.2]")
         self.assertEqual(policies["saturation"], "[0.5,1.5]")
         self.assertEqual(policies["hue"], "[-0.25,0.3]")
-        self.assertEqual(explanation["steps"][0]["pixel_passes"], 5)
+        self.assertEqual(explanation["steps"][0]["pixel_passes"], 2)
         self.assertEqual(explanation["unit_specializations"], [])
 
     def test_color_jitter_hue_matches_reference_and_rotates_primaries(self) -> None:

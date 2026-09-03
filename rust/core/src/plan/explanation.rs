@@ -32,15 +32,15 @@ impl TransformPlan {
                 ("geometry", "in-place", 1, "none", owned_simd_fallback())
             }
             Self::VerticalFlip { .. } => ("geometry", "in-place", 1, "none", "portable-scalar"),
-            Self::ColorJitter { hue, .. } => (
+            Self::ColorJitter { contrast, hue, .. } => (
                 "color",
                 "in-place",
-                if *hue == [0.0, 0.0] { 2 } else { 5 },
+                if *contrast == [1.0, 1.0] { 1 } else { 2 },
                 "none",
                 if *hue == [0.0, 0.0] {
                     owned_simd_numeric_fallback()
                 } else {
-                    "hue-portable-or-numeric-safety-scalar"
+                    hue_simd_fallback()
                 },
             ),
             Self::Affine { .. } | Self::RandomRotation { .. } => (
@@ -54,29 +54,29 @@ impl TransformPlan {
                 "noise",
                 "in-place",
                 1,
-                "sampled-rng-substream",
-                "portable-scalar",
+                "sampled-rng-substream+workspace-f32-block",
+                owned_simd_fallback(),
             ),
             Self::Sharpen { .. } => (
                 "filter",
                 "out-of-place",
                 1,
                 "workspace-u8",
-                "portable-scalar",
+                owned_simd_fallback(),
             ),
             Self::Perspective { .. } => (
                 "geometry",
                 "out-of-place",
                 1,
                 "sampled-homography+workspace-u8",
-                "portable-scalar",
+                owned_simd_fallback(),
             ),
             Self::GridDistortion { .. } => (
                 "geometry",
                 "out-of-place",
                 1,
-                "sampled-coordinate-maps+workspace-u8",
-                "portable-scalar",
+                "sampled-coordinate-maps+workspace-axis-remap+workspace-u8",
+                owned_simd_fallback(),
             ),
             Self::GaussianBlur { sigma, .. } => (
                 "filter",
@@ -107,7 +107,7 @@ impl TransformPlan {
                 "terminal",
                 1,
                 "owned-chw-output",
-                "portable-scalar",
+                layout_simd_fallback(),
             ),
         };
         let probability = self.probability();
@@ -314,7 +314,7 @@ impl TransformPlan {
             } => vec![
                 policy("mean-uint8", format!("[{},{}]", mean[0], mean[1])),
                 policy("std-uint8", format!("[{},{}]", std[0], std[1])),
-                policy("distribution", "box-muller-normal".into()),
+                policy("distribution", "rand-distr-0.5.1-zignor-normal".into()),
                 policy(
                     "channels",
                     if *per_channel {
@@ -402,5 +402,31 @@ impl TransformPlan {
                 Vec::new()
             }
         }
+    }
+}
+
+fn layout_simd_fallback() -> &'static str {
+    #[cfg(target_arch = "x86_64")]
+    {
+        "runtime-ssse3-or-portable-scalar"
+    }
+    #[cfg(target_arch = "aarch64")]
+    {
+        "neon-or-portable-scalar"
+    }
+    #[cfg(not(any(target_arch = "x86_64", target_arch = "aarch64")))]
+    {
+        "portable-scalar"
+    }
+}
+
+fn hue_simd_fallback() -> &'static str {
+    #[cfg(target_arch = "x86_64")]
+    {
+        "hue-runtime-avx2-or-portable-scalar"
+    }
+    #[cfg(not(target_arch = "x86_64"))]
+    {
+        "hue-portable-scalar"
     }
 }

@@ -22,14 +22,18 @@ pub(crate) fn q14_accumulator_fits(matrix: [[i32; 3]; 3], bias: i32) -> bool {
 
 #[inline]
 fn apply_q14_scalar(data: &mut [u8], matrix: [[i32; 3]; 3], bias: i32) {
-    const ROUND: i32 = 8192;
     for pixel in data.chunks_exact_mut(3) {
-        let [r, g, b] = [pixel[0] as i32, pixel[1] as i32, pixel[2] as i32];
-        for channel in 0..3 {
-            let value =
-                matrix[channel][0] * r + matrix[channel][1] * g + matrix[channel][2] * b + bias;
-            pixel[channel] = ((value + ROUND) >> 14).clamp(0, 255) as u8;
-        }
+        apply_q14_pixel(pixel, matrix, bias);
+    }
+}
+
+#[inline]
+pub(crate) fn apply_q14_pixel(pixel: &mut [u8], matrix: [[i32; 3]; 3], bias: i32) {
+    const ROUND: i32 = 8192;
+    let [r, g, b] = [pixel[0] as i32, pixel[1] as i32, pixel[2] as i32];
+    for channel in 0..3 {
+        let value = matrix[channel][0] * r + matrix[channel][1] * g + matrix[channel][2] * b + bias;
+        pixel[channel] = ((value + ROUND) >> 14).clamp(0, 255) as u8;
     }
 }
 
@@ -147,6 +151,192 @@ unsafe fn apply_q14_avx2(data: &mut [u8], matrix: [[i32; 3]; 3], bias: i32) {
     }
 }
 
+pub(crate) fn adjust_hue(data: &mut [u8], factor: f32) {
+    if factor == 0.0 {
+        return;
+    }
+    #[cfg(target_arch = "x86_64")]
+    if std::arch::is_x86_feature_detected!("avx2") {
+        // SAFETY: runtime detection guards AVX2 and the kernel retains a scalar tail.
+        unsafe { adjust_hue_avx2(data, factor) };
+        return;
+    }
+    for pixel in data.chunks_exact_mut(3) {
+        adjust_hue_pixel(pixel, factor);
+    }
+}
+
+#[inline]
+fn adjust_hue_pixel(pixel: &mut [u8], factor: f32) {
+    let r = f32::from(pixel[0]) / 255.0;
+    let g = f32::from(pixel[1]) / 255.0;
+    let b = f32::from(pixel[2]) / 255.0;
+    let maximum = r.max(g).max(b);
+    let minimum = r.min(g).min(b);
+    let delta = maximum - minimum;
+    let hue = if delta == 0.0 {
+        0.0
+    } else if maximum == r {
+        ((g - b) / delta).rem_euclid(6.0) / 6.0
+    } else if maximum == g {
+        ((b - r) / delta + 2.0) / 6.0
+    } else {
+        ((r - g) / delta + 4.0) / 6.0
+    };
+    let hue = (hue + factor).rem_euclid(1.0);
+    let saturation = if maximum == 0.0 { 0.0 } else { delta / maximum };
+    let sector_value = hue * 6.0;
+    let sector_floor = sector_value.floor();
+    let sector = sector_floor as u8 % 6;
+    let fraction = sector_value - sector_floor;
+    let p = maximum * (1.0 - saturation);
+    let q = maximum * (1.0 - saturation * fraction);
+    let t = maximum * (1.0 - saturation * (1.0 - fraction));
+    let (r, g, b) = match sector {
+        0 => (maximum, t, p),
+        1 => (q, maximum, p),
+        2 => (p, maximum, t),
+        3 => (p, q, maximum),
+        4 => (t, p, maximum),
+        _ => (maximum, p, q),
+    };
+    pixel[0] = (r * 255.0).round().clamp(0.0, 255.0) as u8;
+    pixel[1] = (g * 255.0).round().clamp(0.0, 255.0) as u8;
+    pixel[2] = (b * 255.0).round().clamp(0.0, 255.0) as u8;
+}
+
+#[cfg(target_arch = "x86_64")]
+#[target_feature(enable = "avx2")]
+unsafe fn adjust_hue_avx2(data: &mut [u8], factor_value: f32) {
+    // SAFETY: the caller guarantees AVX2. Loads cover complete 24-byte blocks and the
+    // remaining pixels use the safe scalar helper.
+    unsafe {
+        use std::arch::x86_64::*;
+
+        let masks = [
+            [
+                _mm_setr_epi8(0, 3, 6, 9, 12, 15, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1),
+                _mm_setr_epi8(-1, -1, -1, -1, -1, -1, 2, 5, -1, -1, -1, -1, -1, -1, -1, -1),
+            ],
+            [
+                _mm_setr_epi8(1, 4, 7, 10, 13, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1),
+                _mm_setr_epi8(-1, -1, -1, -1, -1, 0, 3, 6, -1, -1, -1, -1, -1, -1, -1, -1),
+            ],
+            [
+                _mm_setr_epi8(2, 5, 8, 11, 14, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1),
+                _mm_setr_epi8(-1, -1, -1, -1, -1, 1, 4, 7, -1, -1, -1, -1, -1, -1, -1, -1),
+            ],
+        ];
+        let zero = _mm256_setzero_ps();
+        let one = _mm256_set1_ps(1.0);
+        let two = _mm256_set1_ps(2.0);
+        let four = _mm256_set1_ps(4.0);
+        let six = _mm256_set1_ps(6.0);
+        let scale = _mm256_set1_ps(255.0);
+        let factor = _mm256_set1_ps(factor_value);
+        let half = _mm256_set1_ps(0.5);
+        let mut offset = 0usize;
+        while offset + 24 <= data.len() {
+            let pointer = data.as_ptr().add(offset);
+            let a = _mm_loadu_si128(pointer.cast());
+            let b = _mm_loadl_epi64(pointer.add(16).cast());
+            let mut channels = [_mm256_setzero_ps(); 3];
+            for (channel, masks) in masks.iter().enumerate() {
+                let bytes =
+                    _mm_or_si128(_mm_shuffle_epi8(a, masks[0]), _mm_shuffle_epi8(b, masks[1]));
+                channels[channel] =
+                    _mm256_div_ps(_mm256_cvtepi32_ps(_mm256_cvtepu8_epi32(bytes)), scale);
+            }
+            let [r, g, b] = channels;
+            let maximum = _mm256_max_ps(_mm256_max_ps(r, g), b);
+            let minimum = _mm256_min_ps(_mm256_min_ps(r, g), b);
+            let delta = _mm256_sub_ps(maximum, minimum);
+            let r_mask = _mm256_cmp_ps::<_CMP_EQ_OQ>(maximum, r);
+            let g_mask = _mm256_andnot_ps(r_mask, _mm256_cmp_ps::<_CMP_EQ_OQ>(maximum, g));
+            let mut r_hue = _mm256_div_ps(_mm256_sub_ps(g, b), delta);
+            r_hue = _mm256_add_ps(
+                r_hue,
+                _mm256_and_ps(_mm256_cmp_ps::<_CMP_LT_OQ>(r_hue, zero), six),
+            );
+            r_hue = _mm256_div_ps(r_hue, six);
+            let g_hue = _mm256_div_ps(
+                _mm256_add_ps(_mm256_div_ps(_mm256_sub_ps(b, r), delta), two),
+                six,
+            );
+            let b_hue = _mm256_div_ps(
+                _mm256_add_ps(_mm256_div_ps(_mm256_sub_ps(r, g), delta), four),
+                six,
+            );
+            let mut hue = _mm256_blendv_ps(b_hue, g_hue, g_mask);
+            hue = _mm256_blendv_ps(hue, r_hue, r_mask);
+            hue = _mm256_blendv_ps(hue, zero, _mm256_cmp_ps::<_CMP_EQ_OQ>(delta, zero));
+            hue = _mm256_add_ps(hue, factor);
+            hue = _mm256_add_ps(
+                hue,
+                _mm256_and_ps(_mm256_cmp_ps::<_CMP_LT_OQ>(hue, zero), one),
+            );
+            hue = _mm256_sub_ps(
+                hue,
+                _mm256_and_ps(_mm256_cmp_ps::<_CMP_GE_OQ>(hue, one), one),
+            );
+            let saturation = _mm256_blendv_ps(
+                _mm256_div_ps(delta, maximum),
+                zero,
+                _mm256_cmp_ps::<_CMP_EQ_OQ>(maximum, zero),
+            );
+            let sector_value = _mm256_mul_ps(hue, six);
+            let sector_floor = _mm256_floor_ps(sector_value);
+            let sectors = _mm256_cvttps_epi32(sector_floor);
+            let fraction = _mm256_sub_ps(sector_value, sector_floor);
+            let p = _mm256_mul_ps(maximum, _mm256_sub_ps(one, saturation));
+            let q = _mm256_mul_ps(
+                maximum,
+                _mm256_sub_ps(one, _mm256_mul_ps(saturation, fraction)),
+            );
+            let t = _mm256_mul_ps(
+                maximum,
+                _mm256_sub_ps(one, _mm256_mul_ps(saturation, _mm256_sub_ps(one, fraction))),
+            );
+            let sector_mask = |sector: i32| {
+                _mm256_castsi256_ps(_mm256_cmpeq_epi32(sectors, _mm256_set1_epi32(sector)))
+            };
+            let select = |values: [__m256; 6]| {
+                let mut result = values[5];
+                for sector in (0..5).rev() {
+                    result = _mm256_blendv_ps(result, values[sector], sector_mask(sector as i32));
+                }
+                result
+            };
+            let outputs = [
+                select([maximum, q, p, p, t, maximum]),
+                select([t, maximum, maximum, q, p, p]),
+                select([p, p, t, maximum, maximum, q]),
+            ];
+            let mut packed = [[0u8; 8]; 3];
+            for channel in 0..3 {
+                let rounded =
+                    _mm256_floor_ps(_mm256_add_ps(_mm256_mul_ps(outputs[channel], scale), half));
+                let integers = _mm256_cvttps_epi32(rounded);
+                let words = _mm_packus_epi32(
+                    _mm256_castsi256_si128(integers),
+                    _mm256_extracti128_si256(integers, 1),
+                );
+                let bytes = _mm_packus_epi16(words, words);
+                _mm_storel_epi64(packed[channel].as_mut_ptr().cast(), bytes);
+            }
+            for pixel in 0..8 {
+                data[offset + pixel * 3] = packed[0][pixel];
+                data[offset + pixel * 3 + 1] = packed[1][pixel];
+                data[offset + pixel * 3 + 2] = packed[2][pixel];
+            }
+            offset += 24;
+        }
+        for pixel in data[offset..].chunks_exact_mut(3) {
+            adjust_hue_pixel(pixel, factor_value);
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -180,5 +370,27 @@ mod tests {
         assert!(q14_accumulator_fits(matrix(maximum), 0));
         assert!(!q14_accumulator_fits(matrix(maximum + 1), 0));
         assert!(!q14_accumulator_fits([[0; 3]; 3], i32::MAX));
+    }
+
+    #[test]
+    fn hue_dispatch_matches_scalar_at_vector_and_sector_boundaries() {
+        for pixel_count in 0..=65 {
+            let mut source: Vec<_> = (0..pixel_count * 3)
+                .map(|index| ((index * 73 + index / 7 * 19) & 255) as u8)
+                .collect();
+            source.extend_from_slice(&[
+                0, 0, 0, 73, 73, 73, 255, 0, 0, 255, 255, 0, 0, 255, 0, 0, 255, 255, 0, 0, 255,
+                255, 0, 255, 255, 0, 255,
+            ]);
+            for factor in [-0.5, -0.231, -0.0001, 0.0001, 0.137, 0.5] {
+                let mut expected = source.clone();
+                let mut actual = source.clone();
+                for pixel in expected.chunks_exact_mut(3) {
+                    adjust_hue_pixel(pixel, factor);
+                }
+                adjust_hue(&mut actual, factor);
+                assert_eq!(actual, expected, "pixels={pixel_count} factor={factor}");
+            }
+        }
     }
 }

@@ -1,4 +1,4 @@
-use crate::kernels::{affine, blur, color};
+use crate::kernels::{affine, blur, color, noise, pad, remap, sharpen};
 use crate::plan::{
     AffineSample, ColorJitterSample, CropSample, GaussianNoiseSample, GridDistortionSample,
     PerspectiveSample, SharpenSample,
@@ -7,7 +7,8 @@ use crate::{BorderMode, CoreError, CoreResult, Interpolation};
 use fast_image_resize as fir;
 use fir::images::{Image as FirImage, ImageRef as FirImageRef};
 use rand::rngs::SmallRng;
-use rand::{Rng, SeedableRng};
+use rand::SeedableRng;
+use rand_distr::{Distribution, StandardNormal};
 
 pub(crate) const MAX_AFFINE_DIMENSION: usize = 1 << 24;
 
@@ -66,30 +67,27 @@ pub(crate) fn pad_raw(
     }
     output.resize(output_len, 0);
     match sample.border_mode {
-        BorderMode::Constant => {
-            for pixel in output.chunks_exact_mut(3) {
-                pixel.copy_from_slice(&sample.fill);
-            }
-            let row_bytes = input_width * 3;
-            for y in 0..input_height {
-                let source = y * row_bytes;
-                let destination = ((sample.top + y) * sample.width + sample.left) * 3;
-                output[destination..destination + row_bytes]
-                    .copy_from_slice(&input[source..source + row_bytes]);
-            }
-        }
-        BorderMode::Reflect101 => {
-            for y in 0..sample.height {
-                let source_y = reflect101_index(y as isize - sample.top as isize, input_height);
-                for x in 0..sample.width {
-                    let source_x = reflect101_index(x as isize - sample.left as isize, input_width);
-                    let source = (source_y * input_width + source_x) * 3;
-                    let destination = (y * sample.width + x) * 3;
-                    output[destination..destination + 3]
-                        .copy_from_slice(&input[source..source + 3]);
-                }
-            }
-        }
+        BorderMode::Constant => pad::constant(
+            input,
+            input_height,
+            input_width,
+            sample.top,
+            sample.left,
+            sample.height,
+            sample.width,
+            sample.fill,
+            &mut output,
+        ),
+        BorderMode::Reflect101 => pad::reflect101(
+            input,
+            input_height,
+            input_width,
+            sample.top,
+            sample.left,
+            sample.height,
+            sample.width,
+            &mut output,
+        )?,
     }
     Ok(ImageU8 {
         data: output,
@@ -179,19 +177,23 @@ pub(crate) fn color_jitter(image: &mut ImageU8, sample: &ColorJitterSample) {
     let cf = sample.contrast;
     let sf = sample.saturation;
 
-    let pixels = image.height * image.width;
     let mut sums = [0u64; 3];
-    for px in image.data.chunks_exact(3) {
-        sums[0] += px[0] as u64;
-        sums[1] += px[1] as u64;
-        sums[2] += px[2] as u64;
-    }
-    let source_mean = sums.map(|sum| sum as f32 / pixels as f32);
+    let source_mean = if cf == 1.0 {
+        [0.0; 3]
+    } else {
+        for pixel in image.data.chunks_exact(3) {
+            sums[0] += u64::from(pixel[0]);
+            sums[1] += u64::from(pixel[1]);
+            sums[2] += u64::from(pixel[2]);
+        }
+        let pixels = (image.height * image.width) as f32;
+        sums.map(|sum| sum as f32 / pixels)
+    };
     let mut matrix = [[1.0f32, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]];
     let mut offset = [0.0f32; 3];
     for operation in sample.order {
         match operation {
-            0 => {
+            0 if bf != 1.0 => {
                 for row in 0..3 {
                     for value in &mut matrix[row] {
                         *value *= bf;
@@ -199,7 +201,7 @@ pub(crate) fn color_jitter(image: &mut ImageU8, sample: &ColorJitterSample) {
                     offset[row] *= bf;
                 }
             }
-            1 => {
+            1 if cf != 1.0 => {
                 let current_mean = matrix.map(|row| {
                     row[0] * source_mean[0] + row[1] * source_mean[1] + row[2] * source_mean[2]
                 });
@@ -213,7 +215,7 @@ pub(crate) fn color_jitter(image: &mut ImageU8, sample: &ColorJitterSample) {
                     offset[row] = offset[row] * cf + luminance * (1.0 - cf);
                 }
             }
-            2 => {
+            2 if sf != 1.0 => {
                 let gray = [0.299 * (1.0 - sf), 0.587 * (1.0 - sf), 0.114 * (1.0 - sf)];
                 let saturation_matrix = [
                     [sf + gray[0], gray[1], gray[2]],
@@ -233,13 +235,14 @@ pub(crate) fn color_jitter(image: &mut ImageU8, sample: &ColorJitterSample) {
                         + saturation_matrix[row][2] * old_offset[2];
                 }
             }
-            3 => {}
+            0..=3 => {}
             _ => unreachable!(),
         }
     }
 
     if !try_apply_color_matrix_q14(image, matrix, offset[0]) {
-        let source_mean_f64 = sums.map(|sum| sum as f64 / pixels as f64);
+        let pixels = (image.height * image.width) as f64;
+        let source_mean_f64 = sums.map(|sum| sum as f64 / pixels);
         let (safe_matrix, safe_offset) = compose_color_matrix_f64(sample, source_mean_f64);
         apply_color_matrix_f64(&mut image.data, safe_matrix, safe_offset[0]);
     }
@@ -256,7 +259,7 @@ fn compose_color_matrix_f64(
     let mut offset = [0.0_f64; 3];
     for operation in sample.order {
         match operation {
-            0 => {
+            0 if bf != 1.0 => {
                 for row in 0..3 {
                     for value in &mut matrix[row] {
                         *value *= bf;
@@ -264,7 +267,7 @@ fn compose_color_matrix_f64(
                     offset[row] *= bf;
                 }
             }
-            1 => {
+            1 if cf != 1.0 => {
                 let current_mean = matrix.map(|row| {
                     row[0] * source_mean[0] + row[1] * source_mean[1] + row[2] * source_mean[2]
                 });
@@ -278,7 +281,7 @@ fn compose_color_matrix_f64(
                     offset[row] = offset[row] * cf + luminance * (1.0 - cf);
                 }
             }
-            2 => {
+            2 if sf != 1.0 => {
                 let gray = [0.299 * (1.0 - sf), 0.587 * (1.0 - sf), 0.114 * (1.0 - sf)];
                 let saturation_matrix = [
                     [sf + gray[0], gray[1], gray[2]],
@@ -298,7 +301,7 @@ fn compose_color_matrix_f64(
                         + saturation_matrix[row][2] * old_offset[2];
                 }
             }
-            3 => {}
+            0..=3 => {}
             _ => unreachable!(),
         }
     }
@@ -306,82 +309,168 @@ fn compose_color_matrix_f64(
 }
 
 pub(crate) fn color_jitter_staged(image: &mut ImageU8, sample: &ColorJitterSample) {
-    let bf = sample.brightness;
-    let cf = sample.contrast;
-    let sf = sample.saturation;
-
-    for operation in sample.order {
-        match operation {
-            0 => apply_color_matrix(image, [[bf, 0.0, 0.0], [0.0, bf, 0.0], [0.0, 0.0, bf]], 0.0),
-            1 => {
-                let mut sums = [0u64; 3];
-                for pixel in image.data.chunks_exact(3) {
-                    sums[0] += pixel[0] as u64;
-                    sums[1] += pixel[1] as u64;
-                    sums[2] += pixel[2] as u64;
-                }
-                let pixels = (image.height * image.width) as f32;
-                let luminance = 0.299 * sums[0] as f32 / pixels
-                    + 0.587 * sums[1] as f32 / pixels
-                    + 0.114 * sums[2] as f32 / pixels;
-                let matrix = [[cf, 0.0, 0.0], [0.0, cf, 0.0], [0.0, 0.0, cf]];
-                let safe_factor = f64::from(cf);
-                let safe_pixels = (image.height * image.width) as f64;
-                let safe_luminance =
-                    (0.299 * sums[0] as f64 + 0.587 * sums[1] as f64 + 0.114 * sums[2] as f64)
-                        / safe_pixels;
-                apply_color_matrix_with_safe(
-                    image,
-                    matrix,
-                    luminance * (1.0 - cf),
-                    matrix.map(|row| row.map(f64::from)),
-                    safe_luminance * (1.0 - safe_factor),
-                );
-            }
-            2 => {
-                let gray = [0.299 * (1.0 - sf), 0.587 * (1.0 - sf), 0.114 * (1.0 - sf)];
-                apply_color_matrix(
-                    image,
-                    [
-                        [sf + gray[0], gray[1], gray[2]],
-                        [gray[0], sf + gray[1], gray[2]],
-                        [gray[0], gray[1], sf + gray[2]],
-                    ],
-                    0.0,
-                );
-            }
-            3 => adjust_hue(image, sample.hue),
+    let active: Vec<_> = sample
+        .order
+        .into_iter()
+        .filter(|operation| match operation {
+            0 => sample.brightness != 1.0,
+            1 => sample.contrast != 1.0,
+            2 => sample.saturation != 1.0,
+            3 => sample.hue != 0.0,
             _ => unreachable!(),
+        })
+        .collect();
+    let Some(contrast) = active.iter().position(|&operation| operation == 1) else {
+        let stages: Vec<_> = active
+            .into_iter()
+            .map(|operation| color_stage(operation, sample, None))
+            .collect();
+        apply_color_stages(&mut image.data, &stages, None);
+        return;
+    };
+
+    let prefix: Vec<_> = active[..contrast]
+        .iter()
+        .map(|&operation| color_stage(operation, sample, None))
+        .collect();
+    let mut sums = [0u64; 3];
+    apply_color_stages(&mut image.data, &prefix, Some(&mut sums));
+    let pixels_f32 = (image.height * image.width) as f32;
+    let luminance = 0.299 * sums[0] as f32 / pixels_f32
+        + 0.587 * sums[1] as f32 / pixels_f32
+        + 0.114 * sums[2] as f32 / pixels_f32;
+    let pixels_f64 = (image.height * image.width) as f64;
+    let safe_luminance =
+        (0.299 * sums[0] as f64 + 0.587 * sums[1] as f64 + 0.114 * sums[2] as f64) / pixels_f64;
+    let mut suffix = Vec::with_capacity(active.len() - contrast);
+    suffix.push(color_stage(1, sample, Some((luminance, safe_luminance))));
+    suffix.extend(
+        active[contrast + 1..]
+            .iter()
+            .map(|&operation| color_stage(operation, sample, None)),
+    );
+    apply_color_stages(&mut image.data, &suffix, None);
+}
+
+#[derive(Clone, Copy)]
+enum ColorStage {
+    Q14 { matrix: [[i32; 3]; 3], bias: i32 },
+    Wide { matrix: [[f64; 3]; 3], bias: f64 },
+    Hue(f32),
+}
+
+fn color_stage(
+    operation: u8,
+    sample: &ColorJitterSample,
+    contrast_luminance: Option<(f32, f64)>,
+) -> ColorStage {
+    if operation == 3 {
+        return ColorStage::Hue(sample.hue);
+    }
+    let (matrix, bias, safe_matrix, safe_bias) = match operation {
+        0 => {
+            let factor = sample.brightness;
+            let matrix = [[factor, 0.0, 0.0], [0.0, factor, 0.0], [0.0, 0.0, factor]];
+            (matrix, 0.0, matrix.map(|row| row.map(f64::from)), 0.0)
+        }
+        1 => {
+            let factor = sample.contrast;
+            let matrix = [[factor, 0.0, 0.0], [0.0, factor, 0.0], [0.0, 0.0, factor]];
+            let (luminance, safe_luminance) = contrast_luminance.unwrap();
+            (
+                matrix,
+                luminance * (1.0 - factor),
+                matrix.map(|row| row.map(f64::from)),
+                safe_luminance * (1.0 - f64::from(factor)),
+            )
+        }
+        2 => {
+            let factor = sample.saturation;
+            let gray = [
+                0.299 * (1.0 - factor),
+                0.587 * (1.0 - factor),
+                0.114 * (1.0 - factor),
+            ];
+            let matrix = [
+                [factor + gray[0], gray[1], gray[2]],
+                [gray[0], factor + gray[1], gray[2]],
+                [gray[0], gray[1], factor + gray[2]],
+            ];
+            (matrix, 0.0, matrix.map(|row| row.map(f64::from)), 0.0)
+        }
+        _ => unreachable!(),
+    };
+    quantize_safe_q14(matrix, bias).map_or(
+        ColorStage::Wide {
+            matrix: safe_matrix,
+            bias: safe_bias,
+        },
+        |(matrix, bias)| ColorStage::Q14 { matrix, bias },
+    )
+}
+
+fn apply_color_stages(data: &mut [u8], stages: &[ColorStage], mut sums: Option<&mut [u64; 3]>) {
+    if sums.is_none() {
+        if let [ColorStage::Hue(factor)] = stages {
+            color::adjust_hue(data, *factor);
+            return;
+        }
+    }
+    for pixel in data.chunks_exact_mut(3) {
+        for &stage in stages {
+            match stage {
+                ColorStage::Q14 { matrix, bias } => color::apply_q14_pixel(pixel, matrix, bias),
+                ColorStage::Wide { matrix, bias } => {
+                    apply_color_matrix_pixel_f64(pixel, matrix, bias)
+                }
+                ColorStage::Hue(factor) => adjust_hue_pixel(pixel, factor),
+            }
+        }
+        if let Some(sums) = sums.as_deref_mut() {
+            sums[0] += u64::from(pixel[0]);
+            sums[1] += u64::from(pixel[1]);
+            sums[2] += u64::from(pixel[2]);
         }
     }
 }
 
-pub(crate) fn gaussian_noise(image: &mut ImageU8, sample: GaussianNoiseSample) {
+pub(crate) fn gaussian_noise(
+    image: &mut ImageU8,
+    sample: GaussianNoiseSample,
+    block: &mut Vec<f32>,
+) -> CoreResult<()> {
+    const BLOCK: usize = 1024;
     let mut rng = SmallRng::seed_from_u64(sample.seed);
-    for pixel in image.data.chunks_exact_mut(3) {
-        if sample.per_channel {
-            for channel in pixel {
-                *channel = noisy_value(*channel, sample.mean, sample.std, &mut rng);
+    if block.capacity() < BLOCK {
+        block
+            .try_reserve_exact(BLOCK - block.len())
+            .map_err(|_| CoreError::Runtime("noise workspace allocation failed".into()))?;
+    }
+    block.resize(BLOCK, 0.0);
+    if sample.per_channel {
+        for channels in image.data.chunks_mut(BLOCK) {
+            let normals = &mut block[..channels.len()];
+            for value in normals.iter_mut() {
+                *value = StandardNormal.sample(&mut rng);
             }
-        } else {
-            let noise = normal_sample(&mut rng) * sample.std + sample.mean;
-            for channel in pixel {
-                *channel = (f32::from(*channel) + noise).round().clamp(0.0, 255.0) as u8;
+            noise::apply_independent(channels, normals, sample.mean, sample.std);
+        }
+    } else {
+        for pixels in image.data.chunks_mut(BLOCK * 3) {
+            let pixel_count = pixels.len() / 3;
+            let normals = &mut block[..pixel_count];
+            for value in normals.iter_mut() {
+                *value = StandardNormal.sample(&mut rng);
+            }
+            for (pixel, &normal) in pixels.chunks_exact_mut(3).zip(normals.iter()) {
+                let noise = normal * sample.std + sample.mean;
+                for channel in pixel {
+                    *channel = (f32::from(*channel) + noise).round().clamp(0.0, 255.0) as u8;
+                }
             }
         }
     }
-}
-
-fn noisy_value(value: u8, mean: f32, std: f32, rng: &mut SmallRng) -> u8 {
-    (f32::from(value) + mean + normal_sample(rng) * std)
-        .round()
-        .clamp(0.0, 255.0) as u8
-}
-
-fn normal_sample(rng: &mut SmallRng) -> f32 {
-    let u1 = 1.0 - rng.random::<f32>();
-    let u2 = rng.random::<f32>();
-    (-2.0 * u1.ln()).sqrt() * (std::f32::consts::TAU * u2).cos()
+    Ok(())
 }
 
 pub(crate) fn sharpen_raw(
@@ -397,62 +486,7 @@ pub(crate) fn sharpen_raw(
             "sharpen requires matching RGB buffers".into(),
         ));
     }
-    for y in 0..height {
-        for x in 0..width {
-            for channel in 0..3 {
-                let center = f32::from(data[(y * width + x) * 3 + channel]);
-                let neighbors = [
-                    border_sample(
-                        data,
-                        height,
-                        width,
-                        x as isize,
-                        y as isize - 1,
-                        channel,
-                        BorderMode::Reflect101,
-                        [0; 3],
-                    ),
-                    border_sample(
-                        data,
-                        height,
-                        width,
-                        x as isize,
-                        y as isize + 1,
-                        channel,
-                        BorderMode::Reflect101,
-                        [0; 3],
-                    ),
-                    border_sample(
-                        data,
-                        height,
-                        width,
-                        x as isize - 1,
-                        y as isize,
-                        channel,
-                        BorderMode::Reflect101,
-                        [0; 3],
-                    ),
-                    border_sample(
-                        data,
-                        height,
-                        width,
-                        x as isize + 1,
-                        y as isize,
-                        channel,
-                        BorderMode::Reflect101,
-                        [0; 3],
-                    ),
-                ];
-                let sharpened = center * (1.0 + 4.0 * sample.lightness)
-                    - neighbors.iter().map(|value| f32::from(*value)).sum::<f32>()
-                        * sample.lightness;
-                output[(y * width + x) * 3 + channel] =
-                    (center + sample.alpha * (sharpened - center))
-                        .round()
-                        .clamp(0.0, 255.0) as u8;
-            }
-        }
-    }
+    sharpen::apply(data, height, width, sample, &mut output);
     Ok(ImageU8 {
         data: output,
         height,
@@ -467,28 +501,28 @@ pub(crate) fn perspective_raw(
     sample: PerspectiveSample,
     output: Vec<u8>,
 ) -> CoreResult<ImageU8> {
-    remap_raw(
+    let expected = rgb_len(height, width)?;
+    if data.len() != expected || output.len() != expected {
+        return Err(CoreError::Runtime(
+            "remapping requires matching RGB buffers".into(),
+        ));
+    }
+    let mut output = output;
+    remap::perspective(
         data,
         height,
         width,
+        sample.inverse,
         sample.interpolation,
         sample.border_mode,
         sample.fill,
-        output,
-        |y, x| {
-            let x = x as f32;
-            let y = y as f32;
-            let denominator = sample.inverse[6] * x + sample.inverse[7] * y + sample.inverse[8];
-            if !denominator.is_finite() || denominator.abs() < 1e-8 {
-                return None;
-            }
-            let source_x =
-                (sample.inverse[0] * x + sample.inverse[1] * y + sample.inverse[2]) / denominator;
-            let source_y =
-                (sample.inverse[3] * x + sample.inverse[4] * y + sample.inverse[5]) / denominator;
-            (source_x.is_finite() && source_y.is_finite()).then_some((source_y, source_x))
-        },
-    )
+        &mut output,
+    );
+    Ok(ImageU8 {
+        data: output,
+        height,
+        width,
+    })
 }
 
 pub(crate) fn grid_distortion_raw(
@@ -497,24 +531,40 @@ pub(crate) fn grid_distortion_raw(
     width: usize,
     sample: &GridDistortionSample,
     output: Vec<u8>,
+    scratch: &mut remap::AxisRemapScratch,
 ) -> CoreResult<ImageU8> {
     if sample.x_map.len() != width || sample.y_map.len() != height {
         return Err(CoreError::Runtime(
             "grid maps must match the image dimensions".into(),
         ));
     }
-    remap_raw(
+    let expected = rgb_len(height, width)?;
+    if data.len() != expected || output.len() != expected {
+        return Err(CoreError::Runtime(
+            "remapping requires matching RGB buffers".into(),
+        ));
+    }
+    let mut output = output;
+    remap::grid(
         data,
         height,
         width,
+        &sample.x_map,
+        &sample.y_map,
         sample.interpolation,
         sample.border_mode,
         sample.fill,
-        output,
-        |y, x| Some((sample.y_map[y], sample.x_map[x])),
-    )
+        &mut output,
+        scratch,
+    )?;
+    Ok(ImageU8 {
+        data: output,
+        height,
+        width,
+    })
 }
 
+#[cfg(test)]
 #[allow(clippy::too_many_arguments)]
 fn remap_raw(
     data: &[u8],
@@ -620,49 +670,55 @@ fn remap_raw(
     })
 }
 
+#[cfg(test)]
 pub(crate) fn adjust_hue(image: &mut ImageU8, factor: f32) {
     if factor == 0.0 {
         return;
     }
     for pixel in image.data.chunks_exact_mut(3) {
-        let r = f32::from(pixel[0]) / 255.0;
-        let g = f32::from(pixel[1]) / 255.0;
-        let b = f32::from(pixel[2]) / 255.0;
-        let maximum = r.max(g).max(b);
-        let minimum = r.min(g).min(b);
-        let delta = maximum - minimum;
-        let hue = if delta == 0.0 {
-            0.0
-        } else if maximum == r {
-            ((g - b) / delta).rem_euclid(6.0) / 6.0
-        } else if maximum == g {
-            ((b - r) / delta + 2.0) / 6.0
-        } else {
-            ((r - g) / delta + 4.0) / 6.0
-        };
-        let hue = (hue + factor).rem_euclid(1.0);
-        let saturation = if maximum == 0.0 { 0.0 } else { delta / maximum };
-        let sector_value = hue * 6.0;
-        let sector_floor = sector_value.floor();
-        let sector = sector_floor as u8 % 6;
-        let fraction = sector_value - sector_floor;
-        let p = maximum * (1.0 - saturation);
-        let q = maximum * (1.0 - saturation * fraction);
-        let t = maximum * (1.0 - saturation * (1.0 - fraction));
-        let (r, g, b) = match sector {
-            0 => (maximum, t, p),
-            1 => (q, maximum, p),
-            2 => (p, maximum, t),
-            3 => (p, q, maximum),
-            4 => (t, p, maximum),
-            _ => (maximum, p, q),
-        };
-        pixel[0] = (r * 255.0).round().clamp(0.0, 255.0) as u8;
-        pixel[1] = (g * 255.0).round().clamp(0.0, 255.0) as u8;
-        pixel[2] = (b * 255.0).round().clamp(0.0, 255.0) as u8;
+        adjust_hue_pixel(pixel, factor);
     }
 }
 
+fn adjust_hue_pixel(pixel: &mut [u8], factor: f32) {
+    let r = f32::from(pixel[0]) / 255.0;
+    let g = f32::from(pixel[1]) / 255.0;
+    let b = f32::from(pixel[2]) / 255.0;
+    let maximum = r.max(g).max(b);
+    let minimum = r.min(g).min(b);
+    let delta = maximum - minimum;
+    let hue = if delta == 0.0 {
+        0.0
+    } else if maximum == r {
+        ((g - b) / delta).rem_euclid(6.0) / 6.0
+    } else if maximum == g {
+        ((b - r) / delta + 2.0) / 6.0
+    } else {
+        ((r - g) / delta + 4.0) / 6.0
+    };
+    let hue = (hue + factor).rem_euclid(1.0);
+    let saturation = if maximum == 0.0 { 0.0 } else { delta / maximum };
+    let sector_value = hue * 6.0;
+    let sector_floor = sector_value.floor();
+    let sector = sector_floor as u8 % 6;
+    let fraction = sector_value - sector_floor;
+    let p = maximum * (1.0 - saturation);
+    let q = maximum * (1.0 - saturation * fraction);
+    let t = maximum * (1.0 - saturation * (1.0 - fraction));
+    let (r, g, b) = match sector {
+        0 => (maximum, t, p),
+        1 => (q, maximum, p),
+        2 => (p, maximum, t),
+        3 => (p, q, maximum),
+        4 => (t, p, maximum),
+        _ => (maximum, p, q),
+    };
+    pixel[0] = (r * 255.0).round().clamp(0.0, 255.0) as u8;
+    pixel[1] = (g * 255.0).round().clamp(0.0, 255.0) as u8;
+    pixel[2] = (b * 255.0).round().clamp(0.0, 255.0) as u8;
+}
+
+#[cfg(test)]
 pub(crate) fn apply_color_matrix(image: &mut ImageU8, matrix: [[f32; 3]; 3], bias: f32) {
     apply_color_matrix_with_safe(
         image,
@@ -673,6 +729,7 @@ pub(crate) fn apply_color_matrix(image: &mut ImageU8, matrix: [[f32; 3]; 3], bia
     );
 }
 
+#[cfg(test)]
 fn apply_color_matrix_with_safe(
     image: &mut ImageU8,
     matrix: [[f32; 3]; 3],
@@ -714,18 +771,22 @@ fn quantize_safe_q14(matrix: [[f32; 3]; 3], bias: f32) -> Option<([[i32; 3]; 3],
 
 fn apply_color_matrix_f64(data: &mut [u8], matrix: [[f64; 3]; 3], bias: f64) {
     for pixel in data.chunks_exact_mut(3) {
-        let source = [
-            f64::from(pixel[0]),
-            f64::from(pixel[1]),
-            f64::from(pixel[2]),
-        ];
-        for channel in 0..3 {
-            let value = matrix[channel][0] * source[0]
-                + matrix[channel][1] * source[1]
-                + matrix[channel][2] * source[2]
-                + bias;
-            pixel[channel] = value.round().clamp(0.0, 255.0) as u8;
-        }
+        apply_color_matrix_pixel_f64(pixel, matrix, bias);
+    }
+}
+
+fn apply_color_matrix_pixel_f64(pixel: &mut [u8], matrix: [[f64; 3]; 3], bias: f64) {
+    let source = [
+        f64::from(pixel[0]),
+        f64::from(pixel[1]),
+        f64::from(pixel[2]),
+    ];
+    for channel in 0..3 {
+        let value = matrix[channel][0] * source[0]
+            + matrix[channel][1] * source[1]
+            + matrix[channel][2] * source[2]
+            + bias;
+        pixel[channel] = value.round().clamp(0.0, 255.0) as u8;
     }
 }
 
@@ -818,23 +879,34 @@ pub(crate) fn rotate_nearest(
     matrix: [f32; 6],
     output: &mut [u8],
 ) {
-    for y in 0..height {
-        let (sx0, sy0, dsx, dsy) = source_coordinates(y, matrix);
-        for x in 0..width {
-            let sx = (sx0 + dsx * x as f64).round() as isize;
-            let sy = (sy0 + dsy * x as f64).round() as isize;
-            let destination = (y * width + x) * 3;
-            for channel in 0..3 {
-                output[destination + channel] = border_sample(
-                    data,
-                    height,
-                    width,
-                    sx,
-                    sy,
-                    channel,
-                    sample.border_mode,
-                    sample.fill,
-                );
+    match sample.border_mode {
+        BorderMode::Constant => {
+            for y in 0..height {
+                let (sx0, sy0, dsx, dsy) = source_coordinates(y, matrix);
+                for x in 0..width {
+                    let sx = (sx0 + dsx * x as f64).round() as isize;
+                    let sy = (sy0 + dsy * x as f64).round() as isize;
+                    let destination = (y * width + x) * 3;
+                    if sx < 0 || sy < 0 || sx >= width as isize || sy >= height as isize {
+                        output[destination..destination + 3].copy_from_slice(&sample.fill);
+                    } else {
+                        let source = (sy as usize * width + sx as usize) * 3;
+                        output[destination..destination + 3]
+                            .copy_from_slice(&data[source..source + 3]);
+                    }
+                }
+            }
+        }
+        BorderMode::Reflect101 => {
+            for y in 0..height {
+                let (sx0, sy0, dsx, dsy) = source_coordinates(y, matrix);
+                for x in 0..width {
+                    let sx = reflect101_index((sx0 + dsx * x as f64).round() as isize, width);
+                    let sy = reflect101_index((sy0 + dsy * x as f64).round() as isize, height);
+                    let source = (sy * width + sx) * 3;
+                    let destination = (y * width + x) * 3;
+                    output[destination..destination + 3].copy_from_slice(&data[source..source + 3]);
+                }
             }
         }
     }
@@ -851,7 +923,7 @@ pub(crate) fn rotate_bilinear_border(
 ) {
     for y in 0..height {
         let (sx0, sy0, dsx, dsy) = source_coordinates(y, matrix);
-        let mut render = |x: usize| {
+        let mut render = |x: usize, inlier: bool| {
             let sx = sx0 + dsx * x as f64;
             let sy = sy0 + dsy * x as f64;
             let x0 = sx.floor() as isize;
@@ -859,6 +931,45 @@ pub(crate) fn rotate_bilinear_border(
             let wx = ((sx - sx.floor()) * 256.0) as u32;
             let wy = ((sy - sy.floor()) * 256.0) as u32;
             let destination = (y * width + x) * 3;
+            if inlier {
+                let x0 = x0 as usize;
+                let y0 = y0 as usize;
+                let offsets = [
+                    (y0 * width + x0) * 3,
+                    (y0 * width + x0 + 1) * 3,
+                    ((y0 + 1) * width + x0) * 3,
+                    ((y0 + 1) * width + x0 + 1) * 3,
+                ];
+                affine::bilinear_rgb(
+                    data,
+                    offsets,
+                    wx,
+                    wy,
+                    &mut output[destination..destination + 3],
+                );
+                return;
+            }
+            if sample.border_mode == BorderMode::Reflect101 {
+                let x0 = reflect101_index(x0, width);
+                let x1 = reflect101_index((sx.floor() as isize).saturating_add(1), width);
+                let y0 = reflect101_index(y0, height);
+                let y1 = reflect101_index((sy.floor() as isize).saturating_add(1), height);
+                let offsets = [
+                    (y0 * width + x0) * 3,
+                    (y0 * width + x1) * 3,
+                    (y1 * width + x0) * 3,
+                    (y1 * width + x1) * 3,
+                ];
+                for channel in 0..3 {
+                    let top = u32::from(data[offsets[0] + channel]) * (256 - wx)
+                        + u32::from(data[offsets[1] + channel]) * wx;
+                    let bottom = u32::from(data[offsets[2] + channel]) * (256 - wx)
+                        + u32::from(data[offsets[3] + channel]) * wx;
+                    output[destination + channel] =
+                        ((top * (256 - wy) + bottom * wy + 32768) >> 16) as u8;
+                }
+                return;
+            }
             for channel in 0..3 {
                 let top = u32::from(border_sample(
                     data,
@@ -904,33 +1015,39 @@ pub(crate) fn rotate_bilinear_border(
                     ((top * (256 - wy) + bottom * wy + 32768) >> 16) as u8;
             }
         };
+        let (mut start, mut end) = (0, width as i64);
+        affine::valid_span(
+            &mut start,
+            &mut end,
+            sx0,
+            dsx,
+            width.saturating_sub(1) as f64,
+            width,
+        );
+        affine::valid_span(
+            &mut start,
+            &mut end,
+            sy0,
+            dsy,
+            height.saturating_sub(1) as f64,
+            width,
+        );
         if border_only {
-            let (mut start, mut end) = (0, width as i64);
-            affine::valid_span(
-                &mut start,
-                &mut end,
-                sx0,
-                dsx,
-                width.saturating_sub(1) as f64,
-                width,
-            );
-            affine::valid_span(
-                &mut start,
-                &mut end,
-                sy0,
-                dsy,
-                height.saturating_sub(1) as f64,
-                width,
-            );
             for x in 0..start as usize {
-                render(x);
+                render(x, false);
             }
             for x in end as usize..width {
-                render(x);
+                render(x, false);
             }
         } else {
-            for x in 0..width {
-                render(x);
+            for x in 0..start as usize {
+                render(x, false);
+            }
+            for x in start as usize..end as usize {
+                render(x, true);
+            }
+            for x in end as usize..width {
+                render(x, false);
             }
         }
     }
@@ -1136,6 +1253,96 @@ mod tests {
             interpolation,
             border_mode,
             fill: [3, 5, 7],
+        }
+    }
+
+    fn pad_oracle(
+        input: &[u8],
+        input_height: usize,
+        input_width: usize,
+        sample: crate::plan::PadSample,
+    ) -> Vec<u8> {
+        let mut output = vec![0xa5; sample.height * sample.width * 3];
+        for y in 0..sample.height {
+            for x in 0..sample.width {
+                let destination = (y * sample.width + x) * 3;
+                let source_x = x as isize - sample.left as isize;
+                let source_y = y as isize - sample.top as isize;
+                if sample.border_mode == BorderMode::Constant
+                    && (source_x < 0
+                        || source_y < 0
+                        || source_x >= input_width as isize
+                        || source_y >= input_height as isize)
+                {
+                    output[destination..destination + 3].copy_from_slice(&sample.fill);
+                } else {
+                    let source_x = reflect101_index(source_x, input_width);
+                    let source_y = reflect101_index(source_y, input_height);
+                    let source = (source_y * input_width + source_x) * 3;
+                    output[destination..destination + 3]
+                        .copy_from_slice(&input[source..source + 3]);
+                }
+            }
+        }
+        output
+    }
+
+    fn color_jitter_staged_oracle(image: &mut ImageU8, sample: &ColorJitterSample) {
+        for operation in sample.order {
+            match operation {
+                0 => {
+                    let factor = sample.brightness;
+                    apply_color_matrix(
+                        image,
+                        [[factor, 0.0, 0.0], [0.0, factor, 0.0], [0.0, 0.0, factor]],
+                        0.0,
+                    );
+                }
+                1 => {
+                    let mut sums = [0u64; 3];
+                    for pixel in image.data.chunks_exact(3) {
+                        sums[0] += u64::from(pixel[0]);
+                        sums[1] += u64::from(pixel[1]);
+                        sums[2] += u64::from(pixel[2]);
+                    }
+                    let pixels = (image.height * image.width) as f32;
+                    let luminance = 0.299 * sums[0] as f32 / pixels
+                        + 0.587 * sums[1] as f32 / pixels
+                        + 0.114 * sums[2] as f32 / pixels;
+                    let factor = sample.contrast;
+                    let matrix = [[factor, 0.0, 0.0], [0.0, factor, 0.0], [0.0, 0.0, factor]];
+                    let safe_pixels = (image.height * image.width) as f64;
+                    let safe_luminance =
+                        (0.299 * sums[0] as f64 + 0.587 * sums[1] as f64 + 0.114 * sums[2] as f64)
+                            / safe_pixels;
+                    apply_color_matrix_with_safe(
+                        image,
+                        matrix,
+                        luminance * (1.0 - factor),
+                        matrix.map(|row| row.map(f64::from)),
+                        safe_luminance * (1.0 - f64::from(factor)),
+                    );
+                }
+                2 => {
+                    let factor = sample.saturation;
+                    let gray = [
+                        0.299 * (1.0 - factor),
+                        0.587 * (1.0 - factor),
+                        0.114 * (1.0 - factor),
+                    ];
+                    apply_color_matrix(
+                        image,
+                        [
+                            [factor + gray[0], gray[1], gray[2]],
+                            [gray[0], factor + gray[1], gray[2]],
+                            [gray[0], gray[1], factor + gray[2]],
+                        ],
+                        0.0,
+                    );
+                }
+                3 => adjust_hue(image, sample.hue),
+                _ => unreachable!(),
+            }
         }
     }
 
@@ -1414,6 +1621,111 @@ mod tests {
     }
 
     #[test]
+    fn consolidated_color_jitter_matches_staged_oracle_for_every_order() {
+        let mut orders = Vec::new();
+        for a in 0..4 {
+            for b in 0..4 {
+                for c in 0..4 {
+                    for d in 0..4 {
+                        let order = [a, b, c, d];
+                        if order
+                            .iter()
+                            .all(|value| order.iter().filter(|other| *other == value).count() == 1)
+                        {
+                            orders.push(order);
+                        }
+                    }
+                }
+            }
+        }
+        for order in orders {
+            for factors in [
+                [1.0, 1.0, 1.0, 0.0],
+                [0.83, 1.0, 1.17, 0.0],
+                [1.0, 0.71, 1.0, 0.137],
+                [1.23, 0.81, 0.67, -0.231],
+            ] {
+                let sample = ColorJitterSample {
+                    brightness: factors[0],
+                    contrast: factors[1],
+                    saturation: factors[2],
+                    hue: factors[3],
+                    hue_enabled: factors[3] != 0.0,
+                    order,
+                };
+                let source = pixels(7 * 11 * 3);
+                let mut expected = ImageU8 {
+                    data: source.clone(),
+                    height: 7,
+                    width: 11,
+                };
+                let mut actual = ImageU8 {
+                    data: source,
+                    height: 7,
+                    width: 11,
+                };
+                color_jitter_staged_oracle(&mut expected, &sample);
+                color_jitter_staged(&mut actual, &sample);
+                assert_eq!(
+                    actual.data, expected.data,
+                    "order={order:?} factors={factors:?}"
+                );
+            }
+        }
+    }
+
+    #[test]
+    fn zignor_noise_stream_is_pinned_and_replayable() {
+        let source = pixels(24);
+        let sample = GaussianNoiseSample {
+            mean: 2.0,
+            std: 10.0,
+            seed: 137,
+            per_channel: true,
+        };
+        let mut first = ImageU8 {
+            data: source.clone(),
+            height: 2,
+            width: 4,
+        };
+        let mut second = ImageU8 {
+            data: source,
+            height: 2,
+            width: 4,
+        };
+        gaussian_noise(&mut first, sample, &mut Vec::new()).unwrap();
+        gaussian_noise(&mut second, sample, &mut Vec::new()).unwrap();
+        assert_eq!(first.data, second.data);
+        assert_eq!(
+            first.data,
+            [
+                0, 68, 158, 210, 52, 120, 200, 14, 97, 171, 242, 54, 129, 209, 26, 118, 176, 255,
+                70, 158, 221, 44, 107, 218,
+            ]
+        );
+    }
+
+    #[test]
+    fn zignor_generator_has_normal_moments_and_tails() {
+        let mut rng = SmallRng::seed_from_u64(137);
+        let mut sum = 0.0_f64;
+        let mut sum_squares = 0.0_f64;
+        let mut tail = false;
+        let samples = 100_000;
+        for _ in 0..samples {
+            let value: f32 = StandardNormal.sample(&mut rng);
+            sum += f64::from(value);
+            sum_squares += f64::from(value) * f64::from(value);
+            tail |= value.abs() > 3.5;
+        }
+        let mean = sum / f64::from(samples);
+        let variance = sum_squares / f64::from(samples) - mean * mean;
+        assert!(mean.abs() < 0.02, "mean={mean}");
+        assert!((variance - 1.0).abs() < 0.03, "variance={variance}");
+        assert!(tail);
+    }
+
+    #[test]
     fn pad_constant_places_input_and_overwrites_destination() {
         let source = pixels(2 * 3 * 3);
         let sample = crate::plan::PadSample {
@@ -1461,12 +1773,58 @@ mod tests {
             [4, 3, 4, 5, 4],
             [1, 0, 1, 2, 1],
         ];
-        for (pixel, expected) in output
+        for (index, (pixel, expected)) in output
             .data
             .chunks_exact(3)
             .zip(expected.into_iter().flatten())
+            .enumerate()
         {
-            assert_eq!(pixel, [expected; 3]);
+            assert_eq!(pixel, [expected; 3], "pixel={index}");
+        }
+    }
+
+    #[test]
+    fn pad_region_kernels_match_the_pixel_oracle() {
+        for input_height in 1..=9 {
+            for input_width in 1..=9 {
+                let source = pixels(input_height * input_width * 3);
+                for border_mode in [BorderMode::Constant, BorderMode::Reflect101] {
+                    for (top, left, bottom, right) in [
+                        (0, 0, 0, 0),
+                        (0, 3, 2, 0),
+                        (2, 0, 0, 4),
+                        (1, 2, 3, 4),
+                        (
+                            input_height + 2,
+                            input_width + 3,
+                            input_height + 1,
+                            input_width + 4,
+                        ),
+                    ] {
+                        let sample = crate::plan::PadSample {
+                            top,
+                            left,
+                            height: top + input_height + bottom,
+                            width: left + input_width + right,
+                            border_mode,
+                            fill: [3, 5, 7],
+                        };
+                        let expected = pad_oracle(&source, input_height, input_width, sample);
+                        let actual = pad_raw(
+                            &source,
+                            input_height,
+                            input_width,
+                            sample,
+                            vec![0xa5; expected.len()],
+                        )
+                        .unwrap();
+                        assert_eq!(
+                            actual.data, expected,
+                            "{input_height}x{input_width} {border_mode:?} {top}/{left}/{bottom}/{right}"
+                        );
+                    }
+                }
+            }
         }
     }
 
@@ -1605,6 +1963,117 @@ mod tests {
         let output = rotate_raw(&source, 1, 3, sample, vec![0; source.len()]).unwrap();
         assert_eq!(&output.data[..3], &[3, 5, 7]);
         assert_eq!(&output.data[3..], &source[..6]);
+    }
+
+    #[test]
+    fn specialized_remappers_match_the_raw_coordinate_oracle() {
+        for (height, width) in [(1, 1), (1, 9), (9, 1), (3, 5), (7, 11), (17, 35)] {
+            let source = pixels(height * width * 3);
+            for interpolation in [Interpolation::Nearest, Interpolation::Bilinear] {
+                for border_mode in [BorderMode::Constant, BorderMode::Reflect101] {
+                    let perspective = PerspectiveSample {
+                        inverse: [0.93, 0.07, -1.3, -0.04, 1.08, 0.6, 0.0007, -0.0004, 1.0],
+                        interpolation,
+                        border_mode,
+                        fill: [3, 5, 7],
+                    };
+                    let expected = remap_raw(
+                        &source,
+                        height,
+                        width,
+                        interpolation,
+                        border_mode,
+                        perspective.fill,
+                        vec![0xa5; source.len()],
+                        |y, x| {
+                            let x = x as f32;
+                            let y = y as f32;
+                            let inverse = perspective.inverse;
+                            let denominator = inverse[6] * x + inverse[7] * y + inverse[8];
+                            if !denominator.is_finite() || denominator.abs() < 1e-8 {
+                                return None;
+                            }
+                            let source_x =
+                                (inverse[0] * x + inverse[1] * y + inverse[2]) / denominator;
+                            let source_y =
+                                (inverse[3] * x + inverse[4] * y + inverse[5]) / denominator;
+                            (source_x.is_finite() && source_y.is_finite())
+                                .then_some((source_y, source_x))
+                        },
+                    )
+                    .unwrap();
+                    let actual = perspective_raw(
+                        &source,
+                        height,
+                        width,
+                        perspective,
+                        vec![0x5a; source.len()],
+                    )
+                    .unwrap();
+                    assert_eq!(
+                        actual.data, expected.data,
+                        "perspective {height}x{width} {interpolation:?} {border_mode:?}"
+                    );
+
+                    let grid = GridDistortionSample {
+                        x_map: (0..width)
+                            .map(|x| x as f32 * 1.07 - 1.3 + (x % 3) as f32 * 0.11)
+                            .collect(),
+                        y_map: (0..height)
+                            .map(|y| y as f32 * 0.91 - 0.7 + (y % 2) as f32 * 0.17)
+                            .collect(),
+                        interpolation,
+                        border_mode,
+                        fill: [3, 5, 7],
+                    };
+                    let expected = remap_raw(
+                        &source,
+                        height,
+                        width,
+                        interpolation,
+                        border_mode,
+                        grid.fill,
+                        vec![0xa5; source.len()],
+                        |y, x| Some((grid.y_map[y], grid.x_map[x])),
+                    )
+                    .unwrap();
+                    let actual = grid_distortion_raw(
+                        &source,
+                        height,
+                        width,
+                        &grid,
+                        vec![0x5a; source.len()],
+                        &mut remap::AxisRemapScratch::default(),
+                    )
+                    .unwrap();
+                    assert_eq!(
+                        actual.data, expected.data,
+                        "grid {height}x{width} {interpolation:?} {border_mode:?}"
+                    );
+                }
+            }
+        }
+    }
+
+    #[test]
+    fn perspective_invalid_denominators_fill_without_panicking() {
+        let source = pixels(5 * 7 * 3);
+        for border_mode in [BorderMode::Constant, BorderMode::Reflect101] {
+            let output = perspective_raw(
+                &source,
+                5,
+                7,
+                PerspectiveSample {
+                    inverse: [1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0],
+                    interpolation: Interpolation::Bilinear,
+                    border_mode,
+                    fill: [3, 5, 7],
+                },
+                vec![0xa5; source.len()],
+            )
+            .unwrap();
+            assert!(output.data.chunks_exact(3).all(|pixel| pixel == [3, 5, 7]));
+        }
     }
 
     #[test]

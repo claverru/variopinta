@@ -28,6 +28,8 @@ pub(crate) enum BufferSlot {
     WorkingU8,
     ScratchU8,
     BlurTemp,
+    NoiseBlock,
+    AxisRemap,
     OutputF32Hwc,
     OutputF32Chw,
     OutputU8Chw,
@@ -39,6 +41,8 @@ impl BufferSlot {
             Self::WorkingU8 => "working-u8",
             Self::ScratchU8 => "scratch-u8",
             Self::BlurTemp => "blur-temp",
+            Self::NoiseBlock => "noise-f32-block",
+            Self::AxisRemap => "axis-remap",
             Self::OutputF32Hwc => "output-f32-hwc",
             Self::OutputF32Chw => "output-f32-chw",
             Self::OutputU8Chw => "output-u8-chw",
@@ -433,6 +437,14 @@ fn scratch_slots(contract: ScratchRequirement) -> Vec<BufferSlot> {
             slot: ReusableScratchSlot::U16,
             ..
         } => vec![BufferSlot::BlurTemp],
+        ScratchRequirement::Reusable {
+            slot: ReusableScratchSlot::NoiseBlock,
+            ..
+        } => vec![BufferSlot::NoiseBlock],
+        ScratchRequirement::Reusable {
+            slot: ReusableScratchSlot::AxisRemap,
+            ..
+        } => vec![BufferSlot::AxisRemap],
     }
 }
 

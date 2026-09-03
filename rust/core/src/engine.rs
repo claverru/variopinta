@@ -1,5 +1,5 @@
 use crate::capability::{ExecutionForm, OutputContract};
-use crate::kernels::layout::{hwc_to_chw, normalize_hwc, normalize_hwc_to_chw};
+use crate::kernels::layout::{hwc_to_chw, hwc_u8_to_chw, normalize_hwc, normalize_hwc_to_chw};
 use crate::kernels::point;
 use crate::operations::*;
 use crate::optimization::{FusionRule, KernelSelection, LoweringPlan};
@@ -263,7 +263,7 @@ impl CompiledPipeline {
                     image = next;
                 }
                 (TransformPlan::GaussianNoise { .. }, SampledTransform::GaussianNoise(sample)) => {
-                    gaussian_noise(&mut image, *sample)
+                    gaussian_noise(&mut image, *sample, workspace.noise_block())?
                 }
                 (TransformPlan::Sharpen { .. }, SampledTransform::Sharpen(sample)) => {
                     let destination = workspace.take_staged_u8(image.data.len(), false, reuse)?;
@@ -295,6 +295,7 @@ impl CompiledPipeline {
                         image.width,
                         sample,
                         destination,
+                        workspace.axis_remap(),
                     )?;
                     workspace.recycle_staged_u8(image.data, reuse);
                     image = next;
@@ -387,7 +388,7 @@ impl CompiledPipeline {
                 }
                 (TransformPlan::ToTorch, SampledTransform::ToTorch) => {
                     return Ok(PipelineOutput::U8Chw {
-                        data: hwc_to_chw(&image.data, image.height, image.width)?,
+                        data: hwc_u8_to_chw(&image.data, image.height, image.width)?,
                         height: image.height,
                         width: image.width,
                     });
@@ -450,7 +451,7 @@ impl CompiledPipeline {
                     [SampledTransform::Skip, SampledTransform::ToTorch],
                 ) => {
                     return Ok(Some(PipelineOutput::U8Chw {
-                        data: hwc_to_chw(data, height, width)?,
+                        data: hwc_u8_to_chw(data, height, width)?,
                         height,
                         width,
                     }));
@@ -472,7 +473,7 @@ impl CompiledPipeline {
         match (self.plan.transforms.as_slice(), sampled) {
             ([TransformPlan::ToTorch], [SampledTransform::ToTorch]) => {
                 Ok(Some(PipelineOutput::U8Chw {
-                    data: hwc_to_chw(data, height, width)?,
+                    data: hwc_u8_to_chw(data, height, width)?,
                     height,
                     width,
                 }))
@@ -664,7 +665,14 @@ impl CompiledPipeline {
             ) => {
                 let destination = workspace.take_u8(data.len(), false)?;
                 Ok((
-                    grid_distortion_raw(data, height, width, sample, destination)?,
+                    grid_distortion_raw(
+                        data,
+                        height,
+                        width,
+                        sample,
+                        destination,
+                        workspace.axis_remap(),
+                    )?,
                     1,
                 ))
             }

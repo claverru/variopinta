@@ -2,6 +2,11 @@
 
 ## 0.3.0
 
+- Accelerate the dominant single-image CPU paths for padding, sharpening,
+  affine and generic remapping, Gaussian noise, hue jitter, and standalone
+  HWC-to-CHW conversion. `GaussianNoise` now uses the pinned `rand_distr`
+  ZIGNOR stream, so keyed noise pixels differ from earlier releases while
+  later transform sampling remains unchanged.
 - Add immutable array, encoded-buffer, and path pipeline inputs plus returned,
   encoded-buffer, and path outputs, with native decode/augment/encode routes,
   size limits, GIL-aware execution, and source/sink introspection.

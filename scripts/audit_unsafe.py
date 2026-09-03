@@ -7,11 +7,38 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 EXPECTED = {
-    "rust/core/src/kernels/affine.rs": (2, "optimized_kernel_matches_safe_oracle_at_boundaries"),
-    "rust/core/src/kernels/blur.rs": (4, "optimized_passes_match_scalar_at_vector_boundaries"),
-    "rust/core/src/kernels/color.rs": (2, "optimized_kernel_matches_scalar_at_vector_boundaries"),
-    "rust/core/src/kernels/layout.rs": (12, "avx2_normalize_matches_scalar"),
-    "rust/core/src/kernels/point.rs": (10, "point_kernels_handle_scalar_tails"),
+    "rust/core/src/kernels/affine.rs": (
+        4,
+        [
+            "optimized_kernel_matches_safe_oracle_at_boundaries",
+            "reflected_rgb_interpolation_matches_scalar",
+        ],
+    ),
+    "rust/core/src/kernels/blur.rs": (4, ["optimized_passes_match_scalar_at_vector_boundaries"]),
+    "rust/core/src/kernels/color.rs": (
+        4,
+        [
+            "optimized_kernel_matches_scalar_at_vector_boundaries",
+            "hue_dispatch_matches_scalar_at_vector_and_sector_boundaries",
+        ],
+    ),
+    "rust/core/src/kernels/layout.rs": (
+        21,
+        [
+            "avx2_normalize_matches_scalar",
+            "u8_chw_dispatch_matches_scalar_for_unaligned_sources_and_tails",
+        ],
+    ),
+    "rust/core/src/kernels/noise.rs": (
+        2,
+        ["application_dispatch_matches_scalar_at_vector_boundaries"],
+    ),
+    "rust/core/src/kernels/point.rs": (10, ["point_kernels_handle_scalar_tails"]),
+    "rust/core/src/kernels/remap.rs": (2, ["perspective_descriptor_dispatch_matches_scalar"]),
+    "rust/core/src/kernels/sharpen.rs": (
+        2,
+        ["dispatch_matches_scalar_for_arbitrary_rectangles_and_coefficients"],
+    ),
 }
 
 
@@ -41,14 +68,16 @@ def main() -> None:
                     }
                 )
 
-    expected_counts = {path: count for path, (count, _oracle) in EXPECTED.items()}
+    expected_counts = {path: count for path, (count, _oracles) in EXPECTED.items()}
     if discovered != expected_counts:
         raise SystemExit(
             f"unsafe inventory changed: expected {expected_counts}, found {discovered}"
         )
-    for relative, (_count, oracle) in EXPECTED.items():
-        if oracle not in (ROOT / relative).read_text():
-            raise SystemExit(f"{relative} is missing scalar oracle {oracle}")
+    for relative, (_count, oracles) in EXPECTED.items():
+        source = (ROOT / relative).read_text()
+        for oracle in oracles:
+            if oracle not in source:
+                raise SystemExit(f"{relative} is missing scalar oracle {oracle}")
 
     payload = {
         "blocks": inventory,

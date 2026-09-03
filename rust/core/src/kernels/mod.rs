@@ -5,7 +5,11 @@ pub(crate) mod affine;
 pub(crate) mod blur;
 pub(crate) mod color;
 pub(crate) mod layout;
+pub(crate) mod noise;
+pub(crate) mod pad;
 pub(crate) mod point;
+pub(crate) mod remap;
+pub(crate) mod sharpen;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub(crate) struct KernelImplementation {

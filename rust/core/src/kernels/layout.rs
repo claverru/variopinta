@@ -22,6 +22,128 @@ pub(crate) fn hwc_to_chw<T: Copy + Default>(
     Ok(output)
 }
 
+pub(crate) fn hwc_u8_to_chw(data: &[u8], height: usize, width: usize) -> CoreResult<Vec<u8>> {
+    let plane = height
+        .checked_mul(width)
+        .ok_or_else(|| CoreError::Invalid("image dimensions overflow".into()))?;
+    let len = plane
+        .checked_mul(3)
+        .ok_or_else(|| CoreError::Invalid("image dimensions overflow".into()))?;
+    if data.len() != len {
+        return Err(CoreError::Invalid("invalid RGB buffer".into()));
+    }
+    let mut output = Vec::new();
+    output
+        .try_reserve_exact(len)
+        .map_err(|_| CoreError::Runtime("output allocation failed".into()))?;
+    output.resize(len, MaybeUninit::uninit());
+
+    #[cfg(target_arch = "x86_64")]
+    if std::arch::is_x86_feature_detected!("ssse3") {
+        // SAFETY: runtime detection guards SSSE3 and both buffers have validated lengths.
+        unsafe { hwc_u8_to_chw_ssse3(data, &mut output, plane) };
+        // SAFETY: the SSSE3 implementation and scalar tail initialize every element.
+        return Ok(unsafe { assume_init_u8(output) });
+    }
+
+    #[cfg(target_arch = "aarch64")]
+    {
+        // SAFETY: NEON is mandatory in AArch64 and both buffers have validated lengths.
+        unsafe { hwc_u8_to_chw_neon(data, &mut output, plane) };
+        // SAFETY: the NEON implementation and scalar tail initialize every element.
+        return Ok(unsafe { assume_init_u8(output) });
+    }
+
+    #[allow(unreachable_code)]
+    {
+        hwc_u8_to_chw_scalar(data, &mut output, plane, 0);
+        // SAFETY: the scalar implementation initializes every element.
+        Ok(unsafe { assume_init_u8(output) })
+    }
+}
+
+fn hwc_u8_to_chw_scalar(
+    data: &[u8],
+    output: &mut [MaybeUninit<u8>],
+    plane: usize,
+    start_pixel: usize,
+) {
+    for pixel in start_pixel..plane {
+        let source = pixel * 3;
+        output[pixel].write(data[source]);
+        output[plane + pixel].write(data[source + 1]);
+        output[2 * plane + pixel].write(data[source + 2]);
+    }
+}
+
+#[cfg(target_arch = "x86_64")]
+#[target_feature(enable = "ssse3")]
+unsafe fn hwc_u8_to_chw_ssse3(data: &[u8], output: &mut [MaybeUninit<u8>], plane: usize) {
+    // SAFETY: the caller guarantees SSSE3 and validated input and output lengths.
+    unsafe {
+        use std::arch::x86_64::*;
+
+        let masks = [
+            [
+                _mm_setr_epi8(0, 3, 6, 9, 12, 15, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1),
+                _mm_setr_epi8(-1, -1, -1, -1, -1, -1, 2, 5, 8, 11, 14, -1, -1, -1, -1, -1),
+                _mm_setr_epi8(-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 1, 4, 7, 10, 13),
+            ],
+            [
+                _mm_setr_epi8(1, 4, 7, 10, 13, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1),
+                _mm_setr_epi8(-1, -1, -1, -1, -1, 0, 3, 6, 9, 12, 15, -1, -1, -1, -1, -1),
+                _mm_setr_epi8(-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 2, 5, 8, 11, 14),
+            ],
+            [
+                _mm_setr_epi8(2, 5, 8, 11, 14, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1),
+                _mm_setr_epi8(-1, -1, -1, -1, -1, 1, 4, 7, 10, 13, -1, -1, -1, -1, -1, -1),
+                _mm_setr_epi8(-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0, 3, 6, 9, 12, 15),
+            ],
+        ];
+        let mut pixel = 0usize;
+        while pixel + 16 <= plane {
+            let source = data.as_ptr().add(pixel * 3);
+            let chunks = [
+                _mm_loadu_si128(source.cast()),
+                _mm_loadu_si128(source.add(16).cast()),
+                _mm_loadu_si128(source.add(32).cast()),
+            ];
+            for (channel, channel_masks) in masks.iter().enumerate() {
+                let first = _mm_shuffle_epi8(chunks[0], channel_masks[0]);
+                let second = _mm_shuffle_epi8(chunks[1], channel_masks[1]);
+                let third = _mm_shuffle_epi8(chunks[2], channel_masks[2]);
+                _mm_storeu_si128(
+                    output.as_mut_ptr().add(channel * plane + pixel).cast(),
+                    _mm_or_si128(_mm_or_si128(first, second), third),
+                );
+            }
+            pixel += 16;
+        }
+        hwc_u8_to_chw_scalar(data, output, plane, pixel);
+    }
+}
+
+#[cfg(target_arch = "aarch64")]
+unsafe fn hwc_u8_to_chw_neon(data: &[u8], output: &mut [MaybeUninit<u8>], plane: usize) {
+    // SAFETY: the caller guarantees validated buffers; AArch64 always provides NEON.
+    unsafe {
+        use std::arch::aarch64::*;
+
+        let mut pixel = 0usize;
+        while pixel + 16 <= plane {
+            let channels = vld3q_u8(data.as_ptr().add(pixel * 3));
+            vst1q_u8(output.as_mut_ptr().add(pixel).cast(), channels.0);
+            vst1q_u8(output.as_mut_ptr().add(plane + pixel).cast(), channels.1);
+            vst1q_u8(
+                output.as_mut_ptr().add(2 * plane + pixel).cast(),
+                channels.2,
+            );
+            pixel += 16;
+        }
+        hwc_u8_to_chw_scalar(data, output, plane, pixel);
+    }
+}
+
 pub(crate) fn normalize_hwc(
     data: &[u8],
     mean: [f32; 3],
@@ -233,6 +355,17 @@ unsafe fn assume_init_f32(mut values: Vec<MaybeUninit<f32>>) -> Vec<f32> {
     }
 }
 
+unsafe fn assume_init_u8(mut values: Vec<MaybeUninit<u8>>) -> Vec<u8> {
+    // SAFETY: the caller guarantees every MaybeUninit element contains a u8.
+    unsafe {
+        let ptr = values.as_mut_ptr().cast::<u8>();
+        let len = values.len();
+        let capacity = values.capacity();
+        std::mem::forget(values);
+        Vec::from_raw_parts(ptr, len, capacity)
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -317,5 +450,28 @@ mod tests {
                 assert_eq!(output[2 * plane + pixel], source[pixel * 3 + 2]);
             }
         }
+    }
+
+    #[test]
+    fn u8_chw_dispatch_matches_scalar_for_unaligned_sources_and_tails() {
+        for pixel_count in 1..=257 {
+            let mut allocation = pixels(pixel_count * 3 + 1);
+            let source = &allocation[1..];
+            let mut expected = vec![MaybeUninit::uninit(); source.len()];
+            hwc_u8_to_chw_scalar(source, &mut expected, pixel_count, 0);
+            // SAFETY: the scalar kernel initialized every output element.
+            let expected = unsafe { assume_init_u8(expected) };
+            let actual = hwc_u8_to_chw(source, 1, pixel_count).unwrap();
+            assert_eq!(actual, expected, "pixel_count={pixel_count}");
+            allocation[0] ^= 1;
+        }
+    }
+
+    #[test]
+    fn u8_chw_rejects_invalid_rgb_buffers() {
+        assert!(matches!(
+            hwc_u8_to_chw(&[1, 2], 1, 1),
+            Err(CoreError::Invalid(message)) if message == "invalid RGB buffer"
+        ));
     }
 }

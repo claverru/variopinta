@@ -35,12 +35,16 @@ pub(crate) enum ExecutionForm {
 pub(crate) enum ReusableScratchSlot {
     U8,
     U16,
+    NoiseBlock,
+    AxisRemap,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub(crate) enum ScratchSizing {
     CurrentImage,
     SampledCrop,
+    FixedBlock,
+    CurrentAxes,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -183,7 +187,10 @@ impl TransformPlan {
                 read: ReadFootprint::Pointwise,
                 write: WriteCoverage::FullOverwrite,
                 legal_forms: OWNED_IN_PLACE,
-                scratch: ScratchRequirement::None,
+                scratch: ScratchRequirement::Reusable {
+                    slot: ReusableScratchSlot::NoiseBlock,
+                    sizing: ScratchSizing::FixedBlock,
+                },
                 barriers: ROUNDING_AND_CLIPPING,
             },
             Self::Sharpen { .. } => TransformCapabilities {
@@ -209,7 +216,10 @@ impl TransformPlan {
                 read: ReadFootprint::IrregularResampling,
                 write: WriteCoverage::FullOverwrite,
                 legal_forms: OUT_OF_PLACE,
-                scratch: ScratchRequirement::None,
+                scratch: ScratchRequirement::Reusable {
+                    slot: ReusableScratchSlot::AxisRemap,
+                    sizing: ScratchSizing::CurrentAxes,
+                },
                 barriers: ROUNDING_AND_BORDER,
             },
             Self::GaussianBlur { .. } => TransformCapabilities {

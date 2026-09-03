@@ -1,5 +1,67 @@
 use crate::{CoreError, CoreResult};
 
+#[inline]
+pub(crate) fn bilinear_rgb(data: &[u8], offsets: [usize; 4], wx: u32, wy: u32, output: &mut [u8]) {
+    #[cfg(target_arch = "x86_64")]
+    if offsets[3].saturating_add(4) <= data.len() && std::arch::is_x86_feature_detected!("avx2") {
+        // SAFETY: runtime detection guards AVX2 and all four-byte loads are in bounds.
+        unsafe { bilinear_rgb_avx2(data, offsets, wx, wy, output) };
+        return;
+    }
+    bilinear_rgb_scalar(data, offsets, wx, wy, output);
+}
+
+fn bilinear_rgb_scalar(data: &[u8], offsets: [usize; 4], wx: u32, wy: u32, output: &mut [u8]) {
+    let inv_wx = 256 - wx;
+    let inv_wy = 256 - wy;
+    for channel in 0..3 {
+        let top = u32::from(data[offsets[0] + channel]) * inv_wx
+            + u32::from(data[offsets[1] + channel]) * wx;
+        let bottom = u32::from(data[offsets[2] + channel]) * inv_wx
+            + u32::from(data[offsets[3] + channel]) * wx;
+        output[channel] = ((top * inv_wy + bottom * wy + 32768) >> 16) as u8;
+    }
+}
+
+#[cfg(target_arch = "x86_64")]
+#[target_feature(enable = "avx2")]
+unsafe fn bilinear_rgb_avx2(data: &[u8], offsets: [usize; 4], wx: u32, wy: u32, output: &mut [u8]) {
+    // SAFETY: the caller guarantees AVX2, four readable bytes at every offset, and RGB output.
+    unsafe {
+        use std::arch::x86_64::*;
+
+        let load = |offset: usize| {
+            let packed = std::ptr::read_unaligned(data.as_ptr().add(offset).cast());
+            _mm_cvtepu8_epi16(_mm_cvtsi32_si128(packed))
+        };
+        let wxv = _mm_set1_epi16(wx as i16);
+        let inv_wxv = _mm_set1_epi16((256 - wx) as i16);
+        let top = _mm_add_epi16(
+            _mm_mullo_epi16(load(offsets[0]), inv_wxv),
+            _mm_mullo_epi16(load(offsets[1]), wxv),
+        );
+        let bottom = _mm_add_epi16(
+            _mm_mullo_epi16(load(offsets[2]), inv_wxv),
+            _mm_mullo_epi16(load(offsets[3]), wxv),
+        );
+        let value = _mm_srli_epi32::<16>(_mm_add_epi32(
+            _mm_add_epi32(
+                _mm_mullo_epi32(_mm_cvtepu16_epi32(top), _mm_set1_epi32((256 - wy) as i32)),
+                _mm_mullo_epi32(_mm_cvtepu16_epi32(bottom), _mm_set1_epi32(wy as i32)),
+            ),
+            _mm_set1_epi32(32768),
+        ));
+        let packed = _mm_packus_epi16(
+            _mm_packs_epi32(value, _mm_setzero_si128()),
+            _mm_setzero_si128(),
+        );
+        let rgb = _mm_cvtsi128_si32(packed) as u32;
+        output[0] = rgb as u8;
+        output[1] = (rgb >> 8) as u8;
+        output[2] = (rgb >> 16) as u8;
+    }
+}
+
 pub(crate) fn bilinear_constant(
     data: &[u8],
     height: usize,
@@ -276,6 +338,23 @@ mod tests {
                     bilinear_constant(&source, height, width, matrix, vec![0xa5; source.len()])
                         .unwrap();
                 assert_eq!(actual, expected, "{height}x{width} {matrix:?}");
+            }
+        }
+    }
+
+    #[test]
+    fn reflected_rgb_interpolation_matches_scalar() {
+        let source: Vec<_> = (0..257).map(|index| (index * 73) as u8).collect();
+        for base in (0..source.len() - 16).step_by(3) {
+            let offsets = [base, base + 3, base + 6, base + 9];
+            for wx in [0, 1, 127, 128, 255] {
+                for wy in [0, 1, 127, 128, 255] {
+                    let mut expected = [0; 3];
+                    let mut actual = [0; 3];
+                    bilinear_rgb_scalar(&source, offsets, wx, wy, &mut expected);
+                    bilinear_rgb(&source, offsets, wx, wy, &mut actual);
+                    assert_eq!(actual, expected, "base={base} wx={wx} wy={wy}");
+                }
             }
         }
     }

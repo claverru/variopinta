@@ -1,10 +1,13 @@
 use fast_image_resize as fir;
 
+use crate::kernels::remap::AxisRemapScratch;
 use crate::{CoreError, CoreResult};
 
 pub struct Workspace {
     resizer: fir::Resizer,
     blur_temp: Vec<u16>,
+    noise_block: Vec<f32>,
+    axis_remap: AxisRemapScratch,
     u8_pool: Vec<Vec<u8>>,
 }
 
@@ -13,6 +16,8 @@ impl Default for Workspace {
         Self {
             resizer: fir::Resizer::new(),
             blur_temp: Vec::new(),
+            noise_block: Vec::new(),
+            axis_remap: AxisRemapScratch::default(),
             u8_pool: Vec::with_capacity(2),
         }
     }
@@ -79,17 +84,32 @@ impl Workspace {
         &mut self.blur_temp
     }
 
+    pub(crate) fn noise_block(&mut self) -> &mut Vec<f32> {
+        &mut self.noise_block
+    }
+
+    pub(crate) fn axis_remap(&mut self) -> &mut AxisRemapScratch {
+        &mut self.axis_remap
+    }
+
     pub fn retained_bytes(&self) -> usize {
         let u8_bytes = self
             .u8_pool
             .iter()
             .map(Vec::capacity)
             .fold(0usize, usize::saturating_add);
-        u8_bytes.saturating_add(
-            self.blur_temp
-                .capacity()
-                .saturating_mul(std::mem::size_of::<u16>()),
-        )
+        u8_bytes
+            .saturating_add(
+                self.blur_temp
+                    .capacity()
+                    .saturating_mul(std::mem::size_of::<u16>()),
+            )
+            .saturating_add(
+                self.noise_block
+                    .capacity()
+                    .saturating_mul(std::mem::size_of::<f32>()),
+            )
+            .saturating_add(self.axis_remap.retained_bytes())
     }
 }
 
