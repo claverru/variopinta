@@ -79,28 +79,23 @@ def _operations(backend: str) -> dict[str, Callable[..., Any]]:
             )(image).contiguous(),
         }
 
-    if backend in {"albumentations", "albumentationsx"}:
+    if backend == "albumentationsx":
         import albumentations as A
         import cv2
 
-        if backend == "albumentationsx":
-            jitter = A.ColorJitter(
-                brightness_range=(0.8, 1.2),
-                contrast_range=(0.8, 1.2),
-                saturation_range=(0.8, 1.2),
-                hue_range=(0.0, 0.0),
-                p=1,
-            )
-            blur = A.GaussianBlur(blur_range=(5, 5), sigma_range=(1.1, 1.1), p=1)
-            affine_base = {
-                "scale": (1.0, 1.0),
-                "translate_percent": (0.0, 0.0),
-                "shear": (0.0, 0.0),
-            }
-        else:
-            jitter = A.ColorJitter(0.2, 0.2, 0.2, 0.0, p=1)
-            blur = A.GaussianBlur(blur_limit=(5, 5), sigma_limit=(1.1, 1.1), p=1)
-            affine_base = {"scale": 1.0, "translate_percent": 0.0, "shear": 0.0}
+        jitter = A.ColorJitter(
+            brightness_range=(0.8, 1.2),
+            contrast_range=(0.8, 1.2),
+            saturation_range=(0.8, 1.2),
+            hue_range=(0.0, 0.0),
+            p=1,
+        )
+        blur = A.GaussianBlur(blur_range=(5, 5), sigma_range=(1.1, 1.1), p=1)
+        affine_base = {
+            "scale": (1.0, 1.0),
+            "translate_percent": (0.0, 0.0),
+            "shear": (0.0, 0.0),
+        }
 
         def apply(transform: Any, image: np.ndarray) -> Any:
             if hasattr(transform, "set_random_seed"):
@@ -162,7 +157,7 @@ def _operations(backend: str) -> dict[str, Callable[..., Any]]:
                 A.Solarize(threshold_range=(128 / 255, 128 / 255), p=1), image
             ),
             "posterize": lambda image: apply(
-                A.Posterize(num_bits=(4, 4) if backend == "albumentationsx" else 4, p=1),
+                A.Posterize(num_bits=(4, 4), p=1),
                 image,
             ),
             "jitter": lambda image: apply(jitter, image),
@@ -233,19 +228,14 @@ def run_correctness_checks(backend: str) -> list[dict[str, Any]]:
             f"vertical-flip-{height}x{width}",
         )
 
-        if backend == "albumentations" and min(height, width) == 1:
-            limitation = "ToGray collapses singleton spatial axes in Albumentations 2.0.8"
-            if limitation not in limitations:
-                limitations.append(limitation)
-        else:
-            grayscale = _to_hwc(operations["grayscale"](native))
-            check(
-                grayscale.shape == image.shape
-                and grayscale.dtype == np.uint8
-                and np.array_equal(grayscale[..., 0], grayscale[..., 1])
-                and np.array_equal(grayscale[..., 1], grayscale[..., 2]),
-                f"grayscale-{height}x{width}",
-            )
+        grayscale = _to_hwc(operations["grayscale"](native))
+        check(
+            grayscale.shape == image.shape
+            and grayscale.dtype == np.uint8
+            and np.array_equal(grayscale[..., 0], grayscale[..., 1])
+            and np.array_equal(grayscale[..., 1], grayscale[..., 2]),
+            f"grayscale-{height}x{width}",
+        )
         inverted = _to_hwc(operations["invert"](native))
         check(np.array_equal(inverted, 255 - image), f"invert-{height}x{width}")
 

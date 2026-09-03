@@ -151,7 +151,7 @@ jobs:
           fi
           python scripts/smoke_release.py --expected-version "${GITHUB_REF_NAME#v}" --torch
           python -m unittest discover -s tests
-          python benchmarks/run_catalog_audit.py
+          python -m benchmarks validate --suite catalog
       - name: Record tested wheel provenance
         run: >-
           python scripts/release_evidence.py
@@ -236,7 +236,7 @@ jobs:
           fi
           python scripts/smoke_release.py --expected-version "${GITHUB_REF_NAME#v}" --torch
           python -m unittest discover -s tests
-          python benchmarks/run_catalog_audit.py
+          python -m benchmarks validate --suite catalog
       - name: Record sdist and rebuilt-wheel provenance
         run: >-
           python scripts/release_evidence.py

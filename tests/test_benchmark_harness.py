@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import time
 import unittest
 from importlib.metadata import PackageNotFoundError
@@ -8,13 +9,13 @@ from tempfile import TemporaryDirectory
 from unittest.mock import patch
 
 from benchmarks import environments
-from benchmarks.common import (
-    aggregate_runs,
-    benchmark_fingerprint,
-    metadata,
-    summarize_observations,
-    time_calls_adaptive,
-)
+from benchmarks.common import metadata, summarize_observations, time_calls_adaptive
+from benchmarks.controller import validate_complete
+from benchmarks.evidence import shard_path, status_for, write_json_atomic
+from benchmarks.fingerprints import case_fingerprint, unclassified_measured_paths
+from benchmarks.model import CaseSpec, PlannedCase, RouteSpec, TimingPolicy
+from benchmarks.registry import CASES
+from benchmarks.selection import Selectors, select_cases, validate_selector_values
 
 
 class AdaptiveTimingTests(unittest.TestCase):
@@ -60,70 +61,208 @@ class AdaptiveTimingTests(unittest.TestCase):
             max_calls=10,
             target_sample_ms=0.001,
         )
-
         self.assertEqual(timing["samples"], 3)
         self.assertEqual(timing["iterations"], 3)
 
-    def test_invalid_policy_is_rejected(self) -> None:
+    def test_fixed_block_size_is_validated(self) -> None:
+        timing, _ = time_calls_adaptive(
+            lambda value: value,
+            [1],
+            budget_ms=0.1,
+            warmup_calls=0,
+            min_samples=3,
+            max_calls=12,
+            block_size=4,
+        )
+        self.assertEqual(timing["block_size"], 4)
         with self.assertRaises(ValueError):
             time_calls_adaptive(
                 lambda value: value,
                 [1],
-                budget_ms=0.0,
+                budget_ms=1.0,
                 warmup_calls=0,
-                min_samples=1,
-                max_calls=1,
+                min_samples=3,
+                max_calls=10,
+                block_size=4,
             )
 
-    def test_aggregation_requires_recalculable_observations(self) -> None:
+
+class RegistryTests(unittest.TestCase):
+    def test_case_and_route_identifiers_are_unique(self) -> None:
+        self.assertEqual(len(CASES), len({case.id for case in CASES}))
+        for case in CASES:
+            self.assertEqual(len(case.routes), len({route.id for route in case.routes}))
+            self.assertTrue(case.id.startswith(f"{case.suite}."))
+
+    def test_atomic_transform_selection_reduces_dimensions(self) -> None:
+        selectors = Selectors(
+            cases=("transforms.affine.bilinear-reflect101",),
+            sizes=(512,),
+            participants=("variopinta",),
+            variants=("compiled",),
+        )
+        validate_selector_values(CASES, selectors)
+        plan = select_cases(CASES, selectors)
+        self.assertEqual(len(plan), 1)
+        self.assertEqual(plan[0].sizes, (512,))
+        self.assertEqual([route.id for route in plan[0].routes], ["variopinta.compiled"])
+
+    def test_complete_selection_expands_the_case_matrix(self) -> None:
+        selectors = Selectors(cases=("transforms.invert.default",), participants=("variopinta",))
+        plan = select_cases(CASES, selectors, complete=True)
+        self.assertGreater(len(plan[0].routes), 1)
+        self.assertEqual(plan[0].sizes, (224, 512, 1024))
+
+    def test_unknown_values_fail_before_execution(self) -> None:
+        with self.assertRaisesRegex(ValueError, "unknown benchmark participants"):
+            validate_selector_values(CASES, Selectors(participants=("missing",)))
+
+
+class EvidenceTests(unittest.TestCase):
+    def test_shard_path_follows_case_identifier(self) -> None:
+        case = next(case for case in CASES if case.id == "transforms.invert.default")
+        root = Path("/tmp/evidence")
+        self.assertEqual(shard_path(case, root), root / "transforms" / "invert" / "default.json")
+
+    def test_atomic_write_preserves_previous_file_on_serialization_failure(self) -> None:
+        with TemporaryDirectory() as directory:
+            path = Path(directory) / "value.json"
+            write_json_atomic(path, {"value": 1})
+            with self.assertRaises(TypeError):
+                write_json_atomic(path, {"value": object()})
+            self.assertEqual(json.loads(path.read_text()), {"value": 1})
+
+    def test_completeness_requires_every_route_size_and_repetition(self) -> None:
+        route = RouteSpec("variopinta.compiled", "variopinta", "compiled", "rust")
+        case = CaseSpec(
+            "transforms.test.default",
+            "transforms",
+            "Test",
+            (),
+            (route,),
+            (224,),
+            "layers",
+            "transform:Invert",
+            "policy",
+            ("transforms",),
+            TimingPolicy(1.0, 0, 1, 1),
+        )
+        planned = PlannedCase(case, case.routes, case.sizes)
         row = {
-            "kind": "micro",
-            "backend": "rust",
-            "transform": "Invert",
-            "pipeline": None,
-            "policy": None,
+            "route_id": route.id,
             "size": 224,
-            "median_ms": 2.0,
-            "p95_ms": 3.0,
-            "images_per_sec": 500.0,
-            "observations_ms": [1.0, 2.0, 3.0],
             "repetition": 1,
-            "worker": "rust-1",
-            "backend_position": 1,
-        }
-        aggregated = aggregate_runs([row])
-        self.assertEqual(aggregated[0]["median_ms"], 2.0)
-        self.assertEqual(aggregated[0]["p95_ms"], 3.0)
-        self.assertEqual(len(aggregated[0]["worker_observations"]), 1)
-
-        missing = dict(row)
-        missing.pop("observations_ms")
-        with self.assertRaisesRegex(ValueError, "missing observations"):
-            aggregate_runs([missing])
-
-    def test_aggregation_rejects_inconsistent_sample_counts(self) -> None:
-        row = {
-            "kind": "micro",
-            "backend": "rust",
-            "transform": "Invert",
-            "pipeline": None,
-            "policy": None,
-            "size": 224,
-            "median_ms": 1.0,
-            "p95_ms": 1.0,
+            "valid": True,
+            "samples": 1,
             "observations_ms": [1.0],
-            "samples": 2,
-            "repetition": 1,
-            "worker": "rust-1",
-            "backend_position": 1,
         }
-        with self.assertRaisesRegex(ValueError, "sample count"):
-            aggregate_runs([row])
+        validate_complete(planned, [row], 1)
+        with self.assertRaisesRegex(RuntimeError, "incomplete evidence"):
+            validate_complete(planned, [row, row], 1)
+
+    def test_status_rejects_an_incomplete_canonical_matrix(self) -> None:
+        route = RouteSpec("variopinta.compiled", "variopinta", "compiled", "rust")
+        case = CaseSpec(
+            "transforms.test.default",
+            "transforms",
+            "Test",
+            (),
+            (route,),
+            (224,),
+            "layers",
+            "transform:Invert",
+            "policy",
+            ("transforms",),
+            TimingPolicy(1.0, 0, 1, 1),
+        )
+        with TemporaryDirectory() as directory:
+            root = Path(directory)
+            write_json_atomic(
+                shard_path(case, root),
+                {
+                    "schema_version": 1,
+                    "case_id": case.id,
+                    "case": case.normalized(),
+                    "fingerprint": {"digest": "current"},
+                    "rows": [
+                        {
+                            "route_id": route.id,
+                            "size": 224,
+                            "repetition": 1,
+                            "valid": True,
+                            "samples": 1,
+                            "observations_ms": [1.0],
+                        }
+                    ],
+                },
+            )
+            with (
+                patch("benchmarks.evidence.unclassified_measured_paths", return_value=()),
+                patch(
+                    "benchmarks.evidence.case_fingerprint",
+                    return_value={"digest": "current"},
+                ),
+            ):
+                status = status_for(case, root)
+        self.assertEqual(status.state, "invalid")
+
+
+class FingerprintTests(unittest.TestCase):
+    def _root(self, directory: str) -> tuple[Path, CaseSpec]:
+        root = Path(directory)
+        for relative in (
+            "benchmarks/common.py",
+            "benchmarks/model.py",
+            "benchmarks/selection.py",
+            "benchmarks/controller.py",
+            "benchmarks/worker.py",
+            "benchmarks/adapters.py",
+            "benchmarks/layer_worker.py",
+            "benchmarks/environments.py",
+            "scripts/setup_benchmark_envs.py",
+            "requirements/benchmarks.txt",
+        ):
+            path = root / relative
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_text(relative)
+        route = RouteSpec("torchvision.stock", "torchvision", "stock", "torchvision")
+        case = CaseSpec(
+            "transforms.test.default",
+            "transforms",
+            "Test",
+            (),
+            (route,),
+            (224,),
+            "layers",
+            "transform:Invert",
+            "policy",
+            ("transforms",),
+            TimingPolicy(1.0, 0, 1, 1),
+        )
+        return root, case
+
+    def test_view_change_does_not_invalidate_measurements(self) -> None:
+        with TemporaryDirectory() as directory:
+            root, case = self._root(directory)
+            view = root / "benchmarks" / "views.py"
+            view.write_text("one")
+            original = case_fingerprint(case, root)["digest"]
+            view.write_text("two")
+            self.assertEqual(case_fingerprint(case, root)["digest"], original)
+            (root / "benchmarks" / "layer_worker.py").write_text("changed")
+            self.assertNotEqual(case_fingerprint(case, root)["digest"], original)
+
+    def test_unknown_benchmark_source_is_reported(self) -> None:
+        with TemporaryDirectory() as directory:
+            root, _ = self._root(directory)
+            unknown = root / "benchmarks" / "new_worker.py"
+            unknown.write_text("value = 1")
+            self.assertEqual(unclassified_measured_paths(root), (Path("benchmarks/new_worker.py"),))
 
 
 class BenchmarkMetadataTests(unittest.TestCase):
     def test_optional_packages_do_not_need_to_be_importable(self) -> None:
-        versions = {"numpy": "2.2.6", "torch": "2.7.0", "variopinta": "0.1.0"}
+        versions = {"numpy": "2.2.6", "torch": "2.13.0", "variopinta": "0.3.0"}
 
         def package_version(name: str) -> str:
             try:
@@ -132,55 +271,22 @@ class BenchmarkMetadataTests(unittest.TestCase):
                 raise PackageNotFoundError(name) from error
 
         with patch("importlib.metadata.version", side_effect=package_version):
-            result = metadata("rust-catalog-audit", {"logical_cpu": 0})
-
-        self.assertEqual(result["torch"], "2.7.0")
+            result = metadata("rust", {"logical_cpu": 0})
+        self.assertEqual(result["torch"], "2.13.0")
         self.assertIsNone(result["torchvision"])
-        self.assertNotIn("torchvision", result["packages"])
-
-    def test_fingerprint_ignores_only_local_package_version_fields(self) -> None:
-        with TemporaryDirectory() as directory:
-            root = Path(directory)
-            (root / "benchmarks").mkdir()
-            (root / "python" / "variopinta").mkdir(parents=True)
-            (root / "requirements").mkdir()
-            (root / "rust").mkdir()
-            (root / "scripts").mkdir()
-            (root / "benchmarks" / "worker.py").write_text("POLICY = 3\n")
-            implementation = root / "python" / "variopinta" / "api.py"
-            implementation.write_text("def measured(): return 1\n")
-            (root / "requirements" / "benchmark.txt").write_text("numpy==2.2.6\n")
-            pyproject = root / "pyproject.toml"
-            pyproject.write_text('[project]\nname = "variopinta"\nversion = "0.2.0"\n')
-            cargo = root / "rust" / "Cargo.toml"
-            cargo.write_text('[workspace.package]\nversion = "0.2.0"\nedition = "2024"\n')
-            lock = root / "rust" / "Cargo.lock"
-            lock.write_text('[[package]]\nname = "augment-core"\nversion = "0.2.0"\n')
-            (root / "scripts" / "setup_benchmark_envs.py").write_text("REPETITIONS = 3\n")
-
-            original = benchmark_fingerprint(root)
-            pyproject.write_text('[project]\nname = "variopinta"\nversion = "0.3.0"\n')
-            cargo.write_text('[workspace.package]\nversion = "0.3.0"\nedition = "2024"\n')
-            lock.write_text('[[package]]\nname = "augment-core"\nversion = "0.3.0"\n')
-            self.assertEqual(benchmark_fingerprint(root), original)
-
-            implementation.write_text("def measured(): return 2\n")
-            self.assertNotEqual(benchmark_fingerprint(root), original)
 
 
 class BenchmarkEnvironmentTests(unittest.TestCase):
-    def test_missing_environment_reports_missing_backends(self) -> None:
+    def test_missing_environment_reports_names(self) -> None:
         with TemporaryDirectory() as directory:
             with patch.object(environments, "ENV_ROOT", Path(directory)):
                 with self.assertRaises(SystemExit) as caught:
-                    environments.require_environments(("rust", "albumentations"))
-
+                    environments.require_environments(("rust", "io"))
         message = str(caught.exception)
-        self.assertIn("Missing benchmark environments", message)
-        self.assertIn("albumentations", message)
+        self.assertIn("io", message)
         self.assertIn("rust", message)
 
-    def test_backend_python_uses_configured_root(self) -> None:
+    def test_environment_python_uses_configured_root(self) -> None:
         root = Path("/tmp/variopinta-benchmark-test")
         with patch.object(environments, "ENV_ROOT", root):
             self.assertEqual(

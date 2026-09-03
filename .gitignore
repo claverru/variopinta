@@ -33,32 +33,7 @@ target/
 rust/target/
 
 # Generated benchmark artifacts
-results/baseline/
-results/benchmark*.md
-results/csv/
-results/layers/csv/
-results/layers/layer-experiments*.md
-results/layers/raw/*.json
-!results/layers/raw/all-runs.json
-results/layers/raw/quick-runs/
-results/layers/raw/runs/
-results/plots/
-results/raw/benchmark-albumentations.json
-results/raw/benchmark-albumentationsx.json
-results/raw/benchmark-rust.json
-results/raw/benchmark-torchvision.json
-results/raw/*-quick.json
-results/raw/*-quick-runs.json
-results/raw/catalog-benchmark-quick-runs/
-results/raw/catalog-benchmark-runs/
-results/raw/catalog-runs/
-results/raw/catalog-audit-local.json
-results/raw/environment-*.txt
-results/raw/fair-stability-*.json
-results/raw/images/
-results/raw/metadata*.json
-results/raw/quick-runs/
-results/raw/runs/
+benchmarks/.runs/
 
 # Editors and operating systems
 .idea/

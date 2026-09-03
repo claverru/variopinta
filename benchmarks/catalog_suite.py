@@ -1,21 +1,15 @@
 from __future__ import annotations
 
-import argparse
-from pathlib import Path
 from typing import Any
 
 import numpy as np
 from common import (
     MEAN,
-    ROOT,
     SEED,
     STD,
-    control_cpu,
-    evidence_provenance,
     make_images,
-    metadata,
     output_facts,
-    write_json,
+    time_calls_adaptive,
 )
 
 
@@ -170,80 +164,68 @@ def validate_output(transform: str, value: Any) -> tuple[dict[str, Any], bool]:
     return facts, valid
 
 
-def audit_catalog() -> dict[str, Any]:
+def _case_transforms(factory: str, size: int) -> tuple[str, str, list[Any]]:
+    expected_name, expected_variant = factory.split("|", 1)
+    for name, variant, transforms in catalog_cases(size):
+        if name == expected_name and variant == expected_variant:
+            return name, variant, transforms
+    raise ValueError(f"unknown catalog factory: {factory}")
+
+
+def run_planned(
+    items: list[dict[str, Any]], quick: bool, repetition: int, *, validate_only: bool = False
+) -> list[dict[str, Any]]:
     import variopinta as R
 
-    cpu = control_cpu()
-    rows: list[dict[str, Any]] = []
-    registered: set[str] = set()
-    for size in (224, 512, 1024):
-        source = make_images(size, count=1)[0]
-        cases = catalog_cases(size)
-        validate_catalog_coverage(cases)
-        registered.update(name for name, _, _ in cases if "+" not in name)
-        for transform, variant, transforms in cases:
+    validate_catalog_coverage(catalog_cases(224))
+    rows = []
+    for order, item in enumerate(items, start=1):
+        route = item["route"]
+        for size in item["sizes"]:
+            transform, policy, transforms = _case_transforms(item["factory"], size)
             reference = R.Compose(transforms, seed=SEED)
             compiled = reference.compile()
-            reference_output = reference(source, key=SEED)
-            compiled_output = compiled(source, key=SEED)
+            reference_output = reference(make_images(size, count=1)[0], key=SEED)
+            compiled_output = compiled(make_images(size, count=1)[0], key=SEED)
             exact = bool(np.array_equal(as_array(reference_output), as_array(compiled_output)))
-            reference_facts, reference_valid = validate_output(transform, reference_output)
-            compiled_facts, compiled_valid = validate_output(transform, compiled_output)
-            rows.append(
-                {
-                    "transform": transform,
-                    "variant": variant,
-                    "size": size,
-                    "reference_exact": exact,
-                    "reference_validation": reference_facts,
-                    "compiled_validation": compiled_facts,
-                    "valid": exact and reference_valid and compiled_valid,
-                    "explanation": compiled.explain(),
-                }
-            )
-    return {
-        "schema_version": 1,
-        "provenance": evidence_provenance(),
-        "metadata": metadata("rust-catalog-audit", cpu),
-        "transforms": len(registered),
-        "rows": rows,
-    }
-
-
-def render_catalog_audit_summary(payload: dict[str, Any]) -> str:
-    rows = payload["rows"]
-    return "\n".join(
-        [
-            "## Complete catalog correctness audit",
-            "",
-            f"The Rust-only audit covers **{payload['transforms']}** registered transforms and "
-            f"has {sum(row['valid'] for row in rows)}/{len(rows)} valid case-size rows. "
-            f"Compiled/reference equality holds in "
-            f"{sum(row['reference_exact'] for row in rows)}/{len(rows)} rows.",
-            "",
-            "This gate executes each reference/compiled pair once at 224², 512², and 1024². "
-            "It does not collect performance samples.",
-        ]
-    )
-
-
-def main() -> None:
-    parser = argparse.ArgumentParser(description="Audit complete catalog correctness")
-    parser.add_argument(
-        "--output",
-        type=Path,
-        default=ROOT / "results" / "raw" / "catalog-audit.json",
-    )
-    args = parser.parse_args()
-    payload = audit_catalog()
-    write_json(args.output, payload)
-    invalid = [row for row in payload["rows"] if not row["valid"]]
-    if invalid:
-        raise SystemExit(f"catalog audit failed: {len(invalid)} invalid rows")
-    print(f"Catalog audit: {len(payload['rows'])} valid rows")
-    print(f"Registered transforms: {payload['transforms']}")
-    print(f"Results: {args.output}")
-
-
-if __name__ == "__main__":
-    main()
+            pipeline = reference if route["variant"] == "reference" else compiled
+            output = reference_output if route["variant"] == "reference" else compiled_output
+            facts, output_valid = validate_output(transform, output)
+            row = {
+                "case_id": item["case_id"],
+                "route_id": route["id"],
+                "participant": route["participant"],
+                "variant": route["variant"],
+                "role": route["role"],
+                "size": size,
+                "repetition": repetition,
+                "case_order": order,
+                "reference_exact": exact,
+                "validation": facts,
+                "valid": exact and output_valid,
+                "explanation": pipeline.explain(),
+                "catalog_policy": policy,
+            }
+            if not validate_only:
+                timing_policy = dict(item["timing"])
+                if quick:
+                    timing_policy.update(
+                        {
+                            "budget_ms": min(float(timing_policy["budget_ms"]), 10.0),
+                            "warmup_calls": min(int(timing_policy["warmup_calls"]), 2),
+                            "min_samples": 3,
+                            "max_calls": 64,
+                        }
+                    )
+                images = make_images(size)
+                timing, measured_output = time_calls_adaptive(
+                    lambda image, selected=pipeline: selected(image, key=SEED),
+                    images,
+                    **timing_policy,
+                )
+                measured_facts, measured_valid = validate_output(transform, measured_output)
+                row.update(timing)
+                row["validation"] = measured_facts
+                row["valid"] = row["valid"] and measured_valid
+            rows.append(row)
+    return rows

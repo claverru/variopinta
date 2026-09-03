@@ -1,13 +1,11 @@
 from __future__ import annotations
 
-import hashlib
 import json
 import math
 import os
 import platform
 import re
 import statistics
-import subprocess
 import time
 from collections.abc import Callable
 from pathlib import Path
@@ -16,7 +14,6 @@ from typing import Any
 import numpy as np
 
 ROOT = Path(__file__).resolve().parents[1]
-RESULTS = ROOT / "results"
 SIZES = (224, 512, 1024)
 PIPELINES = ("classic", "extended", "pixel_policy")
 TRANSFORMS = (
@@ -34,40 +31,47 @@ TRANSFORMS = (
     "Posterize",
     "Normalize",
 )
+FOCUSED_CASES = (
+    "affine-reflect101",
+    "rotation-reflect101",
+    "gaussian-noise-independent",
+    "gaussian-noise-shared",
+    "color-jitter-hue",
+    "sharpen-cross",
+    "perspective-bilinear",
+    "perspective-bilinear-reflect101",
+    "perspective-nearest-constant",
+    "perspective-nearest-reflect101",
+    "grid-distortion-bilinear",
+    "grid-distortion-bilinear-reflect101",
+    "grid-distortion-nearest-constant",
+    "grid-distortion-nearest-reflect101",
+    "pad-constant",
+    "pad-reflect101",
+    "to-torch",
+)
+FOCUSED_LABELS = {
+    "affine-reflect101": "Affine (bilinear, reflect101)",
+    "rotation-reflect101": "RandomRotation (bilinear, reflect101)",
+    "gaussian-noise-independent": "GaussianNoise (independent RGB)",
+    "gaussian-noise-shared": "GaussianNoise (shared RGB)",
+    "color-jitter-hue": "ColorJitter (hue only)",
+    "sharpen-cross": "Sharpen (cross 3x3)",
+    "perspective-bilinear": "Perspective (bilinear, constant)",
+    "perspective-bilinear-reflect101": "Perspective (bilinear, reflect101)",
+    "perspective-nearest-constant": "Perspective (nearest, constant)",
+    "perspective-nearest-reflect101": "Perspective (nearest, reflect101)",
+    "grid-distortion-bilinear": "GridDistortion (bilinear, constant)",
+    "grid-distortion-bilinear-reflect101": "GridDistortion (bilinear, reflect101)",
+    "grid-distortion-nearest-constant": "GridDistortion (nearest, constant)",
+    "grid-distortion-nearest-reflect101": "GridDistortion (nearest, reflect101)",
+    "pad-constant": "PadIfNeeded (constant, +8 px)",
+    "pad-reflect101": "PadIfNeeded (reflect101, +8 px)",
+    "to-torch": "ToTorch (contiguous uint8 CHW)",
+}
 SEED = 137
 MEAN = (0.485, 0.456, 0.406)
 STD = (0.229, 0.224, 0.225)
-EVIDENCE_PATTERNS = (
-    "benchmarks/*.py",
-    "pyproject.toml",
-    "python/variopinta/*.py",
-    "requirements/*.txt",
-    "rust/Cargo.lock",
-    "rust/Cargo.toml",
-    "rust/core/Cargo.toml",
-    "rust/core/src/**/*.rs",
-    "rust/io/Cargo.toml",
-    "rust/io/src/**/*.rs",
-    "rust/pyext/Cargo.toml",
-    "rust/pyext/src/**/*.rs",
-    "scripts/setup_benchmark_envs.py",
-)
-EVIDENCE_EXCLUDES = {
-    Path("benchmarks/check_evidence.py"),
-    Path("benchmarks/plot_results.py"),
-}
-EVIDENCE_STATUS_PATHS = (
-    "benchmarks",
-    "pyproject.toml",
-    "python/variopinta",
-    "requirements",
-    "rust/Cargo.lock",
-    "rust/Cargo.toml",
-    "rust/core",
-    "rust/io",
-    "rust/pyext",
-    "scripts/setup_benchmark_envs.py",
-)
 LOCAL_CRATES = {"augment-core", "augment-io", "augment-pyext"}
 
 
@@ -150,40 +154,6 @@ def make_images(size: int, count: int = 8) -> list[np.ndarray]:
     return [np.ascontiguousarray(patterns[i % len(patterns)]) for i in range(count)]
 
 
-def iterations_for(size: int, quick: bool) -> tuple[int, int]:
-    if quick:
-        return 2, {224: 8, 512: 5, 1024: 3}[size]
-    return 10, {224: 100, 512: 50, 1024: 20}[size]
-
-
-def time_calls(
-    fn: Callable[[Any], Any],
-    inputs: list[Any],
-    warmup: int,
-    iterations: int,
-    *,
-    block_size: int = 1,
-) -> tuple[dict[str, Any], Any]:
-    output = None
-    for i in range(warmup * block_size):
-        output = fn(inputs[i % len(inputs)])
-    samples = []
-    for i in range(iterations):
-        start = time.perf_counter_ns()
-        for offset in range(block_size):
-            output = fn(inputs[(i * block_size + offset) % len(inputs)])
-        samples.append((time.perf_counter_ns() - start) / 1_000_000 / block_size)
-    summary = summarize_observations(samples)
-    return {
-        **summary,
-        "iterations": iterations * block_size,
-        "samples": len(samples),
-        "observations_ms": samples,
-        "block_size": block_size,
-        "warmup_calls": warmup * block_size,
-    }, output
-
-
 def time_calls_adaptive(
     fn: Callable[[Any], Any],
     inputs: list[Any],
@@ -193,6 +163,7 @@ def time_calls_adaptive(
     min_samples: int,
     max_calls: int,
     target_sample_ms: float = 2.0,
+    block_size: int | None = None,
 ) -> tuple[dict[str, Any], Any]:
     if budget_ms <= 0 or warmup_calls < 0 or min_samples <= 0 or max_calls < min_samples:
         raise ValueError("invalid adaptive timing policy")
@@ -204,7 +175,10 @@ def time_calls_adaptive(
     output = fn(inputs[0])
     probe_ms = max((time.perf_counter_ns() - probe_start) / 1_000_000, 1e-6)
     max_block_size = max(1, max_calls // min_samples)
-    block_size = min(max_block_size, max(1, math.ceil(target_sample_ms / probe_ms)))
+    if block_size is None:
+        block_size = min(max_block_size, max(1, math.ceil(target_sample_ms / probe_ms)))
+    elif block_size <= 0 or block_size > max_block_size:
+        raise ValueError("invalid adaptive timing block size")
 
     samples: list[float] = []
     calls = 0
@@ -242,62 +216,6 @@ def summarize_observations(samples: list[float]) -> dict[str, float]:
         "p95_ms": p95,
         "images_per_sec": 1000.0 / median,
     }
-
-
-def aggregate_runs(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
-    grouped: dict[tuple[Any, ...], list[dict[str, Any]]] = {}
-    identity = ("kind", "backend", "transform", "pipeline", "policy", "size")
-    for row in rows:
-        key = tuple(row.get(field) for field in identity)
-        grouped.setdefault(key, []).append(row)
-
-    aggregated = []
-    for members in grouped.values():
-        result = {
-            key: value
-            for key, value in members[0].items()
-            if key not in {"repetition", "worker", "backend_position", "observations_ms"}
-        }
-        result["repetitions"] = len(members)
-        result["valid"] = all(member.get("valid", True) for member in members)
-        if "median_ms" in result:
-            worker_observations = []
-            medians = []
-            p95s = []
-            for member in members:
-                observations = member.get("observations_ms")
-                if not isinstance(observations, list):
-                    raise ValueError("timed benchmark row is missing observations_ms")
-                expected_samples = member.get("samples")
-                if expected_samples is not None and expected_samples != len(observations):
-                    raise ValueError("timing sample count does not match observations_ms")
-                summary = summarize_observations(observations)
-                medians.append(summary["median_ms"])
-                p95s.append(summary["p95_ms"])
-                worker_observations.append(
-                    {
-                        "repetition": member["repetition"],
-                        "worker": member["worker"],
-                        "backend_position": member["backend_position"],
-                        "block_size": member.get("block_size", 1),
-                        "warmup_calls": member.get("warmup_calls", 0),
-                        "iterations": member.get("iterations", len(observations)),
-                        "samples": len(observations),
-                        "observations_ms": observations,
-                    }
-                )
-            result["median_ms"] = statistics.median(medians)
-            result["p95_ms"] = statistics.median(p95s)
-            result["min_run_ms"] = min(medians)
-            result["max_run_ms"] = max(medians)
-            result["run_spread_percent"] = (
-                (max(medians) - min(medians)) / result["median_ms"] * 100.0
-            )
-            result["worker_observations"] = worker_observations
-            if "images_per_sec" in result:
-                result["images_per_sec"] = 1000.0 / result["median_ms"]
-        aggregated.append(result)
-    return aggregated
 
 
 def output_facts(value: Any) -> dict[str, Any]:
@@ -363,48 +281,6 @@ def normalized_evidence_input(path: Path, data: bytes) -> bytes:
     return text.encode()
 
 
-def benchmark_fingerprint(root: Path = ROOT) -> str:
-    paths = {
-        path.relative_to(root)
-        for pattern in EVIDENCE_PATTERNS
-        for path in root.glob(pattern)
-        if path.is_file() and path.relative_to(root) not in EVIDENCE_EXCLUDES
-    }
-    digest = hashlib.sha256()
-    for relative in sorted(paths):
-        digest.update(relative.as_posix().encode())
-        digest.update(b"\0")
-        digest.update(normalized_evidence_input(relative, (root / relative).read_bytes()))
-        digest.update(b"\0")
-    return digest.hexdigest()
-
-
-def evidence_provenance(root: Path = ROOT) -> dict[str, Any]:
-    def git(*arguments: str) -> str | None:
-        result = subprocess.run(
-            ["git", *arguments], cwd=root, text=True, capture_output=True, check=False
-        )
-        return result.stdout.strip() if result.returncode == 0 else None
-
-    dirty = git("status", "--short", "--untracked-files=all", "--", *EVIDENCE_STATUS_PATHS)
-    return {
-        "schema_version": 1,
-        "benchmark_fingerprint": benchmark_fingerprint(root),
-        "source_revision": git("rev-parse", "HEAD"),
-        "source_dirty": None if dirty is None else bool(dirty),
-    }
-
-
-def evidence_matches_code(payload: dict[str, Any], root: Path = ROOT) -> bool:
-    provenance = payload.get("provenance", {})
-    if not isinstance(provenance, dict):
-        return False
-    return (
-        provenance.get("benchmark_fingerprint") == benchmark_fingerprint(root)
-        and provenance.get("source_dirty") is False
-    )
-
-
 def metadata(backend: str, cpu: dict[str, Any]) -> dict[str, Any]:
     import importlib.metadata as md
 
@@ -413,7 +289,6 @@ def metadata(backend: str, cpu: dict[str, Any]) -> dict[str, Any]:
         "torch",
         "torchvision",
         "numpy",
-        "albumentations",
         "albumentationsx",
         "albucore",
         "opencv-python-headless",

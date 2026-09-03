@@ -215,10 +215,10 @@ jobs:
           fi
           python scripts/smoke_release.py --expected-version "$PACKAGE_VERSION" --torch
           python -m unittest discover -s tests
-          python benchmarks/run_catalog_audit.py
+          python -m benchmarks validate --suite catalog
       - name: Run diagnostic macOS ARM64 catalog benchmark
         if: matrix.platform == 'macos-arm64' && matrix.python == '3.13'
-        run: python benchmarks/run_catalog_benchmark.py --quick --budget-ms 5
+        run: python -m benchmarks run --suite catalog --quick --current-environment
       - name: Record tested artifact provenance
         run: >-
           python scripts/release_evidence.py
@@ -301,7 +301,7 @@ jobs:
           fi
           python scripts/smoke_release.py --expected-version "$PACKAGE_VERSION" --torch
           python -m unittest discover -s tests
-          python benchmarks/run_catalog_audit.py
+          python -m benchmarks validate --suite catalog
       - name: Record sdist and rebuilt-wheel provenance
         run: >-
           python scripts/release_evidence.py

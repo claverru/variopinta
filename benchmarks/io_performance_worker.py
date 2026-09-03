@@ -1,9 +1,6 @@
 from __future__ import annotations
 
-import csv
 import hashlib
-import json
-import time
 from collections.abc import Callable
 from io import BytesIO
 from pathlib import Path
@@ -13,36 +10,24 @@ from typing import Any
 import cv2
 import numpy as np
 import variopinta as R
-from common import (
-    RESULTS,
-    control_cpu,
-    evidence_provenance,
-    make_images,
-    metadata,
-    summarize_observations,
-)
+from common import make_images, time_calls_adaptive
 from PIL import Image
 
 
 def time_operation(
     function: Callable[[], Any], warmup: int = 10, iterations: int = 100
 ) -> dict[str, Any]:
-    for _ in range(warmup):
-        function()
-    samples = []
-    for _ in range(iterations):
-        start = time.perf_counter_ns()
-        output = function()
-        samples.append((time.perf_counter_ns() - start) / 1_000_000)
-    summary = summarize_observations(samples)
+    timing, output = time_calls_adaptive(
+        lambda _: function(),
+        [None],
+        budget_ms=100.0,
+        warmup_calls=warmup,
+        min_samples=min(7, iterations),
+        max_calls=iterations,
+    )
     return {
-        **summary,
-        "operations_per_sec": summary["images_per_sec"],
-        "iterations": iterations,
-        "samples": len(samples),
-        "observations_ms": samples,
-        "block_size": 1,
-        "warmup_calls": warmup,
+        **timing,
+        "operations_per_sec": timing["images_per_sec"],
         "output_bytes": len(output) if isinstance(output, bytes) else None,
         "output_sha256": output_sha256(output),
     }
@@ -107,15 +92,15 @@ def three_call_path(
     R.write_image(destination, transformed, format=format)
 
 
-def main() -> None:
-    cpu = control_cpu()
+def run_planned(items: list[dict[str, Any]], quick: bool, repetition: int) -> list[dict[str, Any]]:
     image = make_images(512, 1)[0]
     rows = []
     with TemporaryDirectory() as directory:
         root = Path(directory)
-        for format in ("jpeg", "png"):
-            encoded = pillow_encode(image, format)
-            input_path = root / f"input.{format}"
+        contexts: dict[str, dict[tuple[str, str], Callable[[], Any]]] = {}
+        for format_name in {item["factory"].split("|", 1)[0] for item in items}:
+            encoded = pillow_encode(image, format_name)
+            input_path = root / f"input.{format_name}"
             input_path.write_bytes(encoded)
             array_pipeline = R.Compose([R.Resize(448, 448), R.Invert()], seed=137).compile()
             encoded_input_pipeline = R.Compose(
@@ -124,32 +109,34 @@ def main() -> None:
             encoded_output_pipeline = R.Compose(
                 [R.Resize(448, 448), R.Invert()],
                 seed=137,
-                output=R.EncodedOutput(format=format),
+                output=R.EncodedOutput(format=format_name),
             ).compile()
             encoded_pipeline = R.Compose(
                 [R.Resize(448, 448), R.Invert()],
                 seed=137,
                 input=R.EncodedInput(),
-                output=R.EncodedOutput(format=format),
+                output=R.EncodedOutput(format=format_name),
             ).compile()
             path_pipeline = R.Compose(
                 [R.Resize(448, 448), R.Invert()],
                 seed=137,
                 input=R.PathInput(),
-                output=R.PathOutput(format=format),
+                output=R.PathOutput(format=format_name),
             ).compile()
             functions: dict[tuple[str, str], Callable[[], Any]] = {
-                ("decode", "rust"): lambda data=encoded: R.decode_image(data),
+                ("decode", "variopinta"): lambda data=encoded: R.decode_image(data),
                 ("decode", "pillow"): lambda data=encoded: pillow_decode(data),
                 ("decode", "opencv"): lambda data=encoded: opencv_decode(data),
-                ("read", "rust"): lambda path=input_path: R.read_image(path),
+                ("read", "variopinta"): lambda path=input_path: R.read_image(path),
                 ("read", "pillow"): lambda path=input_path: pillow_read(path),
                 ("read", "opencv"): lambda path=input_path: opencv_read(path),
-                ("encode", "rust"): lambda fmt=format: R.encode_image(image, format=fmt),
-                ("encode", "pillow"): lambda fmt=format: pillow_encode(image, fmt),
-                ("encode", "opencv"): lambda fmt=format: opencv_encode(image, fmt),
-                ("write", "rust"): lambda fmt=format: R.write_image(root / f"rust.{fmt}", image),
-                ("write", "pillow"): lambda fmt=format: Image.fromarray(image).save(
+                ("encode", "variopinta"): lambda fmt=format_name: R.encode_image(image, format=fmt),
+                ("encode", "pillow"): lambda fmt=format_name: pillow_encode(image, fmt),
+                ("encode", "opencv"): lambda fmt=format_name: opencv_encode(image, fmt),
+                ("write", "variopinta"): lambda fmt=format_name: R.write_image(
+                    root / f"variopinta.{fmt}", image
+                ),
+                ("write", "pillow"): lambda fmt=format_name: Image.fromarray(image).save(
                     root / f"pillow.{fmt}",
                     format=fmt.upper(),
                     **(
@@ -158,63 +145,64 @@ def main() -> None:
                         else {"compress_level": 6}
                     ),
                 ),
-                ("write", "opencv"): lambda fmt=format: cv2.imwrite(
+                ("write", "opencv"): lambda fmt=format_name: cv2.imwrite(
                     str(root / f"opencv.{fmt}"),
                     image[..., ::-1],
                     [cv2.IMWRITE_JPEG_QUALITY, 95]
                     if fmt == "jpeg"
                     else [cv2.IMWRITE_PNG_COMPRESSION, 6],
                 ),
-                ("pipeline-three-call-encoded", "rust"): lambda data=encoded,
+                ("pipeline-three-call-encoded", "variopinta"): lambda data=encoded,
                 pipeline=array_pipeline,
-                fmt=format: three_call_encoded(data, pipeline, fmt),
-                ("pipeline-three-call-path", "rust"): lambda source=input_path,
+                fmt=format_name: three_call_encoded(data, pipeline, fmt),
+                ("pipeline-three-call-path", "variopinta"): lambda source=input_path,
                 pipeline=array_pipeline,
-                fmt=format: three_call_path(source, root / f"three-call.{fmt}", pipeline, fmt),
-                ("pipeline-encoded-return", "rust"): lambda data=encoded,
+                fmt=format_name: three_call_path(source, root / f"three-call.{fmt}", pipeline, fmt),
+                ("pipeline-encoded-return", "variopinta"): lambda data=encoded,
                 pipeline=encoded_input_pipeline: pipeline(data, key=11),
                 (
                     "pipeline-array-encoded",
-                    "rust",
+                    "variopinta",
                 ): lambda pipeline=encoded_output_pipeline: pipeline(image, key=11),
-                ("pipeline-encoded-encoded", "rust"): lambda data=encoded,
+                ("pipeline-encoded-encoded", "variopinta"): lambda data=encoded,
                 pipeline=encoded_pipeline: pipeline(data, key=11),
-                ("pipeline-path-path", "rust"): lambda source=input_path,
+                ("pipeline-path-path", "variopinta"): lambda source=input_path,
                 pipeline=path_pipeline,
-                fmt=format: pipeline(source, destination=root / f"native.{fmt}", key=11),
+                fmt=format_name: pipeline(source, destination=root / f"native.{fmt}", key=11),
             }
-            for (operation, backend), function in functions.items():
-                rows.append(
+            contexts[format_name] = functions
+
+        for order, item in enumerate(items, start=1):
+            format_name, operation = item["factory"].split("|", 1)
+            route = item["route"]
+            function = contexts[format_name][(operation, route["participant"])]
+            policy = dict(item["timing"])
+            if quick:
+                policy.update(
                     {
-                        "format": format,
-                        "operation": operation,
-                        "backend": backend,
-                        **time_operation(function),
+                        "budget_ms": min(float(policy["budget_ms"]), 10.0),
+                        "warmup_calls": min(int(policy["warmup_calls"]), 2),
+                        "min_samples": 3,
+                        "max_calls": 64,
                     }
                 )
-    output = {
-        "schema_version": 1,
-        "metadata": metadata("rust-io-performance", cpu),
-        "provenance": evidence_provenance(),
-        "rows": rows,
-    }
-    path = RESULTS / "raw" / "io-performance.json"
-    path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(json.dumps(output, indent=2, sort_keys=True) + "\n")
-    csv_path = RESULTS / "csv" / "io-performance.csv"
-    csv_path.parent.mkdir(parents=True, exist_ok=True)
-    with csv_path.open("w", newline="") as handle:
-        fields = [key for key in rows[0] if key != "observations_ms"]
-        writer = csv.DictWriter(handle, fieldnames=fields)
-        writer.writeheader()
-        writer.writerows(
-            {key: value for key, value in row.items() if key != "observations_ms"} for row in rows
-        )
-    for row in rows:
-        print(
-            f"{row['format']:4} {row['operation']:31} {row['backend']:6} {row['median_ms']:.3f} ms"
-        )
-
-
-if __name__ == "__main__":
-    main()
+            timing, output = time_calls_adaptive(
+                lambda _, selected=function: selected(), [None], **policy
+            )
+            rows.append(
+                {
+                    "case_id": item["case_id"],
+                    "route_id": route["id"],
+                    "participant": route["participant"],
+                    "variant": route["variant"],
+                    "role": route["role"],
+                    "size": 512,
+                    "repetition": repetition,
+                    "case_order": order,
+                    **timing,
+                    "output_bytes": len(output) if isinstance(output, bytes) else None,
+                    "output_sha256": output_sha256(output),
+                    "valid": True,
+                }
+            )
+    return rows

@@ -189,8 +189,8 @@ and file I/O work releases it.
 
 ## Performance evidence
 
-The controlled benchmark compares Variopinta with Torchvision v2,
-Albumentations, and AlbumentationsX on one reference machine. It measures
+The controlled benchmark compares Variopinta with Torchvision v2 and
+AlbumentationsX on one reference machine. It measures
 equivalent materialized work and records correctness, copies, buffers, kernel
 paths, hardware, and statistical limits. The results support the compiled
 pipeline design; they do not establish a universal Rust speed advantage.
@@ -198,9 +198,8 @@ The published x86-64 results do not claim performance parity on Apple Silicon;
 Variopinta-owned kernels use their portable scalar paths there, while resize
 and JPEG dependencies may independently select upstream ARM64 SIMD.
 
-The reproducible harness and archived raw evidence are available under
-[`benchmarks/`](https://github.com/claverru/variopinta/tree/main/benchmarks) and
-[`results/`](https://github.com/claverru/variopinta/tree/main/results).
+The reproducible harness and canonical evidence layout live under
+[`benchmarks/`](https://github.com/claverru/variopinta/tree/main/benchmarks).
 
 ## Project information
 

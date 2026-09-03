@@ -59,7 +59,7 @@ python-syntax:
 # Build the extension, run Python tests, and audit catalog correctness.
 python-check: python-syntax develop
     {{ python }} -m unittest discover -s tests
-    {{ python }} benchmarks/run_catalog_audit.py --output results/raw/catalog-audit-local.json
+    {{ python }} -m benchmarks validate --suite catalog
 
 # Run all ordinary tests.
 test: test-rust python-check
@@ -79,56 +79,23 @@ asan:
 
 # Create the isolated benchmark environments. Extra arguments are forwarded.
 benchmark-setup *args:
-    {{ python }} scripts/setup_benchmark_envs.py {{ args }}
+    {{ python }} -m scripts.setup_benchmark_envs {{ args }}
 
-# Run the complete comparative benchmark.
-benchmark:
-    {{ python }} benchmarks/run_benchmark.py
+# List, run, validate, or render benchmark cases.
+benchmark *args:
+    {{ python }} -m benchmarks {{ args }}
 
-# Run the diagnostic comparative benchmark.
-benchmark-quick:
-    {{ python }} benchmarks/run_benchmark.py --quick
+# Renew complete canonical case shards selected by the supplied filters.
+evidence *args:
+    {{ python }} -m benchmarks evidence {{ args }}
 
-# Regenerate the report and plots from committed observations.
-benchmark-render:
-    {{ python }} benchmarks/run_benchmark.py --render-existing
-
-# Run codec interoperability checks.
-io-parity:
-    {{ python }} benchmarks/run_io_parity.py
-
-# Measure focused codec performance.
-io-performance:
-    {{ python }} benchmarks/run_io_performance.py
-
-# Run backend and optimization attribution experiments.
-layer-experiments:
-    {{ python }} benchmarks/run_layer_experiments.py
-
-# Run the exhaustive transform-catalog correctness audit.
-catalog-audit: develop
-    {{ python }} benchmarks/run_catalog_audit.py
-
-# Run the full adaptive catalog benchmark.
-catalog-benchmark:
-    {{ python }} benchmarks/run_catalog_benchmark.py
-
-# Run the diagnostic adaptive catalog benchmark.
-catalog-benchmark-quick:
-    {{ python }} benchmarks/run_catalog_benchmark.py --quick
-
-# Regenerate all full benchmark evidence in dependency order.
-evidence:
-    just io-parity
-    just io-performance
-    just catalog-audit
-    just catalog-benchmark
-    just layer-experiments
-    just benchmark
+# Force a complete canonical benchmark run.
+evidence-full:
+    {{ python }} -m benchmarks evidence --full
 
 # Check whether canonical benchmark evidence matches the current measured code.
 evidence-status:
-    {{ python }} benchmarks/check_evidence.py
+    {{ python }} -m benchmarks status
 
 # Build one host-platform wheel and one sdist into a new release-dist directory.
 release-build:

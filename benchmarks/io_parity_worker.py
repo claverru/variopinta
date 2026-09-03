@@ -1,8 +1,6 @@
 from __future__ import annotations
 
-import argparse
 import binascii
-import json
 import struct
 import warnings
 import zlib
@@ -16,7 +14,6 @@ import cv2
 import numpy as np
 import torch
 import variopinta as R
-from common import RESULTS, evidence_provenance, metadata
 from PIL import Image
 from torchvision.io import ImageReadMode
 from torchvision.io import decode_image as torchvision_decode
@@ -481,38 +478,27 @@ def summarize(rows: list[dict[str, Any]]) -> dict[str, Any]:
     }
 
 
-def main() -> None:
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--output", type=Path, default=RESULTS / "raw" / "io-parity.json")
-    arguments = parser.parse_args()
+def run_planned(items: list[dict[str, Any]], repetition: int) -> list[dict[str, Any]]:
+    if len(items) != 1 or items[0]["factory"] != "interoperability":
+        raise ValueError("I/O parity expects the interoperability case")
     rows: list[dict[str, Any]] = []
     decode_and_read_checks(fixtures(), rows)
     encode_checks(rows)
     write_checks(rows)
     summary = summarize(rows)
-    payload = {
-        "schema_version": 1,
-        "metadata": metadata("rust-io-parity", {}),
-        "provenance": evidence_provenance(),
-        "summary": summary,
-        "rows": rows,
-    }
-    arguments.output.parent.mkdir(parents=True, exist_ok=True)
-    arguments.output.write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n")
-    for operation, result in summary["by_operation"].items():
-        print(f"{operation}: {result['passed']}/{result['checks']}")
-    print(f"total: {summary['passed']}/{summary['checks']}")
-    if not summary["valid"]:
-        failures = [row for row in rows if not row["valid"]]
-        for failure in failures[:20]:
-            print(
-                f"FAIL {failure['operation']} {failure['case']} vs {failure['reference']}: "
-                f"shape={failure['actual_shape']}/{failure['expected_shape']} "
-                f"dtype={failure['actual_dtype']}/{failure['expected_dtype']} "
-                f"error={failure['max_abs_error']} tolerance={failure['tolerance']}"
-            )
-        raise SystemExit(1)
-
-
-if __name__ == "__main__":
-    main()
+    item = items[0]
+    route = item["route"]
+    return [
+        {
+            "case_id": item["case_id"],
+            "route_id": route["id"],
+            "participant": route["participant"],
+            "variant": route["variant"],
+            "role": route["role"],
+            "size": None,
+            "repetition": repetition,
+            "case_order": 1,
+            "validation": {"summary": summary, "checks": rows},
+            "valid": summary["valid"],
+        }
+    ]

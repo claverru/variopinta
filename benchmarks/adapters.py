@@ -33,7 +33,7 @@ class Adapter:
         out = max(32, size * 3 // 4)
         if self.backend == "torchvision":
             return self._torch_transform(name, out, micro=True)
-        if self.backend in {"albumentations", "albumentationsx"}:
+        if self.backend == "albumentationsx":
             return self._albu_transform(name, out, micro=True)
         return self._rust_transform(name, out, micro=True)
 
@@ -43,7 +43,7 @@ class Adapter:
         crop = max(224, size * 7 // 8)
         if self.backend == "torchvision":
             return self._torch_pipeline(crop, name)
-        if self.backend in {"albumentations", "albumentationsx"}:
+        if self.backend == "albumentationsx":
             return self._albu_pipeline(crop, name, to_torch=to_torch)
         return self._rust_pipeline(crop, name, to_torch=to_torch)
 
@@ -143,36 +143,23 @@ class Adapter:
         import albumentations as A
         import cv2
 
-        if self.backend == "albumentationsx":
-            jitter = A.ColorJitter(
-                brightness_range=(0.8, 1.2),
-                contrast_range=(0.8, 1.2),
-                saturation_range=(0.8, 1.2),
-                hue_range=(0.0, 0.0),
-                p=1,
-            )
-            affine = A.Affine(
-                scale=(1.0, 1.0),
-                translate_percent=(0.0, 0.0),
-                rotate=(-10.0, 10.0),
-                shear=(0.0, 0.0),
-                interpolation=cv2.INTER_LINEAR,
-                fill=0,
-                p=1,
-            )
-            blur = A.GaussianBlur(blur_range=(5, 5), sigma_range=(1.1, 1.1), p=1)
-        else:
-            jitter = A.ColorJitter(0.2, 0.2, 0.2, 0.0, p=1)
-            affine = A.Affine(
-                scale=1.0,
-                translate_percent=0.0,
-                rotate=(-10.0, 10.0),
-                shear=0.0,
-                interpolation=cv2.INTER_LINEAR,
-                fill=0,
-                p=1,
-            )
-            blur = A.GaussianBlur(blur_limit=(5, 5), sigma_limit=(1.1, 1.1), p=1)
+        jitter = A.ColorJitter(
+            brightness_range=(0.8, 1.2),
+            contrast_range=(0.8, 1.2),
+            saturation_range=(0.8, 1.2),
+            hue_range=(0.0, 0.0),
+            p=1,
+        )
+        affine = A.Affine(
+            scale=(1.0, 1.0),
+            translate_percent=(0.0, 0.0),
+            rotate=(-10.0, 10.0),
+            shear=(0.0, 0.0),
+            interpolation=cv2.INTER_LINEAR,
+            fill=0,
+            p=1,
+        )
+        blur = A.GaussianBlur(blur_range=(5, 5), sigma_range=(1.1, 1.1), p=1)
 
         transforms: dict[str, Any] = {
             "Resize": A.Resize(out, out, interpolation=cv2.INTER_LINEAR, p=1),
@@ -186,9 +173,7 @@ class Adapter:
             "Grayscale": A.ToGray(num_output_channels=3, method="weighted_average", p=1),
             "Invert": A.InvertImg(p=1),
             "Solarize": A.Solarize(threshold_range=(128 / 255, 128 / 255), p=1),
-            "Posterize": A.Posterize(
-                num_bits=(4, 4) if self.backend == "albumentationsx" else 4, p=1
-            ),
+            "Posterize": A.Posterize(num_bits=(4, 4), p=1),
             "Normalize": A.Compose([A.Normalize(mean=MEAN, std=STD, max_pixel_value=255.0, p=1)]),
         }
         transform = self._seed_albu(
@@ -202,38 +187,25 @@ class Adapter:
         import albumentations as A
         import cv2
 
-        if self.backend == "albumentationsx":
-            jitter = A.ColorJitter(
-                brightness_range=(0.8, 1.2),
-                contrast_range=(0.8, 1.2),
-                saturation_range=(0.8, 1.2),
-                hue_range=(0.0, 0.0),
-                p=1,
-            )
-            affine = A.Affine(
-                scale=(1.0, 1.0),
-                translate_percent=(0.0, 0.0),
-                rotate=(-10.0, 10.0),
-                shear=(0.0, 0.0),
-                interpolation=cv2.INTER_LINEAR,
-                fill=0,
-                p=1,
-            )
-            blur = A.GaussianBlur(blur_range=(5, 5), sigma_range=(1.1, 1.1), p=1)
-        else:
-            jitter = A.ColorJitter(0.2, 0.2, 0.2, 0.0, p=1)
-            affine = A.Affine(
-                scale=1.0,
-                translate_percent=0.0,
-                rotate=(-10.0, 10.0),
-                shear=0.0,
-                interpolation=cv2.INTER_LINEAR,
-                fill=0,
-                p=1,
-            )
-            blur = A.GaussianBlur(blur_limit=(5, 5), sigma_limit=(1.1, 1.1), p=1)
+        jitter = A.ColorJitter(
+            brightness_range=(0.8, 1.2),
+            contrast_range=(0.8, 1.2),
+            saturation_range=(0.8, 1.2),
+            hue_range=(0.0, 0.0),
+            p=1,
+        )
+        affine = A.Affine(
+            scale=(1.0, 1.0),
+            translate_percent=(0.0, 0.0),
+            rotate=(-10.0, 10.0),
+            shear=(0.0, 0.0),
+            interpolation=cv2.INTER_LINEAR,
+            fill=0,
+            p=1,
+        )
+        blur = A.GaussianBlur(blur_range=(5, 5), sigma_range=(1.1, 1.1), p=1)
 
-        posterize_bits = (4, 4) if self.backend == "albumentationsx" else 4
+        posterize_bits = (4, 4)
         classic = [
             A.RandomCrop(crop, crop, p=1),
             A.Resize(224, 224, interpolation=cv2.INTER_LINEAR, p=1),

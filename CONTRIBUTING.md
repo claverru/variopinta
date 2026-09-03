@@ -28,7 +28,7 @@ implementation. Do not commit virtual environments, build outputs, local
 wheels, quick benchmark runs, or intermediate result files.
 
 Performance claims require the controlled benchmark harness and committed
-evidence under [`benchmarks/`](benchmarks/) and [`results/`](results/). Ordinary
+evidence under [`benchmarks/evidence/`](benchmarks/evidence/). Ordinary
 changes do not need to regenerate performance data unless they affect measured
 work or published results.
 
