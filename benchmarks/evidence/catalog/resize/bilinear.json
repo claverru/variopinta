@@ -1,0 +1,4009 @@
+{
+  "case": {
+    "comparability": "exact",
+    "executor": "catalog",
+    "factory": "Resize|bilinear",
+    "id": "catalog.resize.bilinear",
+    "label": "Resize (bilinear)",
+    "routes": [
+      {
+        "environment": "rust",
+        "id": "variopinta.reference",
+        "participant": "variopinta",
+        "role": "control",
+        "variant": "reference"
+      },
+      {
+        "environment": "rust",
+        "id": "variopinta.compiled",
+        "participant": "variopinta",
+        "role": "public",
+        "variant": "compiled"
+      }
+    ],
+    "scopes": [
+      "catalog",
+      "variopinta"
+    ],
+    "sizes": [
+      224,
+      512,
+      1024
+    ],
+    "suite": "catalog",
+    "tags": [
+      "catalog",
+      "transform:Resize",
+      "policy:bilinear"
+    ],
+    "timing": {
+      "block_size": null,
+      "budget_ms": 100.0,
+      "max_calls": 512,
+      "min_samples": 7,
+      "target_sample_ms": 2.0,
+      "warmup_calls": 3
+    }
+  },
+  "case_id": "catalog.resize.bilinear",
+  "compatibility": {
+    "digest": "84cb3bc954b79131fc1d6544af6552e21c226b960fce25bf3d7d147d8dd3fbaf",
+    "environments": {
+      "rust": {
+        "architecture": "x86_64",
+        "cpu_count": 32,
+        "packages": {
+          "numpy": "2.2.6",
+          "torch": "2.13.0+cu130",
+          "torchvision": "0.28.0+cu130",
+          "variopinta": "0.3.0"
+        },
+        "platform": "Linux-6.18.33.2-microsoft-standard-WSL2-x86_64-with-glibc2.39",
+        "processor": "AMD Ryzen 9 9950X3D 16-Core Processor",
+        "python": "3.12.3",
+        "thread_control": {
+          "MKL_NUM_THREADS": "1",
+          "OMP_NUM_THREADS": "1",
+          "OPENBLAS_NUM_THREADS": "1",
+          "cpu_affinity_after": [
+            0
+          ],
+          "cpu_affinity_before": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23,
+            24,
+            25,
+            26,
+            27,
+            28,
+            29,
+            30,
+            31
+          ],
+          "cv2_num_threads": null,
+          "torch_num_interop_threads": 1,
+          "torch_num_threads": 1
+        }
+      }
+    }
+  },
+  "execution_order": [
+    {
+      "cases": [
+        "catalog.affine.constant",
+        "catalog.affine.constant",
+        "catalog.affine.reflect101",
+        "catalog.affine.reflect101",
+        "catalog.center-crop.default",
+        "catalog.center-crop.default",
+        "catalog.coarse-dropout.eight-holes",
+        "catalog.coarse-dropout.eight-holes",
+        "catalog.color-jitter.hue",
+        "catalog.color-jitter.hue",
+        "catalog.color-jitter.matrix",
+        "catalog.color-jitter.matrix",
+        "catalog.gaussian-blur.fixed-sigma",
+        "catalog.gaussian-blur.fixed-sigma",
+        "catalog.gaussian-blur.sampled-sigma",
+        "catalog.gaussian-blur.sampled-sigma",
+        "catalog.gaussian-noise.independent-rgb",
+        "catalog.gaussian-noise.independent-rgb",
+        "catalog.gaussian-noise.shared-rgb",
+        "catalog.gaussian-noise.shared-rgb",
+        "catalog.grayscale.default",
+        "catalog.grayscale.default",
+        "catalog.grid-distortion.bilinear",
+        "catalog.grid-distortion.bilinear",
+        "catalog.grid-distortion.nearest-reflect101",
+        "catalog.grid-distortion.nearest-reflect101",
+        "catalog.horizontal-flip.default",
+        "catalog.horizontal-flip.default",
+        "catalog.invert.default",
+        "catalog.invert.default",
+        "catalog.normalize-to-torch.terminal",
+        "catalog.normalize-to-torch.terminal",
+        "catalog.normalize.default",
+        "catalog.normalize.default",
+        "catalog.pad-if-needed.constant",
+        "catalog.pad-if-needed.constant",
+        "catalog.pad-if-needed.reflect101",
+        "catalog.pad-if-needed.reflect101",
+        "catalog.perspective.bilinear",
+        "catalog.perspective.bilinear",
+        "catalog.perspective.nearest-reflect101",
+        "catalog.perspective.nearest-reflect101",
+        "catalog.posterize.default",
+        "catalog.posterize.default",
+        "catalog.random-crop.default",
+        "catalog.random-crop.default",
+        "catalog.random-resized-crop.bilinear",
+        "catalog.random-resized-crop.bilinear",
+        "catalog.random-resized-crop.bilinear-antialias",
+        "catalog.random-resized-crop.bilinear-antialias",
+        "catalog.random-rotation.constant",
+        "catalog.random-rotation.constant",
+        "catalog.random-rotation.reflect101",
+        "catalog.random-rotation.reflect101",
+        "catalog.resize.bilinear",
+        "catalog.resize.bilinear",
+        "catalog.resize.bilinear-antialias",
+        "catalog.resize.bilinear-antialias",
+        "catalog.sharpen.cross-3x3",
+        "catalog.sharpen.cross-3x3",
+        "catalog.solarize.default",
+        "catalog.solarize.default",
+        "catalog.to-torch.default",
+        "catalog.to-torch.default",
+        "catalog.vertical-flip.default",
+        "catalog.vertical-flip.default"
+      ],
+      "environment": "rust",
+      "environment_position": 3,
+      "executor": "catalog",
+      "repetition": 1,
+      "worker": "rust-catalog-1"
+    },
+    {
+      "cases": [
+        "catalog.affine.constant",
+        "catalog.affine.reflect101",
+        "catalog.affine.reflect101",
+        "catalog.center-crop.default",
+        "catalog.center-crop.default",
+        "catalog.coarse-dropout.eight-holes",
+        "catalog.coarse-dropout.eight-holes",
+        "catalog.color-jitter.hue",
+        "catalog.color-jitter.hue",
+        "catalog.color-jitter.matrix",
+        "catalog.color-jitter.matrix",
+        "catalog.gaussian-blur.fixed-sigma",
+        "catalog.gaussian-blur.fixed-sigma",
+        "catalog.gaussian-blur.sampled-sigma",
+        "catalog.gaussian-blur.sampled-sigma",
+        "catalog.gaussian-noise.independent-rgb",
+        "catalog.gaussian-noise.independent-rgb",
+        "catalog.gaussian-noise.shared-rgb",
+        "catalog.gaussian-noise.shared-rgb",
+        "catalog.grayscale.default",
+        "catalog.grayscale.default",
+        "catalog.grid-distortion.bilinear",
+        "catalog.grid-distortion.bilinear",
+        "catalog.grid-distortion.nearest-reflect101",
+        "catalog.grid-distortion.nearest-reflect101",
+        "catalog.horizontal-flip.default",
+        "catalog.horizontal-flip.default",
+        "catalog.invert.default",
+        "catalog.invert.default",
+        "catalog.normalize-to-torch.terminal",
+        "catalog.normalize-to-torch.terminal",
+        "catalog.normalize.default",
+        "catalog.normalize.default",
+        "catalog.pad-if-needed.constant",
+        "catalog.pad-if-needed.constant",
+        "catalog.pad-if-needed.reflect101",
+        "catalog.pad-if-needed.reflect101",
+        "catalog.perspective.bilinear",
+        "catalog.perspective.bilinear",
+        "catalog.perspective.nearest-reflect101",
+        "catalog.perspective.nearest-reflect101",
+        "catalog.posterize.default",
+        "catalog.posterize.default",
+        "catalog.random-crop.default",
+        "catalog.random-crop.default",
+        "catalog.random-resized-crop.bilinear",
+        "catalog.random-resized-crop.bilinear",
+        "catalog.random-resized-crop.bilinear-antialias",
+        "catalog.random-resized-crop.bilinear-antialias",
+        "catalog.random-rotation.constant",
+        "catalog.random-rotation.constant",
+        "catalog.random-rotation.reflect101",
+        "catalog.random-rotation.reflect101",
+        "catalog.resize.bilinear",
+        "catalog.resize.bilinear",
+        "catalog.resize.bilinear-antialias",
+        "catalog.resize.bilinear-antialias",
+        "catalog.sharpen.cross-3x3",
+        "catalog.sharpen.cross-3x3",
+        "catalog.solarize.default",
+        "catalog.solarize.default",
+        "catalog.to-torch.default",
+        "catalog.to-torch.default",
+        "catalog.vertical-flip.default",
+        "catalog.vertical-flip.default",
+        "catalog.affine.constant"
+      ],
+      "environment": "rust",
+      "environment_position": 2,
+      "executor": "catalog",
+      "repetition": 2,
+      "worker": "rust-catalog-2"
+    },
+    {
+      "cases": [
+        "catalog.affine.reflect101",
+        "catalog.affine.reflect101",
+        "catalog.center-crop.default",
+        "catalog.center-crop.default",
+        "catalog.coarse-dropout.eight-holes",
+        "catalog.coarse-dropout.eight-holes",
+        "catalog.color-jitter.hue",
+        "catalog.color-jitter.hue",
+        "catalog.color-jitter.matrix",
+        "catalog.color-jitter.matrix",
+        "catalog.gaussian-blur.fixed-sigma",
+        "catalog.gaussian-blur.fixed-sigma",
+        "catalog.gaussian-blur.sampled-sigma",
+        "catalog.gaussian-blur.sampled-sigma",
+        "catalog.gaussian-noise.independent-rgb",
+        "catalog.gaussian-noise.independent-rgb",
+        "catalog.gaussian-noise.shared-rgb",
+        "catalog.gaussian-noise.shared-rgb",
+        "catalog.grayscale.default",
+        "catalog.grayscale.default",
+        "catalog.grid-distortion.bilinear",
+        "catalog.grid-distortion.bilinear",
+        "catalog.grid-distortion.nearest-reflect101",
+        "catalog.grid-distortion.nearest-reflect101",
+        "catalog.horizontal-flip.default",
+        "catalog.horizontal-flip.default",
+        "catalog.invert.default",
+        "catalog.invert.default",
+        "catalog.normalize-to-torch.terminal",
+        "catalog.normalize-to-torch.terminal",
+        "catalog.normalize.default",
+        "catalog.normalize.default",
+        "catalog.pad-if-needed.constant",
+        "catalog.pad-if-needed.constant",
+        "catalog.pad-if-needed.reflect101",
+        "catalog.pad-if-needed.reflect101",
+        "catalog.perspective.bilinear",
+        "catalog.perspective.bilinear",
+        "catalog.perspective.nearest-reflect101",
+        "catalog.perspective.nearest-reflect101",
+        "catalog.posterize.default",
+        "catalog.posterize.default",
+        "catalog.random-crop.default",
+        "catalog.random-crop.default",
+        "catalog.random-resized-crop.bilinear",
+        "catalog.random-resized-crop.bilinear",
+        "catalog.random-resized-crop.bilinear-antialias",
+        "catalog.random-resized-crop.bilinear-antialias",
+        "catalog.random-rotation.constant",
+        "catalog.random-rotation.constant",
+        "catalog.random-rotation.reflect101",
+        "catalog.random-rotation.reflect101",
+        "catalog.resize.bilinear",
+        "catalog.resize.bilinear",
+        "catalog.resize.bilinear-antialias",
+        "catalog.resize.bilinear-antialias",
+        "catalog.sharpen.cross-3x3",
+        "catalog.sharpen.cross-3x3",
+        "catalog.solarize.default",
+        "catalog.solarize.default",
+        "catalog.to-torch.default",
+        "catalog.to-torch.default",
+        "catalog.vertical-flip.default",
+        "catalog.vertical-flip.default",
+        "catalog.affine.constant",
+        "catalog.affine.constant"
+      ],
+      "environment": "rust",
+      "environment_position": 1,
+      "executor": "catalog",
+      "repetition": 3,
+      "worker": "rust-catalog-3"
+    }
+  ],
+  "fingerprint": {
+    "components": {
+      "definition": "1c32cabc57207ae6fd7c6c1c605eaa58f5c204894407caeacd7c9b0e78b0991b",
+      "environments": {
+        "rust": "c21434ab276976c811af1d8dc747f46be02b1f77bad36ecbae0c2a96fee16265"
+      },
+      "source": "e1d09d18a4c6ff243cc5b504886208727031c75ef9e21dc521426b14c4f21c2c",
+      "unclassified": []
+    },
+    "digest": "e9f8e8abd9e11bf93cd307eb2e2ced64fed011e3c5659cbabe0db11898ec6e90"
+  },
+  "metadata": {
+    "rust": {
+      "architecture": "x86_64",
+      "backend": "rust",
+      "cpu_count": 32,
+      "packages": {
+        "numpy": "2.2.6",
+        "torch": "2.13.0+cu130",
+        "torchvision": "0.28.0+cu130",
+        "variopinta": "0.3.0"
+      },
+      "platform": "Linux-6.18.33.2-microsoft-standard-WSL2-x86_64-with-glibc2.39",
+      "processor": "AMD Ryzen 9 9950X3D 16-Core Processor",
+      "python": "3.12.3",
+      "thread_control": {
+        "MKL_NUM_THREADS": "1",
+        "OMP_NUM_THREADS": "1",
+        "OPENBLAS_NUM_THREADS": "1",
+        "cpu_affinity_after": [
+          0
+        ],
+        "cpu_affinity_before": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17,
+          18,
+          19,
+          20,
+          21,
+          22,
+          23,
+          24,
+          25,
+          26,
+          27,
+          28,
+          29,
+          30,
+          31
+        ],
+        "cv2_num_threads": null,
+        "torch_num_interop_threads": 1,
+        "torch_num_threads": 1
+      },
+      "torch": "2.13.0+cu130",
+      "torchvision": "0.28.0+cu130"
+    }
+  },
+  "provenance": {
+    "source_dirty": false,
+    "source_revision": "4a32c003085662b37e5d4fc6c47bdfa7628a7f94"
+  },
+  "rows": [
+    {
+      "block_size": 58,
+      "budget_ms": 100.0,
+      "case_id": "catalog.resize.bilinear",
+      "case_order": 55,
+      "catalog_policy": "bilinear",
+      "environment": "rust",
+      "environment_position": 3,
+      "explanation": {
+        "buffers": [
+          {
+            "condition": "always",
+            "dtype": "uint8",
+            "layout": "HWC",
+            "lifecycle": "borrowed-for-call",
+            "name": "input"
+          },
+          {
+            "condition": "always",
+            "dtype": "uint8",
+            "layout": "HWC",
+            "lifecycle": "owned-per-run-workspace-reusable",
+            "name": "working-u8"
+          }
+        ],
+        "copies": [
+          {
+            "condition": "non-contiguous-input",
+            "count": "0-or-1",
+            "reason": "normalize-to-contiguous-HWC",
+            "stage": "python-entry"
+          },
+          {
+            "condition": "always-elided",
+            "count": "0",
+            "reason": "establish-owned-working-buffer",
+            "stage": "native-entry"
+          },
+          {
+            "condition": "always",
+            "count": "0",
+            "reason": "transfer-Rust-Vec-ownership-to-NumPy-storage",
+            "stage": "python-output"
+          }
+        ],
+        "fallbacks": [
+          "portable"
+        ],
+        "fusions": [],
+        "input": {
+          "channels": "RGB",
+          "container": "borrowed-buffer",
+          "contiguous": true,
+          "dtype": "uint8",
+          "layout": "HWC",
+          "ownership": "caller"
+        },
+        "mode": "compiled",
+        "optimizations": [
+          "input-copy-elision"
+        ],
+        "output": {
+          "channels": "RGB",
+          "container": "owned-buffer",
+          "contiguous": true,
+          "dtype": "uint8",
+          "layout": "HWC",
+          "ownership": "result"
+        },
+        "output_dtype": "uint8",
+        "output_layout": "HWC",
+        "passes": 1,
+        "pixel_passes": 1,
+        "python_boundary": {
+          "augmentation": "held",
+          "crossings_per_call": 1,
+          "decode": "not-applicable",
+          "delivery": "held-for-Python-output-transfer",
+          "gil": "held-during-augmentation",
+          "gil_stages": {
+            "arguments": "held",
+            "augmentation": "held",
+            "decode": "not-applicable",
+            "delivery": "held-for-Python-output-transfer",
+            "source": "held"
+          },
+          "input": "NumPy HWC RGB uint8",
+          "input_access": "read-only-borrow",
+          "output": "owned contiguous NumPy array",
+          "source_acquisition": "held"
+        },
+        "sampling": "native-plan-before-execution",
+        "schema_version": 2,
+        "sink": {
+          "type": "return"
+        },
+        "source": {
+          "type": "array"
+        },
+        "steps": [
+          {
+            "allocation": "workspace-u8",
+            "category": "geometry",
+            "execution": "out-of-place",
+            "fallback": "portable",
+            "input_materialization": "borrowed-input",
+            "kernel_form": "borrowed-to-owned",
+            "name": "Resize",
+            "output_slot": "working-u8",
+            "pixel_passes": 1,
+            "policies": [
+              {
+                "name": "size",
+                "value": "168x168"
+              },
+              {
+                "name": "interpolation",
+                "value": "bilinear"
+              },
+              {
+                "name": "antialias",
+                "value": "false"
+              }
+            ],
+            "probability": 1.0,
+            "scratch_slots": [],
+            "selection_reason": "benchmark-policy:elide-entry-copy",
+            "status": "always"
+          }
+        ],
+        "transforms": [
+          "Resize"
+        ],
+        "unit_specializations": []
+      },
+      "images_per_sec": 28196.841175944402,
+      "iterations": 464,
+      "median_ms": 0.035464965517241376,
+      "observations_ms": [
+        0.03557496551724138,
+        0.03550531034482759,
+        0.03528737931034483,
+        0.03549565517241379,
+        0.035294793103448276,
+        0.03542031034482758,
+        0.03543427586206896,
+        0.03606446551724138
+      ],
+      "p95_ms": 0.03606446551724138,
+      "participant": "variopinta",
+      "reference_exact": true,
+      "repetition": 1,
+      "role": "public",
+      "route_id": "variopinta.compiled",
+      "samples": 8,
+      "size": 224,
+      "valid": true,
+      "validation": {
+        "c_contiguous": true,
+        "container": "numpy.ndarray",
+        "dtype": "uint8",
+        "finite": true,
+        "max": 252.0,
+        "min": 2.0,
+        "shape": [
+          168,
+          168,
+          3
+        ]
+      },
+      "variant": "compiled",
+      "warmup_calls": 3,
+      "worker": "rust-catalog-1"
+    },
+    {
+      "block_size": 13,
+      "budget_ms": 100.0,
+      "case_id": "catalog.resize.bilinear",
+      "case_order": 55,
+      "catalog_policy": "bilinear",
+      "environment": "rust",
+      "environment_position": 3,
+      "explanation": {
+        "buffers": [
+          {
+            "condition": "always",
+            "dtype": "uint8",
+            "layout": "HWC",
+            "lifecycle": "borrowed-for-call",
+            "name": "input"
+          },
+          {
+            "condition": "always",
+            "dtype": "uint8",
+            "layout": "HWC",
+            "lifecycle": "owned-per-run-workspace-reusable",
+            "name": "working-u8"
+          }
+        ],
+        "copies": [
+          {
+            "condition": "non-contiguous-input",
+            "count": "0-or-1",
+            "reason": "normalize-to-contiguous-HWC",
+            "stage": "python-entry"
+          },
+          {
+            "condition": "always-elided",
+            "count": "0",
+            "reason": "establish-owned-working-buffer",
+            "stage": "native-entry"
+          },
+          {
+            "condition": "always",
+            "count": "0",
+            "reason": "transfer-Rust-Vec-ownership-to-NumPy-storage",
+            "stage": "python-output"
+          }
+        ],
+        "fallbacks": [
+          "portable"
+        ],
+        "fusions": [],
+        "input": {
+          "channels": "RGB",
+          "container": "borrowed-buffer",
+          "contiguous": true,
+          "dtype": "uint8",
+          "layout": "HWC",
+          "ownership": "caller"
+        },
+        "mode": "compiled",
+        "optimizations": [
+          "input-copy-elision"
+        ],
+        "output": {
+          "channels": "RGB",
+          "container": "owned-buffer",
+          "contiguous": true,
+          "dtype": "uint8",
+          "layout": "HWC",
+          "ownership": "result"
+        },
+        "output_dtype": "uint8",
+        "output_layout": "HWC",
+        "passes": 1,
+        "pixel_passes": 1,
+        "python_boundary": {
+          "augmentation": "held",
+          "crossings_per_call": 1,
+          "decode": "not-applicable",
+          "delivery": "held-for-Python-output-transfer",
+          "gil": "held-during-augmentation",
+          "gil_stages": {
+            "arguments": "held",
+            "augmentation": "held",
+            "decode": "not-applicable",
+            "delivery": "held-for-Python-output-transfer",
+            "source": "held"
+          },
+          "input": "NumPy HWC RGB uint8",
+          "input_access": "read-only-borrow",
+          "output": "owned contiguous NumPy array",
+          "source_acquisition": "held"
+        },
+        "sampling": "native-plan-before-execution",
+        "schema_version": 2,
+        "sink": {
+          "type": "return"
+        },
+        "source": {
+          "type": "array"
+        },
+        "steps": [
+          {
+            "allocation": "workspace-u8",
+            "category": "geometry",
+            "execution": "out-of-place",
+            "fallback": "portable",
+            "input_materialization": "borrowed-input",
+            "kernel_form": "borrowed-to-owned",
+            "name": "Resize",
+            "output_slot": "working-u8",
+            "pixel_passes": 1,
+            "policies": [
+              {
+                "name": "size",
+                "value": "384x384"
+              },
+              {
+                "name": "interpolation",
+                "value": "bilinear"
+              },
+              {
+                "name": "antialias",
+                "value": "false"
+              }
+            ],
+            "probability": 1.0,
+            "scratch_slots": [],
+            "selection_reason": "benchmark-policy:elide-entry-copy",
+            "status": "always"
+          }
+        ],
+        "transforms": [
+          "Resize"
+        ],
+        "unit_specializations": []
+      },
+      "images_per_sec": 6679.762426541882,
+      "iterations": 507,
+      "median_ms": 0.14970592307692307,
+      "observations_ms": [
+        0.1587136923076923,
+        0.1624183076923077,
+        0.1523536923076923,
+        0.15055284615384615,
+        0.1486990769230769,
+        0.15062823076923076,
+        0.14952053846153845,
+        0.14642746153846153,
+        0.15033361538461537,
+        0.15155446153846153,
+        0.150829,
+        0.14839976923076922,
+        0.15045515384615385,
+        0.14880592307692309,
+        0.1490859230769231,
+        0.1496836153846154,
+        0.1487443846153846,
+        0.1506036923076923,
+        0.15122284615384615,
+        0.14970592307692307,
+        0.1484459230769231,
+        0.15290292307692308,
+        0.14896284615384617,
+        0.14935207692307692,
+        0.14883361538461537,
+        0.15070746153846154,
+        0.1494013076923077,
+        0.14783284615384615,
+        0.15054592307692308,
+        0.14780592307692308,
+        0.15175061538461537,
+        0.1509883076923077,
+        0.15089361538461538,
+        0.14864130769230768,
+        0.15109899999999998,
+        0.14805053846153846,
+        0.14928976923076923,
+        0.15117061538461538,
+        0.14751353846153845
+      ],
+      "p95_ms": 0.1587136923076923,
+      "participant": "variopinta",
+      "reference_exact": true,
+      "repetition": 1,
+      "role": "public",
+      "route_id": "variopinta.compiled",
+      "samples": 39,
+      "size": 512,
+      "valid": true,
+      "validation": {
+        "c_contiguous": true,
+        "container": "numpy.ndarray",
+        "dtype": "uint8",
+        "finite": true,
+        "max": 255.0,
+        "min": 0.0,
+        "shape": [
+          384,
+          384,
+          3
+        ]
+      },
+      "variant": "compiled",
+      "warmup_calls": 3,
+      "worker": "rust-catalog-1"
+    },
+    {
+      "block_size": 4,
+      "budget_ms": 100.0,
+      "case_id": "catalog.resize.bilinear",
+      "case_order": 55,
+      "catalog_policy": "bilinear",
+      "environment": "rust",
+      "environment_position": 3,
+      "explanation": {
+        "buffers": [
+          {
+            "condition": "always",
+            "dtype": "uint8",
+            "layout": "HWC",
+            "lifecycle": "borrowed-for-call",
+            "name": "input"
+          },
+          {
+            "condition": "always",
+            "dtype": "uint8",
+            "layout": "HWC",
+            "lifecycle": "owned-per-run-workspace-reusable",
+            "name": "working-u8"
+          }
+        ],
+        "copies": [
+          {
+            "condition": "non-contiguous-input",
+            "count": "0-or-1",
+            "reason": "normalize-to-contiguous-HWC",
+            "stage": "python-entry"
+          },
+          {
+            "condition": "always-elided",
+            "count": "0",
+            "reason": "establish-owned-working-buffer",
+            "stage": "native-entry"
+          },
+          {
+            "condition": "always",
+            "count": "0",
+            "reason": "transfer-Rust-Vec-ownership-to-NumPy-storage",
+            "stage": "python-output"
+          }
+        ],
+        "fallbacks": [
+          "portable"
+        ],
+        "fusions": [],
+        "input": {
+          "channels": "RGB",
+          "container": "borrowed-buffer",
+          "contiguous": true,
+          "dtype": "uint8",
+          "layout": "HWC",
+          "ownership": "caller"
+        },
+        "mode": "compiled",
+        "optimizations": [
+          "input-copy-elision"
+        ],
+        "output": {
+          "channels": "RGB",
+          "container": "owned-buffer",
+          "contiguous": true,
+          "dtype": "uint8",
+          "layout": "HWC",
+          "ownership": "result"
+        },
+        "output_dtype": "uint8",
+        "output_layout": "HWC",
+        "passes": 1,
+        "pixel_passes": 1,
+        "python_boundary": {
+          "augmentation": "held",
+          "crossings_per_call": 1,
+          "decode": "not-applicable",
+          "delivery": "held-for-Python-output-transfer",
+          "gil": "held-during-augmentation",
+          "gil_stages": {
+            "arguments": "held",
+            "augmentation": "held",
+            "decode": "not-applicable",
+            "delivery": "held-for-Python-output-transfer",
+            "source": "held"
+          },
+          "input": "NumPy HWC RGB uint8",
+          "input_access": "read-only-borrow",
+          "output": "owned contiguous NumPy array",
+          "source_acquisition": "held"
+        },
+        "sampling": "native-plan-before-execution",
+        "schema_version": 2,
+        "sink": {
+          "type": "return"
+        },
+        "source": {
+          "type": "array"
+        },
+        "steps": [
+          {
+            "allocation": "workspace-u8",
+            "category": "geometry",
+            "execution": "out-of-place",
+            "fallback": "portable",
+            "input_materialization": "borrowed-input",
+            "kernel_form": "borrowed-to-owned",
+            "name": "Resize",
+            "output_slot": "working-u8",
+            "pixel_passes": 1,
+            "policies": [
+              {
+                "name": "size",
+                "value": "768x768"
+              },
+              {
+                "name": "interpolation",
+                "value": "bilinear"
+              },
+              {
+                "name": "antialias",
+                "value": "false"
+              }
+            ],
+            "probability": 1.0,
+            "scratch_slots": [],
+            "selection_reason": "benchmark-policy:elide-entry-copy",
+            "status": "always"
+          }
+        ],
+        "transforms": [
+          "Resize"
+        ],
+        "unit_specializations": []
+      },
+      "images_per_sec": 1622.0652783950638,
+      "iterations": 164,
+      "median_ms": 0.616498,
+      "observations_ms": [
+        0.631368,
+        0.70735625,
+        0.619708,
+        0.6238555,
+        0.61117525,
+        0.6178405,
+        0.616498,
+        0.59877275,
+        0.6222655,
+        0.60406775,
+        0.62548575,
+        0.60945025,
+        0.6395455,
+        0.63282825,
+        0.64093575,
+        0.637953,
+        0.64486575,
+        0.6386055,
+        0.63056025,
+        0.6156355,
+        0.613673,
+        0.61428775,
+        0.63137825,
+        0.616553,
+        0.625068,
+        0.61644025,
+        0.618038,
+        0.613473,
+        0.60892275,
+        0.608108,
+        0.621633,
+        0.60310275,
+        0.6148105,
+        0.5895525,
+        0.603643,
+        0.59344275,
+        0.60562025,
+        0.60215025,
+        0.6038255,
+        0.60141025,
+        0.6232955
+      ],
+      "p95_ms": 0.64093575,
+      "participant": "variopinta",
+      "reference_exact": true,
+      "repetition": 1,
+      "role": "public",
+      "route_id": "variopinta.compiled",
+      "samples": 41,
+      "size": 1024,
+      "valid": true,
+      "validation": {
+        "c_contiguous": true,
+        "container": "numpy.ndarray",
+        "dtype": "uint8",
+        "finite": true,
+        "max": 224.0,
+        "min": 32.0,
+        "shape": [
+          768,
+          768,
+          3
+        ]
+      },
+      "variant": "compiled",
+      "warmup_calls": 3,
+      "worker": "rust-catalog-1"
+    },
+    {
+      "block_size": 54,
+      "budget_ms": 100.0,
+      "case_id": "catalog.resize.bilinear",
+      "case_order": 56,
+      "catalog_policy": "bilinear",
+      "environment": "rust",
+      "environment_position": 3,
+      "explanation": {
+        "buffers": [
+          {
+            "condition": "always",
+            "dtype": "uint8",
+            "layout": "HWC",
+            "lifecycle": "borrowed-for-call",
+            "name": "input"
+          },
+          {
+            "condition": "always",
+            "dtype": "uint8",
+            "layout": "HWC",
+            "lifecycle": "owned-per-run-workspace-reusable",
+            "name": "working-u8"
+          },
+          {
+            "condition": "out-of-place-step-applied",
+            "dtype": "uint8",
+            "layout": "HWC",
+            "lifecycle": "owned-per-run-workspace-reusable",
+            "name": "scratch-u8"
+          }
+        ],
+        "copies": [
+          {
+            "condition": "non-contiguous-input",
+            "count": "0-or-1",
+            "reason": "normalize-to-contiguous-HWC",
+            "stage": "python-entry"
+          },
+          {
+            "condition": "always",
+            "count": "1",
+            "reason": "establish-owned-working-buffer",
+            "stage": "native-entry"
+          },
+          {
+            "condition": "always",
+            "count": "0",
+            "reason": "transfer-Rust-Vec-ownership-to-NumPy-storage",
+            "stage": "python-output"
+          }
+        ],
+        "fallbacks": [
+          "portable"
+        ],
+        "fusions": [],
+        "input": {
+          "channels": "RGB",
+          "container": "borrowed-buffer",
+          "contiguous": true,
+          "dtype": "uint8",
+          "layout": "HWC",
+          "ownership": "caller"
+        },
+        "mode": "reference",
+        "optimizations": [],
+        "output": {
+          "channels": "RGB",
+          "container": "owned-buffer",
+          "contiguous": true,
+          "dtype": "uint8",
+          "layout": "HWC",
+          "ownership": "result"
+        },
+        "output_dtype": "uint8",
+        "output_layout": "HWC",
+        "passes": 1,
+        "pixel_passes": 1,
+        "python_boundary": {
+          "augmentation": "held",
+          "crossings_per_call": 1,
+          "decode": "not-applicable",
+          "delivery": "held-for-Python-output-transfer",
+          "gil": "held-during-augmentation",
+          "gil_stages": {
+            "arguments": "held",
+            "augmentation": "held",
+            "decode": "not-applicable",
+            "delivery": "held-for-Python-output-transfer",
+            "source": "held"
+          },
+          "input": "NumPy HWC RGB uint8",
+          "input_access": "read-only-borrow",
+          "output": "owned contiguous NumPy array",
+          "source_acquisition": "held"
+        },
+        "sampling": "native-plan-before-execution",
+        "schema_version": 2,
+        "sink": {
+          "type": "return"
+        },
+        "source": {
+          "type": "array"
+        },
+        "steps": [
+          {
+            "allocation": "workspace-u8",
+            "category": "geometry",
+            "execution": "out-of-place",
+            "fallback": "portable",
+            "input_materialization": "owned-input-copy",
+            "kernel_form": "owned-to-owned",
+            "name": "Resize",
+            "output_slot": "scratch-u8",
+            "pixel_passes": 1,
+            "policies": [
+              {
+                "name": "size",
+                "value": "168x168"
+              },
+              {
+                "name": "interpolation",
+                "value": "bilinear"
+              },
+              {
+                "name": "antialias",
+                "value": "false"
+              }
+            ],
+            "probability": 1.0,
+            "scratch_slots": [],
+            "selection_reason": "semantic-legality:owned-to-owned",
+            "status": "always"
+          }
+        ],
+        "transforms": [
+          "Resize"
+        ],
+        "unit_specializations": []
+      },
+      "images_per_sec": 26843.142099143657,
+      "iterations": 486,
+      "median_ms": 0.03725346296296296,
+      "observations_ms": [
+        0.037704592592592595,
+        0.03725346296296296,
+        0.03693051851851852,
+        0.036722907407407406,
+        0.03745792592592592,
+        0.03673033333333334,
+        0.03788605555555556,
+        0.03663959259259259,
+        0.03734162962962963
+      ],
+      "p95_ms": 0.03788605555555556,
+      "participant": "variopinta",
+      "reference_exact": true,
+      "repetition": 1,
+      "role": "control",
+      "route_id": "variopinta.reference",
+      "samples": 9,
+      "size": 224,
+      "valid": true,
+      "validation": {
+        "c_contiguous": true,
+        "container": "numpy.ndarray",
+        "dtype": "uint8",
+        "finite": true,
+        "max": 230.0,
+        "min": 0.0,
+        "shape": [
+          168,
+          168,
+          3
+        ]
+      },
+      "variant": "reference",
+      "warmup_calls": 3,
+      "worker": "rust-catalog-1"
+    },
+    {
+      "block_size": 13,
+      "budget_ms": 100.0,
+      "case_id": "catalog.resize.bilinear",
+      "case_order": 56,
+      "catalog_policy": "bilinear",
+      "environment": "rust",
+      "environment_position": 3,
+      "explanation": {
+        "buffers": [
+          {
+            "condition": "always",
+            "dtype": "uint8",
+            "layout": "HWC",
+            "lifecycle": "borrowed-for-call",
+            "name": "input"
+          },
+          {
+            "condition": "always",
+            "dtype": "uint8",
+            "layout": "HWC",
+            "lifecycle": "owned-per-run-workspace-reusable",
+            "name": "working-u8"
+          },
+          {
+            "condition": "out-of-place-step-applied",
+            "dtype": "uint8",
+            "layout": "HWC",
+            "lifecycle": "owned-per-run-workspace-reusable",
+            "name": "scratch-u8"
+          }
+        ],
+        "copies": [
+          {
+            "condition": "non-contiguous-input",
+            "count": "0-or-1",
+            "reason": "normalize-to-contiguous-HWC",
+            "stage": "python-entry"
+          },
+          {
+            "condition": "always",
+            "count": "1",
+            "reason": "establish-owned-working-buffer",
+            "stage": "native-entry"
+          },
+          {
+            "condition": "always",
+            "count": "0",
+            "reason": "transfer-Rust-Vec-ownership-to-NumPy-storage",
+            "stage": "python-output"
+          }
+        ],
+        "fallbacks": [
+          "portable"
+        ],
+        "fusions": [],
+        "input": {
+          "channels": "RGB",
+          "container": "borrowed-buffer",
+          "contiguous": true,
+          "dtype": "uint8",
+          "layout": "HWC",
+          "ownership": "caller"
+        },
+        "mode": "reference",
+        "optimizations": [],
+        "output": {
+          "channels": "RGB",
+          "container": "owned-buffer",
+          "contiguous": true,
+          "dtype": "uint8",
+          "layout": "HWC",
+          "ownership": "result"
+        },
+        "output_dtype": "uint8",
+        "output_layout": "HWC",
+        "passes": 1,
+        "pixel_passes": 1,
+        "python_boundary": {
+          "augmentation": "held",
+          "crossings_per_call": 1,
+          "decode": "not-applicable",
+          "delivery": "held-for-Python-output-transfer",
+          "gil": "held-during-augmentation",
+          "gil_stages": {
+            "arguments": "held",
+            "augmentation": "held",
+            "decode": "not-applicable",
+            "delivery": "held-for-Python-output-transfer",
+            "source": "held"
+          },
+          "input": "NumPy HWC RGB uint8",
+          "input_access": "read-only-borrow",
+          "output": "owned contiguous NumPy array",
+          "source_acquisition": "held"
+        },
+        "sampling": "native-plan-before-execution",
+        "schema_version": 2,
+        "sink": {
+          "type": "return"
+        },
+        "source": {
+          "type": "array"
+        },
+        "steps": [
+          {
+            "allocation": "workspace-u8",
+            "category": "geometry",
+            "execution": "out-of-place",
+            "fallback": "portable",
+            "input_materialization": "owned-input-copy",
+            "kernel_form": "owned-to-owned",
+            "name": "Resize",
+            "output_slot": "scratch-u8",
+            "pixel_passes": 1,
+            "policies": [
+              {
+                "name": "size",
+                "value": "384x384"
+              },
+              {
+                "name": "interpolation",
+                "value": "bilinear"
+              },
+              {
+                "name": "antialias",
+                "value": "false"
+              }
+            ],
+            "probability": 1.0,
+            "scratch_slots": [],
+            "selection_reason": "semantic-legality:owned-to-owned",
+            "status": "always"
+          }
+        ],
+        "transforms": [
+          "Resize"
+        ],
+        "unit_specializations": []
+      },
+      "images_per_sec": 6270.59649772715,
+      "iterations": 507,
+      "median_ms": 0.15947446153846154,
+      "observations_ms": [
+        0.15727753846153847,
+        0.16434453846153846,
+        0.157406,
+        0.16004138461538464,
+        0.15763676923076925,
+        0.15785146153846152,
+        0.15883523076923078,
+        0.16203607692307692,
+        0.1624906153846154,
+        0.15687215384615383,
+        0.16009838461538461,
+        0.158146,
+        0.16068138461538461,
+        0.16195838461538464,
+        0.15986984615384614,
+        0.15840676923076924,
+        0.1609506153846154,
+        0.16138146153846153,
+        0.1584083076923077,
+        0.1596683076923077,
+        0.15806061538461538,
+        0.1594906923076923,
+        0.1655576153846154,
+        0.15909984615384615,
+        0.15885523076923078,
+        0.1592199230769231,
+        0.15875984615384614,
+        0.15947446153846154,
+        0.15988676923076922,
+        0.16029761538461537,
+        0.1596206153846154,
+        0.1636583076923077,
+        0.1604160769230769,
+        0.16063838461538463,
+        0.1585229230769231,
+        0.15890607692307693,
+        0.15914515384615385,
+        0.15846830769230769,
+        0.15912223076923077
+      ],
+      "p95_ms": 0.16434453846153846,
+      "participant": "variopinta",
+      "reference_exact": true,
+      "repetition": 1,
+      "role": "control",
+      "route_id": "variopinta.reference",
+      "samples": 39,
+      "size": 512,
+      "valid": true,
+      "validation": {
+        "c_contiguous": true,
+        "container": "numpy.ndarray",
+        "dtype": "uint8",
+        "finite": true,
+        "max": 255.0,
+        "min": 0.0,
+        "shape": [
+          384,
+          384,
+          3
+        ]
+      },
+      "variant": "reference",
+      "warmup_calls": 3,
+      "worker": "rust-catalog-1"
+    },
+    {
+      "block_size": 4,
+      "budget_ms": 100.0,
+      "case_id": "catalog.resize.bilinear",
+      "case_order": 56,
+      "catalog_policy": "bilinear",
+      "environment": "rust",
+      "environment_position": 3,
+      "explanation": {
+        "buffers": [
+          {
+            "condition": "always",
+            "dtype": "uint8",
+            "layout": "HWC",
+            "lifecycle": "borrowed-for-call",
+            "name": "input"
+          },
+          {
+            "condition": "always",
+            "dtype": "uint8",
+            "layout": "HWC",
+            "lifecycle": "owned-per-run-workspace-reusable",
+            "name": "working-u8"
+          },
+          {
+            "condition": "out-of-place-step-applied",
+            "dtype": "uint8",
+            "layout": "HWC",
+            "lifecycle": "owned-per-run-workspace-reusable",
+            "name": "scratch-u8"
+          }
+        ],
+        "copies": [
+          {
+            "condition": "non-contiguous-input",
+            "count": "0-or-1",
+            "reason": "normalize-to-contiguous-HWC",
+            "stage": "python-entry"
+          },
+          {
+            "condition": "always",
+            "count": "1",
+            "reason": "establish-owned-working-buffer",
+            "stage": "native-entry"
+          },
+          {
+            "condition": "always",
+            "count": "0",
+            "reason": "transfer-Rust-Vec-ownership-to-NumPy-storage",
+            "stage": "python-output"
+          }
+        ],
+        "fallbacks": [
+          "portable"
+        ],
+        "fusions": [],
+        "input": {
+          "channels": "RGB",
+          "container": "borrowed-buffer",
+          "contiguous": true,
+          "dtype": "uint8",
+          "layout": "HWC",
+          "ownership": "caller"
+        },
+        "mode": "reference",
+        "optimizations": [],
+        "output": {
+          "channels": "RGB",
+          "container": "owned-buffer",
+          "contiguous": true,
+          "dtype": "uint8",
+          "layout": "HWC",
+          "ownership": "result"
+        },
+        "output_dtype": "uint8",
+        "output_layout": "HWC",
+        "passes": 1,
+        "pixel_passes": 1,
+        "python_boundary": {
+          "augmentation": "held",
+          "crossings_per_call": 1,
+          "decode": "not-applicable",
+          "delivery": "held-for-Python-output-transfer",
+          "gil": "held-during-augmentation",
+          "gil_stages": {
+            "arguments": "held",
+            "augmentation": "held",
+            "decode": "not-applicable",
+            "delivery": "held-for-Python-output-transfer",
+            "source": "held"
+          },
+          "input": "NumPy HWC RGB uint8",
+          "input_access": "read-only-borrow",
+          "output": "owned contiguous NumPy array",
+          "source_acquisition": "held"
+        },
+        "sampling": "native-plan-before-execution",
+        "schema_version": 2,
+        "sink": {
+          "type": "return"
+        },
+        "source": {
+          "type": "array"
+        },
+        "steps": [
+          {
+            "allocation": "workspace-u8",
+            "category": "geometry",
+            "execution": "out-of-place",
+            "fallback": "portable",
+            "input_materialization": "owned-input-copy",
+            "kernel_form": "owned-to-owned",
+            "name": "Resize",
+            "output_slot": "scratch-u8",
+            "pixel_passes": 1,
+            "policies": [
+              {
+                "name": "size",
+                "value": "768x768"
+              },
+              {
+                "name": "interpolation",
+                "value": "bilinear"
+              },
+              {
+                "name": "antialias",
+                "value": "false"
+              }
+            ],
+            "probability": 1.0,
+            "scratch_slots": [],
+            "selection_reason": "semantic-legality:owned-to-owned",
+            "status": "always"
+          }
+        ],
+        "transforms": [
+          "Resize"
+        ],
+        "unit_specializations": []
+      },
+      "images_per_sec": 1717.0469711076798,
+      "iterations": 172,
+      "median_ms": 0.58239525,
+      "observations_ms": [
+        0.61497525,
+        0.622928,
+        0.59958025,
+        0.59779275,
+        0.59082,
+        0.6243455,
+        0.597118,
+        0.59705,
+        0.59037525,
+        0.59118275,
+        0.59393775,
+        0.5906255,
+        0.57761,
+        0.5817925,
+        0.58557025,
+        0.59177775,
+        0.5748825,
+        0.59221775,
+        0.58058025,
+        0.5814775,
+        0.5777075,
+        0.57623775,
+        0.60373775,
+        0.5741275,
+        0.58180525,
+        0.5797625,
+        0.583295,
+        0.57618025,
+        0.58157025,
+        0.5821475,
+        0.59584525,
+        0.58454025,
+        0.584375,
+        0.57315025,
+        0.5824625,
+        0.5736575,
+        0.58239525,
+        0.57536025,
+        0.5782875,
+        0.5819975,
+        0.57689025,
+        0.5806775,
+        0.5772975
+      ],
+      "p95_ms": 0.61497525,
+      "participant": "variopinta",
+      "reference_exact": true,
+      "repetition": 1,
+      "role": "control",
+      "route_id": "variopinta.reference",
+      "samples": 43,
+      "size": 1024,
+      "valid": true,
+      "validation": {
+        "c_contiguous": true,
+        "container": "numpy.ndarray",
+        "dtype": "uint8",
+        "finite": true,
+        "max": 224.0,
+        "min": 32.0,
+        "shape": [
+          768,
+          768,
+          3
+        ]
+      },
+      "variant": "reference",
+      "warmup_calls": 3,
+      "worker": "rust-catalog-1"
+    },
+    {
+      "block_size": 57,
+      "budget_ms": 100.0,
+      "case_id": "catalog.resize.bilinear",
+      "case_order": 54,
+      "catalog_policy": "bilinear",
+      "environment": "rust",
+      "environment_position": 2,
+      "explanation": {
+        "buffers": [
+          {
+            "condition": "always",
+            "dtype": "uint8",
+            "layout": "HWC",
+            "lifecycle": "borrowed-for-call",
+            "name": "input"
+          },
+          {
+            "condition": "always",
+            "dtype": "uint8",
+            "layout": "HWC",
+            "lifecycle": "owned-per-run-workspace-reusable",
+            "name": "working-u8"
+          }
+        ],
+        "copies": [
+          {
+            "condition": "non-contiguous-input",
+            "count": "0-or-1",
+            "reason": "normalize-to-contiguous-HWC",
+            "stage": "python-entry"
+          },
+          {
+            "condition": "always-elided",
+            "count": "0",
+            "reason": "establish-owned-working-buffer",
+            "stage": "native-entry"
+          },
+          {
+            "condition": "always",
+            "count": "0",
+            "reason": "transfer-Rust-Vec-ownership-to-NumPy-storage",
+            "stage": "python-output"
+          }
+        ],
+        "fallbacks": [
+          "portable"
+        ],
+        "fusions": [],
+        "input": {
+          "channels": "RGB",
+          "container": "borrowed-buffer",
+          "contiguous": true,
+          "dtype": "uint8",
+          "layout": "HWC",
+          "ownership": "caller"
+        },
+        "mode": "compiled",
+        "optimizations": [
+          "input-copy-elision"
+        ],
+        "output": {
+          "channels": "RGB",
+          "container": "owned-buffer",
+          "contiguous": true,
+          "dtype": "uint8",
+          "layout": "HWC",
+          "ownership": "result"
+        },
+        "output_dtype": "uint8",
+        "output_layout": "HWC",
+        "passes": 1,
+        "pixel_passes": 1,
+        "python_boundary": {
+          "augmentation": "held",
+          "crossings_per_call": 1,
+          "decode": "not-applicable",
+          "delivery": "held-for-Python-output-transfer",
+          "gil": "held-during-augmentation",
+          "gil_stages": {
+            "arguments": "held",
+            "augmentation": "held",
+            "decode": "not-applicable",
+            "delivery": "held-for-Python-output-transfer",
+            "source": "held"
+          },
+          "input": "NumPy HWC RGB uint8",
+          "input_access": "read-only-borrow",
+          "output": "owned contiguous NumPy array",
+          "source_acquisition": "held"
+        },
+        "sampling": "native-plan-before-execution",
+        "schema_version": 2,
+        "sink": {
+          "type": "return"
+        },
+        "source": {
+          "type": "array"
+        },
+        "steps": [
+          {
+            "allocation": "workspace-u8",
+            "category": "geometry",
+            "execution": "out-of-place",
+            "fallback": "portable",
+            "input_materialization": "borrowed-input",
+            "kernel_form": "borrowed-to-owned",
+            "name": "Resize",
+            "output_slot": "working-u8",
+            "pixel_passes": 1,
+            "policies": [
+              {
+                "name": "size",
+                "value": "168x168"
+              },
+              {
+                "name": "interpolation",
+                "value": "bilinear"
+              },
+              {
+                "name": "antialias",
+                "value": "false"
+              }
+            ],
+            "probability": 1.0,
+            "scratch_slots": [],
+            "selection_reason": "benchmark-policy:elide-entry-copy",
+            "status": "always"
+          }
+        ],
+        "transforms": [
+          "Resize"
+        ],
+        "unit_specializations": []
+      },
+      "images_per_sec": 28136.51144279835,
+      "iterations": 456,
+      "median_ms": 0.035541008771929825,
+      "observations_ms": [
+        0.035569421052631583,
+        0.03630961403508772,
+        0.035062947368421055,
+        0.03552521052631579,
+        0.03555680701754386,
+        0.03540450877192983,
+        0.03556345614035088,
+        0.03550873684210527
+      ],
+      "p95_ms": 0.03630961403508772,
+      "participant": "variopinta",
+      "reference_exact": true,
+      "repetition": 2,
+      "role": "public",
+      "route_id": "variopinta.compiled",
+      "samples": 8,
+      "size": 224,
+      "valid": true,
+      "validation": {
+        "c_contiguous": true,
+        "container": "numpy.ndarray",
+        "dtype": "uint8",
+        "finite": true,
+        "max": 252.0,
+        "min": 2.0,
+        "shape": [
+          168,
+          168,
+          3
+        ]
+      },
+      "variant": "compiled",
+      "warmup_calls": 3,
+      "worker": "rust-catalog-2"
+    },
+    {
+      "block_size": 14,
+      "budget_ms": 100.0,
+      "case_id": "catalog.resize.bilinear",
+      "case_order": 54,
+      "catalog_policy": "bilinear",
+      "environment": "rust",
+      "environment_position": 2,
+      "explanation": {
+        "buffers": [
+          {
+            "condition": "always",
+            "dtype": "uint8",
+            "layout": "HWC",
+            "lifecycle": "borrowed-for-call",
+            "name": "input"
+          },
+          {
+            "condition": "always",
+            "dtype": "uint8",
+            "layout": "HWC",
+            "lifecycle": "owned-per-run-workspace-reusable",
+            "name": "working-u8"
+          }
+        ],
+        "copies": [
+          {
+            "condition": "non-contiguous-input",
+            "count": "0-or-1",
+            "reason": "normalize-to-contiguous-HWC",
+            "stage": "python-entry"
+          },
+          {
+            "condition": "always-elided",
+            "count": "0",
+            "reason": "establish-owned-working-buffer",
+            "stage": "native-entry"
+          },
+          {
+            "condition": "always",
+            "count": "0",
+            "reason": "transfer-Rust-Vec-ownership-to-NumPy-storage",
+            "stage": "python-output"
+          }
+        ],
+        "fallbacks": [
+          "portable"
+        ],
+        "fusions": [],
+        "input": {
+          "channels": "RGB",
+          "container": "borrowed-buffer",
+          "contiguous": true,
+          "dtype": "uint8",
+          "layout": "HWC",
+          "ownership": "caller"
+        },
+        "mode": "compiled",
+        "optimizations": [
+          "input-copy-elision"
+        ],
+        "output": {
+          "channels": "RGB",
+          "container": "owned-buffer",
+          "contiguous": true,
+          "dtype": "uint8",
+          "layout": "HWC",
+          "ownership": "result"
+        },
+        "output_dtype": "uint8",
+        "output_layout": "HWC",
+        "passes": 1,
+        "pixel_passes": 1,
+        "python_boundary": {
+          "augmentation": "held",
+          "crossings_per_call": 1,
+          "decode": "not-applicable",
+          "delivery": "held-for-Python-output-transfer",
+          "gil": "held-during-augmentation",
+          "gil_stages": {
+            "arguments": "held",
+            "augmentation": "held",
+            "decode": "not-applicable",
+            "delivery": "held-for-Python-output-transfer",
+            "source": "held"
+          },
+          "input": "NumPy HWC RGB uint8",
+          "input_access": "read-only-borrow",
+          "output": "owned contiguous NumPy array",
+          "source_acquisition": "held"
+        },
+        "sampling": "native-plan-before-execution",
+        "schema_version": 2,
+        "sink": {
+          "type": "return"
+        },
+        "source": {
+          "type": "array"
+        },
+        "steps": [
+          {
+            "allocation": "workspace-u8",
+            "category": "geometry",
+            "execution": "out-of-place",
+            "fallback": "portable",
+            "input_materialization": "borrowed-input",
+            "kernel_form": "borrowed-to-owned",
+            "name": "Resize",
+            "output_slot": "working-u8",
+            "pixel_passes": 1,
+            "policies": [
+              {
+                "name": "size",
+                "value": "384x384"
+              },
+              {
+                "name": "interpolation",
+                "value": "bilinear"
+              },
+              {
+                "name": "antialias",
+                "value": "false"
+              }
+            ],
+            "probability": 1.0,
+            "scratch_slots": [],
+            "selection_reason": "benchmark-policy:elide-entry-copy",
+            "status": "always"
+          }
+        ],
+        "transforms": [
+          "Resize"
+        ],
+        "unit_specializations": []
+      },
+      "images_per_sec": 5887.433945093791,
+      "iterations": 504,
+      "median_ms": 0.1698532857142857,
+      "observations_ms": [
+        0.1674407142857143,
+        0.17894442857142856,
+        0.1664642857142857,
+        0.1738387142857143,
+        0.1702250714285714,
+        0.17460721428571427,
+        0.17111792857142857,
+        0.1671292857142857,
+        0.16850221428571427,
+        0.1699265,
+        0.17343435714285715,
+        0.17028428571428572,
+        0.17266935714285717,
+        0.1713215,
+        0.16992721428571428,
+        0.16961357142857142,
+        0.1683657857142857,
+        0.17585507142857143,
+        0.16697507142857143,
+        0.16819285714285712,
+        0.17203864285714285,
+        0.1753365,
+        0.16549357142857143,
+        0.16939078571428573,
+        0.16649642857142857,
+        0.1769072857142857,
+        0.1676815,
+        0.17049364285714286,
+        0.16965999999999998,
+        0.17052285714285714,
+        0.16834149999999998,
+        0.1675392857142857,
+        0.1682600714285714,
+        0.17057428571428573,
+        0.16665721428571428,
+        0.1697800714285714
+      ],
+      "p95_ms": 0.1769072857142857,
+      "participant": "variopinta",
+      "reference_exact": true,
+      "repetition": 2,
+      "role": "public",
+      "route_id": "variopinta.compiled",
+      "samples": 36,
+      "size": 512,
+      "valid": true,
+      "validation": {
+        "c_contiguous": true,
+        "container": "numpy.ndarray",
+        "dtype": "uint8",
+        "finite": true,
+        "max": 252.0,
+        "min": 2.0,
+        "shape": [
+          384,
+          384,
+          3
+        ]
+      },
+      "variant": "compiled",
+      "warmup_calls": 3,
+      "worker": "rust-catalog-2"
+    },
+    {
+      "block_size": 3,
+      "budget_ms": 100.0,
+      "case_id": "catalog.resize.bilinear",
+      "case_order": 54,
+      "catalog_policy": "bilinear",
+      "environment": "rust",
+      "environment_position": 2,
+      "explanation": {
+        "buffers": [
+          {
+            "condition": "always",
+            "dtype": "uint8",
+            "layout": "HWC",
+            "lifecycle": "borrowed-for-call",
+            "name": "input"
+          },
+          {
+            "condition": "always",
+            "dtype": "uint8",
+            "layout": "HWC",
+            "lifecycle": "owned-per-run-workspace-reusable",
+            "name": "working-u8"
+          }
+        ],
+        "copies": [
+          {
+            "condition": "non-contiguous-input",
+            "count": "0-or-1",
+            "reason": "normalize-to-contiguous-HWC",
+            "stage": "python-entry"
+          },
+          {
+            "condition": "always-elided",
+            "count": "0",
+            "reason": "establish-owned-working-buffer",
+            "stage": "native-entry"
+          },
+          {
+            "condition": "always",
+            "count": "0",
+            "reason": "transfer-Rust-Vec-ownership-to-NumPy-storage",
+            "stage": "python-output"
+          }
+        ],
+        "fallbacks": [
+          "portable"
+        ],
+        "fusions": [],
+        "input": {
+          "channels": "RGB",
+          "container": "borrowed-buffer",
+          "contiguous": true,
+          "dtype": "uint8",
+          "layout": "HWC",
+          "ownership": "caller"
+        },
+        "mode": "compiled",
+        "optimizations": [
+          "input-copy-elision"
+        ],
+        "output": {
+          "channels": "RGB",
+          "container": "owned-buffer",
+          "contiguous": true,
+          "dtype": "uint8",
+          "layout": "HWC",
+          "ownership": "result"
+        },
+        "output_dtype": "uint8",
+        "output_layout": "HWC",
+        "passes": 1,
+        "pixel_passes": 1,
+        "python_boundary": {
+          "augmentation": "held",
+          "crossings_per_call": 1,
+          "decode": "not-applicable",
+          "delivery": "held-for-Python-output-transfer",
+          "gil": "held-during-augmentation",
+          "gil_stages": {
+            "arguments": "held",
+            "augmentation": "held",
+            "decode": "not-applicable",
+            "delivery": "held-for-Python-output-transfer",
+            "source": "held"
+          },
+          "input": "NumPy HWC RGB uint8",
+          "input_access": "read-only-borrow",
+          "output": "owned contiguous NumPy array",
+          "source_acquisition": "held"
+        },
+        "sampling": "native-plan-before-execution",
+        "schema_version": 2,
+        "sink": {
+          "type": "return"
+        },
+        "source": {
+          "type": "array"
+        },
+        "steps": [
+          {
+            "allocation": "workspace-u8",
+            "category": "geometry",
+            "execution": "out-of-place",
+            "fallback": "portable",
+            "input_materialization": "borrowed-input",
+            "kernel_form": "borrowed-to-owned",
+            "name": "Resize",
+            "output_slot": "working-u8",
+            "pixel_passes": 1,
+            "policies": [
+              {
+                "name": "size",
+                "value": "768x768"
+              },
+              {
+                "name": "interpolation",
+                "value": "bilinear"
+              },
+              {
+                "name": "antialias",
+                "value": "false"
+              }
+            ],
+            "probability": 1.0,
+            "scratch_slots": [],
+            "selection_reason": "benchmark-policy:elide-entry-copy",
+            "status": "always"
+          }
+        ],
+        "transforms": [
+          "Resize"
+        ],
+        "unit_specializations": []
+      },
+      "images_per_sec": 1484.2318914432797,
+      "iterations": 150,
+      "median_ms": 0.6737491666666666,
+      "observations_ms": [
+        0.7076359999999999,
+        0.7864836666666667,
+        0.7344930000000001,
+        0.6994859999999999,
+        0.7246630000000001,
+        0.7159296666666667,
+        0.6591790000000001,
+        0.687866,
+        0.6847326666666667,
+        0.6684323333333334,
+        0.658859,
+        0.6995096666666667,
+        0.6670823333333334,
+        0.7078859999999999,
+        0.648239,
+        0.7017396666666667,
+        0.6926260000000001,
+        0.6928326666666668,
+        0.6473656666666666,
+        0.6884663333333334,
+        0.6593523333333333,
+        0.684236,
+        0.6453986666666667,
+        0.6776559999999999,
+        0.6730426666666666,
+        0.6462586666666666,
+        0.6565123333333334,
+        0.6744556666666667,
+        0.6438956666666666,
+        0.6758993333333333,
+        0.631942,
+        0.6603356666666667,
+        0.6852963333333334,
+        0.6713093333333333,
+        0.654149,
+        0.6866426666666667,
+        0.6505356666666667,
+        0.6874226666666666,
+        0.6367386666666667,
+        0.6615056666666667,
+        0.6587893333333333,
+        0.6663723333333333,
+        0.6488756666666667,
+        0.667319,
+        0.693743,
+        0.7064096666666666,
+        0.6699256666666668,
+        0.6798193333333334,
+        0.6876326666666667,
+        0.6625856666666666
+      ],
+      "p95_ms": 0.7246630000000001,
+      "participant": "variopinta",
+      "reference_exact": true,
+      "repetition": 2,
+      "role": "public",
+      "route_id": "variopinta.compiled",
+      "samples": 50,
+      "size": 1024,
+      "valid": true,
+      "validation": {
+        "c_contiguous": true,
+        "container": "numpy.ndarray",
+        "dtype": "uint8",
+        "finite": true,
+        "max": 230.0,
+        "min": 0.0,
+        "shape": [
+          768,
+          768,
+          3
+        ]
+      },
+      "variant": "compiled",
+      "warmup_calls": 3,
+      "worker": "rust-catalog-2"
+    },
+    {
+      "block_size": 54,
+      "budget_ms": 100.0,
+      "case_id": "catalog.resize.bilinear",
+      "case_order": 55,
+      "catalog_policy": "bilinear",
+      "environment": "rust",
+      "environment_position": 2,
+      "explanation": {
+        "buffers": [
+          {
+            "condition": "always",
+            "dtype": "uint8",
+            "layout": "HWC",
+            "lifecycle": "borrowed-for-call",
+            "name": "input"
+          },
+          {
+            "condition": "always",
+            "dtype": "uint8",
+            "layout": "HWC",
+            "lifecycle": "owned-per-run-workspace-reusable",
+            "name": "working-u8"
+          },
+          {
+            "condition": "out-of-place-step-applied",
+            "dtype": "uint8",
+            "layout": "HWC",
+            "lifecycle": "owned-per-run-workspace-reusable",
+            "name": "scratch-u8"
+          }
+        ],
+        "copies": [
+          {
+            "condition": "non-contiguous-input",
+            "count": "0-or-1",
+            "reason": "normalize-to-contiguous-HWC",
+            "stage": "python-entry"
+          },
+          {
+            "condition": "always",
+            "count": "1",
+            "reason": "establish-owned-working-buffer",
+            "stage": "native-entry"
+          },
+          {
+            "condition": "always",
+            "count": "0",
+            "reason": "transfer-Rust-Vec-ownership-to-NumPy-storage",
+            "stage": "python-output"
+          }
+        ],
+        "fallbacks": [
+          "portable"
+        ],
+        "fusions": [],
+        "input": {
+          "channels": "RGB",
+          "container": "borrowed-buffer",
+          "contiguous": true,
+          "dtype": "uint8",
+          "layout": "HWC",
+          "ownership": "caller"
+        },
+        "mode": "reference",
+        "optimizations": [],
+        "output": {
+          "channels": "RGB",
+          "container": "owned-buffer",
+          "contiguous": true,
+          "dtype": "uint8",
+          "layout": "HWC",
+          "ownership": "result"
+        },
+        "output_dtype": "uint8",
+        "output_layout": "HWC",
+        "passes": 1,
+        "pixel_passes": 1,
+        "python_boundary": {
+          "augmentation": "held",
+          "crossings_per_call": 1,
+          "decode": "not-applicable",
+          "delivery": "held-for-Python-output-transfer",
+          "gil": "held-during-augmentation",
+          "gil_stages": {
+            "arguments": "held",
+            "augmentation": "held",
+            "decode": "not-applicable",
+            "delivery": "held-for-Python-output-transfer",
+            "source": "held"
+          },
+          "input": "NumPy HWC RGB uint8",
+          "input_access": "read-only-borrow",
+          "output": "owned contiguous NumPy array",
+          "source_acquisition": "held"
+        },
+        "sampling": "native-plan-before-execution",
+        "schema_version": 2,
+        "sink": {
+          "type": "return"
+        },
+        "source": {
+          "type": "array"
+        },
+        "steps": [
+          {
+            "allocation": "workspace-u8",
+            "category": "geometry",
+            "execution": "out-of-place",
+            "fallback": "portable",
+            "input_materialization": "owned-input-copy",
+            "kernel_form": "owned-to-owned",
+            "name": "Resize",
+            "output_slot": "scratch-u8",
+            "pixel_passes": 1,
+            "policies": [
+              {
+                "name": "size",
+                "value": "168x168"
+              },
+              {
+                "name": "interpolation",
+                "value": "bilinear"
+              },
+              {
+                "name": "antialias",
+                "value": "false"
+              }
+            ],
+            "probability": 1.0,
+            "scratch_slots": [],
+            "selection_reason": "semantic-legality:owned-to-owned",
+            "status": "always"
+          }
+        ],
+        "transforms": [
+          "Resize"
+        ],
+        "unit_specializations": []
+      },
+      "images_per_sec": 26884.035711956476,
+      "iterations": 486,
+      "median_ms": 0.0371967962962963,
+      "observations_ms": [
+        0.038118296296296296,
+        0.036757185185185184,
+        0.037471629629629626,
+        0.0371967962962963,
+        0.03857368518518518,
+        0.03696661111111111,
+        0.03715735185185185,
+        0.03720737037037037,
+        0.03702142592592593
+      ],
+      "p95_ms": 0.03857368518518518,
+      "participant": "variopinta",
+      "reference_exact": true,
+      "repetition": 2,
+      "role": "control",
+      "route_id": "variopinta.reference",
+      "samples": 9,
+      "size": 224,
+      "valid": true,
+      "validation": {
+        "c_contiguous": true,
+        "container": "numpy.ndarray",
+        "dtype": "uint8",
+        "finite": true,
+        "max": 230.0,
+        "min": 0.0,
+        "shape": [
+          168,
+          168,
+          3
+        ]
+      },
+      "variant": "reference",
+      "warmup_calls": 3,
+      "worker": "rust-catalog-2"
+    },
+    {
+      "block_size": 13,
+      "budget_ms": 100.0,
+      "case_id": "catalog.resize.bilinear",
+      "case_order": 55,
+      "catalog_policy": "bilinear",
+      "environment": "rust",
+      "environment_position": 2,
+      "explanation": {
+        "buffers": [
+          {
+            "condition": "always",
+            "dtype": "uint8",
+            "layout": "HWC",
+            "lifecycle": "borrowed-for-call",
+            "name": "input"
+          },
+          {
+            "condition": "always",
+            "dtype": "uint8",
+            "layout": "HWC",
+            "lifecycle": "owned-per-run-workspace-reusable",
+            "name": "working-u8"
+          },
+          {
+            "condition": "out-of-place-step-applied",
+            "dtype": "uint8",
+            "layout": "HWC",
+            "lifecycle": "owned-per-run-workspace-reusable",
+            "name": "scratch-u8"
+          }
+        ],
+        "copies": [
+          {
+            "condition": "non-contiguous-input",
+            "count": "0-or-1",
+            "reason": "normalize-to-contiguous-HWC",
+            "stage": "python-entry"
+          },
+          {
+            "condition": "always",
+            "count": "1",
+            "reason": "establish-owned-working-buffer",
+            "stage": "native-entry"
+          },
+          {
+            "condition": "always",
+            "count": "0",
+            "reason": "transfer-Rust-Vec-ownership-to-NumPy-storage",
+            "stage": "python-output"
+          }
+        ],
+        "fallbacks": [
+          "portable"
+        ],
+        "fusions": [],
+        "input": {
+          "channels": "RGB",
+          "container": "borrowed-buffer",
+          "contiguous": true,
+          "dtype": "uint8",
+          "layout": "HWC",
+          "ownership": "caller"
+        },
+        "mode": "reference",
+        "optimizations": [],
+        "output": {
+          "channels": "RGB",
+          "container": "owned-buffer",
+          "contiguous": true,
+          "dtype": "uint8",
+          "layout": "HWC",
+          "ownership": "result"
+        },
+        "output_dtype": "uint8",
+        "output_layout": "HWC",
+        "passes": 1,
+        "pixel_passes": 1,
+        "python_boundary": {
+          "augmentation": "held",
+          "crossings_per_call": 1,
+          "decode": "not-applicable",
+          "delivery": "held-for-Python-output-transfer",
+          "gil": "held-during-augmentation",
+          "gil_stages": {
+            "arguments": "held",
+            "augmentation": "held",
+            "decode": "not-applicable",
+            "delivery": "held-for-Python-output-transfer",
+            "source": "held"
+          },
+          "input": "NumPy HWC RGB uint8",
+          "input_access": "read-only-borrow",
+          "output": "owned contiguous NumPy array",
+          "source_acquisition": "held"
+        },
+        "sampling": "native-plan-before-execution",
+        "schema_version": 2,
+        "sink": {
+          "type": "return"
+        },
+        "source": {
+          "type": "array"
+        },
+        "steps": [
+          {
+            "allocation": "workspace-u8",
+            "category": "geometry",
+            "execution": "out-of-place",
+            "fallback": "portable",
+            "input_materialization": "owned-input-copy",
+            "kernel_form": "owned-to-owned",
+            "name": "Resize",
+            "output_slot": "scratch-u8",
+            "pixel_passes": 1,
+            "policies": [
+              {
+                "name": "size",
+                "value": "384x384"
+              },
+              {
+                "name": "interpolation",
+                "value": "bilinear"
+              },
+              {
+                "name": "antialias",
+                "value": "false"
+              }
+            ],
+            "probability": 1.0,
+            "scratch_slots": [],
+            "selection_reason": "semantic-legality:owned-to-owned",
+            "status": "always"
+          }
+        ],
+        "transforms": [
+          "Resize"
+        ],
+        "unit_specializations": []
+      },
+      "images_per_sec": 6228.505666502808,
+      "iterations": 507,
+      "median_ms": 0.16055215384615387,
+      "observations_ms": [
+        0.16401215384615384,
+        0.159136,
+        0.16231446153846155,
+        0.15853523076923076,
+        0.1615283076923077,
+        0.15859215384615383,
+        0.16476300000000002,
+        0.15949984615384613,
+        0.16131146153846154,
+        0.15871446153846153,
+        0.1614013846153846,
+        0.15869676923076922,
+        0.1608483076923077,
+        0.1605953076923077,
+        0.16378369230769232,
+        0.16010523076923075,
+        0.15829676923076924,
+        0.16305753846153845,
+        0.15929907692307693,
+        0.160893,
+        0.1585183076923077,
+        0.16473915384615384,
+        0.15833292307692307,
+        0.15997061538461538,
+        0.15806676923076923,
+        0.16055215384615387,
+        0.16211753846153845,
+        0.16103446153846154,
+        0.158516,
+        0.16614376923076923,
+        0.15870061538461538,
+        0.16542992307692309,
+        0.15951984615384618,
+        0.16442838461538462,
+        0.1581583076923077,
+        0.16665530769230769,
+        0.15956061538461538,
+        0.16341215384615385,
+        0.1601567692307692
+      ],
+      "p95_ms": 0.16614376923076923,
+      "participant": "variopinta",
+      "reference_exact": true,
+      "repetition": 2,
+      "role": "control",
+      "route_id": "variopinta.reference",
+      "samples": 39,
+      "size": 512,
+      "valid": true,
+      "validation": {
+        "c_contiguous": true,
+        "container": "numpy.ndarray",
+        "dtype": "uint8",
+        "finite": true,
+        "max": 255.0,
+        "min": 0.0,
+        "shape": [
+          384,
+          384,
+          3
+        ]
+      },
+      "variant": "reference",
+      "warmup_calls": 3,
+      "worker": "rust-catalog-2"
+    },
+    {
+      "block_size": 3,
+      "budget_ms": 100.0,
+      "case_id": "catalog.resize.bilinear",
+      "case_order": 55,
+      "catalog_policy": "bilinear",
+      "environment": "rust",
+      "environment_position": 2,
+      "explanation": {
+        "buffers": [
+          {
+            "condition": "always",
+            "dtype": "uint8",
+            "layout": "HWC",
+            "lifecycle": "borrowed-for-call",
+            "name": "input"
+          },
+          {
+            "condition": "always",
+            "dtype": "uint8",
+            "layout": "HWC",
+            "lifecycle": "owned-per-run-workspace-reusable",
+            "name": "working-u8"
+          },
+          {
+            "condition": "out-of-place-step-applied",
+            "dtype": "uint8",
+            "layout": "HWC",
+            "lifecycle": "owned-per-run-workspace-reusable",
+            "name": "scratch-u8"
+          }
+        ],
+        "copies": [
+          {
+            "condition": "non-contiguous-input",
+            "count": "0-or-1",
+            "reason": "normalize-to-contiguous-HWC",
+            "stage": "python-entry"
+          },
+          {
+            "condition": "always",
+            "count": "1",
+            "reason": "establish-owned-working-buffer",
+            "stage": "native-entry"
+          },
+          {
+            "condition": "always",
+            "count": "0",
+            "reason": "transfer-Rust-Vec-ownership-to-NumPy-storage",
+            "stage": "python-output"
+          }
+        ],
+        "fallbacks": [
+          "portable"
+        ],
+        "fusions": [],
+        "input": {
+          "channels": "RGB",
+          "container": "borrowed-buffer",
+          "contiguous": true,
+          "dtype": "uint8",
+          "layout": "HWC",
+          "ownership": "caller"
+        },
+        "mode": "reference",
+        "optimizations": [],
+        "output": {
+          "channels": "RGB",
+          "container": "owned-buffer",
+          "contiguous": true,
+          "dtype": "uint8",
+          "layout": "HWC",
+          "ownership": "result"
+        },
+        "output_dtype": "uint8",
+        "output_layout": "HWC",
+        "passes": 1,
+        "pixel_passes": 1,
+        "python_boundary": {
+          "augmentation": "held",
+          "crossings_per_call": 1,
+          "decode": "not-applicable",
+          "delivery": "held-for-Python-output-transfer",
+          "gil": "held-during-augmentation",
+          "gil_stages": {
+            "arguments": "held",
+            "augmentation": "held",
+            "decode": "not-applicable",
+            "delivery": "held-for-Python-output-transfer",
+            "source": "held"
+          },
+          "input": "NumPy HWC RGB uint8",
+          "input_access": "read-only-borrow",
+          "output": "owned contiguous NumPy array",
+          "source_acquisition": "held"
+        },
+        "sampling": "native-plan-before-execution",
+        "schema_version": 2,
+        "sink": {
+          "type": "return"
+        },
+        "source": {
+          "type": "array"
+        },
+        "steps": [
+          {
+            "allocation": "workspace-u8",
+            "category": "geometry",
+            "execution": "out-of-place",
+            "fallback": "portable",
+            "input_materialization": "owned-input-copy",
+            "kernel_form": "owned-to-owned",
+            "name": "Resize",
+            "output_slot": "scratch-u8",
+            "pixel_passes": 1,
+            "policies": [
+              {
+                "name": "size",
+                "value": "768x768"
+              },
+              {
+                "name": "interpolation",
+                "value": "bilinear"
+              },
+              {
+                "name": "antialias",
+                "value": "false"
+              }
+            ],
+            "probability": 1.0,
+            "scratch_slots": [],
+            "selection_reason": "semantic-legality:owned-to-owned",
+            "status": "always"
+          }
+        ],
+        "transforms": [
+          "Resize"
+        ],
+        "unit_specializations": []
+      },
+      "images_per_sec": 1672.7578284369388,
+      "iterations": 168,
+      "median_ms": 0.5978151666666667,
+      "observations_ms": [
+        0.6747026666666667,
+        0.661169,
+        0.6257056666666666,
+        0.6118086666666667,
+        0.6532623333333333,
+        0.623332,
+        0.6174386666666667,
+        0.5987953333333333,
+        0.6406786666666667,
+        0.6213053333333333,
+        0.6090153333333334,
+        0.5979916666666667,
+        0.5941153333333333,
+        0.5976386666666667,
+        0.5884216666666667,
+        0.5942516666666667,
+        0.5915416666666666,
+        0.6090183333333333,
+        0.5891086666666666,
+        0.5959083333333334,
+        0.5811183333333333,
+        0.5971753333333333,
+        0.613772,
+        0.6317886666666667,
+        0.6295623333333333,
+        0.6005116666666667,
+        0.6161823333333333,
+        0.5916453333333334,
+        0.5998519999999999,
+        0.5807516666666667,
+        0.5983316666666666,
+        0.5750316666666667,
+        0.5987486666666667,
+        0.5858716666666667,
+        0.5782283333333333,
+        0.607212,
+        0.575605,
+        0.5906816666666667,
+        0.5768650000000001,
+        0.582322,
+        0.584925,
+        0.577905,
+        0.6313756666666667,
+        0.595222,
+        0.6014186666666667,
+        0.5830583333333333,
+        0.5884349999999999,
+        0.5768346666666667,
+        0.5860916666666667,
+        0.5799949999999999,
+        0.580145,
+        0.6236553333333333,
+        0.598935,
+        0.6048520000000001,
+        0.578465,
+        0.607892
+      ],
+      "p95_ms": 0.6532623333333333,
+      "participant": "variopinta",
+      "reference_exact": true,
+      "repetition": 2,
+      "role": "control",
+      "route_id": "variopinta.reference",
+      "samples": 56,
+      "size": 1024,
+      "valid": true,
+      "validation": {
+        "c_contiguous": true,
+        "container": "numpy.ndarray",
+        "dtype": "uint8",
+        "finite": true,
+        "max": 254.0,
+        "min": 2.0,
+        "shape": [
+          768,
+          768,
+          3
+        ]
+      },
+      "variant": "reference",
+      "warmup_calls": 3,
+      "worker": "rust-catalog-2"
+    },
+    {
+      "block_size": 58,
+      "budget_ms": 100.0,
+      "case_id": "catalog.resize.bilinear",
+      "case_order": 53,
+      "catalog_policy": "bilinear",
+      "environment": "rust",
+      "environment_position": 1,
+      "explanation": {
+        "buffers": [
+          {
+            "condition": "always",
+            "dtype": "uint8",
+            "layout": "HWC",
+            "lifecycle": "borrowed-for-call",
+            "name": "input"
+          },
+          {
+            "condition": "always",
+            "dtype": "uint8",
+            "layout": "HWC",
+            "lifecycle": "owned-per-run-workspace-reusable",
+            "name": "working-u8"
+          }
+        ],
+        "copies": [
+          {
+            "condition": "non-contiguous-input",
+            "count": "0-or-1",
+            "reason": "normalize-to-contiguous-HWC",
+            "stage": "python-entry"
+          },
+          {
+            "condition": "always-elided",
+            "count": "0",
+            "reason": "establish-owned-working-buffer",
+            "stage": "native-entry"
+          },
+          {
+            "condition": "always",
+            "count": "0",
+            "reason": "transfer-Rust-Vec-ownership-to-NumPy-storage",
+            "stage": "python-output"
+          }
+        ],
+        "fallbacks": [
+          "portable"
+        ],
+        "fusions": [],
+        "input": {
+          "channels": "RGB",
+          "container": "borrowed-buffer",
+          "contiguous": true,
+          "dtype": "uint8",
+          "layout": "HWC",
+          "ownership": "caller"
+        },
+        "mode": "compiled",
+        "optimizations": [
+          "input-copy-elision"
+        ],
+        "output": {
+          "channels": "RGB",
+          "container": "owned-buffer",
+          "contiguous": true,
+          "dtype": "uint8",
+          "layout": "HWC",
+          "ownership": "result"
+        },
+        "output_dtype": "uint8",
+        "output_layout": "HWC",
+        "passes": 1,
+        "pixel_passes": 1,
+        "python_boundary": {
+          "augmentation": "held",
+          "crossings_per_call": 1,
+          "decode": "not-applicable",
+          "delivery": "held-for-Python-output-transfer",
+          "gil": "held-during-augmentation",
+          "gil_stages": {
+            "arguments": "held",
+            "augmentation": "held",
+            "decode": "not-applicable",
+            "delivery": "held-for-Python-output-transfer",
+            "source": "held"
+          },
+          "input": "NumPy HWC RGB uint8",
+          "input_access": "read-only-borrow",
+          "output": "owned contiguous NumPy array",
+          "source_acquisition": "held"
+        },
+        "sampling": "native-plan-before-execution",
+        "schema_version": 2,
+        "sink": {
+          "type": "return"
+        },
+        "source": {
+          "type": "array"
+        },
+        "steps": [
+          {
+            "allocation": "workspace-u8",
+            "category": "geometry",
+            "execution": "out-of-place",
+            "fallback": "portable",
+            "input_materialization": "borrowed-input",
+            "kernel_form": "borrowed-to-owned",
+            "name": "Resize",
+            "output_slot": "working-u8",
+            "pixel_passes": 1,
+            "policies": [
+              {
+                "name": "size",
+                "value": "168x168"
+              },
+              {
+                "name": "interpolation",
+                "value": "bilinear"
+              },
+              {
+                "name": "antialias",
+                "value": "false"
+              }
+            ],
+            "probability": 1.0,
+            "scratch_slots": [],
+            "selection_reason": "benchmark-policy:elide-entry-copy",
+            "status": "always"
+          }
+        ],
+        "transforms": [
+          "Resize"
+        ],
+        "unit_specializations": []
+      },
+      "images_per_sec": 28157.355927184108,
+      "iterations": 464,
+      "median_ms": 0.03551469827586207,
+      "observations_ms": [
+        0.036237034482758626,
+        0.03510289655172414,
+        0.03525772413793104,
+        0.035498931034482754,
+        0.03553046551724138,
+        0.035605310344827584,
+        0.035919793103448276,
+        0.03539772413793103
+      ],
+      "p95_ms": 0.036237034482758626,
+      "participant": "variopinta",
+      "reference_exact": true,
+      "repetition": 3,
+      "role": "public",
+      "route_id": "variopinta.compiled",
+      "samples": 8,
+      "size": 224,
+      "valid": true,
+      "validation": {
+        "c_contiguous": true,
+        "container": "numpy.ndarray",
+        "dtype": "uint8",
+        "finite": true,
+        "max": 252.0,
+        "min": 2.0,
+        "shape": [
+          168,
+          168,
+          3
+        ]
+      },
+      "variant": "compiled",
+      "warmup_calls": 3,
+      "worker": "rust-catalog-3"
+    },
+    {
+      "block_size": 12,
+      "budget_ms": 100.0,
+      "case_id": "catalog.resize.bilinear",
+      "case_order": 53,
+      "catalog_policy": "bilinear",
+      "environment": "rust",
+      "environment_position": 1,
+      "explanation": {
+        "buffers": [
+          {
+            "condition": "always",
+            "dtype": "uint8",
+            "layout": "HWC",
+            "lifecycle": "borrowed-for-call",
+            "name": "input"
+          },
+          {
+            "condition": "always",
+            "dtype": "uint8",
+            "layout": "HWC",
+            "lifecycle": "owned-per-run-workspace-reusable",
+            "name": "working-u8"
+          }
+        ],
+        "copies": [
+          {
+            "condition": "non-contiguous-input",
+            "count": "0-or-1",
+            "reason": "normalize-to-contiguous-HWC",
+            "stage": "python-entry"
+          },
+          {
+            "condition": "always-elided",
+            "count": "0",
+            "reason": "establish-owned-working-buffer",
+            "stage": "native-entry"
+          },
+          {
+            "condition": "always",
+            "count": "0",
+            "reason": "transfer-Rust-Vec-ownership-to-NumPy-storage",
+            "stage": "python-output"
+          }
+        ],
+        "fallbacks": [
+          "portable"
+        ],
+        "fusions": [],
+        "input": {
+          "channels": "RGB",
+          "container": "borrowed-buffer",
+          "contiguous": true,
+          "dtype": "uint8",
+          "layout": "HWC",
+          "ownership": "caller"
+        },
+        "mode": "compiled",
+        "optimizations": [
+          "input-copy-elision"
+        ],
+        "output": {
+          "channels": "RGB",
+          "container": "owned-buffer",
+          "contiguous": true,
+          "dtype": "uint8",
+          "layout": "HWC",
+          "ownership": "result"
+        },
+        "output_dtype": "uint8",
+        "output_layout": "HWC",
+        "passes": 1,
+        "pixel_passes": 1,
+        "python_boundary": {
+          "augmentation": "held",
+          "crossings_per_call": 1,
+          "decode": "not-applicable",
+          "delivery": "held-for-Python-output-transfer",
+          "gil": "held-during-augmentation",
+          "gil_stages": {
+            "arguments": "held",
+            "augmentation": "held",
+            "decode": "not-applicable",
+            "delivery": "held-for-Python-output-transfer",
+            "source": "held"
+          },
+          "input": "NumPy HWC RGB uint8",
+          "input_access": "read-only-borrow",
+          "output": "owned contiguous NumPy array",
+          "source_acquisition": "held"
+        },
+        "sampling": "native-plan-before-execution",
+        "schema_version": 2,
+        "sink": {
+          "type": "return"
+        },
+        "source": {
+          "type": "array"
+        },
+        "steps": [
+          {
+            "allocation": "workspace-u8",
+            "category": "geometry",
+            "execution": "out-of-place",
+            "fallback": "portable",
+            "input_materialization": "borrowed-input",
+            "kernel_form": "borrowed-to-owned",
+            "name": "Resize",
+            "output_slot": "working-u8",
+            "pixel_passes": 1,
+            "policies": [
+              {
+                "name": "size",
+                "value": "384x384"
+              },
+              {
+                "name": "interpolation",
+                "value": "bilinear"
+              },
+              {
+                "name": "antialias",
+                "value": "false"
+              }
+            ],
+            "probability": 1.0,
+            "scratch_slots": [],
+            "selection_reason": "benchmark-policy:elide-entry-copy",
+            "status": "always"
+          }
+        ],
+        "transforms": [
+          "Resize"
+        ],
+        "unit_specializations": []
+      },
+      "images_per_sec": 6319.840824275772,
+      "iterations": 504,
+      "median_ms": 0.15823183333333335,
+      "observations_ms": [
+        0.160413,
+        0.15687308333333333,
+        0.15938383333333334,
+        0.15666475,
+        0.16011383333333332,
+        0.16083483333333334,
+        0.15892225000000001,
+        0.1573105,
+        0.16051641666666666,
+        0.15872633333333333,
+        0.15820141666666668,
+        0.15884716666666668,
+        0.15826225,
+        0.16241225,
+        0.15724883333333334,
+        0.15696966666666667,
+        0.15611225,
+        0.156713,
+        0.15644966666666668,
+        0.15710058333333335,
+        0.15747891666666666,
+        0.15958641666666668,
+        0.158693,
+        0.15705891666666666,
+        0.15661383333333334,
+        0.15796133333333334,
+        0.15593641666666666,
+        0.15897716666666667,
+        0.1558055,
+        0.16092216666666667,
+        0.15923558333333335,
+        0.16015891666666668,
+        0.15626466666666666,
+        0.1576005,
+        0.15840808333333334,
+        0.15480975,
+        0.16033058333333333,
+        0.15520466666666666,
+        0.15853216666666667,
+        0.15966225,
+        0.16260391666666665,
+        0.15746383333333333
+      ],
+      "p95_ms": 0.16092216666666667,
+      "participant": "variopinta",
+      "reference_exact": true,
+      "repetition": 3,
+      "role": "public",
+      "route_id": "variopinta.compiled",
+      "samples": 42,
+      "size": 512,
+      "valid": true,
+      "validation": {
+        "c_contiguous": true,
+        "container": "numpy.ndarray",
+        "dtype": "uint8",
+        "finite": true,
+        "max": 252.0,
+        "min": 2.0,
+        "shape": [
+          384,
+          384,
+          3
+        ]
+      },
+      "variant": "compiled",
+      "warmup_calls": 3,
+      "worker": "rust-catalog-3"
+    },
+    {
+      "block_size": 4,
+      "budget_ms": 100.0,
+      "case_id": "catalog.resize.bilinear",
+      "case_order": 53,
+      "catalog_policy": "bilinear",
+      "environment": "rust",
+      "environment_position": 1,
+      "explanation": {
+        "buffers": [
+          {
+            "condition": "always",
+            "dtype": "uint8",
+            "layout": "HWC",
+            "lifecycle": "borrowed-for-call",
+            "name": "input"
+          },
+          {
+            "condition": "always",
+            "dtype": "uint8",
+            "layout": "HWC",
+            "lifecycle": "owned-per-run-workspace-reusable",
+            "name": "working-u8"
+          }
+        ],
+        "copies": [
+          {
+            "condition": "non-contiguous-input",
+            "count": "0-or-1",
+            "reason": "normalize-to-contiguous-HWC",
+            "stage": "python-entry"
+          },
+          {
+            "condition": "always-elided",
+            "count": "0",
+            "reason": "establish-owned-working-buffer",
+            "stage": "native-entry"
+          },
+          {
+            "condition": "always",
+            "count": "0",
+            "reason": "transfer-Rust-Vec-ownership-to-NumPy-storage",
+            "stage": "python-output"
+          }
+        ],
+        "fallbacks": [
+          "portable"
+        ],
+        "fusions": [],
+        "input": {
+          "channels": "RGB",
+          "container": "borrowed-buffer",
+          "contiguous": true,
+          "dtype": "uint8",
+          "layout": "HWC",
+          "ownership": "caller"
+        },
+        "mode": "compiled",
+        "optimizations": [
+          "input-copy-elision"
+        ],
+        "output": {
+          "channels": "RGB",
+          "container": "owned-buffer",
+          "contiguous": true,
+          "dtype": "uint8",
+          "layout": "HWC",
+          "ownership": "result"
+        },
+        "output_dtype": "uint8",
+        "output_layout": "HWC",
+        "passes": 1,
+        "pixel_passes": 1,
+        "python_boundary": {
+          "augmentation": "held",
+          "crossings_per_call": 1,
+          "decode": "not-applicable",
+          "delivery": "held-for-Python-output-transfer",
+          "gil": "held-during-augmentation",
+          "gil_stages": {
+            "arguments": "held",
+            "augmentation": "held",
+            "decode": "not-applicable",
+            "delivery": "held-for-Python-output-transfer",
+            "source": "held"
+          },
+          "input": "NumPy HWC RGB uint8",
+          "input_access": "read-only-borrow",
+          "output": "owned contiguous NumPy array",
+          "source_acquisition": "held"
+        },
+        "sampling": "native-plan-before-execution",
+        "schema_version": 2,
+        "sink": {
+          "type": "return"
+        },
+        "source": {
+          "type": "array"
+        },
+        "steps": [
+          {
+            "allocation": "workspace-u8",
+            "category": "geometry",
+            "execution": "out-of-place",
+            "fallback": "portable",
+            "input_materialization": "borrowed-input",
+            "kernel_form": "borrowed-to-owned",
+            "name": "Resize",
+            "output_slot": "working-u8",
+            "pixel_passes": 1,
+            "policies": [
+              {
+                "name": "size",
+                "value": "768x768"
+              },
+              {
+                "name": "interpolation",
+                "value": "bilinear"
+              },
+              {
+                "name": "antialias",
+                "value": "false"
+              }
+            ],
+            "probability": 1.0,
+            "scratch_slots": [],
+            "selection_reason": "benchmark-policy:elide-entry-copy",
+            "status": "always"
+          }
+        ],
+        "transforms": [
+          "Resize"
+        ],
+        "unit_specializations": []
+      },
+      "images_per_sec": 1584.1069715755766,
+      "iterations": 160,
+      "median_ms": 0.6312705,
+      "observations_ms": [
+        0.624463,
+        0.692091,
+        0.6138505,
+        0.6300455,
+        0.59367775,
+        0.621188,
+        0.636498,
+        0.6424805,
+        0.6326055,
+        0.6412105,
+        0.6336555,
+        0.652203,
+        0.6406105,
+        0.64615075,
+        0.64146075,
+        0.632948,
+        0.6376805,
+        0.65884325,
+        0.636183,
+        0.64886075,
+        0.6395205,
+        0.638938,
+        0.632458,
+        0.634328,
+        0.62573325,
+        0.627323,
+        0.61769525,
+        0.6239005,
+        0.61086525,
+        0.620313,
+        0.61357025,
+        0.61067275,
+        0.60937525,
+        0.63291075,
+        0.61269025,
+        0.628013,
+        0.630083,
+        0.6230505,
+        0.6262455,
+        0.61463525
+      ],
+      "p95_ms": 0.652203,
+      "participant": "variopinta",
+      "reference_exact": true,
+      "repetition": 3,
+      "role": "public",
+      "route_id": "variopinta.compiled",
+      "samples": 40,
+      "size": 1024,
+      "valid": true,
+      "validation": {
+        "c_contiguous": true,
+        "container": "numpy.ndarray",
+        "dtype": "uint8",
+        "finite": true,
+        "max": 254.0,
+        "min": 2.0,
+        "shape": [
+          768,
+          768,
+          3
+        ]
+      },
+      "variant": "compiled",
+      "warmup_calls": 3,
+      "worker": "rust-catalog-3"
+    },
+    {
+      "block_size": 54,
+      "budget_ms": 100.0,
+      "case_id": "catalog.resize.bilinear",
+      "case_order": 54,
+      "catalog_policy": "bilinear",
+      "environment": "rust",
+      "environment_position": 1,
+      "explanation": {
+        "buffers": [
+          {
+            "condition": "always",
+            "dtype": "uint8",
+            "layout": "HWC",
+            "lifecycle": "borrowed-for-call",
+            "name": "input"
+          },
+          {
+            "condition": "always",
+            "dtype": "uint8",
+            "layout": "HWC",
+            "lifecycle": "owned-per-run-workspace-reusable",
+            "name": "working-u8"
+          },
+          {
+            "condition": "out-of-place-step-applied",
+            "dtype": "uint8",
+            "layout": "HWC",
+            "lifecycle": "owned-per-run-workspace-reusable",
+            "name": "scratch-u8"
+          }
+        ],
+        "copies": [
+          {
+            "condition": "non-contiguous-input",
+            "count": "0-or-1",
+            "reason": "normalize-to-contiguous-HWC",
+            "stage": "python-entry"
+          },
+          {
+            "condition": "always",
+            "count": "1",
+            "reason": "establish-owned-working-buffer",
+            "stage": "native-entry"
+          },
+          {
+            "condition": "always",
+            "count": "0",
+            "reason": "transfer-Rust-Vec-ownership-to-NumPy-storage",
+            "stage": "python-output"
+          }
+        ],
+        "fallbacks": [
+          "portable"
+        ],
+        "fusions": [],
+        "input": {
+          "channels": "RGB",
+          "container": "borrowed-buffer",
+          "contiguous": true,
+          "dtype": "uint8",
+          "layout": "HWC",
+          "ownership": "caller"
+        },
+        "mode": "reference",
+        "optimizations": [],
+        "output": {
+          "channels": "RGB",
+          "container": "owned-buffer",
+          "contiguous": true,
+          "dtype": "uint8",
+          "layout": "HWC",
+          "ownership": "result"
+        },
+        "output_dtype": "uint8",
+        "output_layout": "HWC",
+        "passes": 1,
+        "pixel_passes": 1,
+        "python_boundary": {
+          "augmentation": "held",
+          "crossings_per_call": 1,
+          "decode": "not-applicable",
+          "delivery": "held-for-Python-output-transfer",
+          "gil": "held-during-augmentation",
+          "gil_stages": {
+            "arguments": "held",
+            "augmentation": "held",
+            "decode": "not-applicable",
+            "delivery": "held-for-Python-output-transfer",
+            "source": "held"
+          },
+          "input": "NumPy HWC RGB uint8",
+          "input_access": "read-only-borrow",
+          "output": "owned contiguous NumPy array",
+          "source_acquisition": "held"
+        },
+        "sampling": "native-plan-before-execution",
+        "schema_version": 2,
+        "sink": {
+          "type": "return"
+        },
+        "source": {
+          "type": "array"
+        },
+        "steps": [
+          {
+            "allocation": "workspace-u8",
+            "category": "geometry",
+            "execution": "out-of-place",
+            "fallback": "portable",
+            "input_materialization": "owned-input-copy",
+            "kernel_form": "owned-to-owned",
+            "name": "Resize",
+            "output_slot": "scratch-u8",
+            "pixel_passes": 1,
+            "policies": [
+              {
+                "name": "size",
+                "value": "168x168"
+              },
+              {
+                "name": "interpolation",
+                "value": "bilinear"
+              },
+              {
+                "name": "antialias",
+                "value": "false"
+              }
+            ],
+            "probability": 1.0,
+            "scratch_slots": [],
+            "selection_reason": "semantic-legality:owned-to-owned",
+            "status": "always"
+          }
+        ],
+        "transforms": [
+          "Resize"
+        ],
+        "unit_specializations": []
+      },
+      "images_per_sec": 26978.59248686168,
+      "iterations": 486,
+      "median_ms": 0.03706642592592592,
+      "observations_ms": [
+        0.03649068518518518,
+        0.03772681481481482,
+        0.037092185185185186,
+        0.036754388888888885,
+        0.037027185185185184,
+        0.037464574074074074,
+        0.03751181481481481,
+        0.03706642592592592,
+        0.036991444444444445
+      ],
+      "p95_ms": 0.03772681481481482,
+      "participant": "variopinta",
+      "reference_exact": true,
+      "repetition": 3,
+      "role": "control",
+      "route_id": "variopinta.reference",
+      "samples": 9,
+      "size": 224,
+      "valid": true,
+      "validation": {
+        "c_contiguous": true,
+        "container": "numpy.ndarray",
+        "dtype": "uint8",
+        "finite": true,
+        "max": 230.0,
+        "min": 0.0,
+        "shape": [
+          168,
+          168,
+          3
+        ]
+      },
+      "variant": "reference",
+      "warmup_calls": 3,
+      "worker": "rust-catalog-3"
+    },
+    {
+      "block_size": 12,
+      "budget_ms": 100.0,
+      "case_id": "catalog.resize.bilinear",
+      "case_order": 54,
+      "catalog_policy": "bilinear",
+      "environment": "rust",
+      "environment_position": 1,
+      "explanation": {
+        "buffers": [
+          {
+            "condition": "always",
+            "dtype": "uint8",
+            "layout": "HWC",
+            "lifecycle": "borrowed-for-call",
+            "name": "input"
+          },
+          {
+            "condition": "always",
+            "dtype": "uint8",
+            "layout": "HWC",
+            "lifecycle": "owned-per-run-workspace-reusable",
+            "name": "working-u8"
+          },
+          {
+            "condition": "out-of-place-step-applied",
+            "dtype": "uint8",
+            "layout": "HWC",
+            "lifecycle": "owned-per-run-workspace-reusable",
+            "name": "scratch-u8"
+          }
+        ],
+        "copies": [
+          {
+            "condition": "non-contiguous-input",
+            "count": "0-or-1",
+            "reason": "normalize-to-contiguous-HWC",
+            "stage": "python-entry"
+          },
+          {
+            "condition": "always",
+            "count": "1",
+            "reason": "establish-owned-working-buffer",
+            "stage": "native-entry"
+          },
+          {
+            "condition": "always",
+            "count": "0",
+            "reason": "transfer-Rust-Vec-ownership-to-NumPy-storage",
+            "stage": "python-output"
+          }
+        ],
+        "fallbacks": [
+          "portable"
+        ],
+        "fusions": [],
+        "input": {
+          "channels": "RGB",
+          "container": "borrowed-buffer",
+          "contiguous": true,
+          "dtype": "uint8",
+          "layout": "HWC",
+          "ownership": "caller"
+        },
+        "mode": "reference",
+        "optimizations": [],
+        "output": {
+          "channels": "RGB",
+          "container": "owned-buffer",
+          "contiguous": true,
+          "dtype": "uint8",
+          "layout": "HWC",
+          "ownership": "result"
+        },
+        "output_dtype": "uint8",
+        "output_layout": "HWC",
+        "passes": 1,
+        "pixel_passes": 1,
+        "python_boundary": {
+          "augmentation": "held",
+          "crossings_per_call": 1,
+          "decode": "not-applicable",
+          "delivery": "held-for-Python-output-transfer",
+          "gil": "held-during-augmentation",
+          "gil_stages": {
+            "arguments": "held",
+            "augmentation": "held",
+            "decode": "not-applicable",
+            "delivery": "held-for-Python-output-transfer",
+            "source": "held"
+          },
+          "input": "NumPy HWC RGB uint8",
+          "input_access": "read-only-borrow",
+          "output": "owned contiguous NumPy array",
+          "source_acquisition": "held"
+        },
+        "sampling": "native-plan-before-execution",
+        "schema_version": 2,
+        "sink": {
+          "type": "return"
+        },
+        "source": {
+          "type": "array"
+        },
+        "steps": [
+          {
+            "allocation": "workspace-u8",
+            "category": "geometry",
+            "execution": "out-of-place",
+            "fallback": "portable",
+            "input_materialization": "owned-input-copy",
+            "kernel_form": "owned-to-owned",
+            "name": "Resize",
+            "output_slot": "scratch-u8",
+            "pixel_passes": 1,
+            "policies": [
+              {
+                "name": "size",
+                "value": "384x384"
+              },
+              {
+                "name": "interpolation",
+                "value": "bilinear"
+              },
+              {
+                "name": "antialias",
+                "value": "false"
+              }
+            ],
+            "probability": 1.0,
+            "scratch_slots": [],
+            "selection_reason": "semantic-legality:owned-to-owned",
+            "status": "always"
+          }
+        ],
+        "transforms": [
+          "Resize"
+        ],
+        "unit_specializations": []
+      },
+      "images_per_sec": 6319.794227499952,
+      "iterations": 504,
+      "median_ms": 0.158233,
+      "observations_ms": [
+        0.15778633333333333,
+        0.15721808333333334,
+        0.15743133333333334,
+        0.15858808333333332,
+        0.15761716666666667,
+        0.15978225,
+        0.15937966666666667,
+        0.15670975,
+        0.16323391666666667,
+        0.15684633333333334,
+        0.15760475,
+        0.16008808333333333,
+        0.15897808333333333,
+        0.158963,
+        0.15671975,
+        0.1594555,
+        0.15685058333333332,
+        0.16194558333333334,
+        0.15677383333333333,
+        0.15954058333333335,
+        0.15564466666666668,
+        0.15911633333333333,
+        0.15699891666666668,
+        0.15876883333333333,
+        0.15857891666666665,
+        0.16068983333333334,
+        0.157663,
+        0.15797133333333332,
+        0.15796308333333334,
+        0.15937883333333333,
+        0.15957058333333332,
+        0.1569005,
+        0.16241475,
+        0.15743058333333335,
+        0.15782466666666667,
+        0.15911891666666667,
+        0.16157225,
+        0.15849466666666667,
+        0.15728641666666668,
+        0.15991225,
+        0.15759641666666666,
+        0.15745883333333333
+      ],
+      "p95_ms": 0.16194558333333334,
+      "participant": "variopinta",
+      "reference_exact": true,
+      "repetition": 3,
+      "role": "control",
+      "route_id": "variopinta.reference",
+      "samples": 42,
+      "size": 512,
+      "valid": true,
+      "validation": {
+        "c_contiguous": true,
+        "container": "numpy.ndarray",
+        "dtype": "uint8",
+        "finite": true,
+        "max": 252.0,
+        "min": 2.0,
+        "shape": [
+          384,
+          384,
+          3
+        ]
+      },
+      "variant": "reference",
+      "warmup_calls": 3,
+      "worker": "rust-catalog-3"
+    },
+    {
+      "block_size": 4,
+      "budget_ms": 100.0,
+      "case_id": "catalog.resize.bilinear",
+      "case_order": 54,
+      "catalog_policy": "bilinear",
+      "environment": "rust",
+      "environment_position": 1,
+      "explanation": {
+        "buffers": [
+          {
+            "condition": "always",
+            "dtype": "uint8",
+            "layout": "HWC",
+            "lifecycle": "borrowed-for-call",
+            "name": "input"
+          },
+          {
+            "condition": "always",
+            "dtype": "uint8",
+            "layout": "HWC",
+            "lifecycle": "owned-per-run-workspace-reusable",
+            "name": "working-u8"
+          },
+          {
+            "condition": "out-of-place-step-applied",
+            "dtype": "uint8",
+            "layout": "HWC",
+            "lifecycle": "owned-per-run-workspace-reusable",
+            "name": "scratch-u8"
+          }
+        ],
+        "copies": [
+          {
+            "condition": "non-contiguous-input",
+            "count": "0-or-1",
+            "reason": "normalize-to-contiguous-HWC",
+            "stage": "python-entry"
+          },
+          {
+            "condition": "always",
+            "count": "1",
+            "reason": "establish-owned-working-buffer",
+            "stage": "native-entry"
+          },
+          {
+            "condition": "always",
+            "count": "0",
+            "reason": "transfer-Rust-Vec-ownership-to-NumPy-storage",
+            "stage": "python-output"
+          }
+        ],
+        "fallbacks": [
+          "portable"
+        ],
+        "fusions": [],
+        "input": {
+          "channels": "RGB",
+          "container": "borrowed-buffer",
+          "contiguous": true,
+          "dtype": "uint8",
+          "layout": "HWC",
+          "ownership": "caller"
+        },
+        "mode": "reference",
+        "optimizations": [],
+        "output": {
+          "channels": "RGB",
+          "container": "owned-buffer",
+          "contiguous": true,
+          "dtype": "uint8",
+          "layout": "HWC",
+          "ownership": "result"
+        },
+        "output_dtype": "uint8",
+        "output_layout": "HWC",
+        "passes": 1,
+        "pixel_passes": 1,
+        "python_boundary": {
+          "augmentation": "held",
+          "crossings_per_call": 1,
+          "decode": "not-applicable",
+          "delivery": "held-for-Python-output-transfer",
+          "gil": "held-during-augmentation",
+          "gil_stages": {
+            "arguments": "held",
+            "augmentation": "held",
+            "decode": "not-applicable",
+            "delivery": "held-for-Python-output-transfer",
+            "source": "held"
+          },
+          "input": "NumPy HWC RGB uint8",
+          "input_access": "read-only-borrow",
+          "output": "owned contiguous NumPy array",
+          "source_acquisition": "held"
+        },
+        "sampling": "native-plan-before-execution",
+        "schema_version": 2,
+        "sink": {
+          "type": "return"
+        },
+        "source": {
+          "type": "array"
+        },
+        "steps": [
+          {
+            "allocation": "workspace-u8",
+            "category": "geometry",
+            "execution": "out-of-place",
+            "fallback": "portable",
+            "input_materialization": "owned-input-copy",
+            "kernel_form": "owned-to-owned",
+            "name": "Resize",
+            "output_slot": "scratch-u8",
+            "pixel_passes": 1,
+            "policies": [
+              {
+                "name": "size",
+                "value": "768x768"
+              },
+              {
+                "name": "interpolation",
+                "value": "bilinear"
+              },
+              {
+                "name": "antialias",
+                "value": "false"
+              }
+            ],
+            "probability": 1.0,
+            "scratch_slots": [],
+            "selection_reason": "semantic-legality:owned-to-owned",
+            "status": "always"
+          }
+        ],
+        "transforms": [
+          "Resize"
+        ],
+        "unit_specializations": []
+      },
+      "images_per_sec": 1533.9696622984961,
+      "iterations": 152,
+      "median_ms": 0.6519033750000001,
+      "observations_ms": [
+        1.1662825,
+        0.72394625,
+        0.6731785,
+        0.68157825,
+        0.6917385,
+        0.6829185,
+        0.653676,
+        0.66467575,
+        0.635983,
+        0.639763,
+        0.66355075,
+        0.640558,
+        0.633268,
+        0.66412575,
+        0.63623825,
+        0.63750575,
+        0.67247075,
+        0.65013075,
+        0.66906325,
+        0.6819485,
+        0.641223,
+        0.637663,
+        0.66657075,
+        0.64573075,
+        0.633108,
+        0.66671575,
+        0.63647575,
+        0.6355205,
+        0.67051325,
+        0.64460575,
+        0.641948,
+        0.66671325,
+        0.644113,
+        0.6329955,
+        0.664326,
+        0.63494075,
+        0.643253,
+        0.66953325
+      ],
+      "p95_ms": 0.72394625,
+      "participant": "variopinta",
+      "reference_exact": true,
+      "repetition": 3,
+      "role": "control",
+      "route_id": "variopinta.reference",
+      "samples": 38,
+      "size": 1024,
+      "valid": true,
+      "validation": {
+        "c_contiguous": true,
+        "container": "numpy.ndarray",
+        "dtype": "uint8",
+        "finite": true,
+        "max": 254.0,
+        "min": 2.0,
+        "shape": [
+          768,
+          768,
+          3
+        ]
+      },
+      "variant": "reference",
+      "warmup_calls": 3,
+      "worker": "rust-catalog-3"
+    }
+  ],
+  "schema_version": 1
+}

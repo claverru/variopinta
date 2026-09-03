@@ -1,0 +1,546 @@
+{
+  "case": {
+    "comparability": "control",
+    "executor": "contracts",
+    "factory": "augmentation-boundaries",
+    "id": "contracts.augmentation-boundaries",
+    "label": "Augmentation boundary contracts",
+    "routes": [
+      {
+        "environment": "torchvision",
+        "id": "torchvision.stock",
+        "participant": "torchvision",
+        "role": "public",
+        "variant": "stock"
+      },
+      {
+        "environment": "albumentationsx",
+        "id": "albumentationsx.stock",
+        "participant": "albumentationsx",
+        "role": "public",
+        "variant": "stock"
+      },
+      {
+        "environment": "rust",
+        "id": "variopinta.compiled",
+        "participant": "variopinta",
+        "role": "public",
+        "variant": "compiled"
+      }
+    ],
+    "scopes": [
+      "contracts",
+      "transforms",
+      "variopinta"
+    ],
+    "sizes": [],
+    "suite": "contracts",
+    "tags": [
+      "contract",
+      "layout",
+      "dtype",
+      "ownership",
+      "dimensions"
+    ],
+    "timing": null
+  },
+  "case_id": "contracts.augmentation-boundaries",
+  "compatibility": {
+    "digest": "446dd57d465b348eb99d044f17bf7fc29301897afc4bdfa3b2ff25d5f27d44eb",
+    "environments": {
+      "albumentationsx": {
+        "architecture": "x86_64",
+        "cpu_count": 32,
+        "packages": {
+          "albucore": "0.2.13",
+          "albumentationsx": "2.4.2",
+          "numkong": "7.8.1",
+          "numpy": "2.2.6",
+          "opencv-python-headless": "5.0.0.93",
+          "torch": "2.13.0+cu130",
+          "torchvision": "0.28.0+cu130"
+        },
+        "platform": "Linux-6.18.33.2-microsoft-standard-WSL2-x86_64-with-glibc2.39",
+        "processor": "AMD Ryzen 9 9950X3D 16-Core Processor",
+        "python": "3.12.3",
+        "thread_control": {
+          "MKL_NUM_THREADS": "1",
+          "OMP_NUM_THREADS": "1",
+          "OPENBLAS_NUM_THREADS": "1",
+          "cpu_affinity_after": [
+            0
+          ],
+          "cpu_affinity_before": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23,
+            24,
+            25,
+            26,
+            27,
+            28,
+            29,
+            30,
+            31
+          ],
+          "cv2_num_threads": 1,
+          "torch_num_interop_threads": 1,
+          "torch_num_threads": 1
+        }
+      },
+      "rust": {
+        "architecture": "x86_64",
+        "cpu_count": 32,
+        "packages": {
+          "numpy": "2.2.6",
+          "torch": "2.13.0+cu130",
+          "torchvision": "0.28.0+cu130",
+          "variopinta": "0.3.0"
+        },
+        "platform": "Linux-6.18.33.2-microsoft-standard-WSL2-x86_64-with-glibc2.39",
+        "processor": "AMD Ryzen 9 9950X3D 16-Core Processor",
+        "python": "3.12.3",
+        "thread_control": {
+          "MKL_NUM_THREADS": "1",
+          "OMP_NUM_THREADS": "1",
+          "OPENBLAS_NUM_THREADS": "1",
+          "cpu_affinity_after": [
+            0
+          ],
+          "cpu_affinity_before": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23,
+            24,
+            25,
+            26,
+            27,
+            28,
+            29,
+            30,
+            31
+          ],
+          "cv2_num_threads": null,
+          "torch_num_interop_threads": 1,
+          "torch_num_threads": 1
+        }
+      },
+      "torchvision": {
+        "architecture": "x86_64",
+        "cpu_count": 32,
+        "packages": {
+          "numpy": "2.2.6",
+          "torch": "2.13.0+cu130",
+          "torchvision": "0.28.0+cu130"
+        },
+        "platform": "Linux-6.18.33.2-microsoft-standard-WSL2-x86_64-with-glibc2.39",
+        "processor": "AMD Ryzen 9 9950X3D 16-Core Processor",
+        "python": "3.12.3",
+        "thread_control": {
+          "MKL_NUM_THREADS": "1",
+          "OMP_NUM_THREADS": "1",
+          "OPENBLAS_NUM_THREADS": "1",
+          "cpu_affinity_after": [
+            0
+          ],
+          "cpu_affinity_before": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23,
+            24,
+            25,
+            26,
+            27,
+            28,
+            29,
+            30,
+            31
+          ],
+          "cv2_num_threads": null,
+          "torch_num_interop_threads": 1,
+          "torch_num_threads": 1
+        }
+      }
+    }
+  },
+  "execution_order": [
+    {
+      "cases": [
+        "contracts.augmentation-boundaries"
+      ],
+      "environment": "albumentationsx",
+      "environment_position": 1,
+      "executor": "contracts",
+      "repetition": 1,
+      "worker": "albumentationsx-contracts-1"
+    },
+    {
+      "cases": [
+        "contracts.augmentation-boundaries"
+      ],
+      "environment": "rust",
+      "environment_position": 3,
+      "executor": "contracts",
+      "repetition": 1,
+      "worker": "rust-contracts-1"
+    },
+    {
+      "cases": [
+        "contracts.augmentation-boundaries"
+      ],
+      "environment": "torchvision",
+      "environment_position": 4,
+      "executor": "contracts",
+      "repetition": 1,
+      "worker": "torchvision-contracts-1"
+    }
+  ],
+  "fingerprint": {
+    "components": {
+      "definition": "827e9cd46bca9ff10879c22b1cdf00c0064000d9cfc21d598f8d9cb0f5bf625c",
+      "environments": {
+        "albumentationsx": "c68652efdc98b4f953edee17a91dd5f107161e689001d022527f0b0de3821b4b",
+        "rust": "c21434ab276976c811af1d8dc747f46be02b1f77bad36ecbae0c2a96fee16265",
+        "torchvision": "4163a62b3debabcb68117e468e8fb096bb52da3ebee73d24a0867b8d6b13d5db"
+      },
+      "source": "22f3d3d1a19fec6227559f7aea227bae89026b34ca982929dab230dc70ee7eb2",
+      "unclassified": []
+    },
+    "digest": "fc598e7c93ccb4a72cfe5431505bbd7b714f6136e93eb6dac6ddab587cc827af"
+  },
+  "metadata": {
+    "albumentationsx": {
+      "architecture": "x86_64",
+      "backend": "albumentationsx",
+      "cpu_count": 32,
+      "packages": {
+        "albucore": "0.2.13",
+        "albumentationsx": "2.4.2",
+        "numkong": "7.8.1",
+        "numpy": "2.2.6",
+        "opencv-python-headless": "5.0.0.93",
+        "torch": "2.13.0+cu130",
+        "torchvision": "0.28.0+cu130"
+      },
+      "platform": "Linux-6.18.33.2-microsoft-standard-WSL2-x86_64-with-glibc2.39",
+      "processor": "AMD Ryzen 9 9950X3D 16-Core Processor",
+      "python": "3.12.3",
+      "thread_control": {
+        "MKL_NUM_THREADS": "1",
+        "OMP_NUM_THREADS": "1",
+        "OPENBLAS_NUM_THREADS": "1",
+        "cpu_affinity_after": [
+          0
+        ],
+        "cpu_affinity_before": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17,
+          18,
+          19,
+          20,
+          21,
+          22,
+          23,
+          24,
+          25,
+          26,
+          27,
+          28,
+          29,
+          30,
+          31
+        ],
+        "cv2_num_threads": 1,
+        "torch_num_interop_threads": 1,
+        "torch_num_threads": 1
+      },
+      "torch": "2.13.0+cu130",
+      "torchvision": "0.28.0+cu130"
+    },
+    "rust": {
+      "architecture": "x86_64",
+      "backend": "rust",
+      "cpu_count": 32,
+      "packages": {
+        "numpy": "2.2.6",
+        "torch": "2.13.0+cu130",
+        "torchvision": "0.28.0+cu130",
+        "variopinta": "0.3.0"
+      },
+      "platform": "Linux-6.18.33.2-microsoft-standard-WSL2-x86_64-with-glibc2.39",
+      "processor": "AMD Ryzen 9 9950X3D 16-Core Processor",
+      "python": "3.12.3",
+      "thread_control": {
+        "MKL_NUM_THREADS": "1",
+        "OMP_NUM_THREADS": "1",
+        "OPENBLAS_NUM_THREADS": "1",
+        "cpu_affinity_after": [
+          0
+        ],
+        "cpu_affinity_before": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17,
+          18,
+          19,
+          20,
+          21,
+          22,
+          23,
+          24,
+          25,
+          26,
+          27,
+          28,
+          29,
+          30,
+          31
+        ],
+        "cv2_num_threads": null,
+        "torch_num_interop_threads": 1,
+        "torch_num_threads": 1
+      },
+      "torch": "2.13.0+cu130",
+      "torchvision": "0.28.0+cu130"
+    },
+    "torchvision": {
+      "architecture": "x86_64",
+      "backend": "torchvision",
+      "cpu_count": 32,
+      "packages": {
+        "numpy": "2.2.6",
+        "torch": "2.13.0+cu130",
+        "torchvision": "0.28.0+cu130"
+      },
+      "platform": "Linux-6.18.33.2-microsoft-standard-WSL2-x86_64-with-glibc2.39",
+      "processor": "AMD Ryzen 9 9950X3D 16-Core Processor",
+      "python": "3.12.3",
+      "thread_control": {
+        "MKL_NUM_THREADS": "1",
+        "OMP_NUM_THREADS": "1",
+        "OPENBLAS_NUM_THREADS": "1",
+        "cpu_affinity_after": [
+          0
+        ],
+        "cpu_affinity_before": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17,
+          18,
+          19,
+          20,
+          21,
+          22,
+          23,
+          24,
+          25,
+          26,
+          27,
+          28,
+          29,
+          30,
+          31
+        ],
+        "cv2_num_threads": null,
+        "torch_num_interop_threads": 1,
+        "torch_num_threads": 1
+      },
+      "torch": "2.13.0+cu130",
+      "torchvision": "0.28.0+cu130"
+    }
+  },
+  "provenance": {
+    "source_dirty": false,
+    "source_revision": "4a32c003085662b37e5d4fc6c47bdfa7628a7f94"
+  },
+  "rows": [
+    {
+      "case_id": "contracts.augmentation-boundaries",
+      "case_order": 1,
+      "environment": "albumentationsx",
+      "environment_position": 1,
+      "participant": "albumentationsx",
+      "repetition": 1,
+      "role": "public",
+      "route_id": "albumentationsx.stock",
+      "size": null,
+      "valid": true,
+      "validation": {
+        "checks": [
+          {
+            "backend": "albumentationsx",
+            "cases": 123,
+            "failures": [],
+            "kind": "correctness",
+            "limitations": [],
+            "valid": true
+          }
+        ]
+      },
+      "variant": "stock",
+      "worker": "albumentationsx-contracts-1"
+    },
+    {
+      "case_id": "contracts.augmentation-boundaries",
+      "case_order": 1,
+      "environment": "rust",
+      "environment_position": 3,
+      "participant": "variopinta",
+      "repetition": 1,
+      "role": "public",
+      "route_id": "variopinta.compiled",
+      "size": null,
+      "valid": true,
+      "validation": {
+        "checks": [
+          {
+            "backend": "rust",
+            "cases": 155,
+            "failures": [],
+            "kind": "correctness",
+            "limitations": [],
+            "valid": true
+          }
+        ]
+      },
+      "variant": "compiled",
+      "worker": "rust-contracts-1"
+    },
+    {
+      "case_id": "contracts.augmentation-boundaries",
+      "case_order": 1,
+      "environment": "torchvision",
+      "environment_position": 4,
+      "participant": "torchvision",
+      "repetition": 1,
+      "role": "public",
+      "route_id": "torchvision.stock",
+      "size": null,
+      "valid": true,
+      "validation": {
+        "checks": [
+          {
+            "backend": "torchvision",
+            "cases": 123,
+            "failures": [],
+            "kind": "correctness",
+            "limitations": [],
+            "valid": true
+          }
+        ]
+      },
+      "variant": "stock",
+      "worker": "torchvision-contracts-1"
+    }
+  ],
+  "schema_version": 1
+}
