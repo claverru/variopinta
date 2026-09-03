@@ -116,36 +116,18 @@
         "catalog.affine.constant",
         "catalog.affine.reflect101",
         "catalog.affine.reflect101",
-        "catalog.center-crop.default",
-        "catalog.center-crop.default",
-        "catalog.coarse-dropout.eight-holes",
-        "catalog.coarse-dropout.eight-holes",
         "catalog.color-jitter.hue",
         "catalog.color-jitter.hue",
         "catalog.color-jitter.matrix",
         "catalog.color-jitter.matrix",
-        "catalog.gaussian-blur.fixed-sigma",
-        "catalog.gaussian-blur.fixed-sigma",
-        "catalog.gaussian-blur.sampled-sigma",
-        "catalog.gaussian-blur.sampled-sigma",
         "catalog.gaussian-noise.independent-rgb",
         "catalog.gaussian-noise.independent-rgb",
         "catalog.gaussian-noise.shared-rgb",
         "catalog.gaussian-noise.shared-rgb",
-        "catalog.grayscale.default",
-        "catalog.grayscale.default",
         "catalog.grid-distortion.bilinear",
         "catalog.grid-distortion.bilinear",
         "catalog.grid-distortion.nearest-reflect101",
         "catalog.grid-distortion.nearest-reflect101",
-        "catalog.horizontal-flip.default",
-        "catalog.horizontal-flip.default",
-        "catalog.invert.default",
-        "catalog.invert.default",
-        "catalog.normalize-to-torch.terminal",
-        "catalog.normalize-to-torch.terminal",
-        "catalog.normalize.default",
-        "catalog.normalize.default",
         "catalog.pad-if-needed.constant",
         "catalog.pad-if-needed.constant",
         "catalog.pad-if-needed.reflect101",
@@ -154,30 +136,14 @@
         "catalog.perspective.bilinear",
         "catalog.perspective.nearest-reflect101",
         "catalog.perspective.nearest-reflect101",
-        "catalog.posterize.default",
-        "catalog.posterize.default",
-        "catalog.random-crop.default",
-        "catalog.random-crop.default",
-        "catalog.random-resized-crop.bilinear",
-        "catalog.random-resized-crop.bilinear",
-        "catalog.random-resized-crop.bilinear-antialias",
-        "catalog.random-resized-crop.bilinear-antialias",
         "catalog.random-rotation.constant",
         "catalog.random-rotation.constant",
         "catalog.random-rotation.reflect101",
         "catalog.random-rotation.reflect101",
-        "catalog.resize.bilinear",
-        "catalog.resize.bilinear",
-        "catalog.resize.bilinear-antialias",
-        "catalog.resize.bilinear-antialias",
         "catalog.sharpen.cross-3x3",
         "catalog.sharpen.cross-3x3",
-        "catalog.solarize.default",
-        "catalog.solarize.default",
         "catalog.to-torch.default",
-        "catalog.to-torch.default",
-        "catalog.vertical-flip.default",
-        "catalog.vertical-flip.default"
+        "catalog.to-torch.default"
       ],
       "environment": "rust",
       "environment_position": 3,
@@ -190,36 +156,18 @@
         "catalog.affine.constant",
         "catalog.affine.reflect101",
         "catalog.affine.reflect101",
-        "catalog.center-crop.default",
-        "catalog.center-crop.default",
-        "catalog.coarse-dropout.eight-holes",
-        "catalog.coarse-dropout.eight-holes",
         "catalog.color-jitter.hue",
         "catalog.color-jitter.hue",
         "catalog.color-jitter.matrix",
         "catalog.color-jitter.matrix",
-        "catalog.gaussian-blur.fixed-sigma",
-        "catalog.gaussian-blur.fixed-sigma",
-        "catalog.gaussian-blur.sampled-sigma",
-        "catalog.gaussian-blur.sampled-sigma",
         "catalog.gaussian-noise.independent-rgb",
         "catalog.gaussian-noise.independent-rgb",
         "catalog.gaussian-noise.shared-rgb",
         "catalog.gaussian-noise.shared-rgb",
-        "catalog.grayscale.default",
-        "catalog.grayscale.default",
         "catalog.grid-distortion.bilinear",
         "catalog.grid-distortion.bilinear",
         "catalog.grid-distortion.nearest-reflect101",
         "catalog.grid-distortion.nearest-reflect101",
-        "catalog.horizontal-flip.default",
-        "catalog.horizontal-flip.default",
-        "catalog.invert.default",
-        "catalog.invert.default",
-        "catalog.normalize-to-torch.terminal",
-        "catalog.normalize-to-torch.terminal",
-        "catalog.normalize.default",
-        "catalog.normalize.default",
         "catalog.pad-if-needed.constant",
         "catalog.pad-if-needed.constant",
         "catalog.pad-if-needed.reflect101",
@@ -228,30 +176,14 @@
         "catalog.perspective.bilinear",
         "catalog.perspective.nearest-reflect101",
         "catalog.perspective.nearest-reflect101",
-        "catalog.posterize.default",
-        "catalog.posterize.default",
-        "catalog.random-crop.default",
-        "catalog.random-crop.default",
-        "catalog.random-resized-crop.bilinear",
-        "catalog.random-resized-crop.bilinear",
-        "catalog.random-resized-crop.bilinear-antialias",
-        "catalog.random-resized-crop.bilinear-antialias",
         "catalog.random-rotation.constant",
         "catalog.random-rotation.constant",
         "catalog.random-rotation.reflect101",
         "catalog.random-rotation.reflect101",
-        "catalog.resize.bilinear",
-        "catalog.resize.bilinear",
-        "catalog.resize.bilinear-antialias",
-        "catalog.resize.bilinear-antialias",
         "catalog.sharpen.cross-3x3",
         "catalog.sharpen.cross-3x3",
-        "catalog.solarize.default",
-        "catalog.solarize.default",
         "catalog.to-torch.default",
         "catalog.to-torch.default",
-        "catalog.vertical-flip.default",
-        "catalog.vertical-flip.default",
         "catalog.affine.constant"
       ],
       "environment": "rust",
@@ -264,36 +196,18 @@
       "cases": [
         "catalog.affine.reflect101",
         "catalog.affine.reflect101",
-        "catalog.center-crop.default",
-        "catalog.center-crop.default",
-        "catalog.coarse-dropout.eight-holes",
-        "catalog.coarse-dropout.eight-holes",
         "catalog.color-jitter.hue",
         "catalog.color-jitter.hue",
         "catalog.color-jitter.matrix",
         "catalog.color-jitter.matrix",
-        "catalog.gaussian-blur.fixed-sigma",
-        "catalog.gaussian-blur.fixed-sigma",
-        "catalog.gaussian-blur.sampled-sigma",
-        "catalog.gaussian-blur.sampled-sigma",
         "catalog.gaussian-noise.independent-rgb",
         "catalog.gaussian-noise.independent-rgb",
         "catalog.gaussian-noise.shared-rgb",
         "catalog.gaussian-noise.shared-rgb",
-        "catalog.grayscale.default",
-        "catalog.grayscale.default",
         "catalog.grid-distortion.bilinear",
         "catalog.grid-distortion.bilinear",
         "catalog.grid-distortion.nearest-reflect101",
         "catalog.grid-distortion.nearest-reflect101",
-        "catalog.horizontal-flip.default",
-        "catalog.horizontal-flip.default",
-        "catalog.invert.default",
-        "catalog.invert.default",
-        "catalog.normalize-to-torch.terminal",
-        "catalog.normalize-to-torch.terminal",
-        "catalog.normalize.default",
-        "catalog.normalize.default",
         "catalog.pad-if-needed.constant",
         "catalog.pad-if-needed.constant",
         "catalog.pad-if-needed.reflect101",
@@ -302,30 +216,14 @@
         "catalog.perspective.bilinear",
         "catalog.perspective.nearest-reflect101",
         "catalog.perspective.nearest-reflect101",
-        "catalog.posterize.default",
-        "catalog.posterize.default",
-        "catalog.random-crop.default",
-        "catalog.random-crop.default",
-        "catalog.random-resized-crop.bilinear",
-        "catalog.random-resized-crop.bilinear",
-        "catalog.random-resized-crop.bilinear-antialias",
-        "catalog.random-resized-crop.bilinear-antialias",
         "catalog.random-rotation.constant",
         "catalog.random-rotation.constant",
         "catalog.random-rotation.reflect101",
         "catalog.random-rotation.reflect101",
-        "catalog.resize.bilinear",
-        "catalog.resize.bilinear",
-        "catalog.resize.bilinear-antialias",
-        "catalog.resize.bilinear-antialias",
         "catalog.sharpen.cross-3x3",
         "catalog.sharpen.cross-3x3",
-        "catalog.solarize.default",
-        "catalog.solarize.default",
         "catalog.to-torch.default",
         "catalog.to-torch.default",
-        "catalog.vertical-flip.default",
-        "catalog.vertical-flip.default",
         "catalog.affine.constant",
         "catalog.affine.constant"
       ],
@@ -342,10 +240,10 @@
       "environments": {
         "rust": "c21434ab276976c811af1d8dc747f46be02b1f77bad36ecbae0c2a96fee16265"
       },
-      "source": "e1d09d18a4c6ff243cc5b504886208727031c75ef9e21dc521426b14c4f21c2c",
+      "source": "b313858541de0ae91339374efb0533a6ea656f3c02e0ab81de1fb48858cccb5d",
       "unclassified": []
     },
-    "digest": "b90980ba3f3cc5d84653f732559221c0e8caf5652ebfefe68fc4b5aed8b55c57"
+    "digest": "a22dc48d0f936857bf33395f44c65945d93e514ce5a66b7c3336afe431242fab"
   },
   "metadata": {
     "rust": {
@@ -412,14 +310,14 @@
   },
   "provenance": {
     "source_dirty": false,
-    "source_revision": "4a32c003085662b37e5d4fc6c47bdfa7628a7f94"
+    "source_revision": "c4c87f2694af5e45f1cc864e6e7928035c5d4ad8"
   },
   "rows": [
     {
-      "block_size": 3,
+      "block_size": 7,
       "budget_ms": 100.0,
       "case_id": "catalog.gaussian-noise.shared-rgb",
-      "case_order": 19,
+      "case_order": 11,
       "catalog_policy": "shared-rgb",
       "environment": "rust",
       "environment_position": 3,
@@ -461,7 +359,7 @@
           }
         ],
         "fallbacks": [
-          "portable-scalar"
+          "runtime-avx2-or-scalar"
         ],
         "fusions": [],
         "input": {
@@ -514,10 +412,10 @@
         },
         "steps": [
           {
-            "allocation": "sampled-rng-substream",
+            "allocation": "sampled-rng-substream+workspace-f32-block",
             "category": "noise",
             "execution": "in-place",
-            "fallback": "portable-scalar",
+            "fallback": "runtime-avx2-or-scalar",
             "input_materialization": "owned-input-copy",
             "kernel_form": "owned-in-place",
             "name": "GaussianNoise",
@@ -534,7 +432,7 @@
               },
               {
                 "name": "distribution",
-                "value": "box-muller-normal"
+                "value": "rand-distr-0.5.1-zignor-normal"
               },
               {
                 "name": "channels",
@@ -546,7 +444,9 @@
               }
             ],
             "probability": 1.0,
-            "scratch_slots": [],
+            "scratch_slots": [
+              "noise-f32-block"
+            ],
             "selection_reason": "semantic-legality:owned-in-place",
             "status": "always"
           }
@@ -556,58 +456,58 @@
         ],
         "unit_specializations": []
       },
-      "images_per_sec": 1375.6429124469776,
-      "iterations": 138,
-      "median_ms": 0.7269328333333334,
+      "images_per_sec": 3156.782742319717,
+      "iterations": 322,
+      "median_ms": 0.3167782142857143,
       "observations_ms": [
-        0.7280263333333333,
-        0.7268626666666668,
-        0.73626,
-        0.722413,
-        0.7357533333333334,
-        0.7251029999999999,
-        0.7263660000000001,
-        0.7256996666666667,
-        0.7248463333333334,
-        0.7306530000000001,
-        0.727003,
-        0.7246496666666666,
-        0.7270533333333334,
-        0.7305563333333334,
-        0.7278496666666667,
-        0.7255463333333334,
-        0.7324396666666666,
-        0.7233396666666666,
-        0.732183,
-        0.7250563333333333,
-        0.7278496666666667,
-        0.7240763333333334,
-        0.7326096666666667,
-        0.7272133333333333,
-        0.7342396666666667,
-        0.7236463333333334,
-        0.7300796666666667,
-        0.7304529999999999,
-        0.726603,
-        0.7258096666666667,
-        0.7266526666666667,
-        0.7316633333333334,
-        0.722496,
-        0.7273000000000001,
-        0.7217563333333333,
-        0.732533,
-        0.7225496666666666,
-        0.7285496666666668,
-        0.7295929999999999,
-        0.727343,
-        0.7254296666666668,
-        0.7246896666666666,
-        0.7263796666666668,
-        0.7226696666666667,
-        0.7448633333333333,
-        0.7225830000000001
+        0.3200068571428571,
+        0.32235842857142855,
+        0.3155697142857143,
+        0.3172225714285714,
+        0.3141752857142857,
+        0.319114,
+        0.3139168571428571,
+        0.3174754285714286,
+        0.31530557142857146,
+        0.32026114285714286,
+        0.3191497142857143,
+        0.31415257142857145,
+        0.3176467142857143,
+        0.3134882857142857,
+        0.3175054285714286,
+        0.31369985714285714,
+        0.32021114285714286,
+        0.3137225714285714,
+        0.3193297142857143,
+        0.3168854285714286,
+        0.3160752857142857,
+        0.31628685714285715,
+        0.3162882857142857,
+        0.31948257142857145,
+        0.31611271428571425,
+        0.31641257142857143,
+        0.314844,
+        0.32384399999999997,
+        0.31841400000000003,
+        0.31593114285714285,
+        0.3191197142857143,
+        0.31571257142857145,
+        0.31589685714285715,
+        0.31609257142857144,
+        0.31467971428571434,
+        0.32018399999999997,
+        0.3210854285714286,
+        0.3217754285714286,
+        0.3169382857142857,
+        0.31586985714285715,
+        0.3141752857142857,
+        0.316671,
+        0.31923685714285716,
+        0.317614,
+        0.31360114285714286,
+        0.3217782857142857
       ],
-      "p95_ms": 0.7357533333333334,
+      "p95_ms": 0.3217782857142857,
       "participant": "variopinta",
       "reference_exact": true,
       "repetition": 1,
@@ -634,10 +534,10 @@
       "worker": "rust-catalog-1"
     },
     {
-      "block_size": 1,
+      "block_size": 2,
       "budget_ms": 100.0,
       "case_id": "catalog.gaussian-noise.shared-rgb",
-      "case_order": 19,
+      "case_order": 11,
       "catalog_policy": "shared-rgb",
       "environment": "rust",
       "environment_position": 3,
@@ -679,7 +579,7 @@
           }
         ],
         "fallbacks": [
-          "portable-scalar"
+          "runtime-avx2-or-scalar"
         ],
         "fusions": [],
         "input": {
@@ -732,10 +632,10 @@
         },
         "steps": [
           {
-            "allocation": "sampled-rng-substream",
+            "allocation": "sampled-rng-substream+workspace-f32-block",
             "category": "noise",
             "execution": "in-place",
-            "fallback": "portable-scalar",
+            "fallback": "runtime-avx2-or-scalar",
             "input_materialization": "owned-input-copy",
             "kernel_form": "owned-in-place",
             "name": "GaussianNoise",
@@ -752,7 +652,7 @@
               },
               {
                 "name": "distribution",
-                "value": "box-muller-normal"
+                "value": "rand-distr-0.5.1-zignor-normal"
               },
               {
                 "name": "channels",
@@ -764,7 +664,9 @@
               }
             ],
             "probability": 1.0,
-            "scratch_slots": [],
+            "scratch_slots": [
+              "noise-f32-block"
+            ],
             "selection_reason": "semantic-legality:owned-in-place",
             "status": "always"
           }
@@ -774,45 +676,49 @@
         ],
         "unit_specializations": []
       },
-      "images_per_sec": 261.7352945333443,
-      "iterations": 27,
-      "median_ms": 3.820654,
+      "images_per_sec": 600.149677329526,
+      "iterations": 62,
+      "median_ms": 1.666251,
       "observations_ms": [
-        3.846423,
-        3.810143,
-        3.808524,
-        3.816403,
-        3.823453,
-        3.825383,
-        3.845394,
-        3.821454,
-        3.814473,
-        3.814113,
-        3.839673,
-        3.824974,
-        3.833264,
-        3.814793,
-        3.808803,
-        3.839233,
-        3.818863,
-        3.846625,
-        3.810333,
-        3.832243,
-        3.820033,
-        3.823253,
-        3.820654,
-        3.811753,
-        3.824734,
-        3.815283,
-        3.800523
+        1.656466,
+        1.679416,
+        1.669571,
+        1.654501,
+        1.659926,
+        1.656696,
+        1.674381,
+        1.665696,
+        1.656651,
+        1.6647465,
+        1.668291,
+        1.673401,
+        1.6617905,
+        1.6785415,
+        1.654951,
+        1.666251,
+        1.684041,
+        1.654241,
+        1.669811,
+        1.667206,
+        1.656471,
+        1.668816,
+        1.666396,
+        1.660081,
+        1.667316,
+        1.6741665,
+        1.6557105,
+        1.665066,
+        1.663886,
+        1.675996,
+        1.6667065
       ],
-      "p95_ms": 3.846423,
+      "p95_ms": 1.679416,
       "participant": "variopinta",
       "reference_exact": true,
       "repetition": 1,
       "role": "public",
       "route_id": "variopinta.compiled",
-      "samples": 27,
+      "samples": 31,
       "size": 512,
       "valid": true,
       "validation": {
@@ -836,7 +742,7 @@
       "block_size": 1,
       "budget_ms": 100.0,
       "case_id": "catalog.gaussian-noise.shared-rgb",
-      "case_order": 19,
+      "case_order": 11,
       "catalog_policy": "shared-rgb",
       "environment": "rust",
       "environment_position": 3,
@@ -878,7 +784,7 @@
           }
         ],
         "fallbacks": [
-          "portable-scalar"
+          "runtime-avx2-or-scalar"
         ],
         "fusions": [],
         "input": {
@@ -931,10 +837,10 @@
         },
         "steps": [
           {
-            "allocation": "sampled-rng-substream",
+            "allocation": "sampled-rng-substream+workspace-f32-block",
             "category": "noise",
             "execution": "in-place",
-            "fallback": "portable-scalar",
+            "fallback": "runtime-avx2-or-scalar",
             "input_materialization": "owned-input-copy",
             "kernel_form": "owned-in-place",
             "name": "GaussianNoise",
@@ -951,7 +857,7 @@
               },
               {
                 "name": "distribution",
-                "value": "box-muller-normal"
+                "value": "rand-distr-0.5.1-zignor-normal"
               },
               {
                 "name": "channels",
@@ -963,7 +869,9 @@
               }
             ],
             "probability": 1.0,
-            "scratch_slots": [],
+            "scratch_slots": [
+              "noise-f32-block"
+            ],
             "selection_reason": "semantic-legality:owned-in-place",
             "status": "always"
           }
@@ -973,25 +881,33 @@
         ],
         "unit_specializations": []
       },
-      "images_per_sec": 64.74530653179788,
-      "iterations": 7,
-      "median_ms": 15.445135,
+      "images_per_sec": 148.86038444087444,
+      "iterations": 15,
+      "median_ms": 6.717704,
       "observations_ms": [
-        15.304474,
-        15.612335,
-        15.445135,
-        15.520166,
-        15.456404,
-        15.364665,
-        15.366674
+        6.688205,
+        6.740524,
+        6.715845,
+        6.719465,
+        6.744274,
+        6.708764,
+        6.694285,
+        6.733904,
+        6.686855,
+        6.740014,
+        6.676875,
+        6.734465,
+        6.717704,
+        6.703944,
+        6.736825
       ],
-      "p95_ms": 15.612335,
+      "p95_ms": 6.744274,
       "participant": "variopinta",
       "reference_exact": true,
       "repetition": 1,
       "role": "public",
       "route_id": "variopinta.compiled",
-      "samples": 7,
+      "samples": 15,
       "size": 1024,
       "valid": true,
       "validation": {
@@ -999,7 +915,7 @@
         "container": "numpy.ndarray",
         "dtype": "uint8",
         "finite": true,
-        "max": 240.0,
+        "max": 246.0,
         "min": 0.0,
         "shape": [
           1024,
@@ -1012,10 +928,10 @@
       "worker": "rust-catalog-1"
     },
     {
-      "block_size": 3,
+      "block_size": 7,
       "budget_ms": 100.0,
       "case_id": "catalog.gaussian-noise.shared-rgb",
-      "case_order": 20,
+      "case_order": 12,
       "catalog_policy": "shared-rgb",
       "environment": "rust",
       "environment_position": 3,
@@ -1057,7 +973,7 @@
           }
         ],
         "fallbacks": [
-          "portable-scalar"
+          "runtime-avx2-or-scalar"
         ],
         "fusions": [],
         "input": {
@@ -1110,10 +1026,10 @@
         },
         "steps": [
           {
-            "allocation": "sampled-rng-substream",
+            "allocation": "sampled-rng-substream+workspace-f32-block",
             "category": "noise",
             "execution": "in-place",
-            "fallback": "portable-scalar",
+            "fallback": "runtime-avx2-or-scalar",
             "input_materialization": "owned-input-copy",
             "kernel_form": "owned-in-place",
             "name": "GaussianNoise",
@@ -1130,7 +1046,7 @@
               },
               {
                 "name": "distribution",
-                "value": "box-muller-normal"
+                "value": "rand-distr-0.5.1-zignor-normal"
               },
               {
                 "name": "channels",
@@ -1142,7 +1058,9 @@
               }
             ],
             "probability": 1.0,
-            "scratch_slots": [],
+            "scratch_slots": [
+              "noise-f32-block"
+            ],
             "selection_reason": "semantic-legality:owned-in-place",
             "status": "always"
           }
@@ -1152,58 +1070,58 @@
         ],
         "unit_specializations": []
       },
-      "images_per_sec": 1374.7065001622154,
-      "iterations": 138,
-      "median_ms": 0.727428,
+      "images_per_sec": 3164.0513145842197,
+      "iterations": 322,
+      "median_ms": 0.3160505,
       "observations_ms": [
-        0.7337966666666667,
-        0.731373,
-        0.7363400000000001,
-        0.7235963333333334,
-        0.7371263333333333,
-        0.7279263333333333,
-        0.7359896666666667,
-        0.7237396666666666,
-        0.7408696666666666,
-        0.7342396666666667,
-        0.726613,
-        0.7322296666666667,
-        0.72422,
-        0.7418629999999999,
-        0.7229563333333333,
-        0.7413166666666666,
-        0.7246063333333334,
-        0.7363196666666667,
-        0.7235596666666666,
-        0.731523,
-        0.7260626666666666,
-        0.7279993333333333,
-        0.72632,
-        0.7282663333333333,
-        0.7260063333333333,
-        0.7250296666666666,
-        0.7292730000000001,
-        0.7230863333333333,
-        0.7290696666666667,
-        0.7220663333333334,
-        0.7341296666666667,
-        0.725693,
-        0.7254896666666667,
-        0.72621,
-        0.7429929999999999,
-        0.7263063333333334,
-        0.7231296666666666,
-        0.7331863333333333,
-        0.7221896666666666,
-        0.729013,
-        0.7234493333333334,
-        0.7314363333333334,
-        0.7364996666666667,
-        0.7269296666666666,
-        0.7257166666666667,
-        0.726683
+        0.324367,
+        0.31783242857142857,
+        0.31489557142857144,
+        0.3170211428571429,
+        0.3159982857142857,
+        0.31529971428571424,
+        0.3150968571428571,
+        0.32020699999999996,
+        0.314864,
+        0.3147581428571429,
+        0.313994,
+        0.3160868571428571,
+        0.31653985714285715,
+        0.31414400000000003,
+        0.3190368571428572,
+        0.31475685714285717,
+        0.31643957142857143,
+        0.3150027142857143,
+        0.31704114285714285,
+        0.3139597142857143,
+        0.3167068571428571,
+        0.31851414285714286,
+        0.31559114285714285,
+        0.3157181428571429,
+        0.3146454285714286,
+        0.31678114285714287,
+        0.3190098571428571,
+        0.32021685714285714,
+        0.3151454285714285,
+        0.32280400000000004,
+        0.31601414285714285,
+        0.31528828571428574,
+        0.3134297142857143,
+        0.314291,
+        0.3221111428571429,
+        0.31399414285714283,
+        0.32033257142857147,
+        0.31352114285714283,
+        0.31725114285714284,
+        0.31528971428571434,
+        0.31732971428571427,
+        0.3185182857142857,
+        0.3167582857142857,
+        0.31713257142857143,
+        0.31688985714285717,
+        0.31481257142857144
       ],
-      "p95_ms": 0.7413166666666666,
+      "p95_ms": 0.3221111428571429,
       "participant": "variopinta",
       "reference_exact": true,
       "repetition": 1,
@@ -1230,10 +1148,10 @@
       "worker": "rust-catalog-1"
     },
     {
-      "block_size": 1,
+      "block_size": 2,
       "budget_ms": 100.0,
       "case_id": "catalog.gaussian-noise.shared-rgb",
-      "case_order": 20,
+      "case_order": 12,
       "catalog_policy": "shared-rgb",
       "environment": "rust",
       "environment_position": 3,
@@ -1275,7 +1193,7 @@
           }
         ],
         "fallbacks": [
-          "portable-scalar"
+          "runtime-avx2-or-scalar"
         ],
         "fusions": [],
         "input": {
@@ -1328,10 +1246,10 @@
         },
         "steps": [
           {
-            "allocation": "sampled-rng-substream",
+            "allocation": "sampled-rng-substream+workspace-f32-block",
             "category": "noise",
             "execution": "in-place",
-            "fallback": "portable-scalar",
+            "fallback": "runtime-avx2-or-scalar",
             "input_materialization": "owned-input-copy",
             "kernel_form": "owned-in-place",
             "name": "GaussianNoise",
@@ -1348,7 +1266,7 @@
               },
               {
                 "name": "distribution",
-                "value": "box-muller-normal"
+                "value": "rand-distr-0.5.1-zignor-normal"
               },
               {
                 "name": "channels",
@@ -1360,7 +1278,9 @@
               }
             ],
             "probability": 1.0,
-            "scratch_slots": [],
+            "scratch_slots": [
+              "noise-f32-block"
+            ],
             "selection_reason": "semantic-legality:owned-in-place",
             "status": "always"
           }
@@ -1370,44 +1290,48 @@
         ],
         "unit_specializations": []
       },
-      "images_per_sec": 261.7894592306767,
-      "iterations": 26,
-      "median_ms": 3.8198635,
+      "images_per_sec": 599.5505768875651,
+      "iterations": 60,
+      "median_ms": 1.667916,
       "observations_ms": [
-        3.810894,
-        3.832873,
-        3.817623,
-        3.820814,
-        3.818913,
-        3.813723,
-        3.814494,
-        3.836343,
-        3.812793,
-        3.839484,
-        3.833373,
-        3.815014,
-        3.835113,
-        3.816894,
-        5.119124,
-        3.836273,
-        3.813993,
-        3.820875,
-        3.824763,
-        3.808983,
-        3.829493,
-        3.804783,
-        3.814833,
-        3.826044,
-        3.807913,
-        3.821773
+        1.683626,
+        1.6741765,
+        1.671346,
+        1.666876,
+        1.661146,
+        1.670231,
+        1.659756,
+        1.6597315,
+        1.658866,
+        1.6602105,
+        1.6855815,
+        1.655461,
+        1.670861,
+        1.6546865,
+        1.671041,
+        1.668956,
+        1.665226,
+        1.654226,
+        1.671061,
+        1.6719515,
+        1.664501,
+        1.664416,
+        1.670626,
+        1.658521,
+        1.671106,
+        1.656091,
+        1.6534865,
+        1.671906,
+        1.671736,
+        1.676341
       ],
-      "p95_ms": 3.839484,
+      "p95_ms": 1.683626,
       "participant": "variopinta",
       "reference_exact": true,
       "repetition": 1,
       "role": "control",
       "route_id": "variopinta.reference",
-      "samples": 26,
+      "samples": 30,
       "size": 512,
       "valid": true,
       "validation": {
@@ -1431,7 +1355,7 @@
       "block_size": 1,
       "budget_ms": 100.0,
       "case_id": "catalog.gaussian-noise.shared-rgb",
-      "case_order": 20,
+      "case_order": 12,
       "catalog_policy": "shared-rgb",
       "environment": "rust",
       "environment_position": 3,
@@ -1473,7 +1397,7 @@
           }
         ],
         "fallbacks": [
-          "portable-scalar"
+          "runtime-avx2-or-scalar"
         ],
         "fusions": [],
         "input": {
@@ -1526,10 +1450,10 @@
         },
         "steps": [
           {
-            "allocation": "sampled-rng-substream",
+            "allocation": "sampled-rng-substream+workspace-f32-block",
             "category": "noise",
             "execution": "in-place",
-            "fallback": "portable-scalar",
+            "fallback": "runtime-avx2-or-scalar",
             "input_materialization": "owned-input-copy",
             "kernel_form": "owned-in-place",
             "name": "GaussianNoise",
@@ -1546,7 +1470,7 @@
               },
               {
                 "name": "distribution",
-                "value": "box-muller-normal"
+                "value": "rand-distr-0.5.1-zignor-normal"
               },
               {
                 "name": "channels",
@@ -1558,7 +1482,9 @@
               }
             ],
             "probability": 1.0,
-            "scratch_slots": [],
+            "scratch_slots": [
+              "noise-f32-block"
+            ],
             "selection_reason": "semantic-legality:owned-in-place",
             "status": "always"
           }
@@ -1568,25 +1494,33 @@
         ],
         "unit_specializations": []
       },
-      "images_per_sec": 65.23576793654178,
-      "iterations": 7,
-      "median_ms": 15.329014,
+      "images_per_sec": 148.5452812066155,
+      "iterations": 15,
+      "median_ms": 6.731954,
       "observations_ms": [
-        15.366073,
-        15.266784,
-        15.282543,
-        15.329014,
-        15.330103,
-        15.337684,
-        15.319154
+        6.663854,
+        6.713915,
+        6.691864,
+        6.739805,
+        6.771594,
+        6.719745,
+        6.738855,
+        6.713314,
+        6.697715,
+        6.731954,
+        6.676414,
+        6.764935,
+        6.841135,
+        6.942685,
+        6.797546
       ],
-      "p95_ms": 15.366073,
+      "p95_ms": 6.942685,
       "participant": "variopinta",
       "reference_exact": true,
       "repetition": 1,
       "role": "control",
       "route_id": "variopinta.reference",
-      "samples": 7,
+      "samples": 15,
       "size": 1024,
       "valid": true,
       "validation": {
@@ -1594,7 +1528,7 @@
         "container": "numpy.ndarray",
         "dtype": "uint8",
         "finite": true,
-        "max": 240.0,
+        "max": 246.0,
         "min": 0.0,
         "shape": [
           1024,
@@ -1607,10 +1541,10 @@
       "worker": "rust-catalog-1"
     },
     {
-      "block_size": 3,
+      "block_size": 7,
       "budget_ms": 100.0,
       "case_id": "catalog.gaussian-noise.shared-rgb",
-      "case_order": 18,
+      "case_order": 10,
       "catalog_policy": "shared-rgb",
       "environment": "rust",
       "environment_position": 2,
@@ -1652,7 +1586,7 @@
           }
         ],
         "fallbacks": [
-          "portable-scalar"
+          "runtime-avx2-or-scalar"
         ],
         "fusions": [],
         "input": {
@@ -1705,10 +1639,10 @@
         },
         "steps": [
           {
-            "allocation": "sampled-rng-substream",
+            "allocation": "sampled-rng-substream+workspace-f32-block",
             "category": "noise",
             "execution": "in-place",
-            "fallback": "portable-scalar",
+            "fallback": "runtime-avx2-or-scalar",
             "input_materialization": "owned-input-copy",
             "kernel_form": "owned-in-place",
             "name": "GaussianNoise",
@@ -1725,7 +1659,7 @@
               },
               {
                 "name": "distribution",
-                "value": "box-muller-normal"
+                "value": "rand-distr-0.5.1-zignor-normal"
               },
               {
                 "name": "channels",
@@ -1737,7 +1671,9 @@
               }
             ],
             "probability": 1.0,
-            "scratch_slots": [],
+            "scratch_slots": [
+              "noise-f32-block"
+            ],
             "selection_reason": "semantic-legality:owned-in-place",
             "status": "always"
           }
@@ -1747,64 +1683,63 @@
         ],
         "unit_specializations": []
       },
-      "images_per_sec": 1377.0443945342352,
-      "iterations": 138,
-      "median_ms": 0.7261930000000001,
+      "images_per_sec": 3141.3405805556404,
+      "iterations": 315,
+      "median_ms": 0.31833542857142855,
       "observations_ms": [
-        0.7235596666666666,
-        0.74748,
-        0.7357363333333334,
-        0.7281763333333333,
-        0.735233,
-        0.7227963333333333,
-        0.7332733333333333,
-        0.7209463333333334,
-        0.728103,
-        0.7274660000000001,
-        0.727323,
-        0.7209863333333333,
-        0.7340196666666667,
-        0.7237363333333334,
-        0.722683,
-        0.7242463333333333,
-        0.7241263333333333,
-        0.7284866666666666,
-        0.7207659999999999,
-        0.7292163333333334,
-        0.7222096666666666,
-        0.7287663333333333,
-        0.7216296666666667,
-        0.7272396666666667,
-        0.7329663333333333,
-        0.721333,
-        0.7278963333333334,
-        0.7215630000000001,
-        0.7278233333333333,
-        0.7202459999999999,
-        0.7368033333333334,
-        0.7266163333333333,
-        0.7300863333333334,
-        0.7233360000000001,
-        0.7300596666666667,
-        0.74253,
-        0.7232063333333333,
-        0.7238063333333334,
-        0.7264196666666667,
-        0.7259663333333334,
-        0.7237063333333333,
-        0.7233963333333334,
-        0.7234696666666666,
-        0.7311763333333333,
-        0.7258663333333333,
-        0.7233996666666668
+        0.32152257142857144,
+        0.31569257142857143,
+        0.31833542857142855,
+        0.3145912857142857,
+        0.3216454285714286,
+        0.31616542857142854,
+        0.3197397142857143,
+        0.3160082857142857,
+        0.3197368571428571,
+        0.32064257142857144,
+        0.3187752857142857,
+        0.32452699999999995,
+        0.31732814285714284,
+        0.3193998571428572,
+        0.3176211428571429,
+        0.31902685714285717,
+        0.3153497142857143,
+        0.3176368571428571,
+        0.3209568571428571,
+        0.31752971428571425,
+        0.3167582857142857,
+        0.3169025714285714,
+        0.31874542857142857,
+        0.31638814285714284,
+        0.31710842857142857,
+        0.3200197142857143,
+        0.322424,
+        0.3200382857142857,
+        0.3164097142857143,
+        0.3193454285714286,
+        0.3160811428571429,
+        0.3210254285714286,
+        0.3179925714285714,
+        0.31866685714285714,
+        0.315554,
+        0.318254,
+        0.3183398571428571,
+        0.31808242857142854,
+        0.3168154285714286,
+        0.31719114285714284,
+        0.32741257142857144,
+        0.3185725714285715,
+        0.3211697142857143,
+        0.3190968571428571,
+        0.31686128571428573
       ],
-      "p95_ms": 0.7368033333333334,
+      "p95_ms": 0.322424,
       "participant": "variopinta",
       "reference_exact": true,
       "repetition": 2,
       "role": "public",
       "route_id": "variopinta.compiled",
-      "samples": 46,
+      "samples": 45,
       "size": 224,
       "valid": true,
       "validation": {
@@ -1825,10 +1760,10 @@
       "worker": "rust-catalog-2"
     },
     {
-      "block_size": 1,
+      "block_size": 2,
       "budget_ms": 100.0,
       "case_id": "catalog.gaussian-noise.shared-rgb",
-      "case_order": 18,
+      "case_order": 10,
       "catalog_policy": "shared-rgb",
       "environment": "rust",
       "environment_position": 2,
@@ -1870,7 +1805,7 @@
           }
         ],
         "fallbacks": [
-          "portable-scalar"
+          "runtime-avx2-or-scalar"
         ],
         "fusions": [],
         "input": {
@@ -1923,10 +1858,10 @@
         },
         "steps": [
           {
-            "allocation": "sampled-rng-substream",
+            "allocation": "sampled-rng-substream+workspace-f32-block",
             "category": "noise",
             "execution": "in-place",
-            "fallback": "portable-scalar",
+            "fallback": "runtime-avx2-or-scalar",
             "input_materialization": "owned-input-copy",
             "kernel_form": "owned-in-place",
             "name": "GaussianNoise",
@@ -1943,7 +1878,7 @@
               },
               {
                 "name": "distribution",
-                "value": "box-muller-normal"
+                "value": "rand-distr-0.5.1-zignor-normal"
               },
               {
                 "name": "channels",
@@ -1955,7 +1890,9 @@
               }
             ],
             "probability": 1.0,
-            "scratch_slots": [],
+            "scratch_slots": [
+              "noise-f32-block"
+            ],
             "selection_reason": "semantic-legality:owned-in-place",
             "status": "always"
           }
@@ -1965,45 +1902,48 @@
         ],
         "unit_specializations": []
       },
-      "images_per_sec": 260.9376586011706,
-      "iterations": 27,
-      "median_ms": 3.832333,
+      "images_per_sec": 598.6505817237365,
+      "iterations": 60,
+      "median_ms": 1.6704235,
       "observations_ms": [
-        3.812753,
-        3.817363,
-        3.796583,
-        3.823224,
-        3.811763,
-        3.826824,
-        3.814413,
-        3.802563,
-        3.828313,
-        3.828904,
-        3.918604,
-        3.840064,
-        3.941914,
-        3.832333,
-        3.852364,
-        3.820363,
-        3.836673,
-        3.838524,
-        3.818214,
-        3.838543,
-        3.927444,
-        3.854363,
-        3.833704,
-        3.837584,
-        3.833793,
-        3.828044,
-        3.837003
+        1.6965315,
+        1.6716205,
+        1.670886,
+        1.671251,
+        1.668796,
+        1.664191,
+        1.6690565,
+        1.668321,
+        1.6632355,
+        1.6971415,
+        1.6661005,
+        1.6633365,
+        1.683216,
+        1.670521,
+        1.656686,
+        1.664981,
+        1.671686,
+        1.6629055,
+        1.664491,
+        1.6823615,
+        1.661576,
+        1.679251,
+        1.675856,
+        1.667401,
+        1.678871,
+        1.6712705,
+        1.6784165,
+        1.671941,
+        1.670326,
+        1.656456
       ],
-      "p95_ms": 3.927444,
+      "p95_ms": 1.6965315,
       "participant": "variopinta",
       "reference_exact": true,
       "repetition": 2,
       "role": "public",
       "route_id": "variopinta.compiled",
-      "samples": 27,
+      "samples": 30,
       "size": 512,
       "valid": true,
       "validation": {
@@ -2027,7 +1967,7 @@
       "block_size": 1,
       "budget_ms": 100.0,
       "case_id": "catalog.gaussian-noise.shared-rgb",
-      "case_order": 18,
+      "case_order": 10,
       "catalog_policy": "shared-rgb",
       "environment": "rust",
       "environment_position": 2,
@@ -2069,7 +2009,7 @@
           }
         ],
         "fallbacks": [
-          "portable-scalar"
+          "runtime-avx2-or-scalar"
         ],
         "fusions": [],
         "input": {
@@ -2122,10 +2062,10 @@
         },
         "steps": [
           {
-            "allocation": "sampled-rng-substream",
+            "allocation": "sampled-rng-substream+workspace-f32-block",
             "category": "noise",
             "execution": "in-place",
-            "fallback": "portable-scalar",
+            "fallback": "runtime-avx2-or-scalar",
             "input_materialization": "owned-input-copy",
             "kernel_form": "owned-in-place",
             "name": "GaussianNoise",
@@ -2142,7 +2082,7 @@
               },
               {
                 "name": "distribution",
-                "value": "box-muller-normal"
+                "value": "rand-distr-0.5.1-zignor-normal"
               },
               {
                 "name": "channels",
@@ -2154,7 +2094,9 @@
               }
             ],
             "probability": 1.0,
-            "scratch_slots": [],
+            "scratch_slots": [
+              "noise-f32-block"
+            ],
             "selection_reason": "semantic-legality:owned-in-place",
             "status": "always"
           }
@@ -2164,25 +2106,33 @@
         ],
         "unit_specializations": []
       },
-      "images_per_sec": 65.27762836453952,
-      "iterations": 7,
-      "median_ms": 15.319184,
+      "images_per_sec": 148.2873185426619,
+      "iterations": 15,
+      "median_ms": 6.743665,
       "observations_ms": [
-        15.384594,
-        15.391204,
-        15.356024,
-        15.319184,
-        15.288063,
-        15.290593,
-        15.316644
+        6.717905,
+        6.723094,
+        6.721623,
+        6.719235,
+        6.752174,
+        6.729044,
+        6.737664,
+        6.743665,
+        6.726834,
+        6.782764,
+        6.755975,
+        6.777314,
+        6.774164,
+        6.745005,
+        6.797735
       ],
-      "p95_ms": 15.391204,
+      "p95_ms": 6.797735,
       "participant": "variopinta",
       "reference_exact": true,
       "repetition": 2,
       "role": "public",
       "route_id": "variopinta.compiled",
-      "samples": 7,
+      "samples": 15,
       "size": 1024,
       "valid": true,
       "validation": {
@@ -2190,7 +2140,7 @@
         "container": "numpy.ndarray",
         "dtype": "uint8",
         "finite": true,
-        "max": 240.0,
+        "max": 246.0,
         "min": 0.0,
         "shape": [
           1024,
@@ -2203,10 +2153,10 @@
       "worker": "rust-catalog-2"
     },
     {
-      "block_size": 3,
+      "block_size": 7,
       "budget_ms": 100.0,
       "case_id": "catalog.gaussian-noise.shared-rgb",
-      "case_order": 19,
+      "case_order": 11,
       "catalog_policy": "shared-rgb",
       "environment": "rust",
       "environment_position": 2,
@@ -2248,7 +2198,7 @@
           }
         ],
         "fallbacks": [
-          "portable-scalar"
+          "runtime-avx2-or-scalar"
         ],
         "fusions": [],
         "input": {
@@ -2301,10 +2251,10 @@
         },
         "steps": [
           {
-            "allocation": "sampled-rng-substream",
+            "allocation": "sampled-rng-substream+workspace-f32-block",
             "category": "noise",
             "execution": "in-place",
-            "fallback": "portable-scalar",
+            "fallback": "runtime-avx2-or-scalar",
             "input_materialization": "owned-input-copy",
             "kernel_form": "owned-in-place",
             "name": "GaussianNoise",
@@ -2321,7 +2271,7 @@
               },
               {
                 "name": "distribution",
-                "value": "box-muller-normal"
+                "value": "rand-distr-0.5.1-zignor-normal"
               },
               {
                 "name": "channels",
@@ -2333,7 +2283,9 @@
               }
             ],
             "probability": 1.0,
-            "scratch_slots": [],
+            "scratch_slots": [
+              "noise-f32-block"
+            ],
             "selection_reason": "semantic-legality:owned-in-place",
             "status": "always"
           }
@@ -2343,64 +2295,63 @@
         ],
         "unit_specializations": []
       },
-      "images_per_sec": 1367.8022540925215,
-      "iterations": 138,
-      "median_ms": 0.7310998333333333,
+      "images_per_sec": 3147.76791776951,
+      "iterations": 315,
+      "median_ms": 0.31768542857142856,
       "observations_ms": [
-        0.7322096666666668,
-        0.7276896666666667,
-        0.7353466666666666,
-        0.7318163333333333,
-        0.7435063333333334,
-        0.7311963333333332,
-        0.733123,
-        0.7415863333333333,
-        0.7310033333333333,
-        0.7361596666666667,
-        0.7252730000000001,
-        0.73484,
-        0.7273063333333334,
-        0.7341563333333333,
-        0.725253,
-        0.735383,
-        0.726823,
-        0.7371796666666667,
-        0.7333263333333333,
-        0.7229329999999999,
-        0.7349463333333334,
-        0.7222466666666666,
-        0.734073,
-        0.7218429999999999,
-        0.7303196666666666,
-        0.7317363333333334,
-        0.7370230000000001,
-        0.7300663333333333,
-        0.7280963333333333,
-        0.728733,
-        0.727853,
-        0.7302963333333333,
-        0.72528,
-        0.737313,
-        0.724293,
-        0.7293296666666667,
-        0.7270629999999999,
-        0.7333663333333332,
-        0.7343829999999999,
-        0.7228796666666667,
-        0.7344496666666666,
-        0.7294496666666667,
-        0.7325933333333333,
-        0.7206663333333333,
-        0.7340796666666667,
-        0.7210696666666667
+        0.31676957142857143,
+        0.3283027142857143,
+        0.32256414285714285,
+        0.31828399999999996,
+        0.32052242857142854,
+        0.3162124285714286,
+        0.319204,
+        0.3157325714285714,
+        0.3183254285714286,
+        0.3205597142857143,
+        0.3169497142857143,
+        0.3179897142857143,
+        0.31719400000000003,
+        0.31836842857142855,
+        0.3155697142857143,
+        0.31732528571428575,
+        0.3187582857142857,
+        0.318954,
+        0.316574,
+        0.3165025714285714,
+        0.31680542857142857,
+        0.31768542857142856,
+        0.3166997142857143,
+        0.31857685714285716,
+        0.3239741428571428,
+        0.316844,
+        0.31658957142857147,
+        0.31822685714285714,
+        0.31456685714285715,
+        0.31771828571428573,
+        0.31902685714285717,
+        0.3169768571428571,
+        0.31428414285714285,
+        0.3166582857142857,
+        0.31546542857142856,
+        0.31821385714285716,
+        0.3185854285714286,
+        0.31961828571428574,
+        0.32290685714285716,
+        0.318004,
+        0.31549114285714286,
+        0.3161311428571429,
+        0.3175782857142857,
+        0.3160241428571428,
+        0.31774114285714283
       ],
-      "p95_ms": 0.737313,
+      "p95_ms": 0.32290685714285716,
       "participant": "variopinta",
       "reference_exact": true,
       "repetition": 2,
       "role": "control",
       "route_id": "variopinta.reference",
-      "samples": 46,
+      "samples": 45,
       "size": 224,
       "valid": true,
       "validation": {
@@ -2421,10 +2372,10 @@
       "worker": "rust-catalog-2"
     },
     {
-      "block_size": 1,
+      "block_size": 2,
       "budget_ms": 100.0,
       "case_id": "catalog.gaussian-noise.shared-rgb",
-      "case_order": 19,
+      "case_order": 11,
       "catalog_policy": "shared-rgb",
       "environment": "rust",
       "environment_position": 2,
@@ -2466,7 +2417,7 @@
           }
         ],
         "fallbacks": [
-          "portable-scalar"
+          "runtime-avx2-or-scalar"
         ],
         "fusions": [],
         "input": {
@@ -2519,10 +2470,10 @@
         },
         "steps": [
           {
-            "allocation": "sampled-rng-substream",
+            "allocation": "sampled-rng-substream+workspace-f32-block",
             "category": "noise",
             "execution": "in-place",
-            "fallback": "portable-scalar",
+            "fallback": "runtime-avx2-or-scalar",
             "input_materialization": "owned-input-copy",
             "kernel_form": "owned-in-place",
             "name": "GaussianNoise",
@@ -2539,7 +2490,7 @@
               },
               {
                 "name": "distribution",
-                "value": "box-muller-normal"
+                "value": "rand-distr-0.5.1-zignor-normal"
               },
               {
                 "name": "channels",
@@ -2551,7 +2502,9 @@
               }
             ],
             "probability": 1.0,
-            "scratch_slots": [],
+            "scratch_slots": [
+              "noise-f32-block"
+            ],
             "selection_reason": "semantic-legality:owned-in-place",
             "status": "always"
           }
@@ -2561,45 +2514,48 @@
         ],
         "unit_specializations": []
       },
-      "images_per_sec": 262.12505304755757,
-      "iterations": 27,
-      "median_ms": 3.814973,
+      "images_per_sec": 599.8786745380746,
+      "iterations": 60,
+      "median_ms": 1.6670037500000001,
       "observations_ms": [
-        3.796814,
-        3.814973,
-        3.807324,
-        3.808673,
-        3.822393,
-        3.833913,
-        3.803604,
-        3.823913,
-        3.824573,
-        3.846364,
-        3.842473,
-        3.819173,
-        3.824164,
-        3.840304,
-        3.799433,
-        3.809793,
-        3.807653,
-        3.807293,
-        3.832014,
-        3.820314,
-        3.805563,
-        3.820263,
-        3.831833,
-        3.798603,
-        3.810143,
-        3.812434,
-        3.810443
+        1.672636,
+        1.680426,
+        1.664721,
+        1.678826,
+        1.6671065,
+        1.662571,
+        1.6629055,
+        1.668691,
+        1.670351,
+        1.679246,
+        1.668016,
+        1.6545465,
+        1.662046,
+        1.6691755,
+        1.658616,
+        1.666901,
+        1.664826,
+        1.690856,
+        1.6617065,
+        1.769431,
+        1.664741,
+        1.670356,
+        1.669671,
+        1.657661,
+        1.675921,
+        1.667636,
+        1.664581,
+        1.665021,
+        1.661991,
+        1.658411
       ],
-      "p95_ms": 3.842473,
+      "p95_ms": 1.690856,
       "participant": "variopinta",
       "reference_exact": true,
       "repetition": 2,
       "role": "control",
       "route_id": "variopinta.reference",
-      "samples": 27,
+      "samples": 30,
       "size": 512,
       "valid": true,
       "validation": {
@@ -2623,7 +2579,7 @@
       "block_size": 1,
       "budget_ms": 100.0,
       "case_id": "catalog.gaussian-noise.shared-rgb",
-      "case_order": 19,
+      "case_order": 11,
       "catalog_policy": "shared-rgb",
       "environment": "rust",
       "environment_position": 2,
@@ -2665,7 +2621,7 @@
           }
         ],
         "fallbacks": [
-          "portable-scalar"
+          "runtime-avx2-or-scalar"
         ],
         "fusions": [],
         "input": {
@@ -2718,10 +2674,10 @@
         },
         "steps": [
           {
-            "allocation": "sampled-rng-substream",
+            "allocation": "sampled-rng-substream+workspace-f32-block",
             "category": "noise",
             "execution": "in-place",
-            "fallback": "portable-scalar",
+            "fallback": "runtime-avx2-or-scalar",
             "input_materialization": "owned-input-copy",
             "kernel_form": "owned-in-place",
             "name": "GaussianNoise",
@@ -2738,7 +2694,7 @@
               },
               {
                 "name": "distribution",
-                "value": "box-muller-normal"
+                "value": "rand-distr-0.5.1-zignor-normal"
               },
               {
                 "name": "channels",
@@ -2750,7 +2706,9 @@
               }
             ],
             "probability": 1.0,
-            "scratch_slots": [],
+            "scratch_slots": [
+              "noise-f32-block"
+            ],
             "selection_reason": "semantic-legality:owned-in-place",
             "status": "always"
           }
@@ -2760,25 +2718,33 @@
         ],
         "unit_specializations": []
       },
-      "images_per_sec": 65.43910325393978,
-      "iterations": 7,
-      "median_ms": 15.281383,
+      "images_per_sec": 147.4029661014451,
+      "iterations": 15,
+      "median_ms": 6.784124,
       "observations_ms": [
-        15.232183,
-        15.281383,
-        15.262213,
-        15.341794,
-        15.304343,
-        15.293374,
-        15.258362
+        6.837755,
+        6.838814,
+        6.764295,
+        6.784124,
+        6.936395,
+        6.873705,
+        6.844264,
+        6.788124,
+        6.809995,
+        6.746264,
+        6.779814,
+        6.777574,
+        6.725705,
+        6.769484,
+        6.760484
       ],
-      "p95_ms": 15.341794,
+      "p95_ms": 6.936395,
       "participant": "variopinta",
       "reference_exact": true,
       "repetition": 2,
       "role": "control",
       "route_id": "variopinta.reference",
-      "samples": 7,
+      "samples": 15,
       "size": 1024,
       "valid": true,
       "validation": {
@@ -2786,7 +2752,7 @@
         "container": "numpy.ndarray",
         "dtype": "uint8",
         "finite": true,
-        "max": 240.0,
+        "max": 246.0,
         "min": 0.0,
         "shape": [
           1024,
@@ -2799,10 +2765,10 @@
       "worker": "rust-catalog-2"
     },
     {
-      "block_size": 3,
+      "block_size": 7,
       "budget_ms": 100.0,
       "case_id": "catalog.gaussian-noise.shared-rgb",
-      "case_order": 17,
+      "case_order": 9,
       "catalog_policy": "shared-rgb",
       "environment": "rust",
       "environment_position": 1,
@@ -2844,7 +2810,7 @@
           }
         ],
         "fallbacks": [
-          "portable-scalar"
+          "runtime-avx2-or-scalar"
         ],
         "fusions": [],
         "input": {
@@ -2897,10 +2863,10 @@
         },
         "steps": [
           {
-            "allocation": "sampled-rng-substream",
+            "allocation": "sampled-rng-substream+workspace-f32-block",
             "category": "noise",
             "execution": "in-place",
-            "fallback": "portable-scalar",
+            "fallback": "runtime-avx2-or-scalar",
             "input_materialization": "owned-input-copy",
             "kernel_form": "owned-in-place",
             "name": "GaussianNoise",
@@ -2917,7 +2883,7 @@
               },
               {
                 "name": "distribution",
-                "value": "box-muller-normal"
+                "value": "rand-distr-0.5.1-zignor-normal"
               },
               {
                 "name": "channels",
@@ -2929,7 +2895,9 @@
               }
             ],
             "probability": 1.0,
-            "scratch_slots": [],
+            "scratch_slots": [
+              "noise-f32-block"
+            ],
             "selection_reason": "semantic-legality:owned-in-place",
             "status": "always"
           }
@@ -2939,58 +2907,58 @@
         ],
         "unit_specializations": []
       },
-      "images_per_sec": 1377.895072371642,
-      "iterations": 138,
-      "median_ms": 0.7257446666666667,
+      "images_per_sec": 3160.915193322702,
+      "iterations": 322,
+      "median_ms": 0.3163640714285714,
       "observations_ms": [
-        0.7262696666666667,
-        0.7305630000000001,
-        0.726763,
-        0.725443,
-        0.7250329999999999,
-        0.7326229999999999,
-        0.7215963333333333,
-        0.73572,
-        0.7268396666666667,
-        0.7297096666666666,
-        0.7215796666666666,
-        0.7281529999999999,
-        0.728923,
-        0.726133,
-        0.721196,
-        0.727103,
-        0.728253,
-        0.7252696666666667,
-        0.723073,
-        0.7254096666666667,
-        0.7288963333333333,
-        0.7249263333333333,
-        0.7242896666666666,
-        0.7269163333333334,
-        0.7245529999999999,
-        0.725136,
-        0.722713,
-        0.7249996666666667,
-        0.7349733333333334,
-        0.7325896666666667,
-        0.7207863333333333,
-        0.7297263333333334,
-        0.7208863333333334,
-        0.7275996666666668,
-        0.7222430000000001,
-        0.7282096666666668,
-        0.7297396666666667,
-        0.725893,
-        0.723726,
-        0.7292396666666666,
-        0.724433,
-        0.7253430000000001,
-        0.7233696666666667,
-        0.7255963333333333,
-        0.7312896666666666,
-        0.7252896666666667
+        0.3208982857142857,
+        0.3157884285714286,
+        0.3160254285714286,
+        0.3163254285714286,
+        0.321034,
+        0.3170954285714286,
+        0.316344,
+        0.3147325714285714,
+        0.3176882857142857,
+        0.315054,
+        0.31621842857142857,
+        0.3161482857142857,
+        0.3195297142857143,
+        0.31360814285714284,
+        0.3171797142857143,
+        0.314197,
+        0.3171654285714286,
+        0.3180725714285714,
+        0.32635114285714284,
+        0.313764,
+        0.31949685714285714,
+        0.31555414285714284,
+        0.315594,
+        0.31483814285714284,
+        0.3158325714285714,
+        0.319584,
+        0.31638414285714284,
+        0.31585542857142856,
+        0.31645685714285715,
+        0.31487542857142853,
+        0.31822114285714287,
+        0.3142497142857143,
+        0.3196782857142857,
+        0.31821400000000005,
+        0.3189597142857143,
+        0.31563257142857143,
+        0.31664114285714284,
+        0.315637,
+        0.3168997142857143,
+        0.31757542857142856,
+        0.316121,
+        0.3167582857142857,
+        0.31428557142857144,
+        0.31719971428571425,
+        0.313544,
+        0.3167097142857143
       ],
-      "p95_ms": 0.7326229999999999,
+      "p95_ms": 0.3208982857142857,
       "participant": "variopinta",
       "reference_exact": true,
       "repetition": 3,
@@ -3017,10 +2985,10 @@
       "worker": "rust-catalog-3"
     },
     {
-      "block_size": 1,
+      "block_size": 2,
       "budget_ms": 100.0,
       "case_id": "catalog.gaussian-noise.shared-rgb",
-      "case_order": 17,
+      "case_order": 9,
       "catalog_policy": "shared-rgb",
       "environment": "rust",
       "environment_position": 1,
@@ -3062,7 +3030,7 @@
           }
         ],
         "fallbacks": [
-          "portable-scalar"
+          "runtime-avx2-or-scalar"
         ],
         "fusions": [],
         "input": {
@@ -3115,10 +3083,10 @@
         },
         "steps": [
           {
-            "allocation": "sampled-rng-substream",
+            "allocation": "sampled-rng-substream+workspace-f32-block",
             "category": "noise",
             "execution": "in-place",
-            "fallback": "portable-scalar",
+            "fallback": "runtime-avx2-or-scalar",
             "input_materialization": "owned-input-copy",
             "kernel_form": "owned-in-place",
             "name": "GaussianNoise",
@@ -3135,7 +3103,7 @@
               },
               {
                 "name": "distribution",
-                "value": "box-muller-normal"
+                "value": "rand-distr-0.5.1-zignor-normal"
               },
               {
                 "name": "channels",
@@ -3147,7 +3115,9 @@
               }
             ],
             "probability": 1.0,
-            "scratch_slots": [],
+            "scratch_slots": [
+              "noise-f32-block"
+            ],
             "selection_reason": "semantic-legality:owned-in-place",
             "status": "always"
           }
@@ -3157,45 +3127,49 @@
         ],
         "unit_specializations": []
       },
-      "images_per_sec": 262.2425990549301,
-      "iterations": 27,
-      "median_ms": 3.813263,
+      "images_per_sec": 601.5558640868743,
+      "iterations": 62,
+      "median_ms": 1.662356,
       "observations_ms": [
-        3.812973,
-        3.879263,
-        3.796643,
-        3.818104,
-        3.808113,
-        3.837883,
-        3.809153,
-        3.825093,
-        3.820923,
-        3.815304,
-        3.844574,
-        3.830653,
-        3.830233,
-        3.813263,
-        3.826184,
-        3.847553,
-        3.823393,
-        3.828334,
-        3.807603,
-        3.809343,
-        3.806433,
-        3.811703,
-        3.808634,
-        3.811573,
-        3.802183,
-        3.806093,
-        3.790093
+        1.6668505,
+        1.674686,
+        1.6547115,
+        1.656286,
+        1.672636,
+        1.661541,
+        1.664491,
+        1.674081,
+        1.6532465,
+        1.663716,
+        1.661001,
+        1.654306,
+        1.665221,
+        1.663316,
+        1.652366,
+        1.6666515,
+        1.660881,
+        1.6598305,
+        1.662356,
+        1.6612715,
+        1.650466,
+        1.661971,
+        1.676211,
+        1.648501,
+        1.668041,
+        1.686166,
+        1.6547165,
+        1.678386,
+        1.665091,
+        1.659566,
+        1.663926
       ],
-      "p95_ms": 3.847553,
+      "p95_ms": 1.678386,
       "participant": "variopinta",
       "reference_exact": true,
       "repetition": 3,
       "role": "public",
       "route_id": "variopinta.compiled",
-      "samples": 27,
+      "samples": 31,
       "size": 512,
       "valid": true,
       "validation": {
@@ -3219,7 +3193,7 @@
       "block_size": 1,
       "budget_ms": 100.0,
       "case_id": "catalog.gaussian-noise.shared-rgb",
-      "case_order": 17,
+      "case_order": 9,
       "catalog_policy": "shared-rgb",
       "environment": "rust",
       "environment_position": 1,
@@ -3261,7 +3235,7 @@
           }
         ],
         "fallbacks": [
-          "portable-scalar"
+          "runtime-avx2-or-scalar"
         ],
         "fusions": [],
         "input": {
@@ -3314,10 +3288,10 @@
         },
         "steps": [
           {
-            "allocation": "sampled-rng-substream",
+            "allocation": "sampled-rng-substream+workspace-f32-block",
             "category": "noise",
             "execution": "in-place",
-            "fallback": "portable-scalar",
+            "fallback": "runtime-avx2-or-scalar",
             "input_materialization": "owned-input-copy",
             "kernel_form": "owned-in-place",
             "name": "GaussianNoise",
@@ -3334,7 +3308,7 @@
               },
               {
                 "name": "distribution",
-                "value": "box-muller-normal"
+                "value": "rand-distr-0.5.1-zignor-normal"
               },
               {
                 "name": "channels",
@@ -3346,7 +3320,9 @@
               }
             ],
             "probability": 1.0,
-            "scratch_slots": [],
+            "scratch_slots": [
+              "noise-f32-block"
+            ],
             "selection_reason": "semantic-legality:owned-in-place",
             "status": "always"
           }
@@ -3356,25 +3332,33 @@
         ],
         "unit_specializations": []
       },
-      "images_per_sec": 65.5038338738928,
-      "iterations": 7,
-      "median_ms": 15.266282,
+      "images_per_sec": 149.0536435119781,
+      "iterations": 15,
+      "median_ms": 6.708994,
       "observations_ms": [
-        15.231183,
-        15.266282,
-        15.294484,
-        15.283783,
-        15.257892,
-        15.246353,
-        15.291953
+        6.649194,
+        6.691494,
+        6.702545,
+        6.708994,
+        6.753735,
+        6.708594,
+        6.716154,
+        6.720665,
+        6.675174,
+        6.716135,
+        6.720465,
+        6.716534,
+        6.700755,
+        6.708033,
+        6.719025
       ],
-      "p95_ms": 15.294484,
+      "p95_ms": 6.753735,
       "participant": "variopinta",
       "reference_exact": true,
       "repetition": 3,
       "role": "public",
       "route_id": "variopinta.compiled",
-      "samples": 7,
+      "samples": 15,
       "size": 1024,
       "valid": true,
       "validation": {
@@ -3382,7 +3366,7 @@
         "container": "numpy.ndarray",
         "dtype": "uint8",
         "finite": true,
-        "max": 240.0,
+        "max": 246.0,
         "min": 0.0,
         "shape": [
           1024,
@@ -3395,10 +3379,10 @@
       "worker": "rust-catalog-3"
     },
     {
-      "block_size": 3,
+      "block_size": 7,
       "budget_ms": 100.0,
       "case_id": "catalog.gaussian-noise.shared-rgb",
-      "case_order": 18,
+      "case_order": 10,
       "catalog_policy": "shared-rgb",
       "environment": "rust",
       "environment_position": 1,
@@ -3440,7 +3424,7 @@
           }
         ],
         "fallbacks": [
-          "portable-scalar"
+          "runtime-avx2-or-scalar"
         ],
         "fusions": [],
         "input": {
@@ -3493,10 +3477,10 @@
         },
         "steps": [
           {
-            "allocation": "sampled-rng-substream",
+            "allocation": "sampled-rng-substream+workspace-f32-block",
             "category": "noise",
             "execution": "in-place",
-            "fallback": "portable-scalar",
+            "fallback": "runtime-avx2-or-scalar",
             "input_materialization": "owned-input-copy",
             "kernel_form": "owned-in-place",
             "name": "GaussianNoise",
@@ -3513,7 +3497,7 @@
               },
               {
                 "name": "distribution",
-                "value": "box-muller-normal"
+                "value": "rand-distr-0.5.1-zignor-normal"
               },
               {
                 "name": "channels",
@@ -3525,7 +3509,9 @@
               }
             ],
             "probability": 1.0,
-            "scratch_slots": [],
+            "scratch_slots": [
+              "noise-f32-block"
+            ],
             "selection_reason": "semantic-legality:owned-in-place",
             "status": "always"
           }
@@ -3535,58 +3521,58 @@
         ],
         "unit_specializations": []
       },
-      "images_per_sec": 1378.3952171523824,
-      "iterations": 138,
-      "median_ms": 0.7254813333333334,
+      "images_per_sec": 3160.4435276148274,
+      "iterations": 322,
+      "median_ms": 0.3164112857142857,
       "observations_ms": [
-        0.7252896666666667,
-        0.730233,
-        0.7255630000000001,
-        0.7241496666666666,
-        0.725586,
-        0.7314766666666667,
-        0.7262796666666667,
-        0.7247563333333332,
-        0.7315996666666668,
-        0.7229663333333334,
-        0.7263063333333334,
-        0.7213463333333333,
-        0.7253563333333334,
-        0.7212230000000001,
-        0.7283430000000001,
-        0.7266859999999999,
-        0.7287363333333333,
-        0.725073,
-        0.726163,
-        0.7243796666666666,
-        0.7221996666666667,
-        0.7250363333333333,
-        0.7245529999999999,
-        0.7300196666666667,
-        0.7199093333333333,
-        0.7260863333333334,
-        0.7209863333333333,
-        0.7273633333333334,
-        0.7323463333333334,
-        0.7344529999999999,
-        0.7271496666666667,
-        0.7270263333333333,
-        0.7246896666666666,
-        0.7234196666666667,
-        0.724453,
-        0.7207596666666666,
-        0.7404096666666667,
-        0.7213496666666667,
-        0.7265396666666667,
-        0.7210359999999999,
-        0.7321163333333334,
-        0.7225630000000001,
-        0.7256996666666667,
-        0.722123,
-        0.7292896666666667,
-        0.7253996666666667
+        0.3181054285714286,
+        0.3145168571428571,
+        0.31711828571428574,
+        0.31518399999999996,
+        0.31579414285714286,
+        0.315934,
+        0.3222382857142857,
+        0.316081,
+        0.31527971428571433,
+        0.3152798571428571,
+        0.317144,
+        0.31727114285714286,
+        0.3143597142857143,
+        0.31578399999999995,
+        0.3153525714285714,
+        0.31677828571428573,
+        0.3145725714285715,
+        0.3168982857142857,
+        0.3140982857142857,
+        0.3179768571428571,
+        0.3159997142857143,
+        0.3164712857142857,
+        0.314051,
+        0.31659114285714285,
+        0.31313114285714283,
+        0.32123985714285713,
+        0.31496542857142856,
+        0.31500828571428574,
+        0.31977257142857146,
+        0.3172397142857143,
+        0.3187954285714286,
+        0.313284,
+        0.31487114285714285,
+        0.3166282857142857,
+        0.3149297142857143,
+        0.31922114285714287,
+        0.31316828571428573,
+        0.3163512857142857,
+        0.31743814285714284,
+        0.31838685714285714,
+        0.3162568571428572,
+        0.32196271428571427,
+        0.33080985714285716,
+        0.3189767142857143,
+        0.322024,
+        0.33408414285714283
       ],
-      "p95_ms": 0.7323463333333334,
+      "p95_ms": 0.3222382857142857,
       "participant": "variopinta",
       "reference_exact": true,
       "repetition": 3,
@@ -3613,10 +3599,10 @@
       "worker": "rust-catalog-3"
     },
     {
-      "block_size": 1,
+      "block_size": 2,
       "budget_ms": 100.0,
       "case_id": "catalog.gaussian-noise.shared-rgb",
-      "case_order": 18,
+      "case_order": 10,
       "catalog_policy": "shared-rgb",
       "environment": "rust",
       "environment_position": 1,
@@ -3658,7 +3644,7 @@
           }
         ],
         "fallbacks": [
-          "portable-scalar"
+          "runtime-avx2-or-scalar"
         ],
         "fusions": [],
         "input": {
@@ -3711,10 +3697,10 @@
         },
         "steps": [
           {
-            "allocation": "sampled-rng-substream",
+            "allocation": "sampled-rng-substream+workspace-f32-block",
             "category": "noise",
             "execution": "in-place",
-            "fallback": "portable-scalar",
+            "fallback": "runtime-avx2-or-scalar",
             "input_materialization": "owned-input-copy",
             "kernel_form": "owned-in-place",
             "name": "GaussianNoise",
@@ -3731,7 +3717,7 @@
               },
               {
                 "name": "distribution",
-                "value": "box-muller-normal"
+                "value": "rand-distr-0.5.1-zignor-normal"
               },
               {
                 "name": "channels",
@@ -3743,7 +3729,9 @@
               }
             ],
             "probability": 1.0,
-            "scratch_slots": [],
+            "scratch_slots": [
+              "noise-f32-block"
+            ],
             "selection_reason": "semantic-legality:owned-in-place",
             "status": "always"
           }
@@ -3753,45 +3741,48 @@
         ],
         "unit_specializations": []
       },
-      "images_per_sec": 262.52279682336916,
-      "iterations": 27,
-      "median_ms": 3.809193,
+      "images_per_sec": 598.8773445299441,
+      "iterations": 60,
+      "median_ms": 1.669791,
       "observations_ms": [
-        3.802733,
-        3.839453,
-        3.808673,
-        3.810743,
-        3.806383,
-        3.825994,
-        3.809123,
-        3.807763,
-        3.837953,
-        3.903445,
-        3.857353,
-        3.813104,
-        3.821803,
-        3.808603,
-        3.805013,
-        3.806363,
-        3.801943,
-        3.809193,
-        3.809483,
-        3.833223,
-        3.800963,
-        3.801914,
-        3.796553,
-        3.825223,
-        3.808103,
-        3.812563,
-        3.821503
+        1.6617615,
+        1.674346,
+        1.670256,
+        1.684091,
+        1.6761565,
+        1.669941,
+        1.6613705,
+        1.6775915,
+        1.673921,
+        1.675881,
+        1.669641,
+        1.6657215,
+        1.672896,
+        1.667821,
+        1.666241,
+        1.671946,
+        1.673921,
+        1.673666,
+        1.6673915,
+        1.660826,
+        1.669571,
+        1.665651,
+        1.6810465,
+        1.6745505,
+        1.664491,
+        1.6588215,
+        1.659136,
+        1.677686,
+        1.664686,
+        1.665336
       ],
-      "p95_ms": 3.857353,
+      "p95_ms": 1.6810465,
       "participant": "variopinta",
       "reference_exact": true,
       "repetition": 3,
       "role": "control",
       "route_id": "variopinta.reference",
-      "samples": 27,
+      "samples": 30,
       "size": 512,
       "valid": true,
       "validation": {
@@ -3815,7 +3806,7 @@
       "block_size": 1,
       "budget_ms": 100.0,
       "case_id": "catalog.gaussian-noise.shared-rgb",
-      "case_order": 18,
+      "case_order": 10,
       "catalog_policy": "shared-rgb",
       "environment": "rust",
       "environment_position": 1,
@@ -3857,7 +3848,7 @@
           }
         ],
         "fallbacks": [
-          "portable-scalar"
+          "runtime-avx2-or-scalar"
         ],
         "fusions": [],
         "input": {
@@ -3910,10 +3901,10 @@
         },
         "steps": [
           {
-            "allocation": "sampled-rng-substream",
+            "allocation": "sampled-rng-substream+workspace-f32-block",
             "category": "noise",
             "execution": "in-place",
-            "fallback": "portable-scalar",
+            "fallback": "runtime-avx2-or-scalar",
             "input_materialization": "owned-input-copy",
             "kernel_form": "owned-in-place",
             "name": "GaussianNoise",
@@ -3930,7 +3921,7 @@
               },
               {
                 "name": "distribution",
-                "value": "box-muller-normal"
+                "value": "rand-distr-0.5.1-zignor-normal"
               },
               {
                 "name": "channels",
@@ -3942,7 +3933,9 @@
               }
             ],
             "probability": 1.0,
-            "scratch_slots": [],
+            "scratch_slots": [
+              "noise-f32-block"
+            ],
             "selection_reason": "semantic-legality:owned-in-place",
             "status": "always"
           }
@@ -3952,25 +3945,33 @@
         ],
         "unit_specializations": []
       },
-      "images_per_sec": 65.41538804113817,
-      "iterations": 7,
-      "median_ms": 15.286923,
+      "images_per_sec": 148.9109250584922,
+      "iterations": 15,
+      "median_ms": 6.715424,
       "observations_ms": [
-        15.295263,
-        15.261263,
-        15.286473,
-        15.286923,
-        15.340723,
-        15.266624,
-        15.316572
+        6.707755,
+        6.741495,
+        6.711364,
+        6.726805,
+        6.729714,
+        6.732304,
+        6.710035,
+        6.683784,
+        6.717325,
+        6.680704,
+        6.702884,
+        6.715424,
+        6.716335,
+        6.727105,
+        6.713844
       ],
-      "p95_ms": 15.340723,
+      "p95_ms": 6.741495,
       "participant": "variopinta",
       "reference_exact": true,
       "repetition": 3,
       "role": "control",
       "route_id": "variopinta.reference",
-      "samples": 7,
+      "samples": 15,
       "size": 1024,
       "valid": true,
       "validation": {
@@ -3978,7 +3979,7 @@
         "container": "numpy.ndarray",
         "dtype": "uint8",
         "finite": true,
-        "max": 240.0,
+        "max": 246.0,
         "min": 0.0,
         "shape": [
           1024,

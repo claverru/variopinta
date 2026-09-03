@@ -116,36 +116,18 @@
         "catalog.affine.constant",
         "catalog.affine.reflect101",
         "catalog.affine.reflect101",
-        "catalog.center-crop.default",
-        "catalog.center-crop.default",
-        "catalog.coarse-dropout.eight-holes",
-        "catalog.coarse-dropout.eight-holes",
         "catalog.color-jitter.hue",
         "catalog.color-jitter.hue",
         "catalog.color-jitter.matrix",
         "catalog.color-jitter.matrix",
-        "catalog.gaussian-blur.fixed-sigma",
-        "catalog.gaussian-blur.fixed-sigma",
-        "catalog.gaussian-blur.sampled-sigma",
-        "catalog.gaussian-blur.sampled-sigma",
         "catalog.gaussian-noise.independent-rgb",
         "catalog.gaussian-noise.independent-rgb",
         "catalog.gaussian-noise.shared-rgb",
         "catalog.gaussian-noise.shared-rgb",
-        "catalog.grayscale.default",
-        "catalog.grayscale.default",
         "catalog.grid-distortion.bilinear",
         "catalog.grid-distortion.bilinear",
         "catalog.grid-distortion.nearest-reflect101",
         "catalog.grid-distortion.nearest-reflect101",
-        "catalog.horizontal-flip.default",
-        "catalog.horizontal-flip.default",
-        "catalog.invert.default",
-        "catalog.invert.default",
-        "catalog.normalize-to-torch.terminal",
-        "catalog.normalize-to-torch.terminal",
-        "catalog.normalize.default",
-        "catalog.normalize.default",
         "catalog.pad-if-needed.constant",
         "catalog.pad-if-needed.constant",
         "catalog.pad-if-needed.reflect101",
@@ -154,30 +136,14 @@
         "catalog.perspective.bilinear",
         "catalog.perspective.nearest-reflect101",
         "catalog.perspective.nearest-reflect101",
-        "catalog.posterize.default",
-        "catalog.posterize.default",
-        "catalog.random-crop.default",
-        "catalog.random-crop.default",
-        "catalog.random-resized-crop.bilinear",
-        "catalog.random-resized-crop.bilinear",
-        "catalog.random-resized-crop.bilinear-antialias",
-        "catalog.random-resized-crop.bilinear-antialias",
         "catalog.random-rotation.constant",
         "catalog.random-rotation.constant",
         "catalog.random-rotation.reflect101",
         "catalog.random-rotation.reflect101",
-        "catalog.resize.bilinear",
-        "catalog.resize.bilinear",
-        "catalog.resize.bilinear-antialias",
-        "catalog.resize.bilinear-antialias",
         "catalog.sharpen.cross-3x3",
         "catalog.sharpen.cross-3x3",
-        "catalog.solarize.default",
-        "catalog.solarize.default",
         "catalog.to-torch.default",
-        "catalog.to-torch.default",
-        "catalog.vertical-flip.default",
-        "catalog.vertical-flip.default"
+        "catalog.to-torch.default"
       ],
       "environment": "rust",
       "environment_position": 3,
@@ -190,36 +156,18 @@
         "catalog.affine.constant",
         "catalog.affine.reflect101",
         "catalog.affine.reflect101",
-        "catalog.center-crop.default",
-        "catalog.center-crop.default",
-        "catalog.coarse-dropout.eight-holes",
-        "catalog.coarse-dropout.eight-holes",
         "catalog.color-jitter.hue",
         "catalog.color-jitter.hue",
         "catalog.color-jitter.matrix",
         "catalog.color-jitter.matrix",
-        "catalog.gaussian-blur.fixed-sigma",
-        "catalog.gaussian-blur.fixed-sigma",
-        "catalog.gaussian-blur.sampled-sigma",
-        "catalog.gaussian-blur.sampled-sigma",
         "catalog.gaussian-noise.independent-rgb",
         "catalog.gaussian-noise.independent-rgb",
         "catalog.gaussian-noise.shared-rgb",
         "catalog.gaussian-noise.shared-rgb",
-        "catalog.grayscale.default",
-        "catalog.grayscale.default",
         "catalog.grid-distortion.bilinear",
         "catalog.grid-distortion.bilinear",
         "catalog.grid-distortion.nearest-reflect101",
         "catalog.grid-distortion.nearest-reflect101",
-        "catalog.horizontal-flip.default",
-        "catalog.horizontal-flip.default",
-        "catalog.invert.default",
-        "catalog.invert.default",
-        "catalog.normalize-to-torch.terminal",
-        "catalog.normalize-to-torch.terminal",
-        "catalog.normalize.default",
-        "catalog.normalize.default",
         "catalog.pad-if-needed.constant",
         "catalog.pad-if-needed.constant",
         "catalog.pad-if-needed.reflect101",
@@ -228,30 +176,14 @@
         "catalog.perspective.bilinear",
         "catalog.perspective.nearest-reflect101",
         "catalog.perspective.nearest-reflect101",
-        "catalog.posterize.default",
-        "catalog.posterize.default",
-        "catalog.random-crop.default",
-        "catalog.random-crop.default",
-        "catalog.random-resized-crop.bilinear",
-        "catalog.random-resized-crop.bilinear",
-        "catalog.random-resized-crop.bilinear-antialias",
-        "catalog.random-resized-crop.bilinear-antialias",
         "catalog.random-rotation.constant",
         "catalog.random-rotation.constant",
         "catalog.random-rotation.reflect101",
         "catalog.random-rotation.reflect101",
-        "catalog.resize.bilinear",
-        "catalog.resize.bilinear",
-        "catalog.resize.bilinear-antialias",
-        "catalog.resize.bilinear-antialias",
         "catalog.sharpen.cross-3x3",
         "catalog.sharpen.cross-3x3",
-        "catalog.solarize.default",
-        "catalog.solarize.default",
         "catalog.to-torch.default",
         "catalog.to-torch.default",
-        "catalog.vertical-flip.default",
-        "catalog.vertical-flip.default",
         "catalog.affine.constant"
       ],
       "environment": "rust",
@@ -264,36 +196,18 @@
       "cases": [
         "catalog.affine.reflect101",
         "catalog.affine.reflect101",
-        "catalog.center-crop.default",
-        "catalog.center-crop.default",
-        "catalog.coarse-dropout.eight-holes",
-        "catalog.coarse-dropout.eight-holes",
         "catalog.color-jitter.hue",
         "catalog.color-jitter.hue",
         "catalog.color-jitter.matrix",
         "catalog.color-jitter.matrix",
-        "catalog.gaussian-blur.fixed-sigma",
-        "catalog.gaussian-blur.fixed-sigma",
-        "catalog.gaussian-blur.sampled-sigma",
-        "catalog.gaussian-blur.sampled-sigma",
         "catalog.gaussian-noise.independent-rgb",
         "catalog.gaussian-noise.independent-rgb",
         "catalog.gaussian-noise.shared-rgb",
         "catalog.gaussian-noise.shared-rgb",
-        "catalog.grayscale.default",
-        "catalog.grayscale.default",
         "catalog.grid-distortion.bilinear",
         "catalog.grid-distortion.bilinear",
         "catalog.grid-distortion.nearest-reflect101",
         "catalog.grid-distortion.nearest-reflect101",
-        "catalog.horizontal-flip.default",
-        "catalog.horizontal-flip.default",
-        "catalog.invert.default",
-        "catalog.invert.default",
-        "catalog.normalize-to-torch.terminal",
-        "catalog.normalize-to-torch.terminal",
-        "catalog.normalize.default",
-        "catalog.normalize.default",
         "catalog.pad-if-needed.constant",
         "catalog.pad-if-needed.constant",
         "catalog.pad-if-needed.reflect101",
@@ -302,30 +216,14 @@
         "catalog.perspective.bilinear",
         "catalog.perspective.nearest-reflect101",
         "catalog.perspective.nearest-reflect101",
-        "catalog.posterize.default",
-        "catalog.posterize.default",
-        "catalog.random-crop.default",
-        "catalog.random-crop.default",
-        "catalog.random-resized-crop.bilinear",
-        "catalog.random-resized-crop.bilinear",
-        "catalog.random-resized-crop.bilinear-antialias",
-        "catalog.random-resized-crop.bilinear-antialias",
         "catalog.random-rotation.constant",
         "catalog.random-rotation.constant",
         "catalog.random-rotation.reflect101",
         "catalog.random-rotation.reflect101",
-        "catalog.resize.bilinear",
-        "catalog.resize.bilinear",
-        "catalog.resize.bilinear-antialias",
-        "catalog.resize.bilinear-antialias",
         "catalog.sharpen.cross-3x3",
         "catalog.sharpen.cross-3x3",
-        "catalog.solarize.default",
-        "catalog.solarize.default",
         "catalog.to-torch.default",
         "catalog.to-torch.default",
-        "catalog.vertical-flip.default",
-        "catalog.vertical-flip.default",
         "catalog.affine.constant",
         "catalog.affine.constant"
       ],
@@ -342,10 +240,10 @@
       "environments": {
         "rust": "c21434ab276976c811af1d8dc747f46be02b1f77bad36ecbae0c2a96fee16265"
       },
-      "source": "e1d09d18a4c6ff243cc5b504886208727031c75ef9e21dc521426b14c4f21c2c",
+      "source": "b313858541de0ae91339374efb0533a6ea656f3c02e0ab81de1fb48858cccb5d",
       "unclassified": []
     },
-    "digest": "0c962787af49222c6b2910e823d97d1425076054c03e0dd2b0ca8ef185286d78"
+    "digest": "7f766944748f3a38b6c88da8a64937a2d20fcd15baca305a556918c5082bd031"
   },
   "metadata": {
     "rust": {
@@ -412,14 +310,14 @@
   },
   "provenance": {
     "source_dirty": false,
-    "source_revision": "4a32c003085662b37e5d4fc6c47bdfa7628a7f94"
+    "source_revision": "c4c87f2694af5e45f1cc864e6e7928035c5d4ad8"
   },
   "rows": [
     {
-      "block_size": 62,
+      "block_size": 73,
       "budget_ms": 100.0,
       "case_id": "catalog.to-torch.default",
-      "case_order": 63,
+      "case_order": 31,
       "catalog_policy": "default",
       "environment": "rust",
       "environment_position": 3,
@@ -480,7 +378,7 @@
           }
         ],
         "fallbacks": [
-          "portable-scalar"
+          "runtime-ssse3-or-portable-scalar"
         ],
         "fusions": [],
         "input": {
@@ -538,7 +436,7 @@
             "allocation": "owned-chw-output",
             "category": "layout",
             "execution": "terminal",
-            "fallback": "portable-scalar",
+            "fallback": "runtime-ssse3-or-portable-scalar",
             "input_materialization": "borrowed-input",
             "kernel_form": "borrowed-to-owned",
             "name": "ToTorch",
@@ -569,27 +467,439 @@
         ],
         "unit_specializations": []
       },
-      "images_per_sec": 30548.079351099666,
-      "iterations": 496,
-      "median_ms": 0.03273528225806452,
+      "images_per_sec": 237776.49660761343,
+      "iterations": 511,
+      "median_ms": 0.004205630136986301,
       "observations_ms": [
-        0.03325109677419354,
-        0.03267204838709677,
-        0.03299369354838709,
-        0.032255129032258065,
-        0.03281801612903226,
-        0.03244964516129032,
-        0.03258172580645161,
-        0.03279851612903226
+        0.004368232876712329,
+        0.004205630136986301,
+        0.00452427397260274,
+        0.004262753424657534,
+        0.004177,
+        0.0041722054794520545,
+        0.004178506849315068
       ],
-      "p95_ms": 0.03325109677419354,
+      "p95_ms": 0.00452427397260274,
       "participant": "variopinta",
       "reference_exact": true,
       "repetition": 1,
       "role": "public",
       "route_id": "variopinta.compiled",
-      "samples": 8,
+      "samples": 7,
       "size": 224,
+      "valid": true,
+      "validation": {
+        "c_contiguous": true,
+        "container": "torch.Tensor",
+        "dtype": "uint8",
+        "finite": true,
+        "max": 219.0,
+        "min": 3.0,
+        "shape": [
+          3,
+          224,
+          224
+        ]
+      },
+      "variant": "compiled",
+      "warmup_calls": 3,
+      "worker": "rust-catalog-1"
+    },
+    {
+      "block_size": 73,
+      "budget_ms": 100.0,
+      "case_id": "catalog.to-torch.default",
+      "case_order": 31,
+      "catalog_policy": "default",
+      "environment": "rust",
+      "environment_position": 3,
+      "explanation": {
+        "buffers": [
+          {
+            "condition": "always",
+            "dtype": "uint8",
+            "layout": "HWC",
+            "lifecycle": "borrowed-for-call",
+            "name": "input"
+          },
+          {
+            "condition": "not-required",
+            "dtype": "uint8",
+            "layout": "HWC",
+            "lifecycle": "owned-per-run-workspace-reusable",
+            "name": "working-u8"
+          },
+          {
+            "condition": "always",
+            "dtype": "uint8",
+            "layout": "CHW",
+            "lifecycle": "owned-output",
+            "name": "output-u8"
+          }
+        ],
+        "copies": [
+          {
+            "condition": "non-contiguous-input",
+            "count": "0-or-1",
+            "reason": "normalize-to-contiguous-HWC",
+            "stage": "python-entry"
+          },
+          {
+            "condition": "always-elided",
+            "count": "0",
+            "reason": "establish-owned-working-buffer",
+            "stage": "native-entry"
+          },
+          {
+            "condition": "always",
+            "count": "1",
+            "reason": "HWC-to-contiguous-CHW",
+            "stage": "terminal-layout"
+          },
+          {
+            "condition": "always",
+            "count": "0",
+            "reason": "transfer-Rust-Vec-ownership-to-NumPy-storage",
+            "stage": "python-output"
+          },
+          {
+            "condition": "always",
+            "count": "0",
+            "reason": "share-NumPy-storage-with-Torch",
+            "stage": "torch-adapter"
+          }
+        ],
+        "fallbacks": [
+          "runtime-ssse3-or-portable-scalar"
+        ],
+        "fusions": [],
+        "input": {
+          "channels": "RGB",
+          "container": "borrowed-buffer",
+          "contiguous": true,
+          "dtype": "uint8",
+          "layout": "HWC",
+          "ownership": "caller"
+        },
+        "mode": "compiled",
+        "optimizations": [
+          "input-copy-elision"
+        ],
+        "output": {
+          "channels": "RGB",
+          "container": "Torch CPU Tensor",
+          "contiguous": true,
+          "dtype": "uint8",
+          "layout": "CHW",
+          "ownership": "result"
+        },
+        "output_dtype": "uint8",
+        "output_layout": "CHW",
+        "passes": 1,
+        "pixel_passes": 1,
+        "python_boundary": {
+          "augmentation": "held",
+          "crossings_per_call": 1,
+          "decode": "not-applicable",
+          "delivery": "held-for-Python-output-transfer",
+          "gil": "held-during-augmentation",
+          "gil_stages": {
+            "arguments": "held",
+            "augmentation": "held",
+            "decode": "not-applicable",
+            "delivery": "held-for-Python-output-transfer",
+            "source": "held"
+          },
+          "input": "NumPy HWC RGB uint8",
+          "input_access": "read-only-borrow",
+          "output": "owned contiguous CPU Torch Tensor",
+          "source_acquisition": "held"
+        },
+        "sampling": "native-plan-before-execution",
+        "schema_version": 2,
+        "sink": {
+          "type": "return"
+        },
+        "source": {
+          "type": "array"
+        },
+        "steps": [
+          {
+            "allocation": "owned-chw-output",
+            "category": "layout",
+            "execution": "terminal",
+            "fallback": "runtime-ssse3-or-portable-scalar",
+            "input_materialization": "borrowed-input",
+            "kernel_form": "borrowed-to-owned",
+            "name": "ToTorch",
+            "output_slot": "output-u8-chw",
+            "pixel_passes": 1,
+            "policies": [
+              {
+                "name": "layout",
+                "value": "CHW"
+              },
+              {
+                "name": "dtype",
+                "value": "preserve"
+              },
+              {
+                "name": "device",
+                "value": "cpu"
+              }
+            ],
+            "probability": 1.0,
+            "scratch_slots": [],
+            "selection_reason": "benchmark-policy:elide-entry-copy",
+            "status": "always"
+          }
+        ],
+        "transforms": [
+          "ToTorch"
+        ],
+        "unit_specializations": []
+      },
+      "images_per_sec": 47407.646009055505,
+      "iterations": 511,
+      "median_ms": 0.02109364383561644,
+      "observations_ms": [
+        0.022368575342465752,
+        0.020847739726027395,
+        0.02109364383561644,
+        0.02097171232876712,
+        0.02054953424657534,
+        0.021668150684931504,
+        0.02129350684931507
+      ],
+      "p95_ms": 0.022368575342465752,
+      "participant": "variopinta",
+      "reference_exact": true,
+      "repetition": 1,
+      "role": "public",
+      "route_id": "variopinta.compiled",
+      "samples": 7,
+      "size": 512,
+      "valid": true,
+      "validation": {
+        "c_contiguous": true,
+        "container": "torch.Tensor",
+        "dtype": "uint8",
+        "finite": true,
+        "max": 223.0,
+        "min": 0.0,
+        "shape": [
+          3,
+          512,
+          512
+        ]
+      },
+      "variant": "compiled",
+      "warmup_calls": 3,
+      "worker": "rust-catalog-1"
+    },
+    {
+      "block_size": 14,
+      "budget_ms": 100.0,
+      "case_id": "catalog.to-torch.default",
+      "case_order": 31,
+      "catalog_policy": "default",
+      "environment": "rust",
+      "environment_position": 3,
+      "explanation": {
+        "buffers": [
+          {
+            "condition": "always",
+            "dtype": "uint8",
+            "layout": "HWC",
+            "lifecycle": "borrowed-for-call",
+            "name": "input"
+          },
+          {
+            "condition": "not-required",
+            "dtype": "uint8",
+            "layout": "HWC",
+            "lifecycle": "owned-per-run-workspace-reusable",
+            "name": "working-u8"
+          },
+          {
+            "condition": "always",
+            "dtype": "uint8",
+            "layout": "CHW",
+            "lifecycle": "owned-output",
+            "name": "output-u8"
+          }
+        ],
+        "copies": [
+          {
+            "condition": "non-contiguous-input",
+            "count": "0-or-1",
+            "reason": "normalize-to-contiguous-HWC",
+            "stage": "python-entry"
+          },
+          {
+            "condition": "always-elided",
+            "count": "0",
+            "reason": "establish-owned-working-buffer",
+            "stage": "native-entry"
+          },
+          {
+            "condition": "always",
+            "count": "1",
+            "reason": "HWC-to-contiguous-CHW",
+            "stage": "terminal-layout"
+          },
+          {
+            "condition": "always",
+            "count": "0",
+            "reason": "transfer-Rust-Vec-ownership-to-NumPy-storage",
+            "stage": "python-output"
+          },
+          {
+            "condition": "always",
+            "count": "0",
+            "reason": "share-NumPy-storage-with-Torch",
+            "stage": "torch-adapter"
+          }
+        ],
+        "fallbacks": [
+          "runtime-ssse3-or-portable-scalar"
+        ],
+        "fusions": [],
+        "input": {
+          "channels": "RGB",
+          "container": "borrowed-buffer",
+          "contiguous": true,
+          "dtype": "uint8",
+          "layout": "HWC",
+          "ownership": "caller"
+        },
+        "mode": "compiled",
+        "optimizations": [
+          "input-copy-elision"
+        ],
+        "output": {
+          "channels": "RGB",
+          "container": "Torch CPU Tensor",
+          "contiguous": true,
+          "dtype": "uint8",
+          "layout": "CHW",
+          "ownership": "result"
+        },
+        "output_dtype": "uint8",
+        "output_layout": "CHW",
+        "passes": 1,
+        "pixel_passes": 1,
+        "python_boundary": {
+          "augmentation": "held",
+          "crossings_per_call": 1,
+          "decode": "not-applicable",
+          "delivery": "held-for-Python-output-transfer",
+          "gil": "held-during-augmentation",
+          "gil_stages": {
+            "arguments": "held",
+            "augmentation": "held",
+            "decode": "not-applicable",
+            "delivery": "held-for-Python-output-transfer",
+            "source": "held"
+          },
+          "input": "NumPy HWC RGB uint8",
+          "input_access": "read-only-borrow",
+          "output": "owned contiguous CPU Torch Tensor",
+          "source_acquisition": "held"
+        },
+        "sampling": "native-plan-before-execution",
+        "schema_version": 2,
+        "sink": {
+          "type": "return"
+        },
+        "source": {
+          "type": "array"
+        },
+        "steps": [
+          {
+            "allocation": "owned-chw-output",
+            "category": "layout",
+            "execution": "terminal",
+            "fallback": "runtime-ssse3-or-portable-scalar",
+            "input_materialization": "borrowed-input",
+            "kernel_form": "borrowed-to-owned",
+            "name": "ToTorch",
+            "output_slot": "output-u8-chw",
+            "pixel_passes": 1,
+            "policies": [
+              {
+                "name": "layout",
+                "value": "CHW"
+              },
+              {
+                "name": "dtype",
+                "value": "preserve"
+              },
+              {
+                "name": "device",
+                "value": "cpu"
+              }
+            ],
+            "probability": 1.0,
+            "scratch_slots": [],
+            "selection_reason": "benchmark-policy:elide-entry-copy",
+            "status": "always"
+          }
+        ],
+        "transforms": [
+          "ToTorch"
+        ],
+        "unit_specializations": []
+      },
+      "images_per_sec": 9707.556396568934,
+      "iterations": 504,
+      "median_ms": 0.1030125357142857,
+      "observations_ms": [
+        0.1412355,
+        0.11736042857142857,
+        0.11734685714285716,
+        0.10600535714285715,
+        0.10168114285714284,
+        0.09995892857142856,
+        0.10397892857142857,
+        0.1058367857142857,
+        0.10750828571428571,
+        0.1031575,
+        0.10353821428571429,
+        0.10352828571428571,
+        0.10070178571428572,
+        0.107309,
+        0.10012964285714286,
+        0.09650671428571429,
+        0.1021325,
+        0.09997750000000001,
+        0.10045892857142857,
+        0.10286757142857142,
+        0.105294,
+        0.11466035714285715,
+        0.10877257142857143,
+        0.10232964285714286,
+        0.10317964285714286,
+        0.09844964285714286,
+        0.09877321428571428,
+        0.10684321428571429,
+        0.1019525,
+        0.09967607142857142,
+        0.10642185714285714,
+        0.09943892857142857,
+        0.10106185714285713,
+        0.09832464285714285,
+        0.10096178571428571,
+        0.10495392857142857
+      ],
+      "p95_ms": 0.11736042857142857,
+      "participant": "variopinta",
+      "reference_exact": true,
+      "repetition": 1,
+      "role": "public",
+      "route_id": "variopinta.compiled",
+      "samples": 36,
+      "size": 1024,
       "valid": true,
       "validation": {
         "c_contiguous": true,
@@ -600,22 +910,1012 @@
         "min": 0.0,
         "shape": [
           3,
+          1024,
+          1024
+        ]
+      },
+      "variant": "compiled",
+      "warmup_calls": 3,
+      "worker": "rust-catalog-1"
+    },
+    {
+      "block_size": 73,
+      "budget_ms": 100.0,
+      "case_id": "catalog.to-torch.default",
+      "case_order": 32,
+      "catalog_policy": "default",
+      "environment": "rust",
+      "environment_position": 3,
+      "explanation": {
+        "buffers": [
+          {
+            "condition": "always",
+            "dtype": "uint8",
+            "layout": "HWC",
+            "lifecycle": "borrowed-for-call",
+            "name": "input"
+          },
+          {
+            "condition": "always",
+            "dtype": "uint8",
+            "layout": "HWC",
+            "lifecycle": "owned-per-run-workspace-reusable",
+            "name": "working-u8"
+          },
+          {
+            "condition": "always",
+            "dtype": "uint8",
+            "layout": "CHW",
+            "lifecycle": "owned-output",
+            "name": "output-u8"
+          }
+        ],
+        "copies": [
+          {
+            "condition": "non-contiguous-input",
+            "count": "0-or-1",
+            "reason": "normalize-to-contiguous-HWC",
+            "stage": "python-entry"
+          },
+          {
+            "condition": "always",
+            "count": "1",
+            "reason": "establish-owned-working-buffer",
+            "stage": "native-entry"
+          },
+          {
+            "condition": "always",
+            "count": "1",
+            "reason": "HWC-to-contiguous-CHW",
+            "stage": "terminal-layout"
+          },
+          {
+            "condition": "always",
+            "count": "0",
+            "reason": "transfer-Rust-Vec-ownership-to-NumPy-storage",
+            "stage": "python-output"
+          },
+          {
+            "condition": "always",
+            "count": "0",
+            "reason": "share-NumPy-storage-with-Torch",
+            "stage": "torch-adapter"
+          }
+        ],
+        "fallbacks": [
+          "runtime-ssse3-or-portable-scalar"
+        ],
+        "fusions": [],
+        "input": {
+          "channels": "RGB",
+          "container": "borrowed-buffer",
+          "contiguous": true,
+          "dtype": "uint8",
+          "layout": "HWC",
+          "ownership": "caller"
+        },
+        "mode": "reference",
+        "optimizations": [],
+        "output": {
+          "channels": "RGB",
+          "container": "Torch CPU Tensor",
+          "contiguous": true,
+          "dtype": "uint8",
+          "layout": "CHW",
+          "ownership": "result"
+        },
+        "output_dtype": "uint8",
+        "output_layout": "CHW",
+        "passes": 1,
+        "pixel_passes": 1,
+        "python_boundary": {
+          "augmentation": "held",
+          "crossings_per_call": 1,
+          "decode": "not-applicable",
+          "delivery": "held-for-Python-output-transfer",
+          "gil": "held-during-augmentation",
+          "gil_stages": {
+            "arguments": "held",
+            "augmentation": "held",
+            "decode": "not-applicable",
+            "delivery": "held-for-Python-output-transfer",
+            "source": "held"
+          },
+          "input": "NumPy HWC RGB uint8",
+          "input_access": "read-only-borrow",
+          "output": "owned contiguous CPU Torch Tensor",
+          "source_acquisition": "held"
+        },
+        "sampling": "native-plan-before-execution",
+        "schema_version": 2,
+        "sink": {
+          "type": "return"
+        },
+        "source": {
+          "type": "array"
+        },
+        "steps": [
+          {
+            "allocation": "owned-chw-output",
+            "category": "layout",
+            "execution": "terminal",
+            "fallback": "runtime-ssse3-or-portable-scalar",
+            "input_materialization": "owned-input-copy",
+            "kernel_form": "owned-to-owned",
+            "name": "ToTorch",
+            "output_slot": "output-u8-chw",
+            "pixel_passes": 1,
+            "policies": [
+              {
+                "name": "layout",
+                "value": "CHW"
+              },
+              {
+                "name": "dtype",
+                "value": "preserve"
+              },
+              {
+                "name": "device",
+                "value": "cpu"
+              }
+            ],
+            "probability": 1.0,
+            "scratch_slots": [],
+            "selection_reason": "semantic-legality:owned-to-owned",
+            "status": "always"
+          }
+        ],
+        "transforms": [
+          "ToTorch"
+        ],
+        "unit_specializations": []
+      },
+      "images_per_sec": 166764.89804496712,
+      "iterations": 511,
+      "median_ms": 0.005996465753424658,
+      "observations_ms": [
+        0.0068161917808219185,
+        0.005990424657534247,
+        0.006045232876712329,
+        0.00588386301369863,
+        0.007040150684931508,
+        0.005996465753424658,
+        0.005923301369863013
+      ],
+      "p95_ms": 0.007040150684931508,
+      "participant": "variopinta",
+      "reference_exact": true,
+      "repetition": 1,
+      "role": "control",
+      "route_id": "variopinta.reference",
+      "samples": 7,
+      "size": 224,
+      "valid": true,
+      "validation": {
+        "c_contiguous": true,
+        "container": "torch.Tensor",
+        "dtype": "uint8",
+        "finite": true,
+        "max": 219.0,
+        "min": 3.0,
+        "shape": [
+          3,
+          224,
+          224
+        ]
+      },
+      "variant": "reference",
+      "warmup_calls": 3,
+      "worker": "rust-catalog-1"
+    },
+    {
+      "block_size": 64,
+      "budget_ms": 100.0,
+      "case_id": "catalog.to-torch.default",
+      "case_order": 32,
+      "catalog_policy": "default",
+      "environment": "rust",
+      "environment_position": 3,
+      "explanation": {
+        "buffers": [
+          {
+            "condition": "always",
+            "dtype": "uint8",
+            "layout": "HWC",
+            "lifecycle": "borrowed-for-call",
+            "name": "input"
+          },
+          {
+            "condition": "always",
+            "dtype": "uint8",
+            "layout": "HWC",
+            "lifecycle": "owned-per-run-workspace-reusable",
+            "name": "working-u8"
+          },
+          {
+            "condition": "always",
+            "dtype": "uint8",
+            "layout": "CHW",
+            "lifecycle": "owned-output",
+            "name": "output-u8"
+          }
+        ],
+        "copies": [
+          {
+            "condition": "non-contiguous-input",
+            "count": "0-or-1",
+            "reason": "normalize-to-contiguous-HWC",
+            "stage": "python-entry"
+          },
+          {
+            "condition": "always",
+            "count": "1",
+            "reason": "establish-owned-working-buffer",
+            "stage": "native-entry"
+          },
+          {
+            "condition": "always",
+            "count": "1",
+            "reason": "HWC-to-contiguous-CHW",
+            "stage": "terminal-layout"
+          },
+          {
+            "condition": "always",
+            "count": "0",
+            "reason": "transfer-Rust-Vec-ownership-to-NumPy-storage",
+            "stage": "python-output"
+          },
+          {
+            "condition": "always",
+            "count": "0",
+            "reason": "share-NumPy-storage-with-Torch",
+            "stage": "torch-adapter"
+          }
+        ],
+        "fallbacks": [
+          "runtime-ssse3-or-portable-scalar"
+        ],
+        "fusions": [],
+        "input": {
+          "channels": "RGB",
+          "container": "borrowed-buffer",
+          "contiguous": true,
+          "dtype": "uint8",
+          "layout": "HWC",
+          "ownership": "caller"
+        },
+        "mode": "reference",
+        "optimizations": [],
+        "output": {
+          "channels": "RGB",
+          "container": "Torch CPU Tensor",
+          "contiguous": true,
+          "dtype": "uint8",
+          "layout": "CHW",
+          "ownership": "result"
+        },
+        "output_dtype": "uint8",
+        "output_layout": "CHW",
+        "passes": 1,
+        "pixel_passes": 1,
+        "python_boundary": {
+          "augmentation": "held",
+          "crossings_per_call": 1,
+          "decode": "not-applicable",
+          "delivery": "held-for-Python-output-transfer",
+          "gil": "held-during-augmentation",
+          "gil_stages": {
+            "arguments": "held",
+            "augmentation": "held",
+            "decode": "not-applicable",
+            "delivery": "held-for-Python-output-transfer",
+            "source": "held"
+          },
+          "input": "NumPy HWC RGB uint8",
+          "input_access": "read-only-borrow",
+          "output": "owned contiguous CPU Torch Tensor",
+          "source_acquisition": "held"
+        },
+        "sampling": "native-plan-before-execution",
+        "schema_version": 2,
+        "sink": {
+          "type": "return"
+        },
+        "source": {
+          "type": "array"
+        },
+        "steps": [
+          {
+            "allocation": "owned-chw-output",
+            "category": "layout",
+            "execution": "terminal",
+            "fallback": "runtime-ssse3-or-portable-scalar",
+            "input_materialization": "owned-input-copy",
+            "kernel_form": "owned-to-owned",
+            "name": "ToTorch",
+            "output_slot": "output-u8-chw",
+            "pixel_passes": 1,
+            "policies": [
+              {
+                "name": "layout",
+                "value": "CHW"
+              },
+              {
+                "name": "dtype",
+                "value": "preserve"
+              },
+              {
+                "name": "device",
+                "value": "cpu"
+              }
+            ],
+            "probability": 1.0,
+            "scratch_slots": [],
+            "selection_reason": "semantic-legality:owned-to-owned",
+            "status": "always"
+          }
+        ],
+        "transforms": [
+          "ToTorch"
+        ],
+        "unit_specializations": []
+      },
+      "images_per_sec": 35688.6743107346,
+      "iterations": 512,
+      "median_ms": 0.02802009375,
+      "observations_ms": [
+        0.028853234375,
+        0.02785634375,
+        0.028335734375,
+        0.027513375,
+        0.02861946875,
+        0.027852140625,
+        0.02818384375,
+        0.027465734375
+      ],
+      "p95_ms": 0.028853234375,
+      "participant": "variopinta",
+      "reference_exact": true,
+      "repetition": 1,
+      "role": "control",
+      "route_id": "variopinta.reference",
+      "samples": 8,
+      "size": 512,
+      "valid": true,
+      "validation": {
+        "c_contiguous": true,
+        "container": "torch.Tensor",
+        "dtype": "uint8",
+        "finite": true,
+        "max": 255.0,
+        "min": 0.0,
+        "shape": [
+          3,
+          512,
+          512
+        ]
+      },
+      "variant": "reference",
+      "warmup_calls": 3,
+      "worker": "rust-catalog-1"
+    },
+    {
+      "block_size": 12,
+      "budget_ms": 100.0,
+      "case_id": "catalog.to-torch.default",
+      "case_order": 32,
+      "catalog_policy": "default",
+      "environment": "rust",
+      "environment_position": 3,
+      "explanation": {
+        "buffers": [
+          {
+            "condition": "always",
+            "dtype": "uint8",
+            "layout": "HWC",
+            "lifecycle": "borrowed-for-call",
+            "name": "input"
+          },
+          {
+            "condition": "always",
+            "dtype": "uint8",
+            "layout": "HWC",
+            "lifecycle": "owned-per-run-workspace-reusable",
+            "name": "working-u8"
+          },
+          {
+            "condition": "always",
+            "dtype": "uint8",
+            "layout": "CHW",
+            "lifecycle": "owned-output",
+            "name": "output-u8"
+          }
+        ],
+        "copies": [
+          {
+            "condition": "non-contiguous-input",
+            "count": "0-or-1",
+            "reason": "normalize-to-contiguous-HWC",
+            "stage": "python-entry"
+          },
+          {
+            "condition": "always",
+            "count": "1",
+            "reason": "establish-owned-working-buffer",
+            "stage": "native-entry"
+          },
+          {
+            "condition": "always",
+            "count": "1",
+            "reason": "HWC-to-contiguous-CHW",
+            "stage": "terminal-layout"
+          },
+          {
+            "condition": "always",
+            "count": "0",
+            "reason": "transfer-Rust-Vec-ownership-to-NumPy-storage",
+            "stage": "python-output"
+          },
+          {
+            "condition": "always",
+            "count": "0",
+            "reason": "share-NumPy-storage-with-Torch",
+            "stage": "torch-adapter"
+          }
+        ],
+        "fallbacks": [
+          "runtime-ssse3-or-portable-scalar"
+        ],
+        "fusions": [],
+        "input": {
+          "channels": "RGB",
+          "container": "borrowed-buffer",
+          "contiguous": true,
+          "dtype": "uint8",
+          "layout": "HWC",
+          "ownership": "caller"
+        },
+        "mode": "reference",
+        "optimizations": [],
+        "output": {
+          "channels": "RGB",
+          "container": "Torch CPU Tensor",
+          "contiguous": true,
+          "dtype": "uint8",
+          "layout": "CHW",
+          "ownership": "result"
+        },
+        "output_dtype": "uint8",
+        "output_layout": "CHW",
+        "passes": 1,
+        "pixel_passes": 1,
+        "python_boundary": {
+          "augmentation": "held",
+          "crossings_per_call": 1,
+          "decode": "not-applicable",
+          "delivery": "held-for-Python-output-transfer",
+          "gil": "held-during-augmentation",
+          "gil_stages": {
+            "arguments": "held",
+            "augmentation": "held",
+            "decode": "not-applicable",
+            "delivery": "held-for-Python-output-transfer",
+            "source": "held"
+          },
+          "input": "NumPy HWC RGB uint8",
+          "input_access": "read-only-borrow",
+          "output": "owned contiguous CPU Torch Tensor",
+          "source_acquisition": "held"
+        },
+        "sampling": "native-plan-before-execution",
+        "schema_version": 2,
+        "sink": {
+          "type": "return"
+        },
+        "source": {
+          "type": "array"
+        },
+        "steps": [
+          {
+            "allocation": "owned-chw-output",
+            "category": "layout",
+            "execution": "terminal",
+            "fallback": "runtime-ssse3-or-portable-scalar",
+            "input_materialization": "owned-input-copy",
+            "kernel_form": "owned-to-owned",
+            "name": "ToTorch",
+            "output_slot": "output-u8-chw",
+            "pixel_passes": 1,
+            "policies": [
+              {
+                "name": "layout",
+                "value": "CHW"
+              },
+              {
+                "name": "dtype",
+                "value": "preserve"
+              },
+              {
+                "name": "device",
+                "value": "cpu"
+              }
+            ],
+            "probability": 1.0,
+            "scratch_slots": [],
+            "selection_reason": "semantic-legality:owned-to-owned",
+            "status": "always"
+          }
+        ],
+        "transforms": [
+          "ToTorch"
+        ],
+        "unit_specializations": []
+      },
+      "images_per_sec": 8390.8426538697,
+      "iterations": 504,
+      "median_ms": 0.11917754166666666,
+      "observations_ms": [
+        0.158359,
+        0.13915716666666667,
+        0.13583466666666666,
+        0.14255966666666667,
+        0.13075291666666666,
+        0.12039875,
+        0.125363,
+        0.12122875,
+        0.12006791666666666,
+        0.12081041666666666,
+        0.113553,
+        0.11546458333333333,
+        0.12366875,
+        0.12284458333333333,
+        0.130088,
+        0.12100375000000001,
+        0.11766708333333332,
+        0.11659625,
+        0.1189255,
+        0.11880708333333334,
+        0.12655883333333331,
+        0.11629875,
+        0.11595708333333334,
+        0.11776708333333334,
+        0.11551458333333332,
+        0.12429625,
+        0.11942958333333333,
+        0.11577716666666667,
+        0.11890624999999999,
+        0.11593875,
+        0.11767875,
+        0.11496541666666667,
+        0.12326958333333334,
+        0.11830458333333332,
+        0.11548375,
+        0.11575625,
+        0.12764633333333333,
+        0.130453,
+        0.11648708333333334,
+        0.12071541666666667,
+        0.11848874999999999,
+        0.11277375
+      ],
+      "p95_ms": 0.13915716666666667,
+      "participant": "variopinta",
+      "reference_exact": true,
+      "repetition": 1,
+      "role": "control",
+      "route_id": "variopinta.reference",
+      "samples": 42,
+      "size": 1024,
+      "valid": true,
+      "validation": {
+        "c_contiguous": true,
+        "container": "torch.Tensor",
+        "dtype": "uint8",
+        "finite": true,
+        "max": 255.0,
+        "min": 0.0,
+        "shape": [
+          3,
+          1024,
+          1024
+        ]
+      },
+      "variant": "reference",
+      "warmup_calls": 3,
+      "worker": "rust-catalog-1"
+    },
+    {
+      "block_size": 73,
+      "budget_ms": 100.0,
+      "case_id": "catalog.to-torch.default",
+      "case_order": 30,
+      "catalog_policy": "default",
+      "environment": "rust",
+      "environment_position": 2,
+      "explanation": {
+        "buffers": [
+          {
+            "condition": "always",
+            "dtype": "uint8",
+            "layout": "HWC",
+            "lifecycle": "borrowed-for-call",
+            "name": "input"
+          },
+          {
+            "condition": "not-required",
+            "dtype": "uint8",
+            "layout": "HWC",
+            "lifecycle": "owned-per-run-workspace-reusable",
+            "name": "working-u8"
+          },
+          {
+            "condition": "always",
+            "dtype": "uint8",
+            "layout": "CHW",
+            "lifecycle": "owned-output",
+            "name": "output-u8"
+          }
+        ],
+        "copies": [
+          {
+            "condition": "non-contiguous-input",
+            "count": "0-or-1",
+            "reason": "normalize-to-contiguous-HWC",
+            "stage": "python-entry"
+          },
+          {
+            "condition": "always-elided",
+            "count": "0",
+            "reason": "establish-owned-working-buffer",
+            "stage": "native-entry"
+          },
+          {
+            "condition": "always",
+            "count": "1",
+            "reason": "HWC-to-contiguous-CHW",
+            "stage": "terminal-layout"
+          },
+          {
+            "condition": "always",
+            "count": "0",
+            "reason": "transfer-Rust-Vec-ownership-to-NumPy-storage",
+            "stage": "python-output"
+          },
+          {
+            "condition": "always",
+            "count": "0",
+            "reason": "share-NumPy-storage-with-Torch",
+            "stage": "torch-adapter"
+          }
+        ],
+        "fallbacks": [
+          "runtime-ssse3-or-portable-scalar"
+        ],
+        "fusions": [],
+        "input": {
+          "channels": "RGB",
+          "container": "borrowed-buffer",
+          "contiguous": true,
+          "dtype": "uint8",
+          "layout": "HWC",
+          "ownership": "caller"
+        },
+        "mode": "compiled",
+        "optimizations": [
+          "input-copy-elision"
+        ],
+        "output": {
+          "channels": "RGB",
+          "container": "Torch CPU Tensor",
+          "contiguous": true,
+          "dtype": "uint8",
+          "layout": "CHW",
+          "ownership": "result"
+        },
+        "output_dtype": "uint8",
+        "output_layout": "CHW",
+        "passes": 1,
+        "pixel_passes": 1,
+        "python_boundary": {
+          "augmentation": "held",
+          "crossings_per_call": 1,
+          "decode": "not-applicable",
+          "delivery": "held-for-Python-output-transfer",
+          "gil": "held-during-augmentation",
+          "gil_stages": {
+            "arguments": "held",
+            "augmentation": "held",
+            "decode": "not-applicable",
+            "delivery": "held-for-Python-output-transfer",
+            "source": "held"
+          },
+          "input": "NumPy HWC RGB uint8",
+          "input_access": "read-only-borrow",
+          "output": "owned contiguous CPU Torch Tensor",
+          "source_acquisition": "held"
+        },
+        "sampling": "native-plan-before-execution",
+        "schema_version": 2,
+        "sink": {
+          "type": "return"
+        },
+        "source": {
+          "type": "array"
+        },
+        "steps": [
+          {
+            "allocation": "owned-chw-output",
+            "category": "layout",
+            "execution": "terminal",
+            "fallback": "runtime-ssse3-or-portable-scalar",
+            "input_materialization": "borrowed-input",
+            "kernel_form": "borrowed-to-owned",
+            "name": "ToTorch",
+            "output_slot": "output-u8-chw",
+            "pixel_passes": 1,
+            "policies": [
+              {
+                "name": "layout",
+                "value": "CHW"
+              },
+              {
+                "name": "dtype",
+                "value": "preserve"
+              },
+              {
+                "name": "device",
+                "value": "cpu"
+              }
+            ],
+            "probability": 1.0,
+            "scratch_slots": [],
+            "selection_reason": "benchmark-policy:elide-entry-copy",
+            "status": "always"
+          }
+        ],
+        "transforms": [
+          "ToTorch"
+        ],
+        "unit_specializations": []
+      },
+      "images_per_sec": 230865.8100385514,
+      "iterations": 511,
+      "median_ms": 0.004331520547945206,
+      "observations_ms": [
+        0.004410698630136986,
+        0.004304260273972603,
+        0.004331520547945206,
+        0.00423631506849315,
+        0.004208506849315069,
+        0.004768931506849315,
+        0.004511931506849315
+      ],
+      "p95_ms": 0.004768931506849315,
+      "participant": "variopinta",
+      "reference_exact": true,
+      "repetition": 2,
+      "role": "public",
+      "route_id": "variopinta.compiled",
+      "samples": 7,
+      "size": 224,
+      "valid": true,
+      "validation": {
+        "c_contiguous": true,
+        "container": "torch.Tensor",
+        "dtype": "uint8",
+        "finite": true,
+        "max": 219.0,
+        "min": 3.0,
+        "shape": [
+          3,
           224,
           224
         ]
       },
       "variant": "compiled",
       "warmup_calls": 3,
-      "worker": "rust-catalog-1"
+      "worker": "rust-catalog-2"
+    },
+    {
+      "block_size": 73,
+      "budget_ms": 100.0,
+      "case_id": "catalog.to-torch.default",
+      "case_order": 30,
+      "catalog_policy": "default",
+      "environment": "rust",
+      "environment_position": 2,
+      "explanation": {
+        "buffers": [
+          {
+            "condition": "always",
+            "dtype": "uint8",
+            "layout": "HWC",
+            "lifecycle": "borrowed-for-call",
+            "name": "input"
+          },
+          {
+            "condition": "not-required",
+            "dtype": "uint8",
+            "layout": "HWC",
+            "lifecycle": "owned-per-run-workspace-reusable",
+            "name": "working-u8"
+          },
+          {
+            "condition": "always",
+            "dtype": "uint8",
+            "layout": "CHW",
+            "lifecycle": "owned-output",
+            "name": "output-u8"
+          }
+        ],
+        "copies": [
+          {
+            "condition": "non-contiguous-input",
+            "count": "0-or-1",
+            "reason": "normalize-to-contiguous-HWC",
+            "stage": "python-entry"
+          },
+          {
+            "condition": "always-elided",
+            "count": "0",
+            "reason": "establish-owned-working-buffer",
+            "stage": "native-entry"
+          },
+          {
+            "condition": "always",
+            "count": "1",
+            "reason": "HWC-to-contiguous-CHW",
+            "stage": "terminal-layout"
+          },
+          {
+            "condition": "always",
+            "count": "0",
+            "reason": "transfer-Rust-Vec-ownership-to-NumPy-storage",
+            "stage": "python-output"
+          },
+          {
+            "condition": "always",
+            "count": "0",
+            "reason": "share-NumPy-storage-with-Torch",
+            "stage": "torch-adapter"
+          }
+        ],
+        "fallbacks": [
+          "runtime-ssse3-or-portable-scalar"
+        ],
+        "fusions": [],
+        "input": {
+          "channels": "RGB",
+          "container": "borrowed-buffer",
+          "contiguous": true,
+          "dtype": "uint8",
+          "layout": "HWC",
+          "ownership": "caller"
+        },
+        "mode": "compiled",
+        "optimizations": [
+          "input-copy-elision"
+        ],
+        "output": {
+          "channels": "RGB",
+          "container": "Torch CPU Tensor",
+          "contiguous": true,
+          "dtype": "uint8",
+          "layout": "CHW",
+          "ownership": "result"
+        },
+        "output_dtype": "uint8",
+        "output_layout": "CHW",
+        "passes": 1,
+        "pixel_passes": 1,
+        "python_boundary": {
+          "augmentation": "held",
+          "crossings_per_call": 1,
+          "decode": "not-applicable",
+          "delivery": "held-for-Python-output-transfer",
+          "gil": "held-during-augmentation",
+          "gil_stages": {
+            "arguments": "held",
+            "augmentation": "held",
+            "decode": "not-applicable",
+            "delivery": "held-for-Python-output-transfer",
+            "source": "held"
+          },
+          "input": "NumPy HWC RGB uint8",
+          "input_access": "read-only-borrow",
+          "output": "owned contiguous CPU Torch Tensor",
+          "source_acquisition": "held"
+        },
+        "sampling": "native-plan-before-execution",
+        "schema_version": 2,
+        "sink": {
+          "type": "return"
+        },
+        "source": {
+          "type": "array"
+        },
+        "steps": [
+          {
+            "allocation": "owned-chw-output",
+            "category": "layout",
+            "execution": "terminal",
+            "fallback": "runtime-ssse3-or-portable-scalar",
+            "input_materialization": "borrowed-input",
+            "kernel_form": "borrowed-to-owned",
+            "name": "ToTorch",
+            "output_slot": "output-u8-chw",
+            "pixel_passes": 1,
+            "policies": [
+              {
+                "name": "layout",
+                "value": "CHW"
+              },
+              {
+                "name": "dtype",
+                "value": "preserve"
+              },
+              {
+                "name": "device",
+                "value": "cpu"
+              }
+            ],
+            "probability": 1.0,
+            "scratch_slots": [],
+            "selection_reason": "benchmark-policy:elide-entry-copy",
+            "status": "always"
+          }
+        ],
+        "transforms": [
+          "ToTorch"
+        ],
+        "unit_specializations": []
+      },
+      "images_per_sec": 56679.87903116229,
+      "iterations": 511,
+      "median_ms": 0.017642945205479453,
+      "observations_ms": [
+        0.01729390410958904,
+        0.017230479452054793,
+        0.017872657534246578,
+        0.017428972602739727,
+        0.018701301369863012,
+        0.01796772602739726,
+        0.017642945205479453
+      ],
+      "p95_ms": 0.018701301369863012,
+      "participant": "variopinta",
+      "reference_exact": true,
+      "repetition": 2,
+      "role": "public",
+      "route_id": "variopinta.compiled",
+      "samples": 7,
+      "size": 512,
+      "valid": true,
+      "validation": {
+        "c_contiguous": true,
+        "container": "torch.Tensor",
+        "dtype": "uint8",
+        "finite": true,
+        "max": 223.0,
+        "min": 0.0,
+        "shape": [
+          3,
+          512,
+          512
+        ]
+      },
+      "variant": "compiled",
+      "warmup_calls": 3,
+      "worker": "rust-catalog-2"
     },
     {
       "block_size": 13,
       "budget_ms": 100.0,
       "case_id": "catalog.to-torch.default",
-      "case_order": 63,
+      "case_order": 30,
       "catalog_policy": "default",
       "environment": "rust",
-      "environment_position": 3,
+      "environment_position": 2,
       "explanation": {
         "buffers": [
           {
@@ -673,7 +1973,7 @@
           }
         ],
         "fallbacks": [
-          "portable-scalar"
+          "runtime-ssse3-or-portable-scalar"
         ],
         "fusions": [],
         "input": {
@@ -731,7 +2031,7 @@
             "allocation": "owned-chw-output",
             "category": "layout",
             "execution": "terminal",
-            "fallback": "portable-scalar",
+            "fallback": "runtime-ssse3-or-portable-scalar",
             "input_materialization": "borrowed-input",
             "kernel_form": "borrowed-to-owned",
             "name": "ToTorch",
@@ -762,57 +2062,438 @@
         ],
         "unit_specializations": []
       },
-      "images_per_sec": 6021.030068561006,
+      "images_per_sec": 10339.164356923859,
       "iterations": 507,
-      "median_ms": 0.16608453846153845,
+      "median_ms": 0.09671961538461539,
       "observations_ms": [
-        0.1649253076923077,
-        0.16768453846153844,
-        0.16512984615384615,
-        0.16919607692307695,
-        0.16747446153846154,
-        0.16668230769230769,
-        0.16800453846153846,
-        0.16590838461538462,
-        0.16597915384615383,
-        0.16465446153846156,
-        0.16989838461538462,
-        0.16678376923076924,
-        0.1660676153846154,
-        0.16467146153846152,
-        0.16713984615384614,
-        0.16584607692307693,
-        0.16832999999999998,
-        0.16564453846153848,
-        0.16655915384615383,
-        0.16745223076923077,
-        0.16537061538461537,
-        0.16588223076923075,
-        0.16515223076923077,
-        0.1673599230769231,
-        0.1647129230769231,
-        0.165613,
-        0.16712999999999997,
-        0.16708376923076923,
-        0.16576138461538464,
-        0.16761069230769232,
-        0.1696253076923077,
-        0.1658253076923077,
-        0.16628607692307693,
-        0.16629376923076922,
-        0.16522753846153845,
-        0.16608453846153845,
-        0.16515146153846152,
-        0.165993,
-        0.16854453846153847
+        0.139629,
+        0.10984115384615384,
+        0.09310184615384615,
+        0.09445184615384615,
+        0.09629038461538462,
+        0.09069261538461539,
+        0.0933756923076923,
+        0.10051807692307692,
+        0.09424346153846154,
+        0.09411269230769231,
+        0.09207415384615383,
+        0.09419569230769231,
+        0.09690269230769231,
+        0.09780953846153848,
+        0.09945115384615384,
+        0.0953926153846154,
+        0.10142884615384616,
+        0.09694261538461538,
+        0.09188884615384615,
+        0.10018646153846154,
+        0.0967526923076923,
+        0.09324269230769232,
+        0.094038,
+        0.10817507692307693,
+        0.11125653846153846,
+        0.10793192307692306,
+        0.10771038461538461,
+        0.09499953846153845,
+        0.09671961538461539,
+        0.10147723076923078,
+        0.09442346153846154,
+        0.09997184615384615,
+        0.10001499999999999,
+        0.09847576923076923,
+        0.09444576923076922,
+        0.093298,
+        0.09594115384615386,
+        0.09322723076923077,
+        0.09682953846153845
       ],
-      "p95_ms": 0.1696253076923077,
+      "p95_ms": 0.11125653846153846,
       "participant": "variopinta",
       "reference_exact": true,
-      "repetition": 1,
+      "repetition": 2,
       "role": "public",
       "route_id": "variopinta.compiled",
       "samples": 39,
+      "size": 1024,
+      "valid": true,
+      "validation": {
+        "c_contiguous": true,
+        "container": "torch.Tensor",
+        "dtype": "uint8",
+        "finite": true,
+        "max": 255.0,
+        "min": 0.0,
+        "shape": [
+          3,
+          1024,
+          1024
+        ]
+      },
+      "variant": "compiled",
+      "warmup_calls": 3,
+      "worker": "rust-catalog-2"
+    },
+    {
+      "block_size": 73,
+      "budget_ms": 100.0,
+      "case_id": "catalog.to-torch.default",
+      "case_order": 31,
+      "catalog_policy": "default",
+      "environment": "rust",
+      "environment_position": 2,
+      "explanation": {
+        "buffers": [
+          {
+            "condition": "always",
+            "dtype": "uint8",
+            "layout": "HWC",
+            "lifecycle": "borrowed-for-call",
+            "name": "input"
+          },
+          {
+            "condition": "always",
+            "dtype": "uint8",
+            "layout": "HWC",
+            "lifecycle": "owned-per-run-workspace-reusable",
+            "name": "working-u8"
+          },
+          {
+            "condition": "always",
+            "dtype": "uint8",
+            "layout": "CHW",
+            "lifecycle": "owned-output",
+            "name": "output-u8"
+          }
+        ],
+        "copies": [
+          {
+            "condition": "non-contiguous-input",
+            "count": "0-or-1",
+            "reason": "normalize-to-contiguous-HWC",
+            "stage": "python-entry"
+          },
+          {
+            "condition": "always",
+            "count": "1",
+            "reason": "establish-owned-working-buffer",
+            "stage": "native-entry"
+          },
+          {
+            "condition": "always",
+            "count": "1",
+            "reason": "HWC-to-contiguous-CHW",
+            "stage": "terminal-layout"
+          },
+          {
+            "condition": "always",
+            "count": "0",
+            "reason": "transfer-Rust-Vec-ownership-to-NumPy-storage",
+            "stage": "python-output"
+          },
+          {
+            "condition": "always",
+            "count": "0",
+            "reason": "share-NumPy-storage-with-Torch",
+            "stage": "torch-adapter"
+          }
+        ],
+        "fallbacks": [
+          "runtime-ssse3-or-portable-scalar"
+        ],
+        "fusions": [],
+        "input": {
+          "channels": "RGB",
+          "container": "borrowed-buffer",
+          "contiguous": true,
+          "dtype": "uint8",
+          "layout": "HWC",
+          "ownership": "caller"
+        },
+        "mode": "reference",
+        "optimizations": [],
+        "output": {
+          "channels": "RGB",
+          "container": "Torch CPU Tensor",
+          "contiguous": true,
+          "dtype": "uint8",
+          "layout": "CHW",
+          "ownership": "result"
+        },
+        "output_dtype": "uint8",
+        "output_layout": "CHW",
+        "passes": 1,
+        "pixel_passes": 1,
+        "python_boundary": {
+          "augmentation": "held",
+          "crossings_per_call": 1,
+          "decode": "not-applicable",
+          "delivery": "held-for-Python-output-transfer",
+          "gil": "held-during-augmentation",
+          "gil_stages": {
+            "arguments": "held",
+            "augmentation": "held",
+            "decode": "not-applicable",
+            "delivery": "held-for-Python-output-transfer",
+            "source": "held"
+          },
+          "input": "NumPy HWC RGB uint8",
+          "input_access": "read-only-borrow",
+          "output": "owned contiguous CPU Torch Tensor",
+          "source_acquisition": "held"
+        },
+        "sampling": "native-plan-before-execution",
+        "schema_version": 2,
+        "sink": {
+          "type": "return"
+        },
+        "source": {
+          "type": "array"
+        },
+        "steps": [
+          {
+            "allocation": "owned-chw-output",
+            "category": "layout",
+            "execution": "terminal",
+            "fallback": "runtime-ssse3-or-portable-scalar",
+            "input_materialization": "owned-input-copy",
+            "kernel_form": "owned-to-owned",
+            "name": "ToTorch",
+            "output_slot": "output-u8-chw",
+            "pixel_passes": 1,
+            "policies": [
+              {
+                "name": "layout",
+                "value": "CHW"
+              },
+              {
+                "name": "dtype",
+                "value": "preserve"
+              },
+              {
+                "name": "device",
+                "value": "cpu"
+              }
+            ],
+            "probability": 1.0,
+            "scratch_slots": [],
+            "selection_reason": "semantic-legality:owned-to-owned",
+            "status": "always"
+          }
+        ],
+        "transforms": [
+          "ToTorch"
+        ],
+        "unit_specializations": []
+      },
+      "images_per_sec": 163401.9845506781,
+      "iterations": 511,
+      "median_ms": 0.006119876712328767,
+      "observations_ms": [
+        0.00620413698630137,
+        0.006303027397260274,
+        0.005940849315068494,
+        0.0062660547945205475,
+        0.006119876712328767,
+        0.006032767123287671,
+        0.006020438356164383
+      ],
+      "p95_ms": 0.006303027397260274,
+      "participant": "variopinta",
+      "reference_exact": true,
+      "repetition": 2,
+      "role": "control",
+      "route_id": "variopinta.reference",
+      "samples": 7,
+      "size": 224,
+      "valid": true,
+      "validation": {
+        "c_contiguous": true,
+        "container": "torch.Tensor",
+        "dtype": "uint8",
+        "finite": true,
+        "max": 219.0,
+        "min": 3.0,
+        "shape": [
+          3,
+          224,
+          224
+        ]
+      },
+      "variant": "reference",
+      "warmup_calls": 3,
+      "worker": "rust-catalog-2"
+    },
+    {
+      "block_size": 61,
+      "budget_ms": 100.0,
+      "case_id": "catalog.to-torch.default",
+      "case_order": 31,
+      "catalog_policy": "default",
+      "environment": "rust",
+      "environment_position": 2,
+      "explanation": {
+        "buffers": [
+          {
+            "condition": "always",
+            "dtype": "uint8",
+            "layout": "HWC",
+            "lifecycle": "borrowed-for-call",
+            "name": "input"
+          },
+          {
+            "condition": "always",
+            "dtype": "uint8",
+            "layout": "HWC",
+            "lifecycle": "owned-per-run-workspace-reusable",
+            "name": "working-u8"
+          },
+          {
+            "condition": "always",
+            "dtype": "uint8",
+            "layout": "CHW",
+            "lifecycle": "owned-output",
+            "name": "output-u8"
+          }
+        ],
+        "copies": [
+          {
+            "condition": "non-contiguous-input",
+            "count": "0-or-1",
+            "reason": "normalize-to-contiguous-HWC",
+            "stage": "python-entry"
+          },
+          {
+            "condition": "always",
+            "count": "1",
+            "reason": "establish-owned-working-buffer",
+            "stage": "native-entry"
+          },
+          {
+            "condition": "always",
+            "count": "1",
+            "reason": "HWC-to-contiguous-CHW",
+            "stage": "terminal-layout"
+          },
+          {
+            "condition": "always",
+            "count": "0",
+            "reason": "transfer-Rust-Vec-ownership-to-NumPy-storage",
+            "stage": "python-output"
+          },
+          {
+            "condition": "always",
+            "count": "0",
+            "reason": "share-NumPy-storage-with-Torch",
+            "stage": "torch-adapter"
+          }
+        ],
+        "fallbacks": [
+          "runtime-ssse3-or-portable-scalar"
+        ],
+        "fusions": [],
+        "input": {
+          "channels": "RGB",
+          "container": "borrowed-buffer",
+          "contiguous": true,
+          "dtype": "uint8",
+          "layout": "HWC",
+          "ownership": "caller"
+        },
+        "mode": "reference",
+        "optimizations": [],
+        "output": {
+          "channels": "RGB",
+          "container": "Torch CPU Tensor",
+          "contiguous": true,
+          "dtype": "uint8",
+          "layout": "CHW",
+          "ownership": "result"
+        },
+        "output_dtype": "uint8",
+        "output_layout": "CHW",
+        "passes": 1,
+        "pixel_passes": 1,
+        "python_boundary": {
+          "augmentation": "held",
+          "crossings_per_call": 1,
+          "decode": "not-applicable",
+          "delivery": "held-for-Python-output-transfer",
+          "gil": "held-during-augmentation",
+          "gil_stages": {
+            "arguments": "held",
+            "augmentation": "held",
+            "decode": "not-applicable",
+            "delivery": "held-for-Python-output-transfer",
+            "source": "held"
+          },
+          "input": "NumPy HWC RGB uint8",
+          "input_access": "read-only-borrow",
+          "output": "owned contiguous CPU Torch Tensor",
+          "source_acquisition": "held"
+        },
+        "sampling": "native-plan-before-execution",
+        "schema_version": 2,
+        "sink": {
+          "type": "return"
+        },
+        "source": {
+          "type": "array"
+        },
+        "steps": [
+          {
+            "allocation": "owned-chw-output",
+            "category": "layout",
+            "execution": "terminal",
+            "fallback": "runtime-ssse3-or-portable-scalar",
+            "input_materialization": "owned-input-copy",
+            "kernel_form": "owned-to-owned",
+            "name": "ToTorch",
+            "output_slot": "output-u8-chw",
+            "pixel_passes": 1,
+            "policies": [
+              {
+                "name": "layout",
+                "value": "CHW"
+              },
+              {
+                "name": "dtype",
+                "value": "preserve"
+              },
+              {
+                "name": "device",
+                "value": "cpu"
+              }
+            ],
+            "probability": 1.0,
+            "scratch_slots": [],
+            "selection_reason": "semantic-legality:owned-to-owned",
+            "status": "always"
+          }
+        ],
+        "transforms": [
+          "ToTorch"
+        ],
+        "unit_specializations": []
+      },
+      "images_per_sec": 36388.88623760392,
+      "iterations": 488,
+      "median_ms": 0.027480918032786884,
+      "observations_ms": [
+        0.02828650819672131,
+        0.027513868852459013,
+        0.027447967213114755,
+        0.02726370491803279,
+        0.027798131147540983,
+        0.02756927868852459,
+        0.02649337704918033,
+        0.0272932131147541
+      ],
+      "p95_ms": 0.02828650819672131,
+      "participant": "variopinta",
+      "reference_exact": true,
+      "repetition": 2,
+      "role": "control",
+      "route_id": "variopinta.reference",
+      "samples": 8,
       "size": 512,
       "valid": true,
       "validation": {
@@ -828,18 +2509,240 @@
           512
         ]
       },
-      "variant": "compiled",
+      "variant": "reference",
       "warmup_calls": 3,
-      "worker": "rust-catalog-1"
+      "worker": "rust-catalog-2"
     },
     {
-      "block_size": 3,
+      "block_size": 13,
       "budget_ms": 100.0,
       "case_id": "catalog.to-torch.default",
-      "case_order": 63,
+      "case_order": 31,
       "catalog_policy": "default",
       "environment": "rust",
-      "environment_position": 3,
+      "environment_position": 2,
+      "explanation": {
+        "buffers": [
+          {
+            "condition": "always",
+            "dtype": "uint8",
+            "layout": "HWC",
+            "lifecycle": "borrowed-for-call",
+            "name": "input"
+          },
+          {
+            "condition": "always",
+            "dtype": "uint8",
+            "layout": "HWC",
+            "lifecycle": "owned-per-run-workspace-reusable",
+            "name": "working-u8"
+          },
+          {
+            "condition": "always",
+            "dtype": "uint8",
+            "layout": "CHW",
+            "lifecycle": "owned-output",
+            "name": "output-u8"
+          }
+        ],
+        "copies": [
+          {
+            "condition": "non-contiguous-input",
+            "count": "0-or-1",
+            "reason": "normalize-to-contiguous-HWC",
+            "stage": "python-entry"
+          },
+          {
+            "condition": "always",
+            "count": "1",
+            "reason": "establish-owned-working-buffer",
+            "stage": "native-entry"
+          },
+          {
+            "condition": "always",
+            "count": "1",
+            "reason": "HWC-to-contiguous-CHW",
+            "stage": "terminal-layout"
+          },
+          {
+            "condition": "always",
+            "count": "0",
+            "reason": "transfer-Rust-Vec-ownership-to-NumPy-storage",
+            "stage": "python-output"
+          },
+          {
+            "condition": "always",
+            "count": "0",
+            "reason": "share-NumPy-storage-with-Torch",
+            "stage": "torch-adapter"
+          }
+        ],
+        "fallbacks": [
+          "runtime-ssse3-or-portable-scalar"
+        ],
+        "fusions": [],
+        "input": {
+          "channels": "RGB",
+          "container": "borrowed-buffer",
+          "contiguous": true,
+          "dtype": "uint8",
+          "layout": "HWC",
+          "ownership": "caller"
+        },
+        "mode": "reference",
+        "optimizations": [],
+        "output": {
+          "channels": "RGB",
+          "container": "Torch CPU Tensor",
+          "contiguous": true,
+          "dtype": "uint8",
+          "layout": "CHW",
+          "ownership": "result"
+        },
+        "output_dtype": "uint8",
+        "output_layout": "CHW",
+        "passes": 1,
+        "pixel_passes": 1,
+        "python_boundary": {
+          "augmentation": "held",
+          "crossings_per_call": 1,
+          "decode": "not-applicable",
+          "delivery": "held-for-Python-output-transfer",
+          "gil": "held-during-augmentation",
+          "gil_stages": {
+            "arguments": "held",
+            "augmentation": "held",
+            "decode": "not-applicable",
+            "delivery": "held-for-Python-output-transfer",
+            "source": "held"
+          },
+          "input": "NumPy HWC RGB uint8",
+          "input_access": "read-only-borrow",
+          "output": "owned contiguous CPU Torch Tensor",
+          "source_acquisition": "held"
+        },
+        "sampling": "native-plan-before-execution",
+        "schema_version": 2,
+        "sink": {
+          "type": "return"
+        },
+        "source": {
+          "type": "array"
+        },
+        "steps": [
+          {
+            "allocation": "owned-chw-output",
+            "category": "layout",
+            "execution": "terminal",
+            "fallback": "runtime-ssse3-or-portable-scalar",
+            "input_materialization": "owned-input-copy",
+            "kernel_form": "owned-to-owned",
+            "name": "ToTorch",
+            "output_slot": "output-u8-chw",
+            "pixel_passes": 1,
+            "policies": [
+              {
+                "name": "layout",
+                "value": "CHW"
+              },
+              {
+                "name": "dtype",
+                "value": "preserve"
+              },
+              {
+                "name": "device",
+                "value": "cpu"
+              }
+            ],
+            "probability": 1.0,
+            "scratch_slots": [],
+            "selection_reason": "semantic-legality:owned-to-owned",
+            "status": "always"
+          }
+        ],
+        "transforms": [
+          "ToTorch"
+        ],
+        "unit_specializations": []
+      },
+      "images_per_sec": 7759.359578272838,
+      "iterations": 507,
+      "median_ms": 0.1288766153846154,
+      "observations_ms": [
+        0.1459643846153846,
+        0.13783823076923077,
+        0.1320066153846154,
+        0.13462353846153846,
+        0.14246584615384614,
+        0.14082284615384616,
+        0.14134976923076922,
+        0.13427515384615385,
+        0.13850738461538462,
+        0.13215046153846155,
+        0.13047969230769232,
+        0.12668123076923077,
+        0.1288766153846154,
+        0.11681892307692307,
+        0.122815,
+        0.12661123076923075,
+        0.12404738461538461,
+        0.12330592307692309,
+        0.12500884615384616,
+        0.1396020769230769,
+        0.12424046153846155,
+        0.12086192307692308,
+        0.12908353846153847,
+        0.12853892307692308,
+        0.13887584615384616,
+        0.13591976923076923,
+        0.12291661538461537,
+        0.128282,
+        0.12122969230769232,
+        0.12451738461538463,
+        0.12201576923076923,
+        0.12430123076923076,
+        0.134822,
+        0.12569123076923078,
+        0.13093430769230768,
+        0.12803053846153845,
+        0.13025123076923076,
+        0.13152969230769232,
+        0.12056123076923077
+      ],
+      "p95_ms": 0.14246584615384614,
+      "participant": "variopinta",
+      "reference_exact": true,
+      "repetition": 2,
+      "role": "control",
+      "route_id": "variopinta.reference",
+      "samples": 39,
+      "size": 1024,
+      "valid": true,
+      "validation": {
+        "c_contiguous": true,
+        "container": "torch.Tensor",
+        "dtype": "uint8",
+        "finite": true,
+        "max": 255.0,
+        "min": 0.0,
+        "shape": [
+          3,
+          1024,
+          1024
+        ]
+      },
+      "variant": "reference",
+      "warmup_calls": 3,
+      "worker": "rust-catalog-2"
+    },
+    {
+      "block_size": 73,
+      "budget_ms": 100.0,
+      "case_id": "catalog.to-torch.default",
+      "case_order": 29,
+      "catalog_policy": "default",
+      "environment": "rust",
+      "environment_position": 1,
       "explanation": {
         "buffers": [
           {
@@ -897,7 +2800,7 @@
           }
         ],
         "fallbacks": [
-          "portable-scalar"
+          "runtime-ssse3-or-portable-scalar"
         ],
         "fusions": [],
         "input": {
@@ -955,7 +2858,7 @@
             "allocation": "owned-chw-output",
             "category": "layout",
             "execution": "terminal",
-            "fallback": "portable-scalar",
+            "fallback": "runtime-ssse3-or-portable-scalar",
             "input_materialization": "borrowed-input",
             "kernel_form": "borrowed-to-owned",
             "name": "ToTorch",
@@ -986,68 +2889,438 @@
         ],
         "unit_specializations": []
       },
-      "images_per_sec": 1503.742438995049,
-      "iterations": 150,
-      "median_ms": 0.6650075,
+      "images_per_sec": 224345.47974590573,
+      "iterations": 511,
+      "median_ms": 0.004457410958904109,
       "observations_ms": [
-        0.6662723333333334,
-        0.6731723333333334,
-        0.676196,
-        0.6712760000000001,
-        0.6749556666666666,
-        0.664686,
-        0.6748726666666666,
-        0.6719893333333333,
-        0.6803856666666667,
-        0.6652193333333333,
-        0.6751223333333334,
-        0.6609856666666667,
-        0.665686,
-        0.6627856666666666,
-        0.6639856666666667,
-        0.6683659999999999,
-        0.6632326666666667,
-        0.6633756666666667,
-        0.661176,
-        0.6701623333333333,
-        0.6609056666666667,
-        0.664916,
-        0.6651056666666667,
-        0.665099,
-        0.665686,
-        0.6617689999999999,
-        0.6680523333333334,
-        0.658446,
-        0.6671526666666666,
-        0.6596623333333334,
-        0.658269,
-        0.6713626666666667,
-        0.658769,
-        0.664539,
-        0.6582323333333333,
-        0.6702859999999999,
-        0.658919,
-        0.6604260000000001,
-        0.6655289999999999,
-        0.7035796666666667,
-        0.6674156666666667,
-        0.6579856666666667,
-        0.6577256666666667,
-        0.6878393333333334,
-        0.6611593333333333,
-        0.660119,
-        0.658339,
-        0.6686756666666667,
-        0.6589456666666667,
-        0.6621056666666667
+        0.004457410958904109,
+        0.004513726027397261,
+        0.004515219178082191,
+        0.0041689178082191785,
+        0.005223164383561644,
+        0.004177958904109589,
+        0.004162082191780821
       ],
-      "p95_ms": 0.6803856666666667,
+      "p95_ms": 0.005223164383561644,
       "participant": "variopinta",
       "reference_exact": true,
-      "repetition": 1,
+      "repetition": 3,
       "role": "public",
       "route_id": "variopinta.compiled",
-      "samples": 50,
+      "samples": 7,
+      "size": 224,
+      "valid": true,
+      "validation": {
+        "c_contiguous": true,
+        "container": "torch.Tensor",
+        "dtype": "uint8",
+        "finite": true,
+        "max": 219.0,
+        "min": 3.0,
+        "shape": [
+          3,
+          224,
+          224
+        ]
+      },
+      "variant": "compiled",
+      "warmup_calls": 3,
+      "worker": "rust-catalog-3"
+    },
+    {
+      "block_size": 73,
+      "budget_ms": 100.0,
+      "case_id": "catalog.to-torch.default",
+      "case_order": 29,
+      "catalog_policy": "default",
+      "environment": "rust",
+      "environment_position": 1,
+      "explanation": {
+        "buffers": [
+          {
+            "condition": "always",
+            "dtype": "uint8",
+            "layout": "HWC",
+            "lifecycle": "borrowed-for-call",
+            "name": "input"
+          },
+          {
+            "condition": "not-required",
+            "dtype": "uint8",
+            "layout": "HWC",
+            "lifecycle": "owned-per-run-workspace-reusable",
+            "name": "working-u8"
+          },
+          {
+            "condition": "always",
+            "dtype": "uint8",
+            "layout": "CHW",
+            "lifecycle": "owned-output",
+            "name": "output-u8"
+          }
+        ],
+        "copies": [
+          {
+            "condition": "non-contiguous-input",
+            "count": "0-or-1",
+            "reason": "normalize-to-contiguous-HWC",
+            "stage": "python-entry"
+          },
+          {
+            "condition": "always-elided",
+            "count": "0",
+            "reason": "establish-owned-working-buffer",
+            "stage": "native-entry"
+          },
+          {
+            "condition": "always",
+            "count": "1",
+            "reason": "HWC-to-contiguous-CHW",
+            "stage": "terminal-layout"
+          },
+          {
+            "condition": "always",
+            "count": "0",
+            "reason": "transfer-Rust-Vec-ownership-to-NumPy-storage",
+            "stage": "python-output"
+          },
+          {
+            "condition": "always",
+            "count": "0",
+            "reason": "share-NumPy-storage-with-Torch",
+            "stage": "torch-adapter"
+          }
+        ],
+        "fallbacks": [
+          "runtime-ssse3-or-portable-scalar"
+        ],
+        "fusions": [],
+        "input": {
+          "channels": "RGB",
+          "container": "borrowed-buffer",
+          "contiguous": true,
+          "dtype": "uint8",
+          "layout": "HWC",
+          "ownership": "caller"
+        },
+        "mode": "compiled",
+        "optimizations": [
+          "input-copy-elision"
+        ],
+        "output": {
+          "channels": "RGB",
+          "container": "Torch CPU Tensor",
+          "contiguous": true,
+          "dtype": "uint8",
+          "layout": "CHW",
+          "ownership": "result"
+        },
+        "output_dtype": "uint8",
+        "output_layout": "CHW",
+        "passes": 1,
+        "pixel_passes": 1,
+        "python_boundary": {
+          "augmentation": "held",
+          "crossings_per_call": 1,
+          "decode": "not-applicable",
+          "delivery": "held-for-Python-output-transfer",
+          "gil": "held-during-augmentation",
+          "gil_stages": {
+            "arguments": "held",
+            "augmentation": "held",
+            "decode": "not-applicable",
+            "delivery": "held-for-Python-output-transfer",
+            "source": "held"
+          },
+          "input": "NumPy HWC RGB uint8",
+          "input_access": "read-only-borrow",
+          "output": "owned contiguous CPU Torch Tensor",
+          "source_acquisition": "held"
+        },
+        "sampling": "native-plan-before-execution",
+        "schema_version": 2,
+        "sink": {
+          "type": "return"
+        },
+        "source": {
+          "type": "array"
+        },
+        "steps": [
+          {
+            "allocation": "owned-chw-output",
+            "category": "layout",
+            "execution": "terminal",
+            "fallback": "runtime-ssse3-or-portable-scalar",
+            "input_materialization": "borrowed-input",
+            "kernel_form": "borrowed-to-owned",
+            "name": "ToTorch",
+            "output_slot": "output-u8-chw",
+            "pixel_passes": 1,
+            "policies": [
+              {
+                "name": "layout",
+                "value": "CHW"
+              },
+              {
+                "name": "dtype",
+                "value": "preserve"
+              },
+              {
+                "name": "device",
+                "value": "cpu"
+              }
+            ],
+            "probability": 1.0,
+            "scratch_slots": [],
+            "selection_reason": "benchmark-policy:elide-entry-copy",
+            "status": "always"
+          }
+        ],
+        "transforms": [
+          "ToTorch"
+        ],
+        "unit_specializations": []
+      },
+      "images_per_sec": 58092.15803613492,
+      "iterations": 511,
+      "median_ms": 0.017214027397260273,
+      "observations_ms": [
+        0.01725267123287671,
+        0.017214027397260273,
+        0.016688013698630134,
+        0.016907739726027396,
+        0.017572397260273973,
+        0.017659232876712328,
+        0.017068835616438356
+      ],
+      "p95_ms": 0.017659232876712328,
+      "participant": "variopinta",
+      "reference_exact": true,
+      "repetition": 3,
+      "role": "public",
+      "route_id": "variopinta.compiled",
+      "samples": 7,
+      "size": 512,
+      "valid": true,
+      "validation": {
+        "c_contiguous": true,
+        "container": "torch.Tensor",
+        "dtype": "uint8",
+        "finite": true,
+        "max": 223.0,
+        "min": 0.0,
+        "shape": [
+          3,
+          512,
+          512
+        ]
+      },
+      "variant": "compiled",
+      "warmup_calls": 3,
+      "worker": "rust-catalog-3"
+    },
+    {
+      "block_size": 14,
+      "budget_ms": 100.0,
+      "case_id": "catalog.to-torch.default",
+      "case_order": 29,
+      "catalog_policy": "default",
+      "environment": "rust",
+      "environment_position": 1,
+      "explanation": {
+        "buffers": [
+          {
+            "condition": "always",
+            "dtype": "uint8",
+            "layout": "HWC",
+            "lifecycle": "borrowed-for-call",
+            "name": "input"
+          },
+          {
+            "condition": "not-required",
+            "dtype": "uint8",
+            "layout": "HWC",
+            "lifecycle": "owned-per-run-workspace-reusable",
+            "name": "working-u8"
+          },
+          {
+            "condition": "always",
+            "dtype": "uint8",
+            "layout": "CHW",
+            "lifecycle": "owned-output",
+            "name": "output-u8"
+          }
+        ],
+        "copies": [
+          {
+            "condition": "non-contiguous-input",
+            "count": "0-or-1",
+            "reason": "normalize-to-contiguous-HWC",
+            "stage": "python-entry"
+          },
+          {
+            "condition": "always-elided",
+            "count": "0",
+            "reason": "establish-owned-working-buffer",
+            "stage": "native-entry"
+          },
+          {
+            "condition": "always",
+            "count": "1",
+            "reason": "HWC-to-contiguous-CHW",
+            "stage": "terminal-layout"
+          },
+          {
+            "condition": "always",
+            "count": "0",
+            "reason": "transfer-Rust-Vec-ownership-to-NumPy-storage",
+            "stage": "python-output"
+          },
+          {
+            "condition": "always",
+            "count": "0",
+            "reason": "share-NumPy-storage-with-Torch",
+            "stage": "torch-adapter"
+          }
+        ],
+        "fallbacks": [
+          "runtime-ssse3-or-portable-scalar"
+        ],
+        "fusions": [],
+        "input": {
+          "channels": "RGB",
+          "container": "borrowed-buffer",
+          "contiguous": true,
+          "dtype": "uint8",
+          "layout": "HWC",
+          "ownership": "caller"
+        },
+        "mode": "compiled",
+        "optimizations": [
+          "input-copy-elision"
+        ],
+        "output": {
+          "channels": "RGB",
+          "container": "Torch CPU Tensor",
+          "contiguous": true,
+          "dtype": "uint8",
+          "layout": "CHW",
+          "ownership": "result"
+        },
+        "output_dtype": "uint8",
+        "output_layout": "CHW",
+        "passes": 1,
+        "pixel_passes": 1,
+        "python_boundary": {
+          "augmentation": "held",
+          "crossings_per_call": 1,
+          "decode": "not-applicable",
+          "delivery": "held-for-Python-output-transfer",
+          "gil": "held-during-augmentation",
+          "gil_stages": {
+            "arguments": "held",
+            "augmentation": "held",
+            "decode": "not-applicable",
+            "delivery": "held-for-Python-output-transfer",
+            "source": "held"
+          },
+          "input": "NumPy HWC RGB uint8",
+          "input_access": "read-only-borrow",
+          "output": "owned contiguous CPU Torch Tensor",
+          "source_acquisition": "held"
+        },
+        "sampling": "native-plan-before-execution",
+        "schema_version": 2,
+        "sink": {
+          "type": "return"
+        },
+        "source": {
+          "type": "array"
+        },
+        "steps": [
+          {
+            "allocation": "owned-chw-output",
+            "category": "layout",
+            "execution": "terminal",
+            "fallback": "runtime-ssse3-or-portable-scalar",
+            "input_materialization": "borrowed-input",
+            "kernel_form": "borrowed-to-owned",
+            "name": "ToTorch",
+            "output_slot": "output-u8-chw",
+            "pixel_passes": 1,
+            "policies": [
+              {
+                "name": "layout",
+                "value": "CHW"
+              },
+              {
+                "name": "dtype",
+                "value": "preserve"
+              },
+              {
+                "name": "device",
+                "value": "cpu"
+              }
+            ],
+            "probability": 1.0,
+            "scratch_slots": [],
+            "selection_reason": "benchmark-policy:elide-entry-copy",
+            "status": "always"
+          }
+        ],
+        "transforms": [
+          "ToTorch"
+        ],
+        "unit_specializations": []
+      },
+      "images_per_sec": 9838.507919998876,
+      "iterations": 504,
+      "median_ms": 0.10164142857142858,
+      "observations_ms": [
+        0.1287555,
+        0.10174178571428572,
+        0.10177178571428572,
+        0.10186964285714285,
+        0.10154107142857142,
+        0.10263828571428571,
+        0.09686249999999999,
+        0.1022425,
+        0.10738114285714286,
+        0.1023425,
+        0.09871892857142858,
+        0.10455392857142856,
+        0.09756614285714285,
+        0.09786964285714285,
+        0.11595971428571429,
+        0.11620614285714286,
+        0.10657757142857142,
+        0.10258892857142857,
+        0.10231607142857144,
+        0.11221828571428571,
+        0.10261678571428572,
+        0.10098114285714287,
+        0.10320821428571428,
+        0.10134614285714286,
+        0.09812821428571429,
+        0.09887107142857143,
+        0.09717107142857143,
+        0.10229892857142857,
+        0.09315392857142857,
+        0.09890178571428572,
+        0.10125892857142857,
+        0.09823321428571428,
+        0.09418035714285714,
+        0.09807678571428571,
+        0.09333392857142857,
+        0.09976107142857142
+      ],
+      "p95_ms": 0.11620614285714286,
+      "participant": "variopinta",
+      "reference_exact": true,
+      "repetition": 3,
+      "role": "public",
+      "route_id": "variopinta.compiled",
+      "samples": 36,
       "size": 1024,
       "valid": true,
       "validation": {
@@ -1055,7 +3328,7 @@
         "container": "torch.Tensor",
         "dtype": "uint8",
         "finite": true,
-        "max": 230.0,
+        "max": 255.0,
         "min": 0.0,
         "shape": [
           3,
@@ -1065,16 +3338,16 @@
       },
       "variant": "compiled",
       "warmup_calls": 3,
-      "worker": "rust-catalog-1"
+      "worker": "rust-catalog-3"
     },
     {
-      "block_size": 56,
+      "block_size": 73,
       "budget_ms": 100.0,
       "case_id": "catalog.to-torch.default",
-      "case_order": 64,
+      "case_order": 30,
       "catalog_policy": "default",
       "environment": "rust",
-      "environment_position": 3,
+      "environment_position": 1,
       "explanation": {
         "buffers": [
           {
@@ -1132,7 +3405,7 @@
           }
         ],
         "fallbacks": [
-          "portable-scalar"
+          "runtime-ssse3-or-portable-scalar"
         ],
         "fusions": [],
         "input": {
@@ -1188,7 +3461,7 @@
             "allocation": "owned-chw-output",
             "category": "layout",
             "execution": "terminal",
-            "fallback": "portable-scalar",
+            "fallback": "runtime-ssse3-or-portable-scalar",
             "input_materialization": "owned-input-copy",
             "kernel_form": "owned-to-owned",
             "name": "ToTorch",
@@ -1219,1783 +3492,218 @@
         ],
         "unit_specializations": []
       },
-      "images_per_sec": 28855.46349861159,
-      "iterations": 504,
-      "median_ms": 0.034655482142857144,
+      "images_per_sec": 168439.12310131037,
+      "iterations": 511,
+      "median_ms": 0.0059368630136986305,
       "observations_ms": [
-        0.03513048214285714,
-        0.03461405357142857,
-        0.03429635714285714,
-        0.03407457142857143,
-        0.034677267857142854,
-        0.034005660714285714,
-        0.034772089285714285,
-        0.035078339285714286,
-        0.034655482142857144
+        0.00619386301369863,
+        0.00597413698630137,
+        0.0059368630136986305,
+        0.006318246575342465,
+        0.005862630136986301,
+        0.005857,
+        0.00584358904109589
       ],
-      "p95_ms": 0.03513048214285714,
+      "p95_ms": 0.006318246575342465,
       "participant": "variopinta",
       "reference_exact": true,
-      "repetition": 1,
+      "repetition": 3,
+      "role": "control",
+      "route_id": "variopinta.reference",
+      "samples": 7,
+      "size": 224,
+      "valid": true,
+      "validation": {
+        "c_contiguous": true,
+        "container": "torch.Tensor",
+        "dtype": "uint8",
+        "finite": true,
+        "max": 219.0,
+        "min": 3.0,
+        "shape": [
+          3,
+          224,
+          224
+        ]
+      },
+      "variant": "reference",
+      "warmup_calls": 3,
+      "worker": "rust-catalog-3"
+    },
+    {
+      "block_size": 54,
+      "budget_ms": 100.0,
+      "case_id": "catalog.to-torch.default",
+      "case_order": 30,
+      "catalog_policy": "default",
+      "environment": "rust",
+      "environment_position": 1,
+      "explanation": {
+        "buffers": [
+          {
+            "condition": "always",
+            "dtype": "uint8",
+            "layout": "HWC",
+            "lifecycle": "borrowed-for-call",
+            "name": "input"
+          },
+          {
+            "condition": "always",
+            "dtype": "uint8",
+            "layout": "HWC",
+            "lifecycle": "owned-per-run-workspace-reusable",
+            "name": "working-u8"
+          },
+          {
+            "condition": "always",
+            "dtype": "uint8",
+            "layout": "CHW",
+            "lifecycle": "owned-output",
+            "name": "output-u8"
+          }
+        ],
+        "copies": [
+          {
+            "condition": "non-contiguous-input",
+            "count": "0-or-1",
+            "reason": "normalize-to-contiguous-HWC",
+            "stage": "python-entry"
+          },
+          {
+            "condition": "always",
+            "count": "1",
+            "reason": "establish-owned-working-buffer",
+            "stage": "native-entry"
+          },
+          {
+            "condition": "always",
+            "count": "1",
+            "reason": "HWC-to-contiguous-CHW",
+            "stage": "terminal-layout"
+          },
+          {
+            "condition": "always",
+            "count": "0",
+            "reason": "transfer-Rust-Vec-ownership-to-NumPy-storage",
+            "stage": "python-output"
+          },
+          {
+            "condition": "always",
+            "count": "0",
+            "reason": "share-NumPy-storage-with-Torch",
+            "stage": "torch-adapter"
+          }
+        ],
+        "fallbacks": [
+          "runtime-ssse3-or-portable-scalar"
+        ],
+        "fusions": [],
+        "input": {
+          "channels": "RGB",
+          "container": "borrowed-buffer",
+          "contiguous": true,
+          "dtype": "uint8",
+          "layout": "HWC",
+          "ownership": "caller"
+        },
+        "mode": "reference",
+        "optimizations": [],
+        "output": {
+          "channels": "RGB",
+          "container": "Torch CPU Tensor",
+          "contiguous": true,
+          "dtype": "uint8",
+          "layout": "CHW",
+          "ownership": "result"
+        },
+        "output_dtype": "uint8",
+        "output_layout": "CHW",
+        "passes": 1,
+        "pixel_passes": 1,
+        "python_boundary": {
+          "augmentation": "held",
+          "crossings_per_call": 1,
+          "decode": "not-applicable",
+          "delivery": "held-for-Python-output-transfer",
+          "gil": "held-during-augmentation",
+          "gil_stages": {
+            "arguments": "held",
+            "augmentation": "held",
+            "decode": "not-applicable",
+            "delivery": "held-for-Python-output-transfer",
+            "source": "held"
+          },
+          "input": "NumPy HWC RGB uint8",
+          "input_access": "read-only-borrow",
+          "output": "owned contiguous CPU Torch Tensor",
+          "source_acquisition": "held"
+        },
+        "sampling": "native-plan-before-execution",
+        "schema_version": 2,
+        "sink": {
+          "type": "return"
+        },
+        "source": {
+          "type": "array"
+        },
+        "steps": [
+          {
+            "allocation": "owned-chw-output",
+            "category": "layout",
+            "execution": "terminal",
+            "fallback": "runtime-ssse3-or-portable-scalar",
+            "input_materialization": "owned-input-copy",
+            "kernel_form": "owned-to-owned",
+            "name": "ToTorch",
+            "output_slot": "output-u8-chw",
+            "pixel_passes": 1,
+            "policies": [
+              {
+                "name": "layout",
+                "value": "CHW"
+              },
+              {
+                "name": "dtype",
+                "value": "preserve"
+              },
+              {
+                "name": "device",
+                "value": "cpu"
+              }
+            ],
+            "probability": 1.0,
+            "scratch_slots": [],
+            "selection_reason": "semantic-legality:owned-to-owned",
+            "status": "always"
+          }
+        ],
+        "transforms": [
+          "ToTorch"
+        ],
+        "unit_specializations": []
+      },
+      "images_per_sec": 35946.655163737014,
+      "iterations": 486,
+      "median_ms": 0.027819,
+      "observations_ms": [
+        0.027819,
+        0.02898990740740741,
+        0.028381037037037034,
+        0.026865462962962966,
+        0.02758362962962963,
+        0.02836085185185185,
+        0.027526222222222223,
+        0.027113796296296296,
+        0.028157685185185185
+      ],
+      "p95_ms": 0.02898990740740741,
+      "participant": "variopinta",
+      "reference_exact": true,
+      "repetition": 3,
       "role": "control",
       "route_id": "variopinta.reference",
       "samples": 9,
-      "size": 224,
-      "valid": true,
-      "validation": {
-        "c_contiguous": true,
-        "container": "torch.Tensor",
-        "dtype": "uint8",
-        "finite": true,
-        "max": 255.0,
-        "min": 0.0,
-        "shape": [
-          3,
-          224,
-          224
-        ]
-      },
-      "variant": "reference",
-      "warmup_calls": 3,
-      "worker": "rust-catalog-1"
-    },
-    {
-      "block_size": 12,
-      "budget_ms": 100.0,
-      "case_id": "catalog.to-torch.default",
-      "case_order": 64,
-      "catalog_policy": "default",
-      "environment": "rust",
-      "environment_position": 3,
-      "explanation": {
-        "buffers": [
-          {
-            "condition": "always",
-            "dtype": "uint8",
-            "layout": "HWC",
-            "lifecycle": "borrowed-for-call",
-            "name": "input"
-          },
-          {
-            "condition": "always",
-            "dtype": "uint8",
-            "layout": "HWC",
-            "lifecycle": "owned-per-run-workspace-reusable",
-            "name": "working-u8"
-          },
-          {
-            "condition": "always",
-            "dtype": "uint8",
-            "layout": "CHW",
-            "lifecycle": "owned-output",
-            "name": "output-u8"
-          }
-        ],
-        "copies": [
-          {
-            "condition": "non-contiguous-input",
-            "count": "0-or-1",
-            "reason": "normalize-to-contiguous-HWC",
-            "stage": "python-entry"
-          },
-          {
-            "condition": "always",
-            "count": "1",
-            "reason": "establish-owned-working-buffer",
-            "stage": "native-entry"
-          },
-          {
-            "condition": "always",
-            "count": "1",
-            "reason": "HWC-to-contiguous-CHW",
-            "stage": "terminal-layout"
-          },
-          {
-            "condition": "always",
-            "count": "0",
-            "reason": "transfer-Rust-Vec-ownership-to-NumPy-storage",
-            "stage": "python-output"
-          },
-          {
-            "condition": "always",
-            "count": "0",
-            "reason": "share-NumPy-storage-with-Torch",
-            "stage": "torch-adapter"
-          }
-        ],
-        "fallbacks": [
-          "portable-scalar"
-        ],
-        "fusions": [],
-        "input": {
-          "channels": "RGB",
-          "container": "borrowed-buffer",
-          "contiguous": true,
-          "dtype": "uint8",
-          "layout": "HWC",
-          "ownership": "caller"
-        },
-        "mode": "reference",
-        "optimizations": [],
-        "output": {
-          "channels": "RGB",
-          "container": "Torch CPU Tensor",
-          "contiguous": true,
-          "dtype": "uint8",
-          "layout": "CHW",
-          "ownership": "result"
-        },
-        "output_dtype": "uint8",
-        "output_layout": "CHW",
-        "passes": 1,
-        "pixel_passes": 1,
-        "python_boundary": {
-          "augmentation": "held",
-          "crossings_per_call": 1,
-          "decode": "not-applicable",
-          "delivery": "held-for-Python-output-transfer",
-          "gil": "held-during-augmentation",
-          "gil_stages": {
-            "arguments": "held",
-            "augmentation": "held",
-            "decode": "not-applicable",
-            "delivery": "held-for-Python-output-transfer",
-            "source": "held"
-          },
-          "input": "NumPy HWC RGB uint8",
-          "input_access": "read-only-borrow",
-          "output": "owned contiguous CPU Torch Tensor",
-          "source_acquisition": "held"
-        },
-        "sampling": "native-plan-before-execution",
-        "schema_version": 2,
-        "sink": {
-          "type": "return"
-        },
-        "source": {
-          "type": "array"
-        },
-        "steps": [
-          {
-            "allocation": "owned-chw-output",
-            "category": "layout",
-            "execution": "terminal",
-            "fallback": "portable-scalar",
-            "input_materialization": "owned-input-copy",
-            "kernel_form": "owned-to-owned",
-            "name": "ToTorch",
-            "output_slot": "output-u8-chw",
-            "pixel_passes": 1,
-            "policies": [
-              {
-                "name": "layout",
-                "value": "CHW"
-              },
-              {
-                "name": "dtype",
-                "value": "preserve"
-              },
-              {
-                "name": "device",
-                "value": "cpu"
-              }
-            ],
-            "probability": 1.0,
-            "scratch_slots": [],
-            "selection_reason": "semantic-legality:owned-to-owned",
-            "status": "always"
-          }
-        ],
-        "transforms": [
-          "ToTorch"
-        ],
-        "unit_specializations": []
-      },
-      "images_per_sec": 5595.82998749332,
-      "iterations": 504,
-      "median_ms": 0.1787045,
-      "observations_ms": [
-        0.17881491666666668,
-        0.17899733333333334,
-        0.17834741666666667,
-        0.17986741666666664,
-        0.17710316666666667,
-        0.17876158333333333,
-        0.1788499166666667,
-        0.17916825,
-        0.1768615,
-        0.17790908333333333,
-        0.18005908333333334,
-        0.18700408333333332,
-        0.17864741666666664,
-        0.17844733333333332,
-        0.18286408333333334,
-        0.17764408333333334,
-        0.17695399999999997,
-        0.17700158333333335,
-        0.18093241666666668,
-        0.17881991666666666,
-        0.17877908333333334,
-        0.177839,
-        0.17846408333333333,
-        0.17761658333333333,
-        0.17590399999999998,
-        0.17989408333333334,
-        0.18216074999999998,
-        0.17944491666666665,
-        0.17718241666666668,
-        0.17814566666666667,
-        0.17720325,
-        0.17827983333333333,
-        0.17786658333333336,
-        0.17898325,
-        0.17893316666666667,
-        0.17693075,
-        0.1787715,
-        0.17629741666666665,
-        0.17878491666666665,
-        0.18009575,
-        0.17887324999999998,
-        0.17673566666666665
-      ],
-      "p95_ms": 0.18216074999999998,
-      "participant": "variopinta",
-      "reference_exact": true,
-      "repetition": 1,
-      "role": "control",
-      "route_id": "variopinta.reference",
-      "samples": 42,
       "size": 512,
-      "valid": true,
-      "validation": {
-        "c_contiguous": true,
-        "container": "torch.Tensor",
-        "dtype": "uint8",
-        "finite": true,
-        "max": 255.0,
-        "min": 0.0,
-        "shape": [
-          3,
-          512,
-          512
-        ]
-      },
-      "variant": "reference",
-      "warmup_calls": 3,
-      "worker": "rust-catalog-1"
-    },
-    {
-      "block_size": 3,
-      "budget_ms": 100.0,
-      "case_id": "catalog.to-torch.default",
-      "case_order": 64,
-      "catalog_policy": "default",
-      "environment": "rust",
-      "environment_position": 3,
-      "explanation": {
-        "buffers": [
-          {
-            "condition": "always",
-            "dtype": "uint8",
-            "layout": "HWC",
-            "lifecycle": "borrowed-for-call",
-            "name": "input"
-          },
-          {
-            "condition": "always",
-            "dtype": "uint8",
-            "layout": "HWC",
-            "lifecycle": "owned-per-run-workspace-reusable",
-            "name": "working-u8"
-          },
-          {
-            "condition": "always",
-            "dtype": "uint8",
-            "layout": "CHW",
-            "lifecycle": "owned-output",
-            "name": "output-u8"
-          }
-        ],
-        "copies": [
-          {
-            "condition": "non-contiguous-input",
-            "count": "0-or-1",
-            "reason": "normalize-to-contiguous-HWC",
-            "stage": "python-entry"
-          },
-          {
-            "condition": "always",
-            "count": "1",
-            "reason": "establish-owned-working-buffer",
-            "stage": "native-entry"
-          },
-          {
-            "condition": "always",
-            "count": "1",
-            "reason": "HWC-to-contiguous-CHW",
-            "stage": "terminal-layout"
-          },
-          {
-            "condition": "always",
-            "count": "0",
-            "reason": "transfer-Rust-Vec-ownership-to-NumPy-storage",
-            "stage": "python-output"
-          },
-          {
-            "condition": "always",
-            "count": "0",
-            "reason": "share-NumPy-storage-with-Torch",
-            "stage": "torch-adapter"
-          }
-        ],
-        "fallbacks": [
-          "portable-scalar"
-        ],
-        "fusions": [],
-        "input": {
-          "channels": "RGB",
-          "container": "borrowed-buffer",
-          "contiguous": true,
-          "dtype": "uint8",
-          "layout": "HWC",
-          "ownership": "caller"
-        },
-        "mode": "reference",
-        "optimizations": [],
-        "output": {
-          "channels": "RGB",
-          "container": "Torch CPU Tensor",
-          "contiguous": true,
-          "dtype": "uint8",
-          "layout": "CHW",
-          "ownership": "result"
-        },
-        "output_dtype": "uint8",
-        "output_layout": "CHW",
-        "passes": 1,
-        "pixel_passes": 1,
-        "python_boundary": {
-          "augmentation": "held",
-          "crossings_per_call": 1,
-          "decode": "not-applicable",
-          "delivery": "held-for-Python-output-transfer",
-          "gil": "held-during-augmentation",
-          "gil_stages": {
-            "arguments": "held",
-            "augmentation": "held",
-            "decode": "not-applicable",
-            "delivery": "held-for-Python-output-transfer",
-            "source": "held"
-          },
-          "input": "NumPy HWC RGB uint8",
-          "input_access": "read-only-borrow",
-          "output": "owned contiguous CPU Torch Tensor",
-          "source_acquisition": "held"
-        },
-        "sampling": "native-plan-before-execution",
-        "schema_version": 2,
-        "sink": {
-          "type": "return"
-        },
-        "source": {
-          "type": "array"
-        },
-        "steps": [
-          {
-            "allocation": "owned-chw-output",
-            "category": "layout",
-            "execution": "terminal",
-            "fallback": "portable-scalar",
-            "input_materialization": "owned-input-copy",
-            "kernel_form": "owned-to-owned",
-            "name": "ToTorch",
-            "output_slot": "output-u8-chw",
-            "pixel_passes": 1,
-            "policies": [
-              {
-                "name": "layout",
-                "value": "CHW"
-              },
-              {
-                "name": "dtype",
-                "value": "preserve"
-              },
-              {
-                "name": "device",
-                "value": "cpu"
-              }
-            ],
-            "probability": 1.0,
-            "scratch_slots": [],
-            "selection_reason": "semantic-legality:owned-to-owned",
-            "status": "always"
-          }
-        ],
-        "transforms": [
-          "ToTorch"
-        ],
-        "unit_specializations": []
-      },
-      "images_per_sec": 1395.486438662789,
-      "iterations": 141,
-      "median_ms": 0.716596,
-      "observations_ms": [
-        0.718613,
-        0.7797166666666667,
-        0.7440066666666666,
-        0.7332833333333334,
-        0.7215696666666668,
-        0.7204929999999999,
-        0.7159793333333333,
-        0.719253,
-        0.7129026666666666,
-        0.7257030000000001,
-        0.7061463333333333,
-        0.721063,
-        0.708873,
-        0.7300796666666667,
-        0.7133363333333334,
-        0.7200726666666667,
-        0.710283,
-        0.727913,
-        0.7108126666666666,
-        0.713223,
-        0.7092626666666666,
-        0.709603,
-        0.714603,
-        0.7028963333333333,
-        0.7365096666666666,
-        0.7083430000000001,
-        0.7146659999999999,
-        0.7094463333333333,
-        0.7145526666666666,
-        0.7109663333333334,
-        0.7239963333333334,
-        0.716596,
-        0.7247499999999999,
-        0.720593,
-        0.7133863333333333,
-        0.7229760000000001,
-        0.712033,
-        0.7256063333333334,
-        0.7150826666666666,
-        0.7222396666666667,
-        0.7145963333333333,
-        0.7197463333333333,
-        0.7068293333333333,
-        0.7204896666666666,
-        0.72137,
-        0.7119960000000001,
-        0.7205663333333333
-      ],
-      "p95_ms": 0.7365096666666666,
-      "participant": "variopinta",
-      "reference_exact": true,
-      "repetition": 1,
-      "role": "control",
-      "route_id": "variopinta.reference",
-      "samples": 47,
-      "size": 1024,
-      "valid": true,
-      "validation": {
-        "c_contiguous": true,
-        "container": "torch.Tensor",
-        "dtype": "uint8",
-        "finite": true,
-        "max": 242.0,
-        "min": 12.0,
-        "shape": [
-          3,
-          1024,
-          1024
-        ]
-      },
-      "variant": "reference",
-      "warmup_calls": 3,
-      "worker": "rust-catalog-1"
-    },
-    {
-      "block_size": 62,
-      "budget_ms": 100.0,
-      "case_id": "catalog.to-torch.default",
-      "case_order": 62,
-      "catalog_policy": "default",
-      "environment": "rust",
-      "environment_position": 2,
-      "explanation": {
-        "buffers": [
-          {
-            "condition": "always",
-            "dtype": "uint8",
-            "layout": "HWC",
-            "lifecycle": "borrowed-for-call",
-            "name": "input"
-          },
-          {
-            "condition": "not-required",
-            "dtype": "uint8",
-            "layout": "HWC",
-            "lifecycle": "owned-per-run-workspace-reusable",
-            "name": "working-u8"
-          },
-          {
-            "condition": "always",
-            "dtype": "uint8",
-            "layout": "CHW",
-            "lifecycle": "owned-output",
-            "name": "output-u8"
-          }
-        ],
-        "copies": [
-          {
-            "condition": "non-contiguous-input",
-            "count": "0-or-1",
-            "reason": "normalize-to-contiguous-HWC",
-            "stage": "python-entry"
-          },
-          {
-            "condition": "always-elided",
-            "count": "0",
-            "reason": "establish-owned-working-buffer",
-            "stage": "native-entry"
-          },
-          {
-            "condition": "always",
-            "count": "1",
-            "reason": "HWC-to-contiguous-CHW",
-            "stage": "terminal-layout"
-          },
-          {
-            "condition": "always",
-            "count": "0",
-            "reason": "transfer-Rust-Vec-ownership-to-NumPy-storage",
-            "stage": "python-output"
-          },
-          {
-            "condition": "always",
-            "count": "0",
-            "reason": "share-NumPy-storage-with-Torch",
-            "stage": "torch-adapter"
-          }
-        ],
-        "fallbacks": [
-          "portable-scalar"
-        ],
-        "fusions": [],
-        "input": {
-          "channels": "RGB",
-          "container": "borrowed-buffer",
-          "contiguous": true,
-          "dtype": "uint8",
-          "layout": "HWC",
-          "ownership": "caller"
-        },
-        "mode": "compiled",
-        "optimizations": [
-          "input-copy-elision"
-        ],
-        "output": {
-          "channels": "RGB",
-          "container": "Torch CPU Tensor",
-          "contiguous": true,
-          "dtype": "uint8",
-          "layout": "CHW",
-          "ownership": "result"
-        },
-        "output_dtype": "uint8",
-        "output_layout": "CHW",
-        "passes": 1,
-        "pixel_passes": 1,
-        "python_boundary": {
-          "augmentation": "held",
-          "crossings_per_call": 1,
-          "decode": "not-applicable",
-          "delivery": "held-for-Python-output-transfer",
-          "gil": "held-during-augmentation",
-          "gil_stages": {
-            "arguments": "held",
-            "augmentation": "held",
-            "decode": "not-applicable",
-            "delivery": "held-for-Python-output-transfer",
-            "source": "held"
-          },
-          "input": "NumPy HWC RGB uint8",
-          "input_access": "read-only-borrow",
-          "output": "owned contiguous CPU Torch Tensor",
-          "source_acquisition": "held"
-        },
-        "sampling": "native-plan-before-execution",
-        "schema_version": 2,
-        "sink": {
-          "type": "return"
-        },
-        "source": {
-          "type": "array"
-        },
-        "steps": [
-          {
-            "allocation": "owned-chw-output",
-            "category": "layout",
-            "execution": "terminal",
-            "fallback": "portable-scalar",
-            "input_materialization": "borrowed-input",
-            "kernel_form": "borrowed-to-owned",
-            "name": "ToTorch",
-            "output_slot": "output-u8-chw",
-            "pixel_passes": 1,
-            "policies": [
-              {
-                "name": "layout",
-                "value": "CHW"
-              },
-              {
-                "name": "dtype",
-                "value": "preserve"
-              },
-              {
-                "name": "device",
-                "value": "cpu"
-              }
-            ],
-            "probability": 1.0,
-            "scratch_slots": [],
-            "selection_reason": "benchmark-policy:elide-entry-copy",
-            "status": "always"
-          }
-        ],
-        "transforms": [
-          "ToTorch"
-        ],
-        "unit_specializations": []
-      },
-      "images_per_sec": 30751.489525273882,
-      "iterations": 496,
-      "median_ms": 0.03251875,
-      "observations_ms": [
-        0.03378867741935484,
-        0.032456403225806445,
-        0.03245462903225806,
-        0.03264125806451613,
-        0.03249640322580645,
-        0.03254109677419355,
-        0.032632370967741936,
-        0.03229962903225807
-      ],
-      "p95_ms": 0.03378867741935484,
-      "participant": "variopinta",
-      "reference_exact": true,
-      "repetition": 2,
-      "role": "public",
-      "route_id": "variopinta.compiled",
-      "samples": 8,
-      "size": 224,
-      "valid": true,
-      "validation": {
-        "c_contiguous": true,
-        "container": "torch.Tensor",
-        "dtype": "uint8",
-        "finite": true,
-        "max": 255.0,
-        "min": 0.0,
-        "shape": [
-          3,
-          224,
-          224
-        ]
-      },
-      "variant": "compiled",
-      "warmup_calls": 3,
-      "worker": "rust-catalog-2"
-    },
-    {
-      "block_size": 11,
-      "budget_ms": 100.0,
-      "case_id": "catalog.to-torch.default",
-      "case_order": 62,
-      "catalog_policy": "default",
-      "environment": "rust",
-      "environment_position": 2,
-      "explanation": {
-        "buffers": [
-          {
-            "condition": "always",
-            "dtype": "uint8",
-            "layout": "HWC",
-            "lifecycle": "borrowed-for-call",
-            "name": "input"
-          },
-          {
-            "condition": "not-required",
-            "dtype": "uint8",
-            "layout": "HWC",
-            "lifecycle": "owned-per-run-workspace-reusable",
-            "name": "working-u8"
-          },
-          {
-            "condition": "always",
-            "dtype": "uint8",
-            "layout": "CHW",
-            "lifecycle": "owned-output",
-            "name": "output-u8"
-          }
-        ],
-        "copies": [
-          {
-            "condition": "non-contiguous-input",
-            "count": "0-or-1",
-            "reason": "normalize-to-contiguous-HWC",
-            "stage": "python-entry"
-          },
-          {
-            "condition": "always-elided",
-            "count": "0",
-            "reason": "establish-owned-working-buffer",
-            "stage": "native-entry"
-          },
-          {
-            "condition": "always",
-            "count": "1",
-            "reason": "HWC-to-contiguous-CHW",
-            "stage": "terminal-layout"
-          },
-          {
-            "condition": "always",
-            "count": "0",
-            "reason": "transfer-Rust-Vec-ownership-to-NumPy-storage",
-            "stage": "python-output"
-          },
-          {
-            "condition": "always",
-            "count": "0",
-            "reason": "share-NumPy-storage-with-Torch",
-            "stage": "torch-adapter"
-          }
-        ],
-        "fallbacks": [
-          "portable-scalar"
-        ],
-        "fusions": [],
-        "input": {
-          "channels": "RGB",
-          "container": "borrowed-buffer",
-          "contiguous": true,
-          "dtype": "uint8",
-          "layout": "HWC",
-          "ownership": "caller"
-        },
-        "mode": "compiled",
-        "optimizations": [
-          "input-copy-elision"
-        ],
-        "output": {
-          "channels": "RGB",
-          "container": "Torch CPU Tensor",
-          "contiguous": true,
-          "dtype": "uint8",
-          "layout": "CHW",
-          "ownership": "result"
-        },
-        "output_dtype": "uint8",
-        "output_layout": "CHW",
-        "passes": 1,
-        "pixel_passes": 1,
-        "python_boundary": {
-          "augmentation": "held",
-          "crossings_per_call": 1,
-          "decode": "not-applicable",
-          "delivery": "held-for-Python-output-transfer",
-          "gil": "held-during-augmentation",
-          "gil_stages": {
-            "arguments": "held",
-            "augmentation": "held",
-            "decode": "not-applicable",
-            "delivery": "held-for-Python-output-transfer",
-            "source": "held"
-          },
-          "input": "NumPy HWC RGB uint8",
-          "input_access": "read-only-borrow",
-          "output": "owned contiguous CPU Torch Tensor",
-          "source_acquisition": "held"
-        },
-        "sampling": "native-plan-before-execution",
-        "schema_version": 2,
-        "sink": {
-          "type": "return"
-        },
-        "source": {
-          "type": "array"
-        },
-        "steps": [
-          {
-            "allocation": "owned-chw-output",
-            "category": "layout",
-            "execution": "terminal",
-            "fallback": "portable-scalar",
-            "input_materialization": "borrowed-input",
-            "kernel_form": "borrowed-to-owned",
-            "name": "ToTorch",
-            "output_slot": "output-u8-chw",
-            "pixel_passes": 1,
-            "policies": [
-              {
-                "name": "layout",
-                "value": "CHW"
-              },
-              {
-                "name": "dtype",
-                "value": "preserve"
-              },
-              {
-                "name": "device",
-                "value": "cpu"
-              }
-            ],
-            "probability": 1.0,
-            "scratch_slots": [],
-            "selection_reason": "benchmark-policy:elide-entry-copy",
-            "status": "always"
-          }
-        ],
-        "transforms": [
-          "ToTorch"
-        ],
-        "unit_specializations": []
-      },
-      "images_per_sec": 5933.596047793498,
-      "iterations": 506,
-      "median_ms": 0.16853186363636363,
-      "observations_ms": [
-        0.16823509090909092,
-        0.16974872727272727,
-        0.16933236363636364,
-        0.17530145454545454,
-        0.166656,
-        0.1705579090909091,
-        0.16778327272727273,
-        0.1700278181818182,
-        0.16683227272727275,
-        0.16821963636363638,
-        0.1665369090909091,
-        0.17274963636363638,
-        0.16727781818181817,
-        0.16659327272727273,
-        0.1684378181818182,
-        0.17094872727272728,
-        0.1705478181818182,
-        0.16675054545454546,
-        0.16855418181818183,
-        0.16942781818181818,
-        0.17059781818181818,
-        0.16948781818181818,
-        0.16770054545454546,
-        0.168736,
-        0.16830963636363638,
-        0.1711378181818182,
-        0.16980236363636364,
-        0.16624872727272727,
-        0.16850954545454544,
-        0.1681978181818182,
-        0.1685641818181818,
-        0.16829427272727274,
-        0.16649590909090908,
-        0.16955236363636364,
-        0.17098236363636363,
-        0.1679887272727273,
-        0.16886145454545454,
-        0.16973236363636365,
-        0.17007972727272727,
-        0.16827054545454545,
-        0.16638136363636363,
-        0.16695136363636365,
-        0.16635863636363635,
-        0.1688579090909091,
-        0.17239872727272726,
-        0.16715781818181819
-      ],
-      "p95_ms": 0.17239872727272726,
-      "participant": "variopinta",
-      "reference_exact": true,
-      "repetition": 2,
-      "role": "public",
-      "route_id": "variopinta.compiled",
-      "samples": 46,
-      "size": 512,
-      "valid": true,
-      "validation": {
-        "c_contiguous": true,
-        "container": "torch.Tensor",
-        "dtype": "uint8",
-        "finite": true,
-        "max": 255.0,
-        "min": 0.0,
-        "shape": [
-          3,
-          512,
-          512
-        ]
-      },
-      "variant": "compiled",
-      "warmup_calls": 3,
-      "worker": "rust-catalog-2"
-    },
-    {
-      "block_size": 3,
-      "budget_ms": 100.0,
-      "case_id": "catalog.to-torch.default",
-      "case_order": 62,
-      "catalog_policy": "default",
-      "environment": "rust",
-      "environment_position": 2,
-      "explanation": {
-        "buffers": [
-          {
-            "condition": "always",
-            "dtype": "uint8",
-            "layout": "HWC",
-            "lifecycle": "borrowed-for-call",
-            "name": "input"
-          },
-          {
-            "condition": "not-required",
-            "dtype": "uint8",
-            "layout": "HWC",
-            "lifecycle": "owned-per-run-workspace-reusable",
-            "name": "working-u8"
-          },
-          {
-            "condition": "always",
-            "dtype": "uint8",
-            "layout": "CHW",
-            "lifecycle": "owned-output",
-            "name": "output-u8"
-          }
-        ],
-        "copies": [
-          {
-            "condition": "non-contiguous-input",
-            "count": "0-or-1",
-            "reason": "normalize-to-contiguous-HWC",
-            "stage": "python-entry"
-          },
-          {
-            "condition": "always-elided",
-            "count": "0",
-            "reason": "establish-owned-working-buffer",
-            "stage": "native-entry"
-          },
-          {
-            "condition": "always",
-            "count": "1",
-            "reason": "HWC-to-contiguous-CHW",
-            "stage": "terminal-layout"
-          },
-          {
-            "condition": "always",
-            "count": "0",
-            "reason": "transfer-Rust-Vec-ownership-to-NumPy-storage",
-            "stage": "python-output"
-          },
-          {
-            "condition": "always",
-            "count": "0",
-            "reason": "share-NumPy-storage-with-Torch",
-            "stage": "torch-adapter"
-          }
-        ],
-        "fallbacks": [
-          "portable-scalar"
-        ],
-        "fusions": [],
-        "input": {
-          "channels": "RGB",
-          "container": "borrowed-buffer",
-          "contiguous": true,
-          "dtype": "uint8",
-          "layout": "HWC",
-          "ownership": "caller"
-        },
-        "mode": "compiled",
-        "optimizations": [
-          "input-copy-elision"
-        ],
-        "output": {
-          "channels": "RGB",
-          "container": "Torch CPU Tensor",
-          "contiguous": true,
-          "dtype": "uint8",
-          "layout": "CHW",
-          "ownership": "result"
-        },
-        "output_dtype": "uint8",
-        "output_layout": "CHW",
-        "passes": 1,
-        "pixel_passes": 1,
-        "python_boundary": {
-          "augmentation": "held",
-          "crossings_per_call": 1,
-          "decode": "not-applicable",
-          "delivery": "held-for-Python-output-transfer",
-          "gil": "held-during-augmentation",
-          "gil_stages": {
-            "arguments": "held",
-            "augmentation": "held",
-            "decode": "not-applicable",
-            "delivery": "held-for-Python-output-transfer",
-            "source": "held"
-          },
-          "input": "NumPy HWC RGB uint8",
-          "input_access": "read-only-borrow",
-          "output": "owned contiguous CPU Torch Tensor",
-          "source_acquisition": "held"
-        },
-        "sampling": "native-plan-before-execution",
-        "schema_version": 2,
-        "sink": {
-          "type": "return"
-        },
-        "source": {
-          "type": "array"
-        },
-        "steps": [
-          {
-            "allocation": "owned-chw-output",
-            "category": "layout",
-            "execution": "terminal",
-            "fallback": "portable-scalar",
-            "input_materialization": "borrowed-input",
-            "kernel_form": "borrowed-to-owned",
-            "name": "ToTorch",
-            "output_slot": "output-u8-chw",
-            "pixel_passes": 1,
-            "policies": [
-              {
-                "name": "layout",
-                "value": "CHW"
-              },
-              {
-                "name": "dtype",
-                "value": "preserve"
-              },
-              {
-                "name": "device",
-                "value": "cpu"
-              }
-            ],
-            "probability": 1.0,
-            "scratch_slots": [],
-            "selection_reason": "benchmark-policy:elide-entry-copy",
-            "status": "always"
-          }
-        ],
-        "transforms": [
-          "ToTorch"
-        ],
-        "unit_specializations": []
-      },
-      "images_per_sec": 1372.674803272823,
-      "iterations": 138,
-      "median_ms": 0.7285046666666666,
-      "observations_ms": [
-        0.718486,
-        0.7513863333333334,
-        0.7437996666666667,
-        0.736393,
-        0.7341963333333333,
-        0.7397166666666667,
-        0.737113,
-        0.731426,
-        0.7283063333333333,
-        0.7284196666666666,
-        0.733533,
-        0.728923,
-        0.718246,
-        0.7308896666666667,
-        0.7179493333333333,
-        0.7330966666666666,
-        0.7199226666666667,
-        0.7462996666666667,
-        0.7131426666666667,
-        0.729886,
-        0.7285896666666667,
-        0.7333630000000001,
-        0.7140430000000001,
-        0.7331863333333333,
-        0.7214526666666666,
-        0.732333,
-        0.719303,
-        0.7280496666666667,
-        0.7229993333333334,
-        0.7405563333333333,
-        0.7236563333333333,
-        0.7262496666666666,
-        0.725326,
-        0.7231363333333333,
-        0.727163,
-        0.7275593333333333,
-        0.7176130000000001,
-        0.7417596666666667,
-        0.7236263333333333,
-        0.7340663333333333,
-        0.7219793333333334,
-        0.729153,
-        0.718203,
-        0.7304463333333334,
-        0.7133126666666666,
-        0.748453
-      ],
-      "p95_ms": 0.7462996666666667,
-      "participant": "variopinta",
-      "reference_exact": true,
-      "repetition": 2,
-      "role": "public",
-      "route_id": "variopinta.compiled",
-      "samples": 46,
-      "size": 1024,
-      "valid": true,
-      "validation": {
-        "c_contiguous": true,
-        "container": "torch.Tensor",
-        "dtype": "uint8",
-        "finite": true,
-        "max": 255.0,
-        "min": 0.0,
-        "shape": [
-          3,
-          1024,
-          1024
-        ]
-      },
-      "variant": "compiled",
-      "warmup_calls": 3,
-      "worker": "rust-catalog-2"
-    },
-    {
-      "block_size": 58,
-      "budget_ms": 100.0,
-      "case_id": "catalog.to-torch.default",
-      "case_order": 63,
-      "catalog_policy": "default",
-      "environment": "rust",
-      "environment_position": 2,
-      "explanation": {
-        "buffers": [
-          {
-            "condition": "always",
-            "dtype": "uint8",
-            "layout": "HWC",
-            "lifecycle": "borrowed-for-call",
-            "name": "input"
-          },
-          {
-            "condition": "always",
-            "dtype": "uint8",
-            "layout": "HWC",
-            "lifecycle": "owned-per-run-workspace-reusable",
-            "name": "working-u8"
-          },
-          {
-            "condition": "always",
-            "dtype": "uint8",
-            "layout": "CHW",
-            "lifecycle": "owned-output",
-            "name": "output-u8"
-          }
-        ],
-        "copies": [
-          {
-            "condition": "non-contiguous-input",
-            "count": "0-or-1",
-            "reason": "normalize-to-contiguous-HWC",
-            "stage": "python-entry"
-          },
-          {
-            "condition": "always",
-            "count": "1",
-            "reason": "establish-owned-working-buffer",
-            "stage": "native-entry"
-          },
-          {
-            "condition": "always",
-            "count": "1",
-            "reason": "HWC-to-contiguous-CHW",
-            "stage": "terminal-layout"
-          },
-          {
-            "condition": "always",
-            "count": "0",
-            "reason": "transfer-Rust-Vec-ownership-to-NumPy-storage",
-            "stage": "python-output"
-          },
-          {
-            "condition": "always",
-            "count": "0",
-            "reason": "share-NumPy-storage-with-Torch",
-            "stage": "torch-adapter"
-          }
-        ],
-        "fallbacks": [
-          "portable-scalar"
-        ],
-        "fusions": [],
-        "input": {
-          "channels": "RGB",
-          "container": "borrowed-buffer",
-          "contiguous": true,
-          "dtype": "uint8",
-          "layout": "HWC",
-          "ownership": "caller"
-        },
-        "mode": "reference",
-        "optimizations": [],
-        "output": {
-          "channels": "RGB",
-          "container": "Torch CPU Tensor",
-          "contiguous": true,
-          "dtype": "uint8",
-          "layout": "CHW",
-          "ownership": "result"
-        },
-        "output_dtype": "uint8",
-        "output_layout": "CHW",
-        "passes": 1,
-        "pixel_passes": 1,
-        "python_boundary": {
-          "augmentation": "held",
-          "crossings_per_call": 1,
-          "decode": "not-applicable",
-          "delivery": "held-for-Python-output-transfer",
-          "gil": "held-during-augmentation",
-          "gil_stages": {
-            "arguments": "held",
-            "augmentation": "held",
-            "decode": "not-applicable",
-            "delivery": "held-for-Python-output-transfer",
-            "source": "held"
-          },
-          "input": "NumPy HWC RGB uint8",
-          "input_access": "read-only-borrow",
-          "output": "owned contiguous CPU Torch Tensor",
-          "source_acquisition": "held"
-        },
-        "sampling": "native-plan-before-execution",
-        "schema_version": 2,
-        "sink": {
-          "type": "return"
-        },
-        "source": {
-          "type": "array"
-        },
-        "steps": [
-          {
-            "allocation": "owned-chw-output",
-            "category": "layout",
-            "execution": "terminal",
-            "fallback": "portable-scalar",
-            "input_materialization": "owned-input-copy",
-            "kernel_form": "owned-to-owned",
-            "name": "ToTorch",
-            "output_slot": "output-u8-chw",
-            "pixel_passes": 1,
-            "policies": [
-              {
-                "name": "layout",
-                "value": "CHW"
-              },
-              {
-                "name": "dtype",
-                "value": "preserve"
-              },
-              {
-                "name": "device",
-                "value": "cpu"
-              }
-            ],
-            "probability": 1.0,
-            "scratch_slots": [],
-            "selection_reason": "semantic-legality:owned-to-owned",
-            "status": "always"
-          }
-        ],
-        "transforms": [
-          "ToTorch"
-        ],
-        "unit_specializations": []
-      },
-      "images_per_sec": 29118.263828539617,
-      "iterations": 464,
-      "median_ms": 0.03434270689655172,
-      "observations_ms": [
-        0.03504701724137931,
-        0.03438943103448276,
-        0.03428770689655172,
-        0.03429598275862069,
-        0.035420655172413794,
-        0.034058741379310344,
-        0.034693913793103444,
-        0.034187879310344824
-      ],
-      "p95_ms": 0.035420655172413794,
-      "participant": "variopinta",
-      "reference_exact": true,
-      "repetition": 2,
-      "role": "control",
-      "route_id": "variopinta.reference",
-      "samples": 8,
-      "size": 224,
-      "valid": true,
-      "validation": {
-        "c_contiguous": true,
-        "container": "torch.Tensor",
-        "dtype": "uint8",
-        "finite": true,
-        "max": 255.0,
-        "min": 0.0,
-        "shape": [
-          3,
-          224,
-          224
-        ]
-      },
-      "variant": "reference",
-      "warmup_calls": 3,
-      "worker": "rust-catalog-2"
-    },
-    {
-      "block_size": 11,
-      "budget_ms": 100.0,
-      "case_id": "catalog.to-torch.default",
-      "case_order": 63,
-      "catalog_policy": "default",
-      "environment": "rust",
-      "environment_position": 2,
-      "explanation": {
-        "buffers": [
-          {
-            "condition": "always",
-            "dtype": "uint8",
-            "layout": "HWC",
-            "lifecycle": "borrowed-for-call",
-            "name": "input"
-          },
-          {
-            "condition": "always",
-            "dtype": "uint8",
-            "layout": "HWC",
-            "lifecycle": "owned-per-run-workspace-reusable",
-            "name": "working-u8"
-          },
-          {
-            "condition": "always",
-            "dtype": "uint8",
-            "layout": "CHW",
-            "lifecycle": "owned-output",
-            "name": "output-u8"
-          }
-        ],
-        "copies": [
-          {
-            "condition": "non-contiguous-input",
-            "count": "0-or-1",
-            "reason": "normalize-to-contiguous-HWC",
-            "stage": "python-entry"
-          },
-          {
-            "condition": "always",
-            "count": "1",
-            "reason": "establish-owned-working-buffer",
-            "stage": "native-entry"
-          },
-          {
-            "condition": "always",
-            "count": "1",
-            "reason": "HWC-to-contiguous-CHW",
-            "stage": "terminal-layout"
-          },
-          {
-            "condition": "always",
-            "count": "0",
-            "reason": "transfer-Rust-Vec-ownership-to-NumPy-storage",
-            "stage": "python-output"
-          },
-          {
-            "condition": "always",
-            "count": "0",
-            "reason": "share-NumPy-storage-with-Torch",
-            "stage": "torch-adapter"
-          }
-        ],
-        "fallbacks": [
-          "portable-scalar"
-        ],
-        "fusions": [],
-        "input": {
-          "channels": "RGB",
-          "container": "borrowed-buffer",
-          "contiguous": true,
-          "dtype": "uint8",
-          "layout": "HWC",
-          "ownership": "caller"
-        },
-        "mode": "reference",
-        "optimizations": [],
-        "output": {
-          "channels": "RGB",
-          "container": "Torch CPU Tensor",
-          "contiguous": true,
-          "dtype": "uint8",
-          "layout": "CHW",
-          "ownership": "result"
-        },
-        "output_dtype": "uint8",
-        "output_layout": "CHW",
-        "passes": 1,
-        "pixel_passes": 1,
-        "python_boundary": {
-          "augmentation": "held",
-          "crossings_per_call": 1,
-          "decode": "not-applicable",
-          "delivery": "held-for-Python-output-transfer",
-          "gil": "held-during-augmentation",
-          "gil_stages": {
-            "arguments": "held",
-            "augmentation": "held",
-            "decode": "not-applicable",
-            "delivery": "held-for-Python-output-transfer",
-            "source": "held"
-          },
-          "input": "NumPy HWC RGB uint8",
-          "input_access": "read-only-borrow",
-          "output": "owned contiguous CPU Torch Tensor",
-          "source_acquisition": "held"
-        },
-        "sampling": "native-plan-before-execution",
-        "schema_version": 2,
-        "sink": {
-          "type": "return"
-        },
-        "source": {
-          "type": "array"
-        },
-        "steps": [
-          {
-            "allocation": "owned-chw-output",
-            "category": "layout",
-            "execution": "terminal",
-            "fallback": "portable-scalar",
-            "input_materialization": "owned-input-copy",
-            "kernel_form": "owned-to-owned",
-            "name": "ToTorch",
-            "output_slot": "output-u8-chw",
-            "pixel_passes": 1,
-            "policies": [
-              {
-                "name": "layout",
-                "value": "CHW"
-              },
-              {
-                "name": "dtype",
-                "value": "preserve"
-              },
-              {
-                "name": "device",
-                "value": "cpu"
-              }
-            ],
-            "probability": 1.0,
-            "scratch_slots": [],
-            "selection_reason": "semantic-legality:owned-to-owned",
-            "status": "always"
-          }
-        ],
-        "transforms": [
-          "ToTorch"
-        ],
-        "unit_specializations": []
-      },
-      "images_per_sec": 5495.309753125707,
-      "iterations": 506,
-      "median_ms": 0.18197336363636363,
-      "observations_ms": [
-        0.18613254545454544,
-        0.18238054545454546,
-        0.18153427272727274,
-        0.18224072727272728,
-        0.18364154545454545,
-        0.18387436363636364,
-        0.18518518181818183,
-        0.182637,
-        0.1821779090909091,
-        0.181848,
-        0.18079699999999999,
-        0.18575527272727274,
-        0.18113972727272729,
-        0.18142427272727274,
-        0.18837245454545454,
-        0.1793479090909091,
-        0.1858298181818182,
-        0.179267,
-        0.18262345454545456,
-        0.18074236363636365,
-        0.18351981818181817,
-        0.18045063636363637,
-        0.18654527272727275,
-        0.17991245454545454,
-        0.18226245454545456,
-        0.1815597272727273,
-        0.18072518181818184,
-        0.182057,
-        0.18448709090909093,
-        0.18303427272727274,
-        0.18121518181818183,
-        0.17932154545454546,
-        0.19047163636363634,
-        0.179397,
-        0.18268245454545456,
-        0.17950163636363636,
-        0.18188972727272726,
-        0.1835879090909091,
-        0.18032154545454546,
-        0.18019154545454547,
-        0.18422981818181816,
-        0.18119336363636365,
-        0.1797251818181818,
-        0.178656,
-        0.18244154545454547,
-        0.17927800000000002
-      ],
-      "p95_ms": 0.18654527272727275,
-      "participant": "variopinta",
-      "reference_exact": true,
-      "repetition": 2,
-      "role": "control",
-      "route_id": "variopinta.reference",
-      "samples": 46,
-      "size": 512,
-      "valid": true,
-      "validation": {
-        "c_contiguous": true,
-        "container": "torch.Tensor",
-        "dtype": "uint8",
-        "finite": true,
-        "max": 255.0,
-        "min": 0.0,
-        "shape": [
-          3,
-          512,
-          512
-        ]
-      },
-      "variant": "reference",
-      "warmup_calls": 3,
-      "worker": "rust-catalog-2"
-    },
-    {
-      "block_size": 3,
-      "budget_ms": 100.0,
-      "case_id": "catalog.to-torch.default",
-      "case_order": 63,
-      "catalog_policy": "default",
-      "environment": "rust",
-      "environment_position": 2,
-      "explanation": {
-        "buffers": [
-          {
-            "condition": "always",
-            "dtype": "uint8",
-            "layout": "HWC",
-            "lifecycle": "borrowed-for-call",
-            "name": "input"
-          },
-          {
-            "condition": "always",
-            "dtype": "uint8",
-            "layout": "HWC",
-            "lifecycle": "owned-per-run-workspace-reusable",
-            "name": "working-u8"
-          },
-          {
-            "condition": "always",
-            "dtype": "uint8",
-            "layout": "CHW",
-            "lifecycle": "owned-output",
-            "name": "output-u8"
-          }
-        ],
-        "copies": [
-          {
-            "condition": "non-contiguous-input",
-            "count": "0-or-1",
-            "reason": "normalize-to-contiguous-HWC",
-            "stage": "python-entry"
-          },
-          {
-            "condition": "always",
-            "count": "1",
-            "reason": "establish-owned-working-buffer",
-            "stage": "native-entry"
-          },
-          {
-            "condition": "always",
-            "count": "1",
-            "reason": "HWC-to-contiguous-CHW",
-            "stage": "terminal-layout"
-          },
-          {
-            "condition": "always",
-            "count": "0",
-            "reason": "transfer-Rust-Vec-ownership-to-NumPy-storage",
-            "stage": "python-output"
-          },
-          {
-            "condition": "always",
-            "count": "0",
-            "reason": "share-NumPy-storage-with-Torch",
-            "stage": "torch-adapter"
-          }
-        ],
-        "fallbacks": [
-          "portable-scalar"
-        ],
-        "fusions": [],
-        "input": {
-          "channels": "RGB",
-          "container": "borrowed-buffer",
-          "contiguous": true,
-          "dtype": "uint8",
-          "layout": "HWC",
-          "ownership": "caller"
-        },
-        "mode": "reference",
-        "optimizations": [],
-        "output": {
-          "channels": "RGB",
-          "container": "Torch CPU Tensor",
-          "contiguous": true,
-          "dtype": "uint8",
-          "layout": "CHW",
-          "ownership": "result"
-        },
-        "output_dtype": "uint8",
-        "output_layout": "CHW",
-        "passes": 1,
-        "pixel_passes": 1,
-        "python_boundary": {
-          "augmentation": "held",
-          "crossings_per_call": 1,
-          "decode": "not-applicable",
-          "delivery": "held-for-Python-output-transfer",
-          "gil": "held-during-augmentation",
-          "gil_stages": {
-            "arguments": "held",
-            "augmentation": "held",
-            "decode": "not-applicable",
-            "delivery": "held-for-Python-output-transfer",
-            "source": "held"
-          },
-          "input": "NumPy HWC RGB uint8",
-          "input_access": "read-only-borrow",
-          "output": "owned contiguous CPU Torch Tensor",
-          "source_acquisition": "held"
-        },
-        "sampling": "native-plan-before-execution",
-        "schema_version": 2,
-        "sink": {
-          "type": "return"
-        },
-        "source": {
-          "type": "array"
-        },
-        "steps": [
-          {
-            "allocation": "owned-chw-output",
-            "category": "layout",
-            "execution": "terminal",
-            "fallback": "portable-scalar",
-            "input_materialization": "owned-input-copy",
-            "kernel_form": "owned-to-owned",
-            "name": "ToTorch",
-            "output_slot": "output-u8-chw",
-            "pixel_passes": 1,
-            "policies": [
-              {
-                "name": "layout",
-                "value": "CHW"
-              },
-              {
-                "name": "dtype",
-                "value": "preserve"
-              },
-              {
-                "name": "device",
-                "value": "cpu"
-              }
-            ],
-            "probability": 1.0,
-            "scratch_slots": [],
-            "selection_reason": "semantic-legality:owned-to-owned",
-            "status": "always"
-          }
-        ],
-        "transforms": [
-          "ToTorch"
-        ],
-        "unit_specializations": []
-      },
-      "images_per_sec": 1265.7341300145222,
-      "iterations": 126,
-      "median_ms": 0.7900553333333333,
-      "observations_ms": [
-        0.8222269999999999,
-        0.8508073333333334,
-        0.8371406666666666,
-        0.7961703333333333,
-        0.8528373333333333,
-        0.79304,
-        0.8197203333333333,
-        0.79306,
-        0.8079633333333334,
-        0.7883766666666667,
-        0.8047103333333333,
-        0.7829136666666666,
-        0.7856966666666666,
-        0.7697696666666666,
-        0.8051336666666667,
-        0.7665266666666667,
-        0.7985869999999999,
-        0.7810933333333333,
-        0.7859966666666667,
-        0.7874966666666667,
-        0.791687,
-        0.7729266666666667,
-        0.79068,
-        0.7760233333333333,
-        0.801517,
-        0.76611,
-        0.808287,
-        0.7759466666666667,
-        0.7770396666666667,
-        0.7854800000000001,
-        0.7851236666666667,
-        0.7707933333333333,
-        0.7916503333333332,
-        0.7789363333333333,
-        0.7937703333333334,
-        0.832417,
-        0.7901236666666667,
-        0.7760133333333333,
-        0.8128833333333333,
-        0.7878366666666667,
-        0.789987,
-        0.7715133333333334
-      ],
-      "p95_ms": 0.8371406666666666,
-      "participant": "variopinta",
-      "reference_exact": true,
-      "repetition": 2,
-      "role": "control",
-      "route_id": "variopinta.reference",
-      "samples": 42,
-      "size": 1024,
       "valid": true,
       "validation": {
         "c_contiguous": true,
@@ -3006,204 +3714,11 @@
         "min": 0.0,
         "shape": [
           3,
-          1024,
-          1024
+          512,
+          512
         ]
       },
       "variant": "reference",
-      "warmup_calls": 3,
-      "worker": "rust-catalog-2"
-    },
-    {
-      "block_size": 62,
-      "budget_ms": 100.0,
-      "case_id": "catalog.to-torch.default",
-      "case_order": 61,
-      "catalog_policy": "default",
-      "environment": "rust",
-      "environment_position": 1,
-      "explanation": {
-        "buffers": [
-          {
-            "condition": "always",
-            "dtype": "uint8",
-            "layout": "HWC",
-            "lifecycle": "borrowed-for-call",
-            "name": "input"
-          },
-          {
-            "condition": "not-required",
-            "dtype": "uint8",
-            "layout": "HWC",
-            "lifecycle": "owned-per-run-workspace-reusable",
-            "name": "working-u8"
-          },
-          {
-            "condition": "always",
-            "dtype": "uint8",
-            "layout": "CHW",
-            "lifecycle": "owned-output",
-            "name": "output-u8"
-          }
-        ],
-        "copies": [
-          {
-            "condition": "non-contiguous-input",
-            "count": "0-or-1",
-            "reason": "normalize-to-contiguous-HWC",
-            "stage": "python-entry"
-          },
-          {
-            "condition": "always-elided",
-            "count": "0",
-            "reason": "establish-owned-working-buffer",
-            "stage": "native-entry"
-          },
-          {
-            "condition": "always",
-            "count": "1",
-            "reason": "HWC-to-contiguous-CHW",
-            "stage": "terminal-layout"
-          },
-          {
-            "condition": "always",
-            "count": "0",
-            "reason": "transfer-Rust-Vec-ownership-to-NumPy-storage",
-            "stage": "python-output"
-          },
-          {
-            "condition": "always",
-            "count": "0",
-            "reason": "share-NumPy-storage-with-Torch",
-            "stage": "torch-adapter"
-          }
-        ],
-        "fallbacks": [
-          "portable-scalar"
-        ],
-        "fusions": [],
-        "input": {
-          "channels": "RGB",
-          "container": "borrowed-buffer",
-          "contiguous": true,
-          "dtype": "uint8",
-          "layout": "HWC",
-          "ownership": "caller"
-        },
-        "mode": "compiled",
-        "optimizations": [
-          "input-copy-elision"
-        ],
-        "output": {
-          "channels": "RGB",
-          "container": "Torch CPU Tensor",
-          "contiguous": true,
-          "dtype": "uint8",
-          "layout": "CHW",
-          "ownership": "result"
-        },
-        "output_dtype": "uint8",
-        "output_layout": "CHW",
-        "passes": 1,
-        "pixel_passes": 1,
-        "python_boundary": {
-          "augmentation": "held",
-          "crossings_per_call": 1,
-          "decode": "not-applicable",
-          "delivery": "held-for-Python-output-transfer",
-          "gil": "held-during-augmentation",
-          "gil_stages": {
-            "arguments": "held",
-            "augmentation": "held",
-            "decode": "not-applicable",
-            "delivery": "held-for-Python-output-transfer",
-            "source": "held"
-          },
-          "input": "NumPy HWC RGB uint8",
-          "input_access": "read-only-borrow",
-          "output": "owned contiguous CPU Torch Tensor",
-          "source_acquisition": "held"
-        },
-        "sampling": "native-plan-before-execution",
-        "schema_version": 2,
-        "sink": {
-          "type": "return"
-        },
-        "source": {
-          "type": "array"
-        },
-        "steps": [
-          {
-            "allocation": "owned-chw-output",
-            "category": "layout",
-            "execution": "terminal",
-            "fallback": "portable-scalar",
-            "input_materialization": "borrowed-input",
-            "kernel_form": "borrowed-to-owned",
-            "name": "ToTorch",
-            "output_slot": "output-u8-chw",
-            "pixel_passes": 1,
-            "policies": [
-              {
-                "name": "layout",
-                "value": "CHW"
-              },
-              {
-                "name": "dtype",
-                "value": "preserve"
-              },
-              {
-                "name": "device",
-                "value": "cpu"
-              }
-            ],
-            "probability": 1.0,
-            "scratch_slots": [],
-            "selection_reason": "benchmark-policy:elide-entry-copy",
-            "status": "always"
-          }
-        ],
-        "transforms": [
-          "ToTorch"
-        ],
-        "unit_specializations": []
-      },
-      "images_per_sec": 30737.7607937878,
-      "iterations": 496,
-      "median_ms": 0.03253327419354839,
-      "observations_ms": [
-        0.03265511290322581,
-        0.032541580645161286,
-        0.03233204838709677,
-        0.03294996774193549,
-        0.032394306451612905,
-        0.03252496774193548,
-        0.032423016129032256,
-        0.03257158064516129
-      ],
-      "p95_ms": 0.03294996774193549,
-      "participant": "variopinta",
-      "reference_exact": true,
-      "repetition": 3,
-      "role": "public",
-      "route_id": "variopinta.compiled",
-      "samples": 8,
-      "size": 224,
-      "valid": true,
-      "validation": {
-        "c_contiguous": true,
-        "container": "torch.Tensor",
-        "dtype": "uint8",
-        "finite": true,
-        "max": 255.0,
-        "min": 0.0,
-        "shape": [
-          3,
-          224,
-          224
-        ]
-      },
-      "variant": "compiled",
       "warmup_calls": 3,
       "worker": "rust-catalog-3"
     },
@@ -3211,7 +3726,7 @@
       "block_size": 11,
       "budget_ms": 100.0,
       "case_id": "catalog.to-torch.default",
-      "case_order": 61,
+      "case_order": 30,
       "catalog_policy": "default",
       "environment": "rust",
       "environment_position": 1,
@@ -3225,7 +3740,7 @@
             "name": "input"
           },
           {
-            "condition": "not-required",
+            "condition": "always",
             "dtype": "uint8",
             "layout": "HWC",
             "lifecycle": "owned-per-run-workspace-reusable",
@@ -3247,8 +3762,8 @@
             "stage": "python-entry"
           },
           {
-            "condition": "always-elided",
-            "count": "0",
+            "condition": "always",
+            "count": "1",
             "reason": "establish-owned-working-buffer",
             "stage": "native-entry"
           },
@@ -3272,7 +3787,7 @@
           }
         ],
         "fallbacks": [
-          "portable-scalar"
+          "runtime-ssse3-or-portable-scalar"
         ],
         "fusions": [],
         "input": {
@@ -3283,10 +3798,8 @@
           "layout": "HWC",
           "ownership": "caller"
         },
-        "mode": "compiled",
-        "optimizations": [
-          "input-copy-elision"
-        ],
+        "mode": "reference",
+        "optimizations": [],
         "output": {
           "channels": "RGB",
           "container": "Torch CPU Tensor",
@@ -3330,9 +3843,9 @@
             "allocation": "owned-chw-output",
             "category": "layout",
             "execution": "terminal",
-            "fallback": "portable-scalar",
-            "input_materialization": "borrowed-input",
-            "kernel_form": "borrowed-to-owned",
+            "fallback": "runtime-ssse3-or-portable-scalar",
+            "input_materialization": "owned-input-copy",
+            "kernel_form": "owned-to-owned",
             "name": "ToTorch",
             "output_slot": "output-u8-chw",
             "pixel_passes": 1,
@@ -3352,7 +3865,7 @@
             ],
             "probability": 1.0,
             "scratch_slots": [],
-            "selection_reason": "benchmark-policy:elide-entry-copy",
+            "selection_reason": "semantic-legality:owned-to-owned",
             "status": "always"
           }
         ],
@@ -3361,299 +3874,64 @@
         ],
         "unit_specializations": []
       },
-      "images_per_sec": 5938.768061953228,
+      "images_per_sec": 7952.113816436295,
       "iterations": 506,
-      "median_ms": 0.1683850909090909,
+      "median_ms": 0.1257527272727273,
       "observations_ms": [
-        0.17116145454545453,
-        0.16767872727272726,
-        0.17104336363636363,
-        0.17012781818181819,
-        0.1698187272727273,
-        0.17326063636363637,
-        0.17075154545454543,
-        0.17145154545454544,
-        0.167396,
-        0.16903327272727273,
-        0.16847781818181817,
-        0.170216,
-        0.1672569090909091,
-        0.16784509090909092,
-        0.17063054545454545,
-        0.169897,
-        0.17039054545454546,
-        0.16813236363636364,
-        0.168636,
-        0.16975145454545457,
-        0.17033154545454546,
-        0.16992063636363636,
-        0.16807690909090908,
-        0.16734963636363637,
-        0.17098963636363637,
-        0.1676050909090909,
-        0.17062963636363637,
-        0.16721963636363635,
-        0.16604327272727273,
-        0.168096,
-        0.16982972727272727,
-        0.16699863636363638,
-        0.1670331818181818,
-        0.16701145454545455,
-        0.16829236363636363,
-        0.16735972727272727,
-        0.16784418181818184,
-        0.16718054545454544,
-        0.1662059090909091,
-        0.16855054545454545,
-        0.1679551818181818,
-        0.16896236363636363,
-        0.16642327272727273,
-        0.16567863636363636,
-        0.1689779090909091,
-        0.1661959090909091
+        0.1631388181818182,
+        0.15481063636363637,
+        0.145156,
+        0.13683136363636364,
+        0.1343340909090909,
+        0.13232690909090908,
+        0.12154409090909092,
+        0.1255040909090909,
+        0.121055,
+        0.12121772727272728,
+        0.127576,
+        0.12246672727272728,
+        0.12711863636363635,
+        0.12473227272727273,
+        0.12313045454545456,
+        0.11901136363636365,
+        0.12591236363636363,
+        0.12363945454545454,
+        0.13379054545454544,
+        0.13340045454545454,
+        0.12534681818181817,
+        0.12429327272727274,
+        0.12580863636363637,
+        0.12373409090909092,
+        0.12663136363636365,
+        0.12133863636363636,
+        0.12488136363636365,
+        0.12112954545454545,
+        0.11997227272727273,
+        0.12571227272727273,
+        0.12220227272727273,
+        0.12963954545454545,
+        0.12134590909090909,
+        0.12750045454545453,
+        0.12579318181818183,
+        0.126126,
+        0.1343931818181818,
+        0.12526318181818183,
+        0.1205069090909091,
+        0.1290559090909091,
+        0.12084136363636365,
+        0.120944,
+        0.12834045454545454,
+        0.13257327272727273,
+        0.12788227272727273,
+        0.12963963636363637
       ],
-      "p95_ms": 0.17116145454545453,
+      "p95_ms": 0.145156,
       "participant": "variopinta",
       "reference_exact": true,
       "repetition": 3,
-      "role": "public",
-      "route_id": "variopinta.compiled",
+      "role": "control",
+      "route_id": "variopinta.reference",
       "samples": 46,
-      "size": 512,
-      "valid": true,
-      "validation": {
-        "c_contiguous": true,
-        "container": "torch.Tensor",
-        "dtype": "uint8",
-        "finite": true,
-        "max": 255.0,
-        "min": 0.0,
-        "shape": [
-          3,
-          512,
-          512
-        ]
-      },
-      "variant": "compiled",
-      "warmup_calls": 3,
-      "worker": "rust-catalog-3"
-    },
-    {
-      "block_size": 3,
-      "budget_ms": 100.0,
-      "case_id": "catalog.to-torch.default",
-      "case_order": 61,
-      "catalog_policy": "default",
-      "environment": "rust",
-      "environment_position": 1,
-      "explanation": {
-        "buffers": [
-          {
-            "condition": "always",
-            "dtype": "uint8",
-            "layout": "HWC",
-            "lifecycle": "borrowed-for-call",
-            "name": "input"
-          },
-          {
-            "condition": "not-required",
-            "dtype": "uint8",
-            "layout": "HWC",
-            "lifecycle": "owned-per-run-workspace-reusable",
-            "name": "working-u8"
-          },
-          {
-            "condition": "always",
-            "dtype": "uint8",
-            "layout": "CHW",
-            "lifecycle": "owned-output",
-            "name": "output-u8"
-          }
-        ],
-        "copies": [
-          {
-            "condition": "non-contiguous-input",
-            "count": "0-or-1",
-            "reason": "normalize-to-contiguous-HWC",
-            "stage": "python-entry"
-          },
-          {
-            "condition": "always-elided",
-            "count": "0",
-            "reason": "establish-owned-working-buffer",
-            "stage": "native-entry"
-          },
-          {
-            "condition": "always",
-            "count": "1",
-            "reason": "HWC-to-contiguous-CHW",
-            "stage": "terminal-layout"
-          },
-          {
-            "condition": "always",
-            "count": "0",
-            "reason": "transfer-Rust-Vec-ownership-to-NumPy-storage",
-            "stage": "python-output"
-          },
-          {
-            "condition": "always",
-            "count": "0",
-            "reason": "share-NumPy-storage-with-Torch",
-            "stage": "torch-adapter"
-          }
-        ],
-        "fallbacks": [
-          "portable-scalar"
-        ],
-        "fusions": [],
-        "input": {
-          "channels": "RGB",
-          "container": "borrowed-buffer",
-          "contiguous": true,
-          "dtype": "uint8",
-          "layout": "HWC",
-          "ownership": "caller"
-        },
-        "mode": "compiled",
-        "optimizations": [
-          "input-copy-elision"
-        ],
-        "output": {
-          "channels": "RGB",
-          "container": "Torch CPU Tensor",
-          "contiguous": true,
-          "dtype": "uint8",
-          "layout": "CHW",
-          "ownership": "result"
-        },
-        "output_dtype": "uint8",
-        "output_layout": "CHW",
-        "passes": 1,
-        "pixel_passes": 1,
-        "python_boundary": {
-          "augmentation": "held",
-          "crossings_per_call": 1,
-          "decode": "not-applicable",
-          "delivery": "held-for-Python-output-transfer",
-          "gil": "held-during-augmentation",
-          "gil_stages": {
-            "arguments": "held",
-            "augmentation": "held",
-            "decode": "not-applicable",
-            "delivery": "held-for-Python-output-transfer",
-            "source": "held"
-          },
-          "input": "NumPy HWC RGB uint8",
-          "input_access": "read-only-borrow",
-          "output": "owned contiguous CPU Torch Tensor",
-          "source_acquisition": "held"
-        },
-        "sampling": "native-plan-before-execution",
-        "schema_version": 2,
-        "sink": {
-          "type": "return"
-        },
-        "source": {
-          "type": "array"
-        },
-        "steps": [
-          {
-            "allocation": "owned-chw-output",
-            "category": "layout",
-            "execution": "terminal",
-            "fallback": "portable-scalar",
-            "input_materialization": "borrowed-input",
-            "kernel_form": "borrowed-to-owned",
-            "name": "ToTorch",
-            "output_slot": "output-u8-chw",
-            "pixel_passes": 1,
-            "policies": [
-              {
-                "name": "layout",
-                "value": "CHW"
-              },
-              {
-                "name": "dtype",
-                "value": "preserve"
-              },
-              {
-                "name": "device",
-                "value": "cpu"
-              }
-            ],
-            "probability": 1.0,
-            "scratch_slots": [],
-            "selection_reason": "benchmark-policy:elide-entry-copy",
-            "status": "always"
-          }
-        ],
-        "transforms": [
-          "ToTorch"
-        ],
-        "unit_specializations": []
-      },
-      "images_per_sec": 1479.3384497075472,
-      "iterations": 150,
-      "median_ms": 0.6759778333333333,
-      "observations_ms": [
-        0.6976526666666666,
-        0.6880793333333334,
-        0.6979259999999999,
-        0.6917126666666666,
-        0.6971093333333332,
-        0.683386,
-        0.6912093333333332,
-        0.6817456666666667,
-        0.6986796666666667,
-        0.6842723333333334,
-        0.703763,
-        0.680476,
-        0.689129,
-        0.6759263333333334,
-        0.6745126666666666,
-        0.6744723333333332,
-        0.6865226666666667,
-        0.6683793333333333,
-        0.6764756666666667,
-        0.6717426666666667,
-        0.676899,
-        0.6732893333333334,
-        0.6749956666666667,
-        0.670166,
-        0.6788026666666668,
-        0.6741623333333333,
-        0.678616,
-        0.668346,
-        0.6757926666666667,
-        0.6751923333333334,
-        0.6727726666666666,
-        0.669889,
-        0.6857993333333333,
-        0.6743493333333334,
-        0.6768256666666667,
-        0.6725993333333333,
-        0.6757326666666666,
-        0.668679,
-        0.682986,
-        0.666706,
-        0.6823393333333333,
-        0.667369,
-        0.6842426666666667,
-        0.6686826666666666,
-        0.6757523333333334,
-        0.6734926666666667,
-        0.6733656666666666,
-        0.6733626666666667,
-        0.6766556666666667,
-        0.6760293333333333
-      ],
-      "p95_ms": 0.6979259999999999,
-      "participant": "variopinta",
-      "reference_exact": true,
-      "repetition": 3,
-      "role": "public",
-      "route_id": "variopinta.compiled",
-      "samples": 50,
       "size": 1024,
       "valid": true,
       "validation": {
@@ -3661,651 +3939,7 @@
         "container": "torch.Tensor",
         "dtype": "uint8",
         "finite": true,
-        "max": 230.0,
-        "min": 0.0,
-        "shape": [
-          3,
-          1024,
-          1024
-        ]
-      },
-      "variant": "compiled",
-      "warmup_calls": 3,
-      "worker": "rust-catalog-3"
-    },
-    {
-      "block_size": 58,
-      "budget_ms": 100.0,
-      "case_id": "catalog.to-torch.default",
-      "case_order": 62,
-      "catalog_policy": "default",
-      "environment": "rust",
-      "environment_position": 1,
-      "explanation": {
-        "buffers": [
-          {
-            "condition": "always",
-            "dtype": "uint8",
-            "layout": "HWC",
-            "lifecycle": "borrowed-for-call",
-            "name": "input"
-          },
-          {
-            "condition": "always",
-            "dtype": "uint8",
-            "layout": "HWC",
-            "lifecycle": "owned-per-run-workspace-reusable",
-            "name": "working-u8"
-          },
-          {
-            "condition": "always",
-            "dtype": "uint8",
-            "layout": "CHW",
-            "lifecycle": "owned-output",
-            "name": "output-u8"
-          }
-        ],
-        "copies": [
-          {
-            "condition": "non-contiguous-input",
-            "count": "0-or-1",
-            "reason": "normalize-to-contiguous-HWC",
-            "stage": "python-entry"
-          },
-          {
-            "condition": "always",
-            "count": "1",
-            "reason": "establish-owned-working-buffer",
-            "stage": "native-entry"
-          },
-          {
-            "condition": "always",
-            "count": "1",
-            "reason": "HWC-to-contiguous-CHW",
-            "stage": "terminal-layout"
-          },
-          {
-            "condition": "always",
-            "count": "0",
-            "reason": "transfer-Rust-Vec-ownership-to-NumPy-storage",
-            "stage": "python-output"
-          },
-          {
-            "condition": "always",
-            "count": "0",
-            "reason": "share-NumPy-storage-with-Torch",
-            "stage": "torch-adapter"
-          }
-        ],
-        "fallbacks": [
-          "portable-scalar"
-        ],
-        "fusions": [],
-        "input": {
-          "channels": "RGB",
-          "container": "borrowed-buffer",
-          "contiguous": true,
-          "dtype": "uint8",
-          "layout": "HWC",
-          "ownership": "caller"
-        },
-        "mode": "reference",
-        "optimizations": [],
-        "output": {
-          "channels": "RGB",
-          "container": "Torch CPU Tensor",
-          "contiguous": true,
-          "dtype": "uint8",
-          "layout": "CHW",
-          "ownership": "result"
-        },
-        "output_dtype": "uint8",
-        "output_layout": "CHW",
-        "passes": 1,
-        "pixel_passes": 1,
-        "python_boundary": {
-          "augmentation": "held",
-          "crossings_per_call": 1,
-          "decode": "not-applicable",
-          "delivery": "held-for-Python-output-transfer",
-          "gil": "held-during-augmentation",
-          "gil_stages": {
-            "arguments": "held",
-            "augmentation": "held",
-            "decode": "not-applicable",
-            "delivery": "held-for-Python-output-transfer",
-            "source": "held"
-          },
-          "input": "NumPy HWC RGB uint8",
-          "input_access": "read-only-borrow",
-          "output": "owned contiguous CPU Torch Tensor",
-          "source_acquisition": "held"
-        },
-        "sampling": "native-plan-before-execution",
-        "schema_version": 2,
-        "sink": {
-          "type": "return"
-        },
-        "source": {
-          "type": "array"
-        },
-        "steps": [
-          {
-            "allocation": "owned-chw-output",
-            "category": "layout",
-            "execution": "terminal",
-            "fallback": "portable-scalar",
-            "input_materialization": "owned-input-copy",
-            "kernel_form": "owned-to-owned",
-            "name": "ToTorch",
-            "output_slot": "output-u8-chw",
-            "pixel_passes": 1,
-            "policies": [
-              {
-                "name": "layout",
-                "value": "CHW"
-              },
-              {
-                "name": "dtype",
-                "value": "preserve"
-              },
-              {
-                "name": "device",
-                "value": "cpu"
-              }
-            ],
-            "probability": 1.0,
-            "scratch_slots": [],
-            "selection_reason": "semantic-legality:owned-to-owned",
-            "status": "always"
-          }
-        ],
-        "transforms": [
-          "ToTorch"
-        ],
-        "unit_specializations": []
-      },
-      "images_per_sec": 29129.524430379683,
-      "iterations": 464,
-      "median_ms": 0.03432943103448276,
-      "observations_ms": [
-        0.034059258620689654,
-        0.03493358620689655,
-        0.03405943103448276,
-        0.03460477586206897,
-        0.03394201724137931,
-        0.03459943103448276,
-        0.03402822413793104,
-        0.035331172413793105
-      ],
-      "p95_ms": 0.035331172413793105,
-      "participant": "variopinta",
-      "reference_exact": true,
-      "repetition": 3,
-      "role": "control",
-      "route_id": "variopinta.reference",
-      "samples": 8,
-      "size": 224,
-      "valid": true,
-      "validation": {
-        "c_contiguous": true,
-        "container": "torch.Tensor",
-        "dtype": "uint8",
-        "finite": true,
         "max": 255.0,
-        "min": 0.0,
-        "shape": [
-          3,
-          224,
-          224
-        ]
-      },
-      "variant": "reference",
-      "warmup_calls": 3,
-      "worker": "rust-catalog-3"
-    },
-    {
-      "block_size": 12,
-      "budget_ms": 100.0,
-      "case_id": "catalog.to-torch.default",
-      "case_order": 62,
-      "catalog_policy": "default",
-      "environment": "rust",
-      "environment_position": 1,
-      "explanation": {
-        "buffers": [
-          {
-            "condition": "always",
-            "dtype": "uint8",
-            "layout": "HWC",
-            "lifecycle": "borrowed-for-call",
-            "name": "input"
-          },
-          {
-            "condition": "always",
-            "dtype": "uint8",
-            "layout": "HWC",
-            "lifecycle": "owned-per-run-workspace-reusable",
-            "name": "working-u8"
-          },
-          {
-            "condition": "always",
-            "dtype": "uint8",
-            "layout": "CHW",
-            "lifecycle": "owned-output",
-            "name": "output-u8"
-          }
-        ],
-        "copies": [
-          {
-            "condition": "non-contiguous-input",
-            "count": "0-or-1",
-            "reason": "normalize-to-contiguous-HWC",
-            "stage": "python-entry"
-          },
-          {
-            "condition": "always",
-            "count": "1",
-            "reason": "establish-owned-working-buffer",
-            "stage": "native-entry"
-          },
-          {
-            "condition": "always",
-            "count": "1",
-            "reason": "HWC-to-contiguous-CHW",
-            "stage": "terminal-layout"
-          },
-          {
-            "condition": "always",
-            "count": "0",
-            "reason": "transfer-Rust-Vec-ownership-to-NumPy-storage",
-            "stage": "python-output"
-          },
-          {
-            "condition": "always",
-            "count": "0",
-            "reason": "share-NumPy-storage-with-Torch",
-            "stage": "torch-adapter"
-          }
-        ],
-        "fallbacks": [
-          "portable-scalar"
-        ],
-        "fusions": [],
-        "input": {
-          "channels": "RGB",
-          "container": "borrowed-buffer",
-          "contiguous": true,
-          "dtype": "uint8",
-          "layout": "HWC",
-          "ownership": "caller"
-        },
-        "mode": "reference",
-        "optimizations": [],
-        "output": {
-          "channels": "RGB",
-          "container": "Torch CPU Tensor",
-          "contiguous": true,
-          "dtype": "uint8",
-          "layout": "CHW",
-          "ownership": "result"
-        },
-        "output_dtype": "uint8",
-        "output_layout": "CHW",
-        "passes": 1,
-        "pixel_passes": 1,
-        "python_boundary": {
-          "augmentation": "held",
-          "crossings_per_call": 1,
-          "decode": "not-applicable",
-          "delivery": "held-for-Python-output-transfer",
-          "gil": "held-during-augmentation",
-          "gil_stages": {
-            "arguments": "held",
-            "augmentation": "held",
-            "decode": "not-applicable",
-            "delivery": "held-for-Python-output-transfer",
-            "source": "held"
-          },
-          "input": "NumPy HWC RGB uint8",
-          "input_access": "read-only-borrow",
-          "output": "owned contiguous CPU Torch Tensor",
-          "source_acquisition": "held"
-        },
-        "sampling": "native-plan-before-execution",
-        "schema_version": 2,
-        "sink": {
-          "type": "return"
-        },
-        "source": {
-          "type": "array"
-        },
-        "steps": [
-          {
-            "allocation": "owned-chw-output",
-            "category": "layout",
-            "execution": "terminal",
-            "fallback": "portable-scalar",
-            "input_materialization": "owned-input-copy",
-            "kernel_form": "owned-to-owned",
-            "name": "ToTorch",
-            "output_slot": "output-u8-chw",
-            "pixel_passes": 1,
-            "policies": [
-              {
-                "name": "layout",
-                "value": "CHW"
-              },
-              {
-                "name": "dtype",
-                "value": "preserve"
-              },
-              {
-                "name": "device",
-                "value": "cpu"
-              }
-            ],
-            "probability": 1.0,
-            "scratch_slots": [],
-            "selection_reason": "semantic-legality:owned-to-owned",
-            "status": "always"
-          }
-        ],
-        "transforms": [
-          "ToTorch"
-        ],
-        "unit_specializations": []
-      },
-      "images_per_sec": 5606.640879233422,
-      "iterations": 504,
-      "median_ms": 0.17835991666666667,
-      "observations_ms": [
-        0.18178491666666666,
-        0.18052325,
-        0.17831991666666666,
-        0.18144649999999998,
-        0.17839991666666666,
-        0.17730491666666667,
-        0.178509,
-        0.17911575000000002,
-        0.17888075,
-        0.17862158333333333,
-        0.18073991666666667,
-        0.17894908333333334,
-        0.18139566666666665,
-        0.17711158333333332,
-        0.17713233333333334,
-        0.17858908333333334,
-        0.176929,
-        0.17610991666666667,
-        0.17700324999999997,
-        0.18742,
-        0.17676566666666668,
-        0.18008158333333335,
-        0.17646066666666668,
-        0.17793408333333335,
-        0.177849,
-        0.1775274166666667,
-        0.17935075,
-        0.1791365,
-        0.17772325,
-        0.176844,
-        0.17814158333333333,
-        0.176754,
-        0.17807333333333333,
-        0.17918566666666666,
-        0.17883991666666665,
-        0.17682658333333334,
-        0.1774281666666667,
-        0.17875158333333332,
-        0.17728233333333332,
-        0.17820741666666665,
-        0.17872316666666666,
-        0.18077658333333335
-      ],
-      "p95_ms": 0.18144649999999998,
-      "participant": "variopinta",
-      "reference_exact": true,
-      "repetition": 3,
-      "role": "control",
-      "route_id": "variopinta.reference",
-      "samples": 42,
-      "size": 512,
-      "valid": true,
-      "validation": {
-        "c_contiguous": true,
-        "container": "torch.Tensor",
-        "dtype": "uint8",
-        "finite": true,
-        "max": 255.0,
-        "min": 0.0,
-        "shape": [
-          3,
-          512,
-          512
-        ]
-      },
-      "variant": "reference",
-      "warmup_calls": 3,
-      "worker": "rust-catalog-3"
-    },
-    {
-      "block_size": 3,
-      "budget_ms": 100.0,
-      "case_id": "catalog.to-torch.default",
-      "case_order": 62,
-      "catalog_policy": "default",
-      "environment": "rust",
-      "environment_position": 1,
-      "explanation": {
-        "buffers": [
-          {
-            "condition": "always",
-            "dtype": "uint8",
-            "layout": "HWC",
-            "lifecycle": "borrowed-for-call",
-            "name": "input"
-          },
-          {
-            "condition": "always",
-            "dtype": "uint8",
-            "layout": "HWC",
-            "lifecycle": "owned-per-run-workspace-reusable",
-            "name": "working-u8"
-          },
-          {
-            "condition": "always",
-            "dtype": "uint8",
-            "layout": "CHW",
-            "lifecycle": "owned-output",
-            "name": "output-u8"
-          }
-        ],
-        "copies": [
-          {
-            "condition": "non-contiguous-input",
-            "count": "0-or-1",
-            "reason": "normalize-to-contiguous-HWC",
-            "stage": "python-entry"
-          },
-          {
-            "condition": "always",
-            "count": "1",
-            "reason": "establish-owned-working-buffer",
-            "stage": "native-entry"
-          },
-          {
-            "condition": "always",
-            "count": "1",
-            "reason": "HWC-to-contiguous-CHW",
-            "stage": "terminal-layout"
-          },
-          {
-            "condition": "always",
-            "count": "0",
-            "reason": "transfer-Rust-Vec-ownership-to-NumPy-storage",
-            "stage": "python-output"
-          },
-          {
-            "condition": "always",
-            "count": "0",
-            "reason": "share-NumPy-storage-with-Torch",
-            "stage": "torch-adapter"
-          }
-        ],
-        "fallbacks": [
-          "portable-scalar"
-        ],
-        "fusions": [],
-        "input": {
-          "channels": "RGB",
-          "container": "borrowed-buffer",
-          "contiguous": true,
-          "dtype": "uint8",
-          "layout": "HWC",
-          "ownership": "caller"
-        },
-        "mode": "reference",
-        "optimizations": [],
-        "output": {
-          "channels": "RGB",
-          "container": "Torch CPU Tensor",
-          "contiguous": true,
-          "dtype": "uint8",
-          "layout": "CHW",
-          "ownership": "result"
-        },
-        "output_dtype": "uint8",
-        "output_layout": "CHW",
-        "passes": 1,
-        "pixel_passes": 1,
-        "python_boundary": {
-          "augmentation": "held",
-          "crossings_per_call": 1,
-          "decode": "not-applicable",
-          "delivery": "held-for-Python-output-transfer",
-          "gil": "held-during-augmentation",
-          "gil_stages": {
-            "arguments": "held",
-            "augmentation": "held",
-            "decode": "not-applicable",
-            "delivery": "held-for-Python-output-transfer",
-            "source": "held"
-          },
-          "input": "NumPy HWC RGB uint8",
-          "input_access": "read-only-borrow",
-          "output": "owned contiguous CPU Torch Tensor",
-          "source_acquisition": "held"
-        },
-        "sampling": "native-plan-before-execution",
-        "schema_version": 2,
-        "sink": {
-          "type": "return"
-        },
-        "source": {
-          "type": "array"
-        },
-        "steps": [
-          {
-            "allocation": "owned-chw-output",
-            "category": "layout",
-            "execution": "terminal",
-            "fallback": "portable-scalar",
-            "input_materialization": "owned-input-copy",
-            "kernel_form": "owned-to-owned",
-            "name": "ToTorch",
-            "output_slot": "output-u8-chw",
-            "pixel_passes": 1,
-            "policies": [
-              {
-                "name": "layout",
-                "value": "CHW"
-              },
-              {
-                "name": "dtype",
-                "value": "preserve"
-              },
-              {
-                "name": "device",
-                "value": "cpu"
-              }
-            ],
-            "probability": 1.0,
-            "scratch_slots": [],
-            "selection_reason": "semantic-legality:owned-to-owned",
-            "status": "always"
-          }
-        ],
-        "transforms": [
-          "ToTorch"
-        ],
-        "unit_specializations": []
-      },
-      "images_per_sec": 1358.6648853060392,
-      "iterations": 135,
-      "median_ms": 0.7360166666666667,
-      "observations_ms": [
-        0.7776733333333333,
-        0.8010536666666667,
-        0.7856503333333333,
-        0.7539196666666667,
-        0.778267,
-        0.7395863333333333,
-        0.7573366666666667,
-        0.7394096666666666,
-        0.7341563333333333,
-        0.741183,
-        0.7315763333333334,
-        0.7374200000000001,
-        0.7347333333333333,
-        0.733463,
-        0.731223,
-        0.7385196666666666,
-        0.74308,
-        0.7323729999999999,
-        0.7623966666666666,
-        0.7220693333333333,
-        0.74443,
-        0.7252263333333334,
-        0.741263,
-        0.7268933333333334,
-        0.7317796666666667,
-        0.7262463333333334,
-        0.7395063333333334,
-        0.7233329999999999,
-        0.741413,
-        0.7222296666666667,
-        0.7354063333333333,
-        0.7324496666666667,
-        0.728433,
-        0.7518766666666666,
-        0.7319996666666667,
-        0.727583,
-        0.7360166666666667,
-        0.7232729999999999,
-        0.7401496666666666,
-        0.733923,
-        0.7409933333333334,
-        0.7290996666666666,
-        0.7374596666666666,
-        0.7270363333333334,
-        0.7422063333333333
-      ],
-      "p95_ms": 0.778267,
-      "participant": "variopinta",
-      "reference_exact": true,
-      "repetition": 3,
-      "role": "control",
-      "route_id": "variopinta.reference",
-      "samples": 45,
-      "size": 1024,
-      "valid": true,
-      "validation": {
-        "c_contiguous": true,
-        "container": "torch.Tensor",
-        "dtype": "uint8",
-        "finite": true,
-        "max": 233.0,
         "min": 0.0,
         "shape": [
           3,

@@ -116,36 +116,18 @@
         "catalog.affine.constant",
         "catalog.affine.reflect101",
         "catalog.affine.reflect101",
-        "catalog.center-crop.default",
-        "catalog.center-crop.default",
-        "catalog.coarse-dropout.eight-holes",
-        "catalog.coarse-dropout.eight-holes",
         "catalog.color-jitter.hue",
         "catalog.color-jitter.hue",
         "catalog.color-jitter.matrix",
         "catalog.color-jitter.matrix",
-        "catalog.gaussian-blur.fixed-sigma",
-        "catalog.gaussian-blur.fixed-sigma",
-        "catalog.gaussian-blur.sampled-sigma",
-        "catalog.gaussian-blur.sampled-sigma",
         "catalog.gaussian-noise.independent-rgb",
         "catalog.gaussian-noise.independent-rgb",
         "catalog.gaussian-noise.shared-rgb",
         "catalog.gaussian-noise.shared-rgb",
-        "catalog.grayscale.default",
-        "catalog.grayscale.default",
         "catalog.grid-distortion.bilinear",
         "catalog.grid-distortion.bilinear",
         "catalog.grid-distortion.nearest-reflect101",
         "catalog.grid-distortion.nearest-reflect101",
-        "catalog.horizontal-flip.default",
-        "catalog.horizontal-flip.default",
-        "catalog.invert.default",
-        "catalog.invert.default",
-        "catalog.normalize-to-torch.terminal",
-        "catalog.normalize-to-torch.terminal",
-        "catalog.normalize.default",
-        "catalog.normalize.default",
         "catalog.pad-if-needed.constant",
         "catalog.pad-if-needed.constant",
         "catalog.pad-if-needed.reflect101",
@@ -154,30 +136,14 @@
         "catalog.perspective.bilinear",
         "catalog.perspective.nearest-reflect101",
         "catalog.perspective.nearest-reflect101",
-        "catalog.posterize.default",
-        "catalog.posterize.default",
-        "catalog.random-crop.default",
-        "catalog.random-crop.default",
-        "catalog.random-resized-crop.bilinear",
-        "catalog.random-resized-crop.bilinear",
-        "catalog.random-resized-crop.bilinear-antialias",
-        "catalog.random-resized-crop.bilinear-antialias",
         "catalog.random-rotation.constant",
         "catalog.random-rotation.constant",
         "catalog.random-rotation.reflect101",
         "catalog.random-rotation.reflect101",
-        "catalog.resize.bilinear",
-        "catalog.resize.bilinear",
-        "catalog.resize.bilinear-antialias",
-        "catalog.resize.bilinear-antialias",
         "catalog.sharpen.cross-3x3",
         "catalog.sharpen.cross-3x3",
-        "catalog.solarize.default",
-        "catalog.solarize.default",
         "catalog.to-torch.default",
-        "catalog.to-torch.default",
-        "catalog.vertical-flip.default",
-        "catalog.vertical-flip.default"
+        "catalog.to-torch.default"
       ],
       "environment": "rust",
       "environment_position": 3,
@@ -190,36 +156,18 @@
         "catalog.affine.constant",
         "catalog.affine.reflect101",
         "catalog.affine.reflect101",
-        "catalog.center-crop.default",
-        "catalog.center-crop.default",
-        "catalog.coarse-dropout.eight-holes",
-        "catalog.coarse-dropout.eight-holes",
         "catalog.color-jitter.hue",
         "catalog.color-jitter.hue",
         "catalog.color-jitter.matrix",
         "catalog.color-jitter.matrix",
-        "catalog.gaussian-blur.fixed-sigma",
-        "catalog.gaussian-blur.fixed-sigma",
-        "catalog.gaussian-blur.sampled-sigma",
-        "catalog.gaussian-blur.sampled-sigma",
         "catalog.gaussian-noise.independent-rgb",
         "catalog.gaussian-noise.independent-rgb",
         "catalog.gaussian-noise.shared-rgb",
         "catalog.gaussian-noise.shared-rgb",
-        "catalog.grayscale.default",
-        "catalog.grayscale.default",
         "catalog.grid-distortion.bilinear",
         "catalog.grid-distortion.bilinear",
         "catalog.grid-distortion.nearest-reflect101",
         "catalog.grid-distortion.nearest-reflect101",
-        "catalog.horizontal-flip.default",
-        "catalog.horizontal-flip.default",
-        "catalog.invert.default",
-        "catalog.invert.default",
-        "catalog.normalize-to-torch.terminal",
-        "catalog.normalize-to-torch.terminal",
-        "catalog.normalize.default",
-        "catalog.normalize.default",
         "catalog.pad-if-needed.constant",
         "catalog.pad-if-needed.constant",
         "catalog.pad-if-needed.reflect101",
@@ -228,30 +176,14 @@
         "catalog.perspective.bilinear",
         "catalog.perspective.nearest-reflect101",
         "catalog.perspective.nearest-reflect101",
-        "catalog.posterize.default",
-        "catalog.posterize.default",
-        "catalog.random-crop.default",
-        "catalog.random-crop.default",
-        "catalog.random-resized-crop.bilinear",
-        "catalog.random-resized-crop.bilinear",
-        "catalog.random-resized-crop.bilinear-antialias",
-        "catalog.random-resized-crop.bilinear-antialias",
         "catalog.random-rotation.constant",
         "catalog.random-rotation.constant",
         "catalog.random-rotation.reflect101",
         "catalog.random-rotation.reflect101",
-        "catalog.resize.bilinear",
-        "catalog.resize.bilinear",
-        "catalog.resize.bilinear-antialias",
-        "catalog.resize.bilinear-antialias",
         "catalog.sharpen.cross-3x3",
         "catalog.sharpen.cross-3x3",
-        "catalog.solarize.default",
-        "catalog.solarize.default",
         "catalog.to-torch.default",
         "catalog.to-torch.default",
-        "catalog.vertical-flip.default",
-        "catalog.vertical-flip.default",
         "catalog.affine.constant"
       ],
       "environment": "rust",
@@ -264,36 +196,18 @@
       "cases": [
         "catalog.affine.reflect101",
         "catalog.affine.reflect101",
-        "catalog.center-crop.default",
-        "catalog.center-crop.default",
-        "catalog.coarse-dropout.eight-holes",
-        "catalog.coarse-dropout.eight-holes",
         "catalog.color-jitter.hue",
         "catalog.color-jitter.hue",
         "catalog.color-jitter.matrix",
         "catalog.color-jitter.matrix",
-        "catalog.gaussian-blur.fixed-sigma",
-        "catalog.gaussian-blur.fixed-sigma",
-        "catalog.gaussian-blur.sampled-sigma",
-        "catalog.gaussian-blur.sampled-sigma",
         "catalog.gaussian-noise.independent-rgb",
         "catalog.gaussian-noise.independent-rgb",
         "catalog.gaussian-noise.shared-rgb",
         "catalog.gaussian-noise.shared-rgb",
-        "catalog.grayscale.default",
-        "catalog.grayscale.default",
         "catalog.grid-distortion.bilinear",
         "catalog.grid-distortion.bilinear",
         "catalog.grid-distortion.nearest-reflect101",
         "catalog.grid-distortion.nearest-reflect101",
-        "catalog.horizontal-flip.default",
-        "catalog.horizontal-flip.default",
-        "catalog.invert.default",
-        "catalog.invert.default",
-        "catalog.normalize-to-torch.terminal",
-        "catalog.normalize-to-torch.terminal",
-        "catalog.normalize.default",
-        "catalog.normalize.default",
         "catalog.pad-if-needed.constant",
         "catalog.pad-if-needed.constant",
         "catalog.pad-if-needed.reflect101",
@@ -302,30 +216,14 @@
         "catalog.perspective.bilinear",
         "catalog.perspective.nearest-reflect101",
         "catalog.perspective.nearest-reflect101",
-        "catalog.posterize.default",
-        "catalog.posterize.default",
-        "catalog.random-crop.default",
-        "catalog.random-crop.default",
-        "catalog.random-resized-crop.bilinear",
-        "catalog.random-resized-crop.bilinear",
-        "catalog.random-resized-crop.bilinear-antialias",
-        "catalog.random-resized-crop.bilinear-antialias",
         "catalog.random-rotation.constant",
         "catalog.random-rotation.constant",
         "catalog.random-rotation.reflect101",
         "catalog.random-rotation.reflect101",
-        "catalog.resize.bilinear",
-        "catalog.resize.bilinear",
-        "catalog.resize.bilinear-antialias",
-        "catalog.resize.bilinear-antialias",
         "catalog.sharpen.cross-3x3",
         "catalog.sharpen.cross-3x3",
-        "catalog.solarize.default",
-        "catalog.solarize.default",
         "catalog.to-torch.default",
         "catalog.to-torch.default",
-        "catalog.vertical-flip.default",
-        "catalog.vertical-flip.default",
         "catalog.affine.constant",
         "catalog.affine.constant"
       ],
@@ -342,10 +240,10 @@
       "environments": {
         "rust": "c21434ab276976c811af1d8dc747f46be02b1f77bad36ecbae0c2a96fee16265"
       },
-      "source": "e1d09d18a4c6ff243cc5b504886208727031c75ef9e21dc521426b14c4f21c2c",
+      "source": "b313858541de0ae91339374efb0533a6ea656f3c02e0ab81de1fb48858cccb5d",
       "unclassified": []
     },
-    "digest": "1753533a36c8fee24d17ebf68b39efeca5f0811dd5e9e7de0d7c29a0fe42f422"
+    "digest": "da16c5cb99c2b4ab5fd59fc71226d52ffe1f894f07145b4facab138aec02f3f7"
   },
   "metadata": {
     "rust": {
@@ -412,14 +310,14 @@
   },
   "provenance": {
     "source_dirty": false,
-    "source_revision": "4a32c003085662b37e5d4fc6c47bdfa7628a7f94"
+    "source_revision": "c4c87f2694af5e45f1cc864e6e7928035c5d4ad8"
   },
   "rows": [
     {
-      "block_size": 41,
+      "block_size": 40,
       "budget_ms": 100.0,
       "case_id": "catalog.color-jitter.matrix",
-      "case_order": 11,
+      "case_order": 7,
       "catalog_policy": "matrix",
       "environment": "rust",
       "environment_position": 3,
@@ -558,29 +456,660 @@
           "ColorJitter:composed-color-matrix"
         ]
       },
-      "images_per_sec": 20293.684258981066,
-      "iterations": 492,
-      "median_ms": 0.04927641463414635,
+      "images_per_sec": 20249.294122262705,
+      "iterations": 480,
+      "median_ms": 0.0493844375,
       "observations_ms": [
-        0.04937043902439025,
-        0.04947431707317073,
-        0.04886775609756098,
-        0.04916968292682927,
-        0.04893531707317073,
-        0.04913407317073171,
-        0.04956873170731708,
-        0.04972604878048781,
-        0.049776292682926826,
-        0.049666292682926834,
-        0.049182390243902446,
-        0.049069195121951216
+        0.049503425000000004,
+        0.049174675,
+        0.049400675,
+        0.049153175,
+        0.049785425,
+        0.0493902,
+        0.049073675,
+        0.049333425,
+        0.049354425,
+        0.049458925,
+        0.049378675,
+        0.049447675
       ],
-      "p95_ms": 0.049776292682926826,
+      "p95_ms": 0.049785425,
       "participant": "variopinta",
       "reference_exact": true,
       "repetition": 1,
       "role": "public",
       "route_id": "variopinta.compiled",
+      "samples": 12,
+      "size": 224,
+      "valid": true,
+      "validation": {
+        "c_contiguous": true,
+        "container": "numpy.ndarray",
+        "dtype": "uint8",
+        "finite": true,
+        "max": 255.0,
+        "min": 0.0,
+        "shape": [
+          224,
+          224,
+          3
+        ]
+      },
+      "variant": "compiled",
+      "warmup_calls": 3,
+      "worker": "rust-catalog-1"
+    },
+    {
+      "block_size": 8,
+      "budget_ms": 100.0,
+      "case_id": "catalog.color-jitter.matrix",
+      "case_order": 7,
+      "catalog_policy": "matrix",
+      "environment": "rust",
+      "environment_position": 3,
+      "explanation": {
+        "buffers": [
+          {
+            "condition": "always",
+            "dtype": "uint8",
+            "layout": "HWC",
+            "lifecycle": "borrowed-for-call",
+            "name": "input"
+          },
+          {
+            "condition": "always",
+            "dtype": "uint8",
+            "layout": "HWC",
+            "lifecycle": "owned-per-run-workspace-reusable",
+            "name": "working-u8"
+          }
+        ],
+        "copies": [
+          {
+            "condition": "non-contiguous-input",
+            "count": "0-or-1",
+            "reason": "normalize-to-contiguous-HWC",
+            "stage": "python-entry"
+          },
+          {
+            "condition": "always",
+            "count": "1",
+            "reason": "establish-owned-working-buffer",
+            "stage": "native-entry"
+          },
+          {
+            "condition": "always",
+            "count": "0",
+            "reason": "transfer-Rust-Vec-ownership-to-NumPy-storage",
+            "stage": "python-output"
+          }
+        ],
+        "fallbacks": [
+          "runtime-avx2-or-numeric-safety-scalar"
+        ],
+        "fusions": [],
+        "input": {
+          "channels": "RGB",
+          "container": "borrowed-buffer",
+          "contiguous": true,
+          "dtype": "uint8",
+          "layout": "HWC",
+          "ownership": "caller"
+        },
+        "mode": "compiled",
+        "optimizations": [],
+        "output": {
+          "channels": "RGB",
+          "container": "owned-buffer",
+          "contiguous": true,
+          "dtype": "uint8",
+          "layout": "HWC",
+          "ownership": "result"
+        },
+        "output_dtype": "uint8",
+        "output_layout": "HWC",
+        "passes": 1,
+        "pixel_passes": 2,
+        "python_boundary": {
+          "augmentation": "held",
+          "crossings_per_call": 1,
+          "decode": "not-applicable",
+          "delivery": "held-for-Python-output-transfer",
+          "gil": "held-during-augmentation",
+          "gil_stages": {
+            "arguments": "held",
+            "augmentation": "held",
+            "decode": "not-applicable",
+            "delivery": "held-for-Python-output-transfer",
+            "source": "held"
+          },
+          "input": "NumPy HWC RGB uint8",
+          "input_access": "read-only-borrow",
+          "output": "owned contiguous NumPy array",
+          "source_acquisition": "held"
+        },
+        "sampling": "native-plan-before-execution",
+        "schema_version": 2,
+        "sink": {
+          "type": "return"
+        },
+        "source": {
+          "type": "array"
+        },
+        "steps": [
+          {
+            "allocation": "none",
+            "category": "color",
+            "execution": "in-place",
+            "fallback": "runtime-avx2-or-numeric-safety-scalar",
+            "input_materialization": "owned-input-copy",
+            "kernel_form": "owned-in-place",
+            "name": "ColorJitter",
+            "output_slot": "working-u8",
+            "pixel_passes": 2,
+            "policies": [
+              {
+                "name": "brightness",
+                "value": "[0.8,1.2]"
+              },
+              {
+                "name": "contrast",
+                "value": "[0.8,1.2]"
+              },
+              {
+                "name": "saturation",
+                "value": "[0.8,1.2]"
+              },
+              {
+                "name": "hue",
+                "value": "[-0,0]"
+              },
+              {
+                "name": "order",
+                "value": "uniform-random-permutation"
+              }
+            ],
+            "probability": 1.0,
+            "scratch_slots": [],
+            "selection_reason": "benchmark-policy:composed-color-matrix",
+            "status": "always"
+          }
+        ],
+        "transforms": [
+          "ColorJitter"
+        ],
+        "unit_specializations": [
+          "ColorJitter:composed-color-matrix"
+        ]
+      },
+      "images_per_sec": 3883.630884186243,
+      "iterations": 392,
+      "median_ms": 0.257491,
+      "observations_ms": [
+        0.257553375,
+        0.260352125,
+        0.257381,
+        0.255602125,
+        0.258621,
+        0.255608375,
+        0.25858475,
+        0.254969625,
+        0.26171975,
+        0.256165875,
+        0.258973375,
+        0.25520725,
+        0.258248375,
+        0.25484975,
+        0.25840475,
+        0.255253375,
+        0.260387125,
+        0.25722725,
+        0.257155875,
+        0.257394625,
+        0.25663725,
+        0.25882475,
+        0.254935875,
+        0.258085875,
+        0.25866225,
+        0.259378375,
+        0.257846,
+        0.256098375,
+        0.257407125,
+        0.25756975,
+        0.255734625,
+        0.25920225,
+        0.258225875,
+        0.25841225,
+        0.255100875,
+        0.258225875,
+        0.25898225,
+        0.258304625,
+        0.25524225,
+        0.25614975,
+        0.257898375,
+        0.256903375,
+        0.256876,
+        0.261040875,
+        0.256672125,
+        0.26192975,
+        0.25700725,
+        0.257063375,
+        0.257491
+      ],
+      "p95_ms": 0.261040875,
+      "participant": "variopinta",
+      "reference_exact": true,
+      "repetition": 1,
+      "role": "public",
+      "route_id": "variopinta.compiled",
+      "samples": 49,
+      "size": 512,
+      "valid": true,
+      "validation": {
+        "c_contiguous": true,
+        "container": "numpy.ndarray",
+        "dtype": "uint8",
+        "finite": true,
+        "max": 255.0,
+        "min": 0.0,
+        "shape": [
+          512,
+          512,
+          3
+        ]
+      },
+      "variant": "compiled",
+      "warmup_calls": 3,
+      "worker": "rust-catalog-1"
+    },
+    {
+      "block_size": 2,
+      "budget_ms": 100.0,
+      "case_id": "catalog.color-jitter.matrix",
+      "case_order": 7,
+      "catalog_policy": "matrix",
+      "environment": "rust",
+      "environment_position": 3,
+      "explanation": {
+        "buffers": [
+          {
+            "condition": "always",
+            "dtype": "uint8",
+            "layout": "HWC",
+            "lifecycle": "borrowed-for-call",
+            "name": "input"
+          },
+          {
+            "condition": "always",
+            "dtype": "uint8",
+            "layout": "HWC",
+            "lifecycle": "owned-per-run-workspace-reusable",
+            "name": "working-u8"
+          }
+        ],
+        "copies": [
+          {
+            "condition": "non-contiguous-input",
+            "count": "0-or-1",
+            "reason": "normalize-to-contiguous-HWC",
+            "stage": "python-entry"
+          },
+          {
+            "condition": "always",
+            "count": "1",
+            "reason": "establish-owned-working-buffer",
+            "stage": "native-entry"
+          },
+          {
+            "condition": "always",
+            "count": "0",
+            "reason": "transfer-Rust-Vec-ownership-to-NumPy-storage",
+            "stage": "python-output"
+          }
+        ],
+        "fallbacks": [
+          "runtime-avx2-or-numeric-safety-scalar"
+        ],
+        "fusions": [],
+        "input": {
+          "channels": "RGB",
+          "container": "borrowed-buffer",
+          "contiguous": true,
+          "dtype": "uint8",
+          "layout": "HWC",
+          "ownership": "caller"
+        },
+        "mode": "compiled",
+        "optimizations": [],
+        "output": {
+          "channels": "RGB",
+          "container": "owned-buffer",
+          "contiguous": true,
+          "dtype": "uint8",
+          "layout": "HWC",
+          "ownership": "result"
+        },
+        "output_dtype": "uint8",
+        "output_layout": "HWC",
+        "passes": 1,
+        "pixel_passes": 2,
+        "python_boundary": {
+          "augmentation": "held",
+          "crossings_per_call": 1,
+          "decode": "not-applicable",
+          "delivery": "held-for-Python-output-transfer",
+          "gil": "held-during-augmentation",
+          "gil_stages": {
+            "arguments": "held",
+            "augmentation": "held",
+            "decode": "not-applicable",
+            "delivery": "held-for-Python-output-transfer",
+            "source": "held"
+          },
+          "input": "NumPy HWC RGB uint8",
+          "input_access": "read-only-borrow",
+          "output": "owned contiguous NumPy array",
+          "source_acquisition": "held"
+        },
+        "sampling": "native-plan-before-execution",
+        "schema_version": 2,
+        "sink": {
+          "type": "return"
+        },
+        "source": {
+          "type": "array"
+        },
+        "steps": [
+          {
+            "allocation": "none",
+            "category": "color",
+            "execution": "in-place",
+            "fallback": "runtime-avx2-or-numeric-safety-scalar",
+            "input_materialization": "owned-input-copy",
+            "kernel_form": "owned-in-place",
+            "name": "ColorJitter",
+            "output_slot": "working-u8",
+            "pixel_passes": 2,
+            "policies": [
+              {
+                "name": "brightness",
+                "value": "[0.8,1.2]"
+              },
+              {
+                "name": "contrast",
+                "value": "[0.8,1.2]"
+              },
+              {
+                "name": "saturation",
+                "value": "[0.8,1.2]"
+              },
+              {
+                "name": "hue",
+                "value": "[-0,0]"
+              },
+              {
+                "name": "order",
+                "value": "uniform-random-permutation"
+              }
+            ],
+            "probability": 1.0,
+            "scratch_slots": [],
+            "selection_reason": "benchmark-policy:composed-color-matrix",
+            "status": "always"
+          }
+        ],
+        "transforms": [
+          "ColorJitter"
+        ],
+        "unit_specializations": [
+          "ColorJitter:composed-color-matrix"
+        ]
+      },
+      "images_per_sec": 951.8515416187566,
+      "iterations": 96,
+      "median_ms": 1.0505840000000002,
+      "observations_ms": [
+        1.0625035,
+        1.070384,
+        1.104284,
+        1.0578035,
+        1.058379,
+        1.0498485,
+        1.066064,
+        1.050564,
+        1.062524,
+        1.054419,
+        1.0635885,
+        1.076644,
+        1.0636435,
+        1.062099,
+        1.067024,
+        1.069634,
+        1.046574,
+        1.0563985,
+        1.0478335,
+        1.0553535,
+        1.0397385,
+        1.051619,
+        1.042234,
+        1.065419,
+        1.0398685,
+        1.045704,
+        1.0379085,
+        1.0390685,
+        1.043974,
+        1.0364435,
+        1.062004,
+        1.039194,
+        1.046609,
+        1.0404785,
+        1.050604,
+        1.0624035,
+        1.053079,
+        1.0433485,
+        1.057409,
+        1.035529,
+        1.0477035,
+        1.046034,
+        1.0459635,
+        1.037914,
+        1.0613435,
+        1.045154,
+        1.0498785,
+        1.0496085
+      ],
+      "p95_ms": 1.070384,
+      "participant": "variopinta",
+      "reference_exact": true,
+      "repetition": 1,
+      "role": "public",
+      "route_id": "variopinta.compiled",
+      "samples": 48,
+      "size": 1024,
+      "valid": true,
+      "validation": {
+        "c_contiguous": true,
+        "container": "numpy.ndarray",
+        "dtype": "uint8",
+        "finite": true,
+        "max": 255.0,
+        "min": 0.0,
+        "shape": [
+          1024,
+          1024,
+          3
+        ]
+      },
+      "variant": "compiled",
+      "warmup_calls": 3,
+      "worker": "rust-catalog-1"
+    },
+    {
+      "block_size": 41,
+      "budget_ms": 100.0,
+      "case_id": "catalog.color-jitter.matrix",
+      "case_order": 8,
+      "catalog_policy": "matrix",
+      "environment": "rust",
+      "environment_position": 3,
+      "explanation": {
+        "buffers": [
+          {
+            "condition": "always",
+            "dtype": "uint8",
+            "layout": "HWC",
+            "lifecycle": "borrowed-for-call",
+            "name": "input"
+          },
+          {
+            "condition": "always",
+            "dtype": "uint8",
+            "layout": "HWC",
+            "lifecycle": "owned-per-run-workspace-reusable",
+            "name": "working-u8"
+          }
+        ],
+        "copies": [
+          {
+            "condition": "non-contiguous-input",
+            "count": "0-or-1",
+            "reason": "normalize-to-contiguous-HWC",
+            "stage": "python-entry"
+          },
+          {
+            "condition": "always",
+            "count": "1",
+            "reason": "establish-owned-working-buffer",
+            "stage": "native-entry"
+          },
+          {
+            "condition": "always",
+            "count": "0",
+            "reason": "transfer-Rust-Vec-ownership-to-NumPy-storage",
+            "stage": "python-output"
+          }
+        ],
+        "fallbacks": [
+          "runtime-avx2-or-numeric-safety-scalar"
+        ],
+        "fusions": [],
+        "input": {
+          "channels": "RGB",
+          "container": "borrowed-buffer",
+          "contiguous": true,
+          "dtype": "uint8",
+          "layout": "HWC",
+          "ownership": "caller"
+        },
+        "mode": "reference",
+        "optimizations": [],
+        "output": {
+          "channels": "RGB",
+          "container": "owned-buffer",
+          "contiguous": true,
+          "dtype": "uint8",
+          "layout": "HWC",
+          "ownership": "result"
+        },
+        "output_dtype": "uint8",
+        "output_layout": "HWC",
+        "passes": 1,
+        "pixel_passes": 2,
+        "python_boundary": {
+          "augmentation": "held",
+          "crossings_per_call": 1,
+          "decode": "not-applicable",
+          "delivery": "held-for-Python-output-transfer",
+          "gil": "held-during-augmentation",
+          "gil_stages": {
+            "arguments": "held",
+            "augmentation": "held",
+            "decode": "not-applicable",
+            "delivery": "held-for-Python-output-transfer",
+            "source": "held"
+          },
+          "input": "NumPy HWC RGB uint8",
+          "input_access": "read-only-borrow",
+          "output": "owned contiguous NumPy array",
+          "source_acquisition": "held"
+        },
+        "sampling": "native-plan-before-execution",
+        "schema_version": 2,
+        "sink": {
+          "type": "return"
+        },
+        "source": {
+          "type": "array"
+        },
+        "steps": [
+          {
+            "allocation": "none",
+            "category": "color",
+            "execution": "in-place",
+            "fallback": "runtime-avx2-or-numeric-safety-scalar",
+            "input_materialization": "owned-input-copy",
+            "kernel_form": "owned-in-place",
+            "name": "ColorJitter",
+            "output_slot": "working-u8",
+            "pixel_passes": 2,
+            "policies": [
+              {
+                "name": "brightness",
+                "value": "[0.8,1.2]"
+              },
+              {
+                "name": "contrast",
+                "value": "[0.8,1.2]"
+              },
+              {
+                "name": "saturation",
+                "value": "[0.8,1.2]"
+              },
+              {
+                "name": "hue",
+                "value": "[-0,0]"
+              },
+              {
+                "name": "order",
+                "value": "uniform-random-permutation"
+              }
+            ],
+            "probability": 1.0,
+            "scratch_slots": [],
+            "selection_reason": "benchmark-policy:composed-color-matrix",
+            "status": "always"
+          }
+        ],
+        "transforms": [
+          "ColorJitter"
+        ],
+        "unit_specializations": [
+          "ColorJitter:composed-color-matrix"
+        ]
+      },
+      "images_per_sec": 20123.815455777425,
+      "iterations": 492,
+      "median_ms": 0.049692365853658535,
+      "observations_ms": [
+        0.05039358536585366,
+        0.0504540975609756,
+        0.04884578048780487,
+        0.049964073170731704,
+        0.04898043902439025,
+        0.04967968292682927,
+        0.04898897560975609,
+        0.04970504878048781,
+        0.04925675609756098,
+        0.04973187804878048,
+        0.04882334146341463,
+        0.049831170731707314
+      ],
+      "p95_ms": 0.0504540975609756,
+      "participant": "variopinta",
+      "reference_exact": true,
+      "repetition": 1,
+      "role": "control",
+      "route_id": "variopinta.reference",
       "samples": 12,
       "size": 224,
       "valid": true,
@@ -597,7 +1126,7 @@
           3
         ]
       },
-      "variant": "compiled",
+      "variant": "reference",
       "warmup_calls": 3,
       "worker": "rust-catalog-1"
     },
@@ -605,7 +1134,7 @@
       "block_size": 8,
       "budget_ms": 100.0,
       "case_id": "catalog.color-jitter.matrix",
-      "case_order": 11,
+      "case_order": 8,
       "catalog_policy": "matrix",
       "environment": "rust",
       "environment_position": 3,
@@ -658,7 +1187,7 @@
           "layout": "HWC",
           "ownership": "caller"
         },
-        "mode": "compiled",
+        "mode": "reference",
         "optimizations": [],
         "output": {
           "channels": "RGB",
@@ -744,66 +1273,66 @@
           "ColorJitter:composed-color-matrix"
         ]
       },
-      "images_per_sec": 3901.71958536426,
+      "images_per_sec": 3888.841358605617,
       "iterations": 392,
-      "median_ms": 0.25629725,
+      "median_ms": 0.257146,
       "observations_ms": [
-        0.2570985,
-        0.2563885,
-        0.25658975,
-        0.26183475,
-        0.25717975,
-        0.2541835,
-        0.25768975,
-        0.253884625,
-        0.258196,
-        0.254711,
-        0.25503225,
+        0.256948375,
         0.256191,
-        0.25873975,
-        0.25354975,
-        0.25579475,
-        0.25381225,
-        0.2607035,
-        0.253453375,
-        0.2579385,
-        0.25629725,
-        0.2596385,
-        0.2560585,
-        0.258056,
-        0.258911125,
-        0.2588835,
-        0.255079625,
-        0.25819725,
-        0.2536835,
-        0.256946,
-        0.253583375,
-        0.258909625,
-        0.253741,
-        0.25722225,
-        0.253851,
-        0.256371,
-        0.25391725,
-        0.25778475,
-        0.253761,
-        0.2583985,
-        0.253740875,
-        0.26032475,
-        0.2539485,
-        0.26038225,
-        0.2551085,
-        0.255537125,
-        0.25515475,
-        0.256492375,
-        0.2554535,
-        0.255591
+        0.2571435,
+        0.255757125,
+        0.256586,
+        0.260289625,
+        0.255657125,
+        0.258651,
+        0.255748375,
+        0.2580135,
+        0.254482125,
+        0.2601135,
+        0.258999625,
+        0.258416,
+        0.255483375,
+        0.257119625,
+        0.254950875,
+        0.25625225,
+        0.258445875,
+        0.25617725,
+        0.2611535,
+        0.254695875,
+        0.257517125,
+        0.25616725,
+        0.257083375,
+        0.257300875,
+        0.25871725,
+        0.256366,
+        0.258123375,
+        0.25833725,
+        0.257187125,
+        0.254680875,
+        0.258671,
+        0.254997125,
+        0.258259625,
+        0.2589585,
+        0.25718725,
+        0.255204625,
+        0.257987125,
+        0.2550285,
+        0.257568375,
+        0.255473375,
+        0.257146,
+        0.25898975,
+        0.261489625,
+        0.25468475,
+        0.258358375,
+        0.254643375,
+        0.26195475
       ],
-      "p95_ms": 0.26038225,
+      "p95_ms": 0.2611535,
       "participant": "variopinta",
       "reference_exact": true,
       "repetition": 1,
-      "role": "public",
-      "route_id": "variopinta.compiled",
+      "role": "control",
+      "route_id": "variopinta.reference",
       "samples": 49,
       "size": 512,
       "valid": true,
@@ -820,7 +1349,7 @@
           3
         ]
       },
-      "variant": "compiled",
+      "variant": "reference",
       "warmup_calls": 3,
       "worker": "rust-catalog-1"
     },
@@ -828,7 +1357,7 @@
       "block_size": 2,
       "budget_ms": 100.0,
       "case_id": "catalog.color-jitter.matrix",
-      "case_order": 11,
+      "case_order": 8,
       "catalog_policy": "matrix",
       "environment": "rust",
       "environment_position": 3,
@@ -881,7 +1410,7 @@
           "layout": "HWC",
           "ownership": "caller"
         },
-        "mode": "compiled",
+        "mode": "reference",
         "optimizations": [],
         "output": {
           "channels": "RGB",
@@ -967,65 +1496,65 @@
           "ColorJitter:composed-color-matrix"
         ]
       },
-      "images_per_sec": 951.4256756965685,
+      "images_per_sec": 949.9662287005698,
       "iterations": 96,
-      "median_ms": 1.05105425,
+      "median_ms": 1.0526689999999999,
       "observations_ms": [
-        1.077009,
-        1.0840295,
-        1.0762795,
-        1.0865395,
-        1.061539,
-        1.0537095,
-        1.067654,
-        1.0695795,
-        1.061699,
-        1.0615095,
-        1.0449745,
-        1.065884,
-        1.0698145,
-        1.043604,
-        1.044309,
-        1.0789445,
-        1.074034,
-        1.035739,
-        1.036044,
-        1.0731695,
-        1.0648745,
-        1.039014,
-        1.0328445,
-        1.054379,
-        1.0792245,
-        1.037144,
-        1.047044,
-        1.048009,
-        1.0653045,
-        1.0307235,
-        1.0395845,
-        1.042774,
-        1.062269,
-        1.036649,
-        1.036364,
-        1.047154,
-        1.0587745,
-        1.037474,
-        1.035699,
-        1.060759,
-        1.045034,
-        1.033044,
-        1.0283295,
-        1.051439,
-        1.0506695,
-        1.037719,
-        1.039634,
-        1.061319
+        1.035219,
+        1.0858235,
+        1.088409,
+        1.070659,
+        1.042944,
+        1.060364,
+        1.0540285,
+        1.046974,
+        1.0378735,
+        1.047664,
+        1.0432385,
+        1.040999,
+        1.052139,
+        1.0581185,
+        1.062319,
+        1.0517185,
+        1.060149,
+        1.0481135,
+        1.053014,
+        1.0512135,
+        1.053694,
+        1.058164,
+        1.049794,
+        1.0563585,
+        1.050739,
+        1.0519235,
+        1.059909,
+        1.0725435,
+        1.060049,
+        1.0633995,
+        1.0582185,
+        1.063274,
+        1.0519385,
+        1.055984,
+        1.0657035,
+        1.053624,
+        1.053849,
+        1.051984,
+        1.0477435,
+        1.049259,
+        1.0418235,
+        1.076449,
+        1.0449785,
+        1.061419,
+        1.0478035,
+        1.052324,
+        1.048894,
+        1.050104
       ],
-      "p95_ms": 1.0792245,
+      "p95_ms": 1.076449,
       "participant": "variopinta",
       "reference_exact": true,
       "repetition": 1,
-      "role": "public",
-      "route_id": "variopinta.compiled",
+      "role": "control",
+      "route_id": "variopinta.reference",
       "samples": 48,
       "size": 1024,
       "valid": true,
@@ -1042,635 +1571,6 @@
           3
         ]
       },
-      "variant": "compiled",
-      "warmup_calls": 3,
-      "worker": "rust-catalog-1"
-    },
-    {
-      "block_size": 41,
-      "budget_ms": 100.0,
-      "case_id": "catalog.color-jitter.matrix",
-      "case_order": 12,
-      "catalog_policy": "matrix",
-      "environment": "rust",
-      "environment_position": 3,
-      "explanation": {
-        "buffers": [
-          {
-            "condition": "always",
-            "dtype": "uint8",
-            "layout": "HWC",
-            "lifecycle": "borrowed-for-call",
-            "name": "input"
-          },
-          {
-            "condition": "always",
-            "dtype": "uint8",
-            "layout": "HWC",
-            "lifecycle": "owned-per-run-workspace-reusable",
-            "name": "working-u8"
-          }
-        ],
-        "copies": [
-          {
-            "condition": "non-contiguous-input",
-            "count": "0-or-1",
-            "reason": "normalize-to-contiguous-HWC",
-            "stage": "python-entry"
-          },
-          {
-            "condition": "always",
-            "count": "1",
-            "reason": "establish-owned-working-buffer",
-            "stage": "native-entry"
-          },
-          {
-            "condition": "always",
-            "count": "0",
-            "reason": "transfer-Rust-Vec-ownership-to-NumPy-storage",
-            "stage": "python-output"
-          }
-        ],
-        "fallbacks": [
-          "runtime-avx2-or-numeric-safety-scalar"
-        ],
-        "fusions": [],
-        "input": {
-          "channels": "RGB",
-          "container": "borrowed-buffer",
-          "contiguous": true,
-          "dtype": "uint8",
-          "layout": "HWC",
-          "ownership": "caller"
-        },
-        "mode": "reference",
-        "optimizations": [],
-        "output": {
-          "channels": "RGB",
-          "container": "owned-buffer",
-          "contiguous": true,
-          "dtype": "uint8",
-          "layout": "HWC",
-          "ownership": "result"
-        },
-        "output_dtype": "uint8",
-        "output_layout": "HWC",
-        "passes": 1,
-        "pixel_passes": 2,
-        "python_boundary": {
-          "augmentation": "held",
-          "crossings_per_call": 1,
-          "decode": "not-applicable",
-          "delivery": "held-for-Python-output-transfer",
-          "gil": "held-during-augmentation",
-          "gil_stages": {
-            "arguments": "held",
-            "augmentation": "held",
-            "decode": "not-applicable",
-            "delivery": "held-for-Python-output-transfer",
-            "source": "held"
-          },
-          "input": "NumPy HWC RGB uint8",
-          "input_access": "read-only-borrow",
-          "output": "owned contiguous NumPy array",
-          "source_acquisition": "held"
-        },
-        "sampling": "native-plan-before-execution",
-        "schema_version": 2,
-        "sink": {
-          "type": "return"
-        },
-        "source": {
-          "type": "array"
-        },
-        "steps": [
-          {
-            "allocation": "none",
-            "category": "color",
-            "execution": "in-place",
-            "fallback": "runtime-avx2-or-numeric-safety-scalar",
-            "input_materialization": "owned-input-copy",
-            "kernel_form": "owned-in-place",
-            "name": "ColorJitter",
-            "output_slot": "working-u8",
-            "pixel_passes": 2,
-            "policies": [
-              {
-                "name": "brightness",
-                "value": "[0.8,1.2]"
-              },
-              {
-                "name": "contrast",
-                "value": "[0.8,1.2]"
-              },
-              {
-                "name": "saturation",
-                "value": "[0.8,1.2]"
-              },
-              {
-                "name": "hue",
-                "value": "[-0,0]"
-              },
-              {
-                "name": "order",
-                "value": "uniform-random-permutation"
-              }
-            ],
-            "probability": 1.0,
-            "scratch_slots": [],
-            "selection_reason": "benchmark-policy:composed-color-matrix",
-            "status": "always"
-          }
-        ],
-        "transforms": [
-          "ColorJitter"
-        ],
-        "unit_specializations": [
-          "ColorJitter:composed-color-matrix"
-        ]
-      },
-      "images_per_sec": 20286.705577557557,
-      "iterations": 492,
-      "median_ms": 0.04929336585365854,
-      "observations_ms": [
-        0.05041507317073171,
-        0.048729219512195124,
-        0.04985897560975609,
-        0.04893507317073171,
-        0.04939724390243903,
-        0.048760682926829266,
-        0.0495750487804878,
-        0.048794829268292685,
-        0.04920602439024391,
-        0.04933556097560976,
-        0.04950434146341463,
-        0.04925117073170732
-      ],
-      "p95_ms": 0.05041507317073171,
-      "participant": "variopinta",
-      "reference_exact": true,
-      "repetition": 1,
-      "role": "control",
-      "route_id": "variopinta.reference",
-      "samples": 12,
-      "size": 224,
-      "valid": true,
-      "validation": {
-        "c_contiguous": true,
-        "container": "numpy.ndarray",
-        "dtype": "uint8",
-        "finite": true,
-        "max": 255.0,
-        "min": 15.0,
-        "shape": [
-          224,
-          224,
-          3
-        ]
-      },
-      "variant": "reference",
-      "warmup_calls": 3,
-      "worker": "rust-catalog-1"
-    },
-    {
-      "block_size": 8,
-      "budget_ms": 100.0,
-      "case_id": "catalog.color-jitter.matrix",
-      "case_order": 12,
-      "catalog_policy": "matrix",
-      "environment": "rust",
-      "environment_position": 3,
-      "explanation": {
-        "buffers": [
-          {
-            "condition": "always",
-            "dtype": "uint8",
-            "layout": "HWC",
-            "lifecycle": "borrowed-for-call",
-            "name": "input"
-          },
-          {
-            "condition": "always",
-            "dtype": "uint8",
-            "layout": "HWC",
-            "lifecycle": "owned-per-run-workspace-reusable",
-            "name": "working-u8"
-          }
-        ],
-        "copies": [
-          {
-            "condition": "non-contiguous-input",
-            "count": "0-or-1",
-            "reason": "normalize-to-contiguous-HWC",
-            "stage": "python-entry"
-          },
-          {
-            "condition": "always",
-            "count": "1",
-            "reason": "establish-owned-working-buffer",
-            "stage": "native-entry"
-          },
-          {
-            "condition": "always",
-            "count": "0",
-            "reason": "transfer-Rust-Vec-ownership-to-NumPy-storage",
-            "stage": "python-output"
-          }
-        ],
-        "fallbacks": [
-          "runtime-avx2-or-numeric-safety-scalar"
-        ],
-        "fusions": [],
-        "input": {
-          "channels": "RGB",
-          "container": "borrowed-buffer",
-          "contiguous": true,
-          "dtype": "uint8",
-          "layout": "HWC",
-          "ownership": "caller"
-        },
-        "mode": "reference",
-        "optimizations": [],
-        "output": {
-          "channels": "RGB",
-          "container": "owned-buffer",
-          "contiguous": true,
-          "dtype": "uint8",
-          "layout": "HWC",
-          "ownership": "result"
-        },
-        "output_dtype": "uint8",
-        "output_layout": "HWC",
-        "passes": 1,
-        "pixel_passes": 2,
-        "python_boundary": {
-          "augmentation": "held",
-          "crossings_per_call": 1,
-          "decode": "not-applicable",
-          "delivery": "held-for-Python-output-transfer",
-          "gil": "held-during-augmentation",
-          "gil_stages": {
-            "arguments": "held",
-            "augmentation": "held",
-            "decode": "not-applicable",
-            "delivery": "held-for-Python-output-transfer",
-            "source": "held"
-          },
-          "input": "NumPy HWC RGB uint8",
-          "input_access": "read-only-borrow",
-          "output": "owned contiguous NumPy array",
-          "source_acquisition": "held"
-        },
-        "sampling": "native-plan-before-execution",
-        "schema_version": 2,
-        "sink": {
-          "type": "return"
-        },
-        "source": {
-          "type": "array"
-        },
-        "steps": [
-          {
-            "allocation": "none",
-            "category": "color",
-            "execution": "in-place",
-            "fallback": "runtime-avx2-or-numeric-safety-scalar",
-            "input_materialization": "owned-input-copy",
-            "kernel_form": "owned-in-place",
-            "name": "ColorJitter",
-            "output_slot": "working-u8",
-            "pixel_passes": 2,
-            "policies": [
-              {
-                "name": "brightness",
-                "value": "[0.8,1.2]"
-              },
-              {
-                "name": "contrast",
-                "value": "[0.8,1.2]"
-              },
-              {
-                "name": "saturation",
-                "value": "[0.8,1.2]"
-              },
-              {
-                "name": "hue",
-                "value": "[-0,0]"
-              },
-              {
-                "name": "order",
-                "value": "uniform-random-permutation"
-              }
-            ],
-            "probability": 1.0,
-            "scratch_slots": [],
-            "selection_reason": "benchmark-policy:composed-color-matrix",
-            "status": "always"
-          }
-        ],
-        "transforms": [
-          "ColorJitter"
-        ],
-        "unit_specializations": [
-          "ColorJitter:composed-color-matrix"
-        ]
-      },
-      "images_per_sec": 3909.8238233385205,
-      "iterations": 392,
-      "median_ms": 0.255766,
-      "observations_ms": [
-        0.262816,
-        0.25619975,
-        0.25506225,
-        0.25405225,
-        0.2601935,
-        0.253971,
-        0.257016,
-        0.253858375,
-        0.2575185,
-        0.25860975,
-        0.25664475,
-        0.258476,
-        0.25394975,
-        0.257206125,
-        0.253284625,
-        0.25731225,
-        0.25352975,
-        0.26180975,
-        0.2546735,
-        0.2586035,
-        0.253427125,
-        0.25508975,
-        0.253627125,
-        0.257084875,
-        0.2547985,
-        0.25951975,
-        0.25409975,
-        0.2582635,
-        0.256119625,
-        0.25430225,
-        0.255756,
-        0.254836,
-        0.256880875,
-        0.257862375,
-        0.255766,
-        0.25482225,
-        0.25585475,
-        0.254923375,
-        0.25619725,
-        0.25474225,
-        0.2554535,
-        0.256205875,
-        0.256046,
-        0.2579885,
-        0.25509225,
-        0.2546285,
-        0.25597725,
-        0.25510475,
-        0.254791
-      ],
-      "p95_ms": 0.2601935,
-      "participant": "variopinta",
-      "reference_exact": true,
-      "repetition": 1,
-      "role": "control",
-      "route_id": "variopinta.reference",
-      "samples": 49,
-      "size": 512,
-      "valid": true,
-      "validation": {
-        "c_contiguous": true,
-        "container": "numpy.ndarray",
-        "dtype": "uint8",
-        "finite": true,
-        "max": 255.0,
-        "min": 0.0,
-        "shape": [
-          512,
-          512,
-          3
-        ]
-      },
-      "variant": "reference",
-      "warmup_calls": 3,
-      "worker": "rust-catalog-1"
-    },
-    {
-      "block_size": 2,
-      "budget_ms": 100.0,
-      "case_id": "catalog.color-jitter.matrix",
-      "case_order": 12,
-      "catalog_policy": "matrix",
-      "environment": "rust",
-      "environment_position": 3,
-      "explanation": {
-        "buffers": [
-          {
-            "condition": "always",
-            "dtype": "uint8",
-            "layout": "HWC",
-            "lifecycle": "borrowed-for-call",
-            "name": "input"
-          },
-          {
-            "condition": "always",
-            "dtype": "uint8",
-            "layout": "HWC",
-            "lifecycle": "owned-per-run-workspace-reusable",
-            "name": "working-u8"
-          }
-        ],
-        "copies": [
-          {
-            "condition": "non-contiguous-input",
-            "count": "0-or-1",
-            "reason": "normalize-to-contiguous-HWC",
-            "stage": "python-entry"
-          },
-          {
-            "condition": "always",
-            "count": "1",
-            "reason": "establish-owned-working-buffer",
-            "stage": "native-entry"
-          },
-          {
-            "condition": "always",
-            "count": "0",
-            "reason": "transfer-Rust-Vec-ownership-to-NumPy-storage",
-            "stage": "python-output"
-          }
-        ],
-        "fallbacks": [
-          "runtime-avx2-or-numeric-safety-scalar"
-        ],
-        "fusions": [],
-        "input": {
-          "channels": "RGB",
-          "container": "borrowed-buffer",
-          "contiguous": true,
-          "dtype": "uint8",
-          "layout": "HWC",
-          "ownership": "caller"
-        },
-        "mode": "reference",
-        "optimizations": [],
-        "output": {
-          "channels": "RGB",
-          "container": "owned-buffer",
-          "contiguous": true,
-          "dtype": "uint8",
-          "layout": "HWC",
-          "ownership": "result"
-        },
-        "output_dtype": "uint8",
-        "output_layout": "HWC",
-        "passes": 1,
-        "pixel_passes": 2,
-        "python_boundary": {
-          "augmentation": "held",
-          "crossings_per_call": 1,
-          "decode": "not-applicable",
-          "delivery": "held-for-Python-output-transfer",
-          "gil": "held-during-augmentation",
-          "gil_stages": {
-            "arguments": "held",
-            "augmentation": "held",
-            "decode": "not-applicable",
-            "delivery": "held-for-Python-output-transfer",
-            "source": "held"
-          },
-          "input": "NumPy HWC RGB uint8",
-          "input_access": "read-only-borrow",
-          "output": "owned contiguous NumPy array",
-          "source_acquisition": "held"
-        },
-        "sampling": "native-plan-before-execution",
-        "schema_version": 2,
-        "sink": {
-          "type": "return"
-        },
-        "source": {
-          "type": "array"
-        },
-        "steps": [
-          {
-            "allocation": "none",
-            "category": "color",
-            "execution": "in-place",
-            "fallback": "runtime-avx2-or-numeric-safety-scalar",
-            "input_materialization": "owned-input-copy",
-            "kernel_form": "owned-in-place",
-            "name": "ColorJitter",
-            "output_slot": "working-u8",
-            "pixel_passes": 2,
-            "policies": [
-              {
-                "name": "brightness",
-                "value": "[0.8,1.2]"
-              },
-              {
-                "name": "contrast",
-                "value": "[0.8,1.2]"
-              },
-              {
-                "name": "saturation",
-                "value": "[0.8,1.2]"
-              },
-              {
-                "name": "hue",
-                "value": "[-0,0]"
-              },
-              {
-                "name": "order",
-                "value": "uniform-random-permutation"
-              }
-            ],
-            "probability": 1.0,
-            "scratch_slots": [],
-            "selection_reason": "benchmark-policy:composed-color-matrix",
-            "status": "always"
-          }
-        ],
-        "transforms": [
-          "ColorJitter"
-        ],
-        "unit_specializations": [
-          "ColorJitter:composed-color-matrix"
-        ]
-      },
-      "images_per_sec": 958.2362320618176,
-      "iterations": 92,
-      "median_ms": 1.043584,
-      "observations_ms": [
-        1.039109,
-        1.059984,
-        1.1112745,
-        1.0678245,
-        1.050229,
-        1.048269,
-        1.027664,
-        3.050697,
-        1.036829,
-        1.489453,
-        1.031759,
-        1.047164,
-        1.056679,
-        1.0291235,
-        1.042014,
-        1.0400045,
-        1.061894,
-        1.0309645,
-        1.037404,
-        1.048429,
-        1.056984,
-        1.046824,
-        1.036239,
-        1.053099,
-        1.059694,
-        1.040464,
-        1.0286645,
-        1.0552045,
-        1.051514,
-        1.042279,
-        1.030119,
-        1.059169,
-        1.044724,
-        1.0458645,
-        1.0212535,
-        1.044274,
-        1.042589,
-        1.029579,
-        1.024044,
-        1.042894,
-        1.040059,
-        1.0394195,
-        1.0246985,
-        1.030009,
-        1.046714,
-        1.0557745
-      ],
-      "p95_ms": 1.1112745,
-      "participant": "variopinta",
-      "reference_exact": true,
-      "repetition": 1,
-      "role": "control",
-      "route_id": "variopinta.reference",
-      "samples": 46,
-      "size": 1024,
-      "valid": true,
-      "validation": {
-        "c_contiguous": true,
-        "container": "numpy.ndarray",
-        "dtype": "uint8",
-        "finite": true,
-        "max": 255.0,
-        "min": 15.0,
-        "shape": [
-          1024,
-          1024,
-          3
-        ]
-      },
       "variant": "reference",
       "warmup_calls": 3,
       "worker": "rust-catalog-1"
@@ -1679,7 +1579,7 @@
       "block_size": 41,
       "budget_ms": 100.0,
       "case_id": "catalog.color-jitter.matrix",
-      "case_order": 10,
+      "case_order": 6,
       "catalog_policy": "matrix",
       "environment": "rust",
       "environment_position": 2,
@@ -1818,24 +1718,24 @@
           "ColorJitter:composed-color-matrix"
         ]
       },
-      "images_per_sec": 20318.887595418237,
+      "images_per_sec": 20212.706693413173,
       "iterations": 492,
-      "median_ms": 0.049215292682926834,
+      "median_ms": 0.049473829268292684,
       "observations_ms": [
-        0.04909043902439024,
-        0.049095292682926825,
-        0.0492399512195122,
-        0.04913212195121951,
-        0.04935239024390244,
-        0.04992165853658536,
-        0.04922309756097561,
-        0.04901653658536585,
-        0.04934968292682927,
-        0.04912751219512195,
-        0.049207487804878054,
-        0.049961658536585365
+        0.04935041463414634,
+        0.04954870731707317,
+        0.049258243902439026,
+        0.04917214634146342,
+        0.04947431707317073,
+        0.04947334146341464,
+        0.04901919512195122,
+        0.04973943902439024,
+        0.04968141463414635,
+        0.049671634146341466,
+        0.0488779756097561,
+        0.049588463414634146
       ],
-      "p95_ms": 0.049961658536585365,
+      "p95_ms": 0.04973943902439024,
       "participant": "variopinta",
       "reference_exact": true,
       "repetition": 2,
@@ -1865,7 +1765,7 @@
       "block_size": 8,
       "budget_ms": 100.0,
       "case_id": "catalog.color-jitter.matrix",
-      "case_order": 10,
+      "case_order": 6,
       "catalog_policy": "matrix",
       "environment": "rust",
       "environment_position": 2,
@@ -2004,61 +1904,61 @@
           "ColorJitter:composed-color-matrix"
         ]
       },
-      "images_per_sec": 3890.4129041105616,
+      "images_per_sec": 3902.1953751180413,
       "iterations": 392,
-      "median_ms": 0.257042125,
+      "median_ms": 0.256266,
       "observations_ms": [
-        0.257042125,
-        0.2563335,
-        0.26261225,
-        0.25500225,
-        0.258791,
-        0.25584725,
-        0.25947475,
-        0.256946125,
-        0.254986,
-        0.258660875,
-        0.2545435,
-        0.25767725,
-        0.25517975,
-        0.26034475,
-        0.2583935,
-        0.25780475,
-        0.258461,
-        0.25662225,
-        0.25703475,
-        0.25974725,
-        0.257681,
-        0.259141,
-        0.25679725,
-        0.25650725,
-        0.25746975,
-        0.2606685,
+        0.262210875,
+        0.255384625,
+        0.2572835,
+        0.254740875,
+        0.258103375,
+        0.2549035,
+        0.25741475,
+        0.254420875,
+        0.258888375,
+        0.25388225,
+        0.256724625,
+        0.254985875,
+        0.258696,
+        0.256967125,
+        0.257587125,
         0.25660225,
-        0.2563885,
-        0.257078375,
-        0.259461125,
-        0.255876,
-        0.25807475,
-        0.25666225,
-        0.2595185,
-        0.25470725,
-        0.25803725,
-        0.254733375,
-        0.264587375,
-        0.25594475,
-        0.257485875,
-        0.256221,
-        0.257107375,
-        0.264327375,
-        0.256945875,
-        0.25656225,
-        0.2565235,
-        0.25826975,
-        0.25688725,
-        0.256161
+        0.25927475,
+        0.255789625,
+        0.255698375,
+        0.25405475,
+        0.257872125,
+        0.254229625,
+        0.256662125,
+        0.25387975,
+        0.261783375,
+        0.254268375,
+        0.25517475,
+        0.256266,
+        0.256625875,
+        0.25601475,
+        0.255323375,
+        0.256700875,
+        0.259415875,
+        0.254011,
+        0.255313375,
+        0.253995875,
+        0.257329625,
+        0.25970975,
+        0.25778225,
+        0.254415875,
+        0.2552985,
+        0.266618375,
+        0.25590725,
+        0.257163375,
+        0.255858375,
+        0.257487125,
+        0.25447975,
+        0.258528375,
+        0.254243375
       ],
-      "p95_ms": 0.26261225,
+      "p95_ms": 0.261783375,
       "participant": "variopinta",
       "reference_exact": true,
       "repetition": 2,
@@ -2088,7 +1988,7 @@
       "block_size": 2,
       "budget_ms": 100.0,
       "case_id": "catalog.color-jitter.matrix",
-      "case_order": 10,
+      "case_order": 6,
       "catalog_policy": "matrix",
       "environment": "rust",
       "environment_position": 2,
@@ -2227,1319 +2127,63 @@
           "ColorJitter:composed-color-matrix"
         ]
       },
-      "images_per_sec": 896.7081842555978,
-      "iterations": 90,
-      "median_ms": 1.11519,
-      "observations_ms": [
-        1.1118495,
-        1.13148,
-        1.14733,
-        1.1212595,
-        1.116245,
-        1.180325,
-        1.116925,
-        1.133465,
-        1.0986145,
-        1.123605,
-        1.1149845,
-        1.12203,
-        1.1094595,
-        1.1177345,
-        1.105825,
-        1.1115445,
-        1.0993195,
-        1.107045,
-        1.1022945,
-        1.140775,
-        1.1077895,
-        1.128655,
-        1.1045945,
-        1.11299,
-        1.0967595,
-        1.1131245,
-        1.1152295,
-        1.129275,
-        1.11803,
-        1.11519,
-        1.1213345,
-        1.1115345,
-        1.1084,
-        1.1212845,
-        1.1070495,
-        1.11782,
-        1.1107945,
-        1.12913,
-        1.1013695,
-        1.1323255,
-        1.1017045,
-        1.1213045,
-        1.0947645,
-        1.119385,
-        1.1074345
-      ],
-      "p95_ms": 1.140775,
-      "participant": "variopinta",
-      "reference_exact": true,
-      "repetition": 2,
-      "role": "public",
-      "route_id": "variopinta.compiled",
-      "samples": 45,
-      "size": 1024,
-      "valid": true,
-      "validation": {
-        "c_contiguous": true,
-        "container": "numpy.ndarray",
-        "dtype": "uint8",
-        "finite": true,
-        "max": 255.0,
-        "min": 0.0,
-        "shape": [
-          1024,
-          1024,
-          3
-        ]
-      },
-      "variant": "compiled",
-      "warmup_calls": 3,
-      "worker": "rust-catalog-2"
-    },
-    {
-      "block_size": 41,
-      "budget_ms": 100.0,
-      "case_id": "catalog.color-jitter.matrix",
-      "case_order": 11,
-      "catalog_policy": "matrix",
-      "environment": "rust",
-      "environment_position": 2,
-      "explanation": {
-        "buffers": [
-          {
-            "condition": "always",
-            "dtype": "uint8",
-            "layout": "HWC",
-            "lifecycle": "borrowed-for-call",
-            "name": "input"
-          },
-          {
-            "condition": "always",
-            "dtype": "uint8",
-            "layout": "HWC",
-            "lifecycle": "owned-per-run-workspace-reusable",
-            "name": "working-u8"
-          }
-        ],
-        "copies": [
-          {
-            "condition": "non-contiguous-input",
-            "count": "0-or-1",
-            "reason": "normalize-to-contiguous-HWC",
-            "stage": "python-entry"
-          },
-          {
-            "condition": "always",
-            "count": "1",
-            "reason": "establish-owned-working-buffer",
-            "stage": "native-entry"
-          },
-          {
-            "condition": "always",
-            "count": "0",
-            "reason": "transfer-Rust-Vec-ownership-to-NumPy-storage",
-            "stage": "python-output"
-          }
-        ],
-        "fallbacks": [
-          "runtime-avx2-or-numeric-safety-scalar"
-        ],
-        "fusions": [],
-        "input": {
-          "channels": "RGB",
-          "container": "borrowed-buffer",
-          "contiguous": true,
-          "dtype": "uint8",
-          "layout": "HWC",
-          "ownership": "caller"
-        },
-        "mode": "reference",
-        "optimizations": [],
-        "output": {
-          "channels": "RGB",
-          "container": "owned-buffer",
-          "contiguous": true,
-          "dtype": "uint8",
-          "layout": "HWC",
-          "ownership": "result"
-        },
-        "output_dtype": "uint8",
-        "output_layout": "HWC",
-        "passes": 1,
-        "pixel_passes": 2,
-        "python_boundary": {
-          "augmentation": "held",
-          "crossings_per_call": 1,
-          "decode": "not-applicable",
-          "delivery": "held-for-Python-output-transfer",
-          "gil": "held-during-augmentation",
-          "gil_stages": {
-            "arguments": "held",
-            "augmentation": "held",
-            "decode": "not-applicable",
-            "delivery": "held-for-Python-output-transfer",
-            "source": "held"
-          },
-          "input": "NumPy HWC RGB uint8",
-          "input_access": "read-only-borrow",
-          "output": "owned contiguous NumPy array",
-          "source_acquisition": "held"
-        },
-        "sampling": "native-plan-before-execution",
-        "schema_version": 2,
-        "sink": {
-          "type": "return"
-        },
-        "source": {
-          "type": "array"
-        },
-        "steps": [
-          {
-            "allocation": "none",
-            "category": "color",
-            "execution": "in-place",
-            "fallback": "runtime-avx2-or-numeric-safety-scalar",
-            "input_materialization": "owned-input-copy",
-            "kernel_form": "owned-in-place",
-            "name": "ColorJitter",
-            "output_slot": "working-u8",
-            "pixel_passes": 2,
-            "policies": [
-              {
-                "name": "brightness",
-                "value": "[0.8,1.2]"
-              },
-              {
-                "name": "contrast",
-                "value": "[0.8,1.2]"
-              },
-              {
-                "name": "saturation",
-                "value": "[0.8,1.2]"
-              },
-              {
-                "name": "hue",
-                "value": "[-0,0]"
-              },
-              {
-                "name": "order",
-                "value": "uniform-random-permutation"
-              }
-            ],
-            "probability": 1.0,
-            "scratch_slots": [],
-            "selection_reason": "benchmark-policy:composed-color-matrix",
-            "status": "always"
-          }
-        ],
-        "transforms": [
-          "ColorJitter"
-        ],
-        "unit_specializations": [
-          "ColorJitter:composed-color-matrix"
-        ]
-      },
-      "images_per_sec": 20372.58982324542,
-      "iterations": 492,
-      "median_ms": 0.04908556097560976,
-      "observations_ms": [
-        0.04881165853658537,
-        0.05043263414634146,
-        0.04880165853658537,
-        0.05003358536585366,
-        0.04884507317073171,
-        0.050847756097560974,
-        0.048844560975609755,
-        0.0495709268292683,
-        0.049041146341463414,
-        0.049063121951219514,
-        0.04918480487804878,
-        0.049108000000000006
-      ],
-      "p95_ms": 0.050847756097560974,
-      "participant": "variopinta",
-      "reference_exact": true,
-      "repetition": 2,
-      "role": "control",
-      "route_id": "variopinta.reference",
-      "samples": 12,
-      "size": 224,
-      "valid": true,
-      "validation": {
-        "c_contiguous": true,
-        "container": "numpy.ndarray",
-        "dtype": "uint8",
-        "finite": true,
-        "max": 255.0,
-        "min": 15.0,
-        "shape": [
-          224,
-          224,
-          3
-        ]
-      },
-      "variant": "reference",
-      "warmup_calls": 3,
-      "worker": "rust-catalog-2"
-    },
-    {
-      "block_size": 8,
-      "budget_ms": 100.0,
-      "case_id": "catalog.color-jitter.matrix",
-      "case_order": 11,
-      "catalog_policy": "matrix",
-      "environment": "rust",
-      "environment_position": 2,
-      "explanation": {
-        "buffers": [
-          {
-            "condition": "always",
-            "dtype": "uint8",
-            "layout": "HWC",
-            "lifecycle": "borrowed-for-call",
-            "name": "input"
-          },
-          {
-            "condition": "always",
-            "dtype": "uint8",
-            "layout": "HWC",
-            "lifecycle": "owned-per-run-workspace-reusable",
-            "name": "working-u8"
-          }
-        ],
-        "copies": [
-          {
-            "condition": "non-contiguous-input",
-            "count": "0-or-1",
-            "reason": "normalize-to-contiguous-HWC",
-            "stage": "python-entry"
-          },
-          {
-            "condition": "always",
-            "count": "1",
-            "reason": "establish-owned-working-buffer",
-            "stage": "native-entry"
-          },
-          {
-            "condition": "always",
-            "count": "0",
-            "reason": "transfer-Rust-Vec-ownership-to-NumPy-storage",
-            "stage": "python-output"
-          }
-        ],
-        "fallbacks": [
-          "runtime-avx2-or-numeric-safety-scalar"
-        ],
-        "fusions": [],
-        "input": {
-          "channels": "RGB",
-          "container": "borrowed-buffer",
-          "contiguous": true,
-          "dtype": "uint8",
-          "layout": "HWC",
-          "ownership": "caller"
-        },
-        "mode": "reference",
-        "optimizations": [],
-        "output": {
-          "channels": "RGB",
-          "container": "owned-buffer",
-          "contiguous": true,
-          "dtype": "uint8",
-          "layout": "HWC",
-          "ownership": "result"
-        },
-        "output_dtype": "uint8",
-        "output_layout": "HWC",
-        "passes": 1,
-        "pixel_passes": 2,
-        "python_boundary": {
-          "augmentation": "held",
-          "crossings_per_call": 1,
-          "decode": "not-applicable",
-          "delivery": "held-for-Python-output-transfer",
-          "gil": "held-during-augmentation",
-          "gil_stages": {
-            "arguments": "held",
-            "augmentation": "held",
-            "decode": "not-applicable",
-            "delivery": "held-for-Python-output-transfer",
-            "source": "held"
-          },
-          "input": "NumPy HWC RGB uint8",
-          "input_access": "read-only-borrow",
-          "output": "owned contiguous NumPy array",
-          "source_acquisition": "held"
-        },
-        "sampling": "native-plan-before-execution",
-        "schema_version": 2,
-        "sink": {
-          "type": "return"
-        },
-        "source": {
-          "type": "array"
-        },
-        "steps": [
-          {
-            "allocation": "none",
-            "category": "color",
-            "execution": "in-place",
-            "fallback": "runtime-avx2-or-numeric-safety-scalar",
-            "input_materialization": "owned-input-copy",
-            "kernel_form": "owned-in-place",
-            "name": "ColorJitter",
-            "output_slot": "working-u8",
-            "pixel_passes": 2,
-            "policies": [
-              {
-                "name": "brightness",
-                "value": "[0.8,1.2]"
-              },
-              {
-                "name": "contrast",
-                "value": "[0.8,1.2]"
-              },
-              {
-                "name": "saturation",
-                "value": "[0.8,1.2]"
-              },
-              {
-                "name": "hue",
-                "value": "[-0,0]"
-              },
-              {
-                "name": "order",
-                "value": "uniform-random-permutation"
-              }
-            ],
-            "probability": 1.0,
-            "scratch_slots": [],
-            "selection_reason": "benchmark-policy:composed-color-matrix",
-            "status": "always"
-          }
-        ],
-        "transforms": [
-          "ColorJitter"
-        ],
-        "unit_specializations": [
-          "ColorJitter:composed-color-matrix"
-        ]
-      },
-      "images_per_sec": 3880.3249578135924,
-      "iterations": 384,
-      "median_ms": 0.257710375,
-      "observations_ms": [
-        0.256501,
-        0.259977375,
-        0.259061,
-        0.2597435,
-        0.261957375,
-        0.256692125,
-        0.25672725,
-        0.25631225,
-        0.2546535,
-        0.258306,
-        0.254589625,
-        0.26018975,
-        0.254933375,
-        0.257818625,
-        0.255586,
-        0.2561385,
-        0.261831,
-        0.51492075,
-        0.2624635,
-        0.26112975,
-        0.256521,
-        0.2572435,
-        0.25761475,
-        0.25710975,
-        0.25625975,
-        0.263608625,
-        0.257791,
-        0.258324625,
-        0.25806225,
-        0.25681975,
-        0.25762975,
-        0.25864975,
-        0.25752975,
-        0.267662375,
-        0.258221,
-        0.25672975,
-        0.2578035,
-        0.25632975,
-        0.25724975,
-        0.259221,
-        0.25592475,
-        0.2613585,
-        0.25470975,
-        0.258596,
-        0.255250875,
-        0.2592185,
-        0.2555935,
-        0.258893625
-      ],
-      "p95_ms": 0.263608625,
-      "participant": "variopinta",
-      "reference_exact": true,
-      "repetition": 2,
-      "role": "control",
-      "route_id": "variopinta.reference",
-      "samples": 48,
-      "size": 512,
-      "valid": true,
-      "validation": {
-        "c_contiguous": true,
-        "container": "numpy.ndarray",
-        "dtype": "uint8",
-        "finite": true,
-        "max": 255.0,
-        "min": 0.0,
-        "shape": [
-          512,
-          512,
-          3
-        ]
-      },
-      "variant": "reference",
-      "warmup_calls": 3,
-      "worker": "rust-catalog-2"
-    },
-    {
-      "block_size": 2,
-      "budget_ms": 100.0,
-      "case_id": "catalog.color-jitter.matrix",
-      "case_order": 11,
-      "catalog_policy": "matrix",
-      "environment": "rust",
-      "environment_position": 2,
-      "explanation": {
-        "buffers": [
-          {
-            "condition": "always",
-            "dtype": "uint8",
-            "layout": "HWC",
-            "lifecycle": "borrowed-for-call",
-            "name": "input"
-          },
-          {
-            "condition": "always",
-            "dtype": "uint8",
-            "layout": "HWC",
-            "lifecycle": "owned-per-run-workspace-reusable",
-            "name": "working-u8"
-          }
-        ],
-        "copies": [
-          {
-            "condition": "non-contiguous-input",
-            "count": "0-or-1",
-            "reason": "normalize-to-contiguous-HWC",
-            "stage": "python-entry"
-          },
-          {
-            "condition": "always",
-            "count": "1",
-            "reason": "establish-owned-working-buffer",
-            "stage": "native-entry"
-          },
-          {
-            "condition": "always",
-            "count": "0",
-            "reason": "transfer-Rust-Vec-ownership-to-NumPy-storage",
-            "stage": "python-output"
-          }
-        ],
-        "fallbacks": [
-          "runtime-avx2-or-numeric-safety-scalar"
-        ],
-        "fusions": [],
-        "input": {
-          "channels": "RGB",
-          "container": "borrowed-buffer",
-          "contiguous": true,
-          "dtype": "uint8",
-          "layout": "HWC",
-          "ownership": "caller"
-        },
-        "mode": "reference",
-        "optimizations": [],
-        "output": {
-          "channels": "RGB",
-          "container": "owned-buffer",
-          "contiguous": true,
-          "dtype": "uint8",
-          "layout": "HWC",
-          "ownership": "result"
-        },
-        "output_dtype": "uint8",
-        "output_layout": "HWC",
-        "passes": 1,
-        "pixel_passes": 2,
-        "python_boundary": {
-          "augmentation": "held",
-          "crossings_per_call": 1,
-          "decode": "not-applicable",
-          "delivery": "held-for-Python-output-transfer",
-          "gil": "held-during-augmentation",
-          "gil_stages": {
-            "arguments": "held",
-            "augmentation": "held",
-            "decode": "not-applicable",
-            "delivery": "held-for-Python-output-transfer",
-            "source": "held"
-          },
-          "input": "NumPy HWC RGB uint8",
-          "input_access": "read-only-borrow",
-          "output": "owned contiguous NumPy array",
-          "source_acquisition": "held"
-        },
-        "sampling": "native-plan-before-execution",
-        "schema_version": 2,
-        "sink": {
-          "type": "return"
-        },
-        "source": {
-          "type": "array"
-        },
-        "steps": [
-          {
-            "allocation": "none",
-            "category": "color",
-            "execution": "in-place",
-            "fallback": "runtime-avx2-or-numeric-safety-scalar",
-            "input_materialization": "owned-input-copy",
-            "kernel_form": "owned-in-place",
-            "name": "ColorJitter",
-            "output_slot": "working-u8",
-            "pixel_passes": 2,
-            "policies": [
-              {
-                "name": "brightness",
-                "value": "[0.8,1.2]"
-              },
-              {
-                "name": "contrast",
-                "value": "[0.8,1.2]"
-              },
-              {
-                "name": "saturation",
-                "value": "[0.8,1.2]"
-              },
-              {
-                "name": "hue",
-                "value": "[-0,0]"
-              },
-              {
-                "name": "order",
-                "value": "uniform-random-permutation"
-              }
-            ],
-            "probability": 1.0,
-            "scratch_slots": [],
-            "selection_reason": "benchmark-policy:composed-color-matrix",
-            "status": "always"
-          }
-        ],
-        "transforms": [
-          "ColorJitter"
-        ],
-        "unit_specializations": [
-          "ColorJitter:composed-color-matrix"
-        ]
-      },
-      "images_per_sec": 895.6243822990588,
-      "iterations": 90,
-      "median_ms": 1.1165395,
-      "observations_ms": [
-        1.1244295,
-        1.134195,
-        1.13545,
-        1.13217,
-        1.118835,
-        1.1165395,
-        1.13755,
-        1.12394,
-        1.1190095,
-        1.12542,
-        1.1073145,
-        1.1210995,
-        1.0984845,
-        1.117895,
-        1.09707,
-        1.1209295,
-        1.12282,
-        1.1204795,
-        1.0984695,
-        1.11044,
-        1.0987395,
-        1.1154095,
-        1.1023395,
-        1.116545,
-        1.1063045,
-        1.1181,
-        1.0956695,
-        1.12133,
-        1.0933295,
-        1.1171495,
-        1.1101295,
-        1.12212,
-        1.0964345,
-        1.1265395,
-        1.0872345,
-        1.11945,
-        1.10609,
-        1.1045545,
-        1.11868,
-        1.1079445,
-        1.1082995,
-        1.1086595,
-        1.10814,
-        1.1077145,
-        1.1150895
-      ],
-      "p95_ms": 1.134195,
-      "participant": "variopinta",
-      "reference_exact": true,
-      "repetition": 2,
-      "role": "control",
-      "route_id": "variopinta.reference",
-      "samples": 45,
-      "size": 1024,
-      "valid": true,
-      "validation": {
-        "c_contiguous": true,
-        "container": "numpy.ndarray",
-        "dtype": "uint8",
-        "finite": true,
-        "max": 255.0,
-        "min": 0.0,
-        "shape": [
-          1024,
-          1024,
-          3
-        ]
-      },
-      "variant": "reference",
-      "warmup_calls": 3,
-      "worker": "rust-catalog-2"
-    },
-    {
-      "block_size": 38,
-      "budget_ms": 100.0,
-      "case_id": "catalog.color-jitter.matrix",
-      "case_order": 9,
-      "catalog_policy": "matrix",
-      "environment": "rust",
-      "environment_position": 1,
-      "explanation": {
-        "buffers": [
-          {
-            "condition": "always",
-            "dtype": "uint8",
-            "layout": "HWC",
-            "lifecycle": "borrowed-for-call",
-            "name": "input"
-          },
-          {
-            "condition": "always",
-            "dtype": "uint8",
-            "layout": "HWC",
-            "lifecycle": "owned-per-run-workspace-reusable",
-            "name": "working-u8"
-          }
-        ],
-        "copies": [
-          {
-            "condition": "non-contiguous-input",
-            "count": "0-or-1",
-            "reason": "normalize-to-contiguous-HWC",
-            "stage": "python-entry"
-          },
-          {
-            "condition": "always",
-            "count": "1",
-            "reason": "establish-owned-working-buffer",
-            "stage": "native-entry"
-          },
-          {
-            "condition": "always",
-            "count": "0",
-            "reason": "transfer-Rust-Vec-ownership-to-NumPy-storage",
-            "stage": "python-output"
-          }
-        ],
-        "fallbacks": [
-          "runtime-avx2-or-numeric-safety-scalar"
-        ],
-        "fusions": [],
-        "input": {
-          "channels": "RGB",
-          "container": "borrowed-buffer",
-          "contiguous": true,
-          "dtype": "uint8",
-          "layout": "HWC",
-          "ownership": "caller"
-        },
-        "mode": "compiled",
-        "optimizations": [],
-        "output": {
-          "channels": "RGB",
-          "container": "owned-buffer",
-          "contiguous": true,
-          "dtype": "uint8",
-          "layout": "HWC",
-          "ownership": "result"
-        },
-        "output_dtype": "uint8",
-        "output_layout": "HWC",
-        "passes": 1,
-        "pixel_passes": 2,
-        "python_boundary": {
-          "augmentation": "held",
-          "crossings_per_call": 1,
-          "decode": "not-applicable",
-          "delivery": "held-for-Python-output-transfer",
-          "gil": "held-during-augmentation",
-          "gil_stages": {
-            "arguments": "held",
-            "augmentation": "held",
-            "decode": "not-applicable",
-            "delivery": "held-for-Python-output-transfer",
-            "source": "held"
-          },
-          "input": "NumPy HWC RGB uint8",
-          "input_access": "read-only-borrow",
-          "output": "owned contiguous NumPy array",
-          "source_acquisition": "held"
-        },
-        "sampling": "native-plan-before-execution",
-        "schema_version": 2,
-        "sink": {
-          "type": "return"
-        },
-        "source": {
-          "type": "array"
-        },
-        "steps": [
-          {
-            "allocation": "none",
-            "category": "color",
-            "execution": "in-place",
-            "fallback": "runtime-avx2-or-numeric-safety-scalar",
-            "input_materialization": "owned-input-copy",
-            "kernel_form": "owned-in-place",
-            "name": "ColorJitter",
-            "output_slot": "working-u8",
-            "pixel_passes": 2,
-            "policies": [
-              {
-                "name": "brightness",
-                "value": "[0.8,1.2]"
-              },
-              {
-                "name": "contrast",
-                "value": "[0.8,1.2]"
-              },
-              {
-                "name": "saturation",
-                "value": "[0.8,1.2]"
-              },
-              {
-                "name": "hue",
-                "value": "[-0,0]"
-              },
-              {
-                "name": "order",
-                "value": "uniform-random-permutation"
-              }
-            ],
-            "probability": 1.0,
-            "scratch_slots": [],
-            "selection_reason": "benchmark-policy:composed-color-matrix",
-            "status": "always"
-          }
-        ],
-        "transforms": [
-          "ColorJitter"
-        ],
-        "unit_specializations": [
-          "ColorJitter:composed-color-matrix"
-        ]
-      },
-      "images_per_sec": 20275.252560284192,
-      "iterations": 494,
-      "median_ms": 0.049321210526315794,
-      "observations_ms": [
-        0.05031886842105263,
-        0.048858578947368426,
-        0.049694631578947365,
-        0.04887542105263158,
-        0.05030807894736842,
-        0.048849631578947374,
-        0.049321210526315794,
-        0.04847018421052631,
-        0.049370447368421055,
-        0.049293052631578946,
-        0.049106473684210526,
-        0.049402263157894734,
-        0.050277289473684206
-      ],
-      "p95_ms": 0.05031886842105263,
-      "participant": "variopinta",
-      "reference_exact": true,
-      "repetition": 3,
-      "role": "public",
-      "route_id": "variopinta.compiled",
-      "samples": 13,
-      "size": 224,
-      "valid": true,
-      "validation": {
-        "c_contiguous": true,
-        "container": "numpy.ndarray",
-        "dtype": "uint8",
-        "finite": true,
-        "max": 255.0,
-        "min": 0.0,
-        "shape": [
-          224,
-          224,
-          3
-        ]
-      },
-      "variant": "compiled",
-      "warmup_calls": 3,
-      "worker": "rust-catalog-3"
-    },
-    {
-      "block_size": 8,
-      "budget_ms": 100.0,
-      "case_id": "catalog.color-jitter.matrix",
-      "case_order": 9,
-      "catalog_policy": "matrix",
-      "environment": "rust",
-      "environment_position": 1,
-      "explanation": {
-        "buffers": [
-          {
-            "condition": "always",
-            "dtype": "uint8",
-            "layout": "HWC",
-            "lifecycle": "borrowed-for-call",
-            "name": "input"
-          },
-          {
-            "condition": "always",
-            "dtype": "uint8",
-            "layout": "HWC",
-            "lifecycle": "owned-per-run-workspace-reusable",
-            "name": "working-u8"
-          }
-        ],
-        "copies": [
-          {
-            "condition": "non-contiguous-input",
-            "count": "0-or-1",
-            "reason": "normalize-to-contiguous-HWC",
-            "stage": "python-entry"
-          },
-          {
-            "condition": "always",
-            "count": "1",
-            "reason": "establish-owned-working-buffer",
-            "stage": "native-entry"
-          },
-          {
-            "condition": "always",
-            "count": "0",
-            "reason": "transfer-Rust-Vec-ownership-to-NumPy-storage",
-            "stage": "python-output"
-          }
-        ],
-        "fallbacks": [
-          "runtime-avx2-or-numeric-safety-scalar"
-        ],
-        "fusions": [],
-        "input": {
-          "channels": "RGB",
-          "container": "borrowed-buffer",
-          "contiguous": true,
-          "dtype": "uint8",
-          "layout": "HWC",
-          "ownership": "caller"
-        },
-        "mode": "compiled",
-        "optimizations": [],
-        "output": {
-          "channels": "RGB",
-          "container": "owned-buffer",
-          "contiguous": true,
-          "dtype": "uint8",
-          "layout": "HWC",
-          "ownership": "result"
-        },
-        "output_dtype": "uint8",
-        "output_layout": "HWC",
-        "passes": 1,
-        "pixel_passes": 2,
-        "python_boundary": {
-          "augmentation": "held",
-          "crossings_per_call": 1,
-          "decode": "not-applicable",
-          "delivery": "held-for-Python-output-transfer",
-          "gil": "held-during-augmentation",
-          "gil_stages": {
-            "arguments": "held",
-            "augmentation": "held",
-            "decode": "not-applicable",
-            "delivery": "held-for-Python-output-transfer",
-            "source": "held"
-          },
-          "input": "NumPy HWC RGB uint8",
-          "input_access": "read-only-borrow",
-          "output": "owned contiguous NumPy array",
-          "source_acquisition": "held"
-        },
-        "sampling": "native-plan-before-execution",
-        "schema_version": 2,
-        "sink": {
-          "type": "return"
-        },
-        "source": {
-          "type": "array"
-        },
-        "steps": [
-          {
-            "allocation": "none",
-            "category": "color",
-            "execution": "in-place",
-            "fallback": "runtime-avx2-or-numeric-safety-scalar",
-            "input_materialization": "owned-input-copy",
-            "kernel_form": "owned-in-place",
-            "name": "ColorJitter",
-            "output_slot": "working-u8",
-            "pixel_passes": 2,
-            "policies": [
-              {
-                "name": "brightness",
-                "value": "[0.8,1.2]"
-              },
-              {
-                "name": "contrast",
-                "value": "[0.8,1.2]"
-              },
-              {
-                "name": "saturation",
-                "value": "[0.8,1.2]"
-              },
-              {
-                "name": "hue",
-                "value": "[-0,0]"
-              },
-              {
-                "name": "order",
-                "value": "uniform-random-permutation"
-              }
-            ],
-            "probability": 1.0,
-            "scratch_slots": [],
-            "selection_reason": "benchmark-policy:composed-color-matrix",
-            "status": "always"
-          }
-        ],
-        "transforms": [
-          "ColorJitter"
-        ],
-        "unit_specializations": [
-          "ColorJitter:composed-color-matrix"
-        ]
-      },
-      "images_per_sec": 3911.429588400264,
-      "iterations": 392,
-      "median_ms": 0.255661,
-      "observations_ms": [
-        0.25532725,
-        0.255661,
-        0.25560225,
-        0.25562225,
-        0.25582975,
-        0.256466,
-        0.255582125,
-        0.255636,
-        0.25825475,
-        0.25768975,
-        0.25603475,
-        0.25492725,
-        0.256334625,
-        0.254366,
-        0.25611725,
-        0.254580875,
-        0.25540975,
-        0.25621225,
-        0.2554085,
-        0.25457725,
-        0.25624225,
-        0.25528975,
-        0.2551235,
-        0.255878375,
-        0.256108375,
-        0.25997725,
-        0.25644725,
-        0.25553225,
-        0.255816,
-        0.255462125,
-        0.256446,
-        0.254676,
-        0.25477225,
-        0.2568485,
-        0.2532985,
-        0.25517225,
-        0.2561385,
-        0.256994625,
-        0.25355725,
-        0.2576335,
-        0.25459225,
-        0.25723475,
-        0.254190875,
-        0.25726475,
-        0.254151,
-        0.257041,
-        0.253355875,
-        0.261451,
-        0.2560785
-      ],
-      "p95_ms": 0.25825475,
-      "participant": "variopinta",
-      "reference_exact": true,
-      "repetition": 3,
-      "role": "public",
-      "route_id": "variopinta.compiled",
-      "samples": 49,
-      "size": 512,
-      "valid": true,
-      "validation": {
-        "c_contiguous": true,
-        "container": "numpy.ndarray",
-        "dtype": "uint8",
-        "finite": true,
-        "max": 255.0,
-        "min": 0.0,
-        "shape": [
-          512,
-          512,
-          3
-        ]
-      },
-      "variant": "compiled",
-      "warmup_calls": 3,
-      "worker": "rust-catalog-3"
-    },
-    {
-      "block_size": 2,
-      "budget_ms": 100.0,
-      "case_id": "catalog.color-jitter.matrix",
-      "case_order": 9,
-      "catalog_policy": "matrix",
-      "environment": "rust",
-      "environment_position": 1,
-      "explanation": {
-        "buffers": [
-          {
-            "condition": "always",
-            "dtype": "uint8",
-            "layout": "HWC",
-            "lifecycle": "borrowed-for-call",
-            "name": "input"
-          },
-          {
-            "condition": "always",
-            "dtype": "uint8",
-            "layout": "HWC",
-            "lifecycle": "owned-per-run-workspace-reusable",
-            "name": "working-u8"
-          }
-        ],
-        "copies": [
-          {
-            "condition": "non-contiguous-input",
-            "count": "0-or-1",
-            "reason": "normalize-to-contiguous-HWC",
-            "stage": "python-entry"
-          },
-          {
-            "condition": "always",
-            "count": "1",
-            "reason": "establish-owned-working-buffer",
-            "stage": "native-entry"
-          },
-          {
-            "condition": "always",
-            "count": "0",
-            "reason": "transfer-Rust-Vec-ownership-to-NumPy-storage",
-            "stage": "python-output"
-          }
-        ],
-        "fallbacks": [
-          "runtime-avx2-or-numeric-safety-scalar"
-        ],
-        "fusions": [],
-        "input": {
-          "channels": "RGB",
-          "container": "borrowed-buffer",
-          "contiguous": true,
-          "dtype": "uint8",
-          "layout": "HWC",
-          "ownership": "caller"
-        },
-        "mode": "compiled",
-        "optimizations": [],
-        "output": {
-          "channels": "RGB",
-          "container": "owned-buffer",
-          "contiguous": true,
-          "dtype": "uint8",
-          "layout": "HWC",
-          "ownership": "result"
-        },
-        "output_dtype": "uint8",
-        "output_layout": "HWC",
-        "passes": 1,
-        "pixel_passes": 2,
-        "python_boundary": {
-          "augmentation": "held",
-          "crossings_per_call": 1,
-          "decode": "not-applicable",
-          "delivery": "held-for-Python-output-transfer",
-          "gil": "held-during-augmentation",
-          "gil_stages": {
-            "arguments": "held",
-            "augmentation": "held",
-            "decode": "not-applicable",
-            "delivery": "held-for-Python-output-transfer",
-            "source": "held"
-          },
-          "input": "NumPy HWC RGB uint8",
-          "input_access": "read-only-borrow",
-          "output": "owned contiguous NumPy array",
-          "source_acquisition": "held"
-        },
-        "sampling": "native-plan-before-execution",
-        "schema_version": 2,
-        "sink": {
-          "type": "return"
-        },
-        "source": {
-          "type": "array"
-        },
-        "steps": [
-          {
-            "allocation": "none",
-            "category": "color",
-            "execution": "in-place",
-            "fallback": "runtime-avx2-or-numeric-safety-scalar",
-            "input_materialization": "owned-input-copy",
-            "kernel_form": "owned-in-place",
-            "name": "ColorJitter",
-            "output_slot": "working-u8",
-            "pixel_passes": 2,
-            "policies": [
-              {
-                "name": "brightness",
-                "value": "[0.8,1.2]"
-              },
-              {
-                "name": "contrast",
-                "value": "[0.8,1.2]"
-              },
-              {
-                "name": "saturation",
-                "value": "[0.8,1.2]"
-              },
-              {
-                "name": "hue",
-                "value": "[-0,0]"
-              },
-              {
-                "name": "order",
-                "value": "uniform-random-permutation"
-              }
-            ],
-            "probability": 1.0,
-            "scratch_slots": [],
-            "selection_reason": "benchmark-policy:composed-color-matrix",
-            "status": "always"
-          }
-        ],
-        "transforms": [
-          "ColorJitter"
-        ],
-        "unit_specializations": [
-          "ColorJitter:composed-color-matrix"
-        ]
-      },
-      "images_per_sec": 959.4060892545081,
+      "images_per_sec": 957.1060940141389,
       "iterations": 96,
-      "median_ms": 1.0423114999999998,
+      "median_ms": 1.04481625,
       "observations_ms": [
-        1.032169,
-        1.0679545,
-        1.072014,
-        1.0596095,
-        1.034419,
-        1.035664,
-        1.043204,
-        1.044974,
-        1.034494,
-        1.038214,
-        1.049069,
-        1.038279,
-        1.0459595,
-        1.032104,
-        1.045224,
-        1.036414,
-        1.0541495,
-        1.030539,
-        1.046744,
-        1.048389,
-        1.034529,
-        1.032239,
-        1.041209,
-        1.033299,
-        1.025079,
-        1.045159,
-        1.037989,
-        1.039504,
-        1.0400245,
-        1.037479,
-        1.044864,
-        1.043739,
-        1.037249,
-        1.043054,
-        1.034854,
-        1.0483295,
-        1.043709,
-        1.050724,
-        1.065344,
-        1.0441195,
-        1.042244,
-        1.049059,
-        1.0412345,
-        1.042379,
-        1.050484,
-        1.0607445,
-        1.041109,
-        1.039779
+        1.0363385,
+        1.064599,
+        1.0828835,
+        1.062254,
+        1.036884,
+        1.035149,
+        1.0551185,
+        1.038179,
+        1.0426485,
+        1.0351785,
+        1.066559,
+        1.0367285,
+        1.051959,
+        1.028424,
+        1.053869,
+        1.0296585,
+        1.0278785,
+        1.037789,
+        1.0356835,
+        1.0451835,
+        1.031664,
+        1.0304085,
+        1.0534385,
+        1.0422635,
+        1.050194,
+        1.035639,
+        1.0572285,
+        1.046874,
+        1.0430685,
+        1.069854,
+        1.0500985,
+        1.067649,
+        1.0412885,
+        1.046749,
+        1.0519485,
+        1.043419,
+        1.036934,
+        1.0500085,
+        1.044449,
+        1.0540035,
+        1.062289,
+        1.0596885,
+        1.047064,
+        1.0632085,
+        1.037899,
+        1.0429985,
+        1.047439,
+        1.034829
       ],
-      "p95_ms": 1.065344,
+      "p95_ms": 1.067649,
       "participant": "variopinta",
       "reference_exact": true,
-      "repetition": 3,
+      "repetition": 2,
       "role": "public",
       "route_id": "variopinta.compiled",
       "samples": 48,
@@ -3560,16 +2204,16 @@
       },
       "variant": "compiled",
       "warmup_calls": 3,
-      "worker": "rust-catalog-3"
+      "worker": "rust-catalog-2"
     },
     {
       "block_size": 41,
       "budget_ms": 100.0,
       "case_id": "catalog.color-jitter.matrix",
-      "case_order": 10,
+      "case_order": 7,
       "catalog_policy": "matrix",
       "environment": "rust",
-      "environment_position": 1,
+      "environment_position": 2,
       "explanation": {
         "buffers": [
           {
@@ -3705,24 +2349,1284 @@
           "ColorJitter:composed-color-matrix"
         ]
       },
-      "images_per_sec": 20212.995674418926,
+      "images_per_sec": 20188.51145673405,
       "iterations": 492,
-      "median_ms": 0.049473121951219515,
+      "median_ms": 0.04953312195121951,
       "observations_ms": [
-        0.05085678048780488,
-        0.0489289756097561,
-        0.048847975609756095,
-        0.049470195121951215,
-        0.04884409756097561,
-        0.050827512195121945,
-        0.04975604878048781,
-        0.04937187804878049,
-        0.04896117073170731,
+        0.05050043902439024,
+        0.04887895121951219,
         0.04965114634146341,
-        0.04947604878048781,
-        0.049745560975609754
+        0.04900163414634146,
+        0.04976726829268293,
+        0.049569951219512194,
+        0.04974285365853659,
+        0.048976756097560976,
+        0.049726512195121954,
+        0.04898334146341463,
+        0.04949629268292683,
+        0.048890902439024386
       ],
-      "p95_ms": 0.05085678048780488,
+      "p95_ms": 0.05050043902439024,
+      "participant": "variopinta",
+      "reference_exact": true,
+      "repetition": 2,
+      "role": "control",
+      "route_id": "variopinta.reference",
+      "samples": 12,
+      "size": 224,
+      "valid": true,
+      "validation": {
+        "c_contiguous": true,
+        "container": "numpy.ndarray",
+        "dtype": "uint8",
+        "finite": true,
+        "max": 255.0,
+        "min": 15.0,
+        "shape": [
+          224,
+          224,
+          3
+        ]
+      },
+      "variant": "reference",
+      "warmup_calls": 3,
+      "worker": "rust-catalog-2"
+    },
+    {
+      "block_size": 8,
+      "budget_ms": 100.0,
+      "case_id": "catalog.color-jitter.matrix",
+      "case_order": 7,
+      "catalog_policy": "matrix",
+      "environment": "rust",
+      "environment_position": 2,
+      "explanation": {
+        "buffers": [
+          {
+            "condition": "always",
+            "dtype": "uint8",
+            "layout": "HWC",
+            "lifecycle": "borrowed-for-call",
+            "name": "input"
+          },
+          {
+            "condition": "always",
+            "dtype": "uint8",
+            "layout": "HWC",
+            "lifecycle": "owned-per-run-workspace-reusable",
+            "name": "working-u8"
+          }
+        ],
+        "copies": [
+          {
+            "condition": "non-contiguous-input",
+            "count": "0-or-1",
+            "reason": "normalize-to-contiguous-HWC",
+            "stage": "python-entry"
+          },
+          {
+            "condition": "always",
+            "count": "1",
+            "reason": "establish-owned-working-buffer",
+            "stage": "native-entry"
+          },
+          {
+            "condition": "always",
+            "count": "0",
+            "reason": "transfer-Rust-Vec-ownership-to-NumPy-storage",
+            "stage": "python-output"
+          }
+        ],
+        "fallbacks": [
+          "runtime-avx2-or-numeric-safety-scalar"
+        ],
+        "fusions": [],
+        "input": {
+          "channels": "RGB",
+          "container": "borrowed-buffer",
+          "contiguous": true,
+          "dtype": "uint8",
+          "layout": "HWC",
+          "ownership": "caller"
+        },
+        "mode": "reference",
+        "optimizations": [],
+        "output": {
+          "channels": "RGB",
+          "container": "owned-buffer",
+          "contiguous": true,
+          "dtype": "uint8",
+          "layout": "HWC",
+          "ownership": "result"
+        },
+        "output_dtype": "uint8",
+        "output_layout": "HWC",
+        "passes": 1,
+        "pixel_passes": 2,
+        "python_boundary": {
+          "augmentation": "held",
+          "crossings_per_call": 1,
+          "decode": "not-applicable",
+          "delivery": "held-for-Python-output-transfer",
+          "gil": "held-during-augmentation",
+          "gil_stages": {
+            "arguments": "held",
+            "augmentation": "held",
+            "decode": "not-applicable",
+            "delivery": "held-for-Python-output-transfer",
+            "source": "held"
+          },
+          "input": "NumPy HWC RGB uint8",
+          "input_access": "read-only-borrow",
+          "output": "owned contiguous NumPy array",
+          "source_acquisition": "held"
+        },
+        "sampling": "native-plan-before-execution",
+        "schema_version": 2,
+        "sink": {
+          "type": "return"
+        },
+        "source": {
+          "type": "array"
+        },
+        "steps": [
+          {
+            "allocation": "none",
+            "category": "color",
+            "execution": "in-place",
+            "fallback": "runtime-avx2-or-numeric-safety-scalar",
+            "input_materialization": "owned-input-copy",
+            "kernel_form": "owned-in-place",
+            "name": "ColorJitter",
+            "output_slot": "working-u8",
+            "pixel_passes": 2,
+            "policies": [
+              {
+                "name": "brightness",
+                "value": "[0.8,1.2]"
+              },
+              {
+                "name": "contrast",
+                "value": "[0.8,1.2]"
+              },
+              {
+                "name": "saturation",
+                "value": "[0.8,1.2]"
+              },
+              {
+                "name": "hue",
+                "value": "[-0,0]"
+              },
+              {
+                "name": "order",
+                "value": "uniform-random-permutation"
+              }
+            ],
+            "probability": 1.0,
+            "scratch_slots": [],
+            "selection_reason": "benchmark-policy:composed-color-matrix",
+            "status": "always"
+          }
+        ],
+        "transforms": [
+          "ColorJitter"
+        ],
+        "unit_specializations": [
+          "ColorJitter:composed-color-matrix"
+        ]
+      },
+      "images_per_sec": 3905.4357319055057,
+      "iterations": 392,
+      "median_ms": 0.256053375,
+      "observations_ms": [
+        0.254664625,
+        0.257345875,
+        0.255265875,
+        0.25552225,
+        0.259578375,
+        0.256053375,
+        0.2564685,
+        0.258848375,
+        0.25645475,
+        0.255495875,
+        0.256636,
+        0.257195875,
+        0.255143375,
+        0.257311,
+        0.253995875,
+        0.258110875,
+        0.25941225,
+        0.256227125,
+        0.255386,
+        0.254299625,
+        0.25831475,
+        0.253943375,
+        0.256423375,
+        0.2542085,
+        0.260728375,
+        0.257170875,
+        0.255544625,
+        0.256214625,
+        0.255192125,
+        0.25570975,
+        0.255656,
+        0.256283375,
+        0.255555875,
+        0.255977125,
+        0.2586835,
+        0.255758375,
+        0.256650875,
+        0.25426725,
+        0.255887125,
+        0.254424625,
+        0.25721225,
+        0.254562125,
+        0.265529625,
+        0.254649625,
+        0.25839725,
+        0.253845875,
+        0.257932125,
+        0.2543835,
+        0.257603375
+      ],
+      "p95_ms": 0.259578375,
+      "participant": "variopinta",
+      "reference_exact": true,
+      "repetition": 2,
+      "role": "control",
+      "route_id": "variopinta.reference",
+      "samples": 49,
+      "size": 512,
+      "valid": true,
+      "validation": {
+        "c_contiguous": true,
+        "container": "numpy.ndarray",
+        "dtype": "uint8",
+        "finite": true,
+        "max": 255.0,
+        "min": 0.0,
+        "shape": [
+          512,
+          512,
+          3
+        ]
+      },
+      "variant": "reference",
+      "warmup_calls": 3,
+      "worker": "rust-catalog-2"
+    },
+    {
+      "block_size": 2,
+      "budget_ms": 100.0,
+      "case_id": "catalog.color-jitter.matrix",
+      "case_order": 7,
+      "catalog_policy": "matrix",
+      "environment": "rust",
+      "environment_position": 2,
+      "explanation": {
+        "buffers": [
+          {
+            "condition": "always",
+            "dtype": "uint8",
+            "layout": "HWC",
+            "lifecycle": "borrowed-for-call",
+            "name": "input"
+          },
+          {
+            "condition": "always",
+            "dtype": "uint8",
+            "layout": "HWC",
+            "lifecycle": "owned-per-run-workspace-reusable",
+            "name": "working-u8"
+          }
+        ],
+        "copies": [
+          {
+            "condition": "non-contiguous-input",
+            "count": "0-or-1",
+            "reason": "normalize-to-contiguous-HWC",
+            "stage": "python-entry"
+          },
+          {
+            "condition": "always",
+            "count": "1",
+            "reason": "establish-owned-working-buffer",
+            "stage": "native-entry"
+          },
+          {
+            "condition": "always",
+            "count": "0",
+            "reason": "transfer-Rust-Vec-ownership-to-NumPy-storage",
+            "stage": "python-output"
+          }
+        ],
+        "fallbacks": [
+          "runtime-avx2-or-numeric-safety-scalar"
+        ],
+        "fusions": [],
+        "input": {
+          "channels": "RGB",
+          "container": "borrowed-buffer",
+          "contiguous": true,
+          "dtype": "uint8",
+          "layout": "HWC",
+          "ownership": "caller"
+        },
+        "mode": "reference",
+        "optimizations": [],
+        "output": {
+          "channels": "RGB",
+          "container": "owned-buffer",
+          "contiguous": true,
+          "dtype": "uint8",
+          "layout": "HWC",
+          "ownership": "result"
+        },
+        "output_dtype": "uint8",
+        "output_layout": "HWC",
+        "passes": 1,
+        "pixel_passes": 2,
+        "python_boundary": {
+          "augmentation": "held",
+          "crossings_per_call": 1,
+          "decode": "not-applicable",
+          "delivery": "held-for-Python-output-transfer",
+          "gil": "held-during-augmentation",
+          "gil_stages": {
+            "arguments": "held",
+            "augmentation": "held",
+            "decode": "not-applicable",
+            "delivery": "held-for-Python-output-transfer",
+            "source": "held"
+          },
+          "input": "NumPy HWC RGB uint8",
+          "input_access": "read-only-borrow",
+          "output": "owned contiguous NumPy array",
+          "source_acquisition": "held"
+        },
+        "sampling": "native-plan-before-execution",
+        "schema_version": 2,
+        "sink": {
+          "type": "return"
+        },
+        "source": {
+          "type": "array"
+        },
+        "steps": [
+          {
+            "allocation": "none",
+            "category": "color",
+            "execution": "in-place",
+            "fallback": "runtime-avx2-or-numeric-safety-scalar",
+            "input_materialization": "owned-input-copy",
+            "kernel_form": "owned-in-place",
+            "name": "ColorJitter",
+            "output_slot": "working-u8",
+            "pixel_passes": 2,
+            "policies": [
+              {
+                "name": "brightness",
+                "value": "[0.8,1.2]"
+              },
+              {
+                "name": "contrast",
+                "value": "[0.8,1.2]"
+              },
+              {
+                "name": "saturation",
+                "value": "[0.8,1.2]"
+              },
+              {
+                "name": "hue",
+                "value": "[-0,0]"
+              },
+              {
+                "name": "order",
+                "value": "uniform-random-permutation"
+              }
+            ],
+            "probability": 1.0,
+            "scratch_slots": [],
+            "selection_reason": "benchmark-policy:composed-color-matrix",
+            "status": "always"
+          }
+        ],
+        "transforms": [
+          "ColorJitter"
+        ],
+        "unit_specializations": [
+          "ColorJitter:composed-color-matrix"
+        ]
+      },
+      "images_per_sec": 957.7869757253679,
+      "iterations": 94,
+      "median_ms": 1.0440735,
+      "observations_ms": [
+        1.0356535,
+        1.069294,
+        1.0810235,
+        1.069509,
+        1.0351635,
+        1.046504,
+        1.054524,
+        1.050144,
+        1.0303285,
+        1.046649,
+        1.0939135,
+        1.052009,
+        1.0433235,
+        1.047919,
+        1.0585685,
+        1.0401385,
+        1.049059,
+        1.0388585,
+        1.067884,
+        1.0417735,
+        1.037544,
+        1.0373735,
+        1.046214,
+        1.0339635,
+        1.0335085,
+        1.827912,
+        1.049784,
+        1.0494935,
+        1.041419,
+        1.0534285,
+        1.064289,
+        1.0376285,
+        1.040394,
+        1.0381135,
+        1.0421085,
+        1.051719,
+        1.0346435,
+        1.043774,
+        1.040539,
+        1.0413535,
+        1.035434,
+        1.0333585,
+        1.042044,
+        1.0440735,
+        1.0609785,
+        1.0499085,
+        1.060999
+      ],
+      "p95_ms": 1.0810235,
+      "participant": "variopinta",
+      "reference_exact": true,
+      "repetition": 2,
+      "role": "control",
+      "route_id": "variopinta.reference",
+      "samples": 47,
+      "size": 1024,
+      "valid": true,
+      "validation": {
+        "c_contiguous": true,
+        "container": "numpy.ndarray",
+        "dtype": "uint8",
+        "finite": true,
+        "max": 255.0,
+        "min": 0.0,
+        "shape": [
+          1024,
+          1024,
+          3
+        ]
+      },
+      "variant": "reference",
+      "warmup_calls": 3,
+      "worker": "rust-catalog-2"
+    },
+    {
+      "block_size": 40,
+      "budget_ms": 100.0,
+      "case_id": "catalog.color-jitter.matrix",
+      "case_order": 5,
+      "catalog_policy": "matrix",
+      "environment": "rust",
+      "environment_position": 1,
+      "explanation": {
+        "buffers": [
+          {
+            "condition": "always",
+            "dtype": "uint8",
+            "layout": "HWC",
+            "lifecycle": "borrowed-for-call",
+            "name": "input"
+          },
+          {
+            "condition": "always",
+            "dtype": "uint8",
+            "layout": "HWC",
+            "lifecycle": "owned-per-run-workspace-reusable",
+            "name": "working-u8"
+          }
+        ],
+        "copies": [
+          {
+            "condition": "non-contiguous-input",
+            "count": "0-or-1",
+            "reason": "normalize-to-contiguous-HWC",
+            "stage": "python-entry"
+          },
+          {
+            "condition": "always",
+            "count": "1",
+            "reason": "establish-owned-working-buffer",
+            "stage": "native-entry"
+          },
+          {
+            "condition": "always",
+            "count": "0",
+            "reason": "transfer-Rust-Vec-ownership-to-NumPy-storage",
+            "stage": "python-output"
+          }
+        ],
+        "fallbacks": [
+          "runtime-avx2-or-numeric-safety-scalar"
+        ],
+        "fusions": [],
+        "input": {
+          "channels": "RGB",
+          "container": "borrowed-buffer",
+          "contiguous": true,
+          "dtype": "uint8",
+          "layout": "HWC",
+          "ownership": "caller"
+        },
+        "mode": "compiled",
+        "optimizations": [],
+        "output": {
+          "channels": "RGB",
+          "container": "owned-buffer",
+          "contiguous": true,
+          "dtype": "uint8",
+          "layout": "HWC",
+          "ownership": "result"
+        },
+        "output_dtype": "uint8",
+        "output_layout": "HWC",
+        "passes": 1,
+        "pixel_passes": 2,
+        "python_boundary": {
+          "augmentation": "held",
+          "crossings_per_call": 1,
+          "decode": "not-applicable",
+          "delivery": "held-for-Python-output-transfer",
+          "gil": "held-during-augmentation",
+          "gil_stages": {
+            "arguments": "held",
+            "augmentation": "held",
+            "decode": "not-applicable",
+            "delivery": "held-for-Python-output-transfer",
+            "source": "held"
+          },
+          "input": "NumPy HWC RGB uint8",
+          "input_access": "read-only-borrow",
+          "output": "owned contiguous NumPy array",
+          "source_acquisition": "held"
+        },
+        "sampling": "native-plan-before-execution",
+        "schema_version": 2,
+        "sink": {
+          "type": "return"
+        },
+        "source": {
+          "type": "array"
+        },
+        "steps": [
+          {
+            "allocation": "none",
+            "category": "color",
+            "execution": "in-place",
+            "fallback": "runtime-avx2-or-numeric-safety-scalar",
+            "input_materialization": "owned-input-copy",
+            "kernel_form": "owned-in-place",
+            "name": "ColorJitter",
+            "output_slot": "working-u8",
+            "pixel_passes": 2,
+            "policies": [
+              {
+                "name": "brightness",
+                "value": "[0.8,1.2]"
+              },
+              {
+                "name": "contrast",
+                "value": "[0.8,1.2]"
+              },
+              {
+                "name": "saturation",
+                "value": "[0.8,1.2]"
+              },
+              {
+                "name": "hue",
+                "value": "[-0,0]"
+              },
+              {
+                "name": "order",
+                "value": "uniform-random-permutation"
+              }
+            ],
+            "probability": 1.0,
+            "scratch_slots": [],
+            "selection_reason": "benchmark-policy:composed-color-matrix",
+            "status": "always"
+          }
+        ],
+        "transforms": [
+          "ColorJitter"
+        ],
+        "unit_specializations": [
+          "ColorJitter:composed-color-matrix"
+        ]
+      },
+      "images_per_sec": 20233.93463528586,
+      "iterations": 480,
+      "median_ms": 0.049421925,
+      "observations_ms": [
+        0.049370675,
+        0.049718675000000004,
+        0.049038700000000005,
+        0.049781175,
+        0.049104425,
+        0.049962675,
+        0.049459425,
+        0.049716175,
+        0.04903845,
+        0.049384424999999996,
+        0.049753925,
+        0.049012675
+      ],
+      "p95_ms": 0.049962675,
+      "participant": "variopinta",
+      "reference_exact": true,
+      "repetition": 3,
+      "role": "public",
+      "route_id": "variopinta.compiled",
+      "samples": 12,
+      "size": 224,
+      "valid": true,
+      "validation": {
+        "c_contiguous": true,
+        "container": "numpy.ndarray",
+        "dtype": "uint8",
+        "finite": true,
+        "max": 255.0,
+        "min": 0.0,
+        "shape": [
+          224,
+          224,
+          3
+        ]
+      },
+      "variant": "compiled",
+      "warmup_calls": 3,
+      "worker": "rust-catalog-3"
+    },
+    {
+      "block_size": 8,
+      "budget_ms": 100.0,
+      "case_id": "catalog.color-jitter.matrix",
+      "case_order": 5,
+      "catalog_policy": "matrix",
+      "environment": "rust",
+      "environment_position": 1,
+      "explanation": {
+        "buffers": [
+          {
+            "condition": "always",
+            "dtype": "uint8",
+            "layout": "HWC",
+            "lifecycle": "borrowed-for-call",
+            "name": "input"
+          },
+          {
+            "condition": "always",
+            "dtype": "uint8",
+            "layout": "HWC",
+            "lifecycle": "owned-per-run-workspace-reusable",
+            "name": "working-u8"
+          }
+        ],
+        "copies": [
+          {
+            "condition": "non-contiguous-input",
+            "count": "0-or-1",
+            "reason": "normalize-to-contiguous-HWC",
+            "stage": "python-entry"
+          },
+          {
+            "condition": "always",
+            "count": "1",
+            "reason": "establish-owned-working-buffer",
+            "stage": "native-entry"
+          },
+          {
+            "condition": "always",
+            "count": "0",
+            "reason": "transfer-Rust-Vec-ownership-to-NumPy-storage",
+            "stage": "python-output"
+          }
+        ],
+        "fallbacks": [
+          "runtime-avx2-or-numeric-safety-scalar"
+        ],
+        "fusions": [],
+        "input": {
+          "channels": "RGB",
+          "container": "borrowed-buffer",
+          "contiguous": true,
+          "dtype": "uint8",
+          "layout": "HWC",
+          "ownership": "caller"
+        },
+        "mode": "compiled",
+        "optimizations": [],
+        "output": {
+          "channels": "RGB",
+          "container": "owned-buffer",
+          "contiguous": true,
+          "dtype": "uint8",
+          "layout": "HWC",
+          "ownership": "result"
+        },
+        "output_dtype": "uint8",
+        "output_layout": "HWC",
+        "passes": 1,
+        "pixel_passes": 2,
+        "python_boundary": {
+          "augmentation": "held",
+          "crossings_per_call": 1,
+          "decode": "not-applicable",
+          "delivery": "held-for-Python-output-transfer",
+          "gil": "held-during-augmentation",
+          "gil_stages": {
+            "arguments": "held",
+            "augmentation": "held",
+            "decode": "not-applicable",
+            "delivery": "held-for-Python-output-transfer",
+            "source": "held"
+          },
+          "input": "NumPy HWC RGB uint8",
+          "input_access": "read-only-borrow",
+          "output": "owned contiguous NumPy array",
+          "source_acquisition": "held"
+        },
+        "sampling": "native-plan-before-execution",
+        "schema_version": 2,
+        "sink": {
+          "type": "return"
+        },
+        "source": {
+          "type": "array"
+        },
+        "steps": [
+          {
+            "allocation": "none",
+            "category": "color",
+            "execution": "in-place",
+            "fallback": "runtime-avx2-or-numeric-safety-scalar",
+            "input_materialization": "owned-input-copy",
+            "kernel_form": "owned-in-place",
+            "name": "ColorJitter",
+            "output_slot": "working-u8",
+            "pixel_passes": 2,
+            "policies": [
+              {
+                "name": "brightness",
+                "value": "[0.8,1.2]"
+              },
+              {
+                "name": "contrast",
+                "value": "[0.8,1.2]"
+              },
+              {
+                "name": "saturation",
+                "value": "[0.8,1.2]"
+              },
+              {
+                "name": "hue",
+                "value": "[-0,0]"
+              },
+              {
+                "name": "order",
+                "value": "uniform-random-permutation"
+              }
+            ],
+            "probability": 1.0,
+            "scratch_slots": [],
+            "selection_reason": "benchmark-policy:composed-color-matrix",
+            "status": "always"
+          }
+        ],
+        "transforms": [
+          "ColorJitter"
+        ],
+        "unit_specializations": [
+          "ColorJitter:composed-color-matrix"
+        ]
+      },
+      "images_per_sec": 3904.834306898011,
+      "iterations": 384,
+      "median_ms": 0.25609281250000004,
+      "observations_ms": [
+        0.25505225,
+        0.260033375,
+        0.254410875,
+        0.25810225,
+        0.259849625,
+        0.25674975,
+        0.255361,
+        0.255327125,
+        0.257892125,
+        0.255300875,
+        0.2610285,
+        0.2537885,
+        0.261846,
+        0.254198375,
+        0.257327125,
+        0.253337125,
+        0.25787975,
+        0.254139625,
+        0.2568185,
+        0.253620875,
+        0.258981,
+        0.253919625,
+        0.256232125,
+        0.25417975,
+        0.454460375,
+        0.25438475,
+        0.255363375,
+        0.256873375,
+        0.256421,
+        0.257991,
+        0.256179625,
+        0.25509725,
+        0.256179625,
+        0.25527725,
+        0.255892125,
+        0.2571285,
+        0.254068375,
+        0.255040875,
+        0.2564635,
+        0.2550035,
+        0.256259625,
+        0.255472125,
+        0.256329625,
+        0.257451,
+        0.256006,
+        0.255170875,
+        0.25543975,
+        0.257852125
+      ],
+      "p95_ms": 0.2610285,
+      "participant": "variopinta",
+      "reference_exact": true,
+      "repetition": 3,
+      "role": "public",
+      "route_id": "variopinta.compiled",
+      "samples": 48,
+      "size": 512,
+      "valid": true,
+      "validation": {
+        "c_contiguous": true,
+        "container": "numpy.ndarray",
+        "dtype": "uint8",
+        "finite": true,
+        "max": 255.0,
+        "min": 0.0,
+        "shape": [
+          512,
+          512,
+          3
+        ]
+      },
+      "variant": "compiled",
+      "warmup_calls": 3,
+      "worker": "rust-catalog-3"
+    },
+    {
+      "block_size": 2,
+      "budget_ms": 100.0,
+      "case_id": "catalog.color-jitter.matrix",
+      "case_order": 5,
+      "catalog_policy": "matrix",
+      "environment": "rust",
+      "environment_position": 1,
+      "explanation": {
+        "buffers": [
+          {
+            "condition": "always",
+            "dtype": "uint8",
+            "layout": "HWC",
+            "lifecycle": "borrowed-for-call",
+            "name": "input"
+          },
+          {
+            "condition": "always",
+            "dtype": "uint8",
+            "layout": "HWC",
+            "lifecycle": "owned-per-run-workspace-reusable",
+            "name": "working-u8"
+          }
+        ],
+        "copies": [
+          {
+            "condition": "non-contiguous-input",
+            "count": "0-or-1",
+            "reason": "normalize-to-contiguous-HWC",
+            "stage": "python-entry"
+          },
+          {
+            "condition": "always",
+            "count": "1",
+            "reason": "establish-owned-working-buffer",
+            "stage": "native-entry"
+          },
+          {
+            "condition": "always",
+            "count": "0",
+            "reason": "transfer-Rust-Vec-ownership-to-NumPy-storage",
+            "stage": "python-output"
+          }
+        ],
+        "fallbacks": [
+          "runtime-avx2-or-numeric-safety-scalar"
+        ],
+        "fusions": [],
+        "input": {
+          "channels": "RGB",
+          "container": "borrowed-buffer",
+          "contiguous": true,
+          "dtype": "uint8",
+          "layout": "HWC",
+          "ownership": "caller"
+        },
+        "mode": "compiled",
+        "optimizations": [],
+        "output": {
+          "channels": "RGB",
+          "container": "owned-buffer",
+          "contiguous": true,
+          "dtype": "uint8",
+          "layout": "HWC",
+          "ownership": "result"
+        },
+        "output_dtype": "uint8",
+        "output_layout": "HWC",
+        "passes": 1,
+        "pixel_passes": 2,
+        "python_boundary": {
+          "augmentation": "held",
+          "crossings_per_call": 1,
+          "decode": "not-applicable",
+          "delivery": "held-for-Python-output-transfer",
+          "gil": "held-during-augmentation",
+          "gil_stages": {
+            "arguments": "held",
+            "augmentation": "held",
+            "decode": "not-applicable",
+            "delivery": "held-for-Python-output-transfer",
+            "source": "held"
+          },
+          "input": "NumPy HWC RGB uint8",
+          "input_access": "read-only-borrow",
+          "output": "owned contiguous NumPy array",
+          "source_acquisition": "held"
+        },
+        "sampling": "native-plan-before-execution",
+        "schema_version": 2,
+        "sink": {
+          "type": "return"
+        },
+        "source": {
+          "type": "array"
+        },
+        "steps": [
+          {
+            "allocation": "none",
+            "category": "color",
+            "execution": "in-place",
+            "fallback": "runtime-avx2-or-numeric-safety-scalar",
+            "input_materialization": "owned-input-copy",
+            "kernel_form": "owned-in-place",
+            "name": "ColorJitter",
+            "output_slot": "working-u8",
+            "pixel_passes": 2,
+            "policies": [
+              {
+                "name": "brightness",
+                "value": "[0.8,1.2]"
+              },
+              {
+                "name": "contrast",
+                "value": "[0.8,1.2]"
+              },
+              {
+                "name": "saturation",
+                "value": "[0.8,1.2]"
+              },
+              {
+                "name": "hue",
+                "value": "[-0,0]"
+              },
+              {
+                "name": "order",
+                "value": "uniform-random-permutation"
+              }
+            ],
+            "probability": 1.0,
+            "scratch_slots": [],
+            "selection_reason": "benchmark-policy:composed-color-matrix",
+            "status": "always"
+          }
+        ],
+        "transforms": [
+          "ColorJitter"
+        ],
+        "unit_specializations": [
+          "ColorJitter:composed-color-matrix"
+        ]
+      },
+      "images_per_sec": 961.6577440855644,
+      "iterations": 96,
+      "median_ms": 1.039871,
+      "observations_ms": [
+        1.0247435,
+        1.0715685,
+        1.079849,
+        1.066564,
+        1.051644,
+        1.041844,
+        1.0557485,
+        1.051339,
+        1.0616085,
+        1.039094,
+        1.036269,
+        1.0375185,
+        1.033064,
+        1.0428885,
+        1.0299685,
+        1.042529,
+        1.030674,
+        1.045609,
+        1.0300335,
+        1.0388785,
+        1.054764,
+        1.044864,
+        1.052474,
+        1.0396635,
+        1.052559,
+        1.0400785,
+        1.034054,
+        1.0376385,
+        1.037829,
+        1.0332335,
+        1.043619,
+        1.0308335,
+        1.043909,
+        1.027784,
+        1.0411035,
+        1.030844,
+        1.0548285,
+        1.030609,
+        1.0496685,
+        1.034039,
+        1.037809,
+        1.0409685,
+        1.0337085,
+        1.037319,
+        1.041669,
+        1.039284,
+        1.0330135,
+        1.0501835
+      ],
+      "p95_ms": 1.066564,
+      "participant": "variopinta",
+      "reference_exact": true,
+      "repetition": 3,
+      "role": "public",
+      "route_id": "variopinta.compiled",
+      "samples": 48,
+      "size": 1024,
+      "valid": true,
+      "validation": {
+        "c_contiguous": true,
+        "container": "numpy.ndarray",
+        "dtype": "uint8",
+        "finite": true,
+        "max": 255.0,
+        "min": 0.0,
+        "shape": [
+          1024,
+          1024,
+          3
+        ]
+      },
+      "variant": "compiled",
+      "warmup_calls": 3,
+      "worker": "rust-catalog-3"
+    },
+    {
+      "block_size": 41,
+      "budget_ms": 100.0,
+      "case_id": "catalog.color-jitter.matrix",
+      "case_order": 6,
+      "catalog_policy": "matrix",
+      "environment": "rust",
+      "environment_position": 1,
+      "explanation": {
+        "buffers": [
+          {
+            "condition": "always",
+            "dtype": "uint8",
+            "layout": "HWC",
+            "lifecycle": "borrowed-for-call",
+            "name": "input"
+          },
+          {
+            "condition": "always",
+            "dtype": "uint8",
+            "layout": "HWC",
+            "lifecycle": "owned-per-run-workspace-reusable",
+            "name": "working-u8"
+          }
+        ],
+        "copies": [
+          {
+            "condition": "non-contiguous-input",
+            "count": "0-or-1",
+            "reason": "normalize-to-contiguous-HWC",
+            "stage": "python-entry"
+          },
+          {
+            "condition": "always",
+            "count": "1",
+            "reason": "establish-owned-working-buffer",
+            "stage": "native-entry"
+          },
+          {
+            "condition": "always",
+            "count": "0",
+            "reason": "transfer-Rust-Vec-ownership-to-NumPy-storage",
+            "stage": "python-output"
+          }
+        ],
+        "fallbacks": [
+          "runtime-avx2-or-numeric-safety-scalar"
+        ],
+        "fusions": [],
+        "input": {
+          "channels": "RGB",
+          "container": "borrowed-buffer",
+          "contiguous": true,
+          "dtype": "uint8",
+          "layout": "HWC",
+          "ownership": "caller"
+        },
+        "mode": "reference",
+        "optimizations": [],
+        "output": {
+          "channels": "RGB",
+          "container": "owned-buffer",
+          "contiguous": true,
+          "dtype": "uint8",
+          "layout": "HWC",
+          "ownership": "result"
+        },
+        "output_dtype": "uint8",
+        "output_layout": "HWC",
+        "passes": 1,
+        "pixel_passes": 2,
+        "python_boundary": {
+          "augmentation": "held",
+          "crossings_per_call": 1,
+          "decode": "not-applicable",
+          "delivery": "held-for-Python-output-transfer",
+          "gil": "held-during-augmentation",
+          "gil_stages": {
+            "arguments": "held",
+            "augmentation": "held",
+            "decode": "not-applicable",
+            "delivery": "held-for-Python-output-transfer",
+            "source": "held"
+          },
+          "input": "NumPy HWC RGB uint8",
+          "input_access": "read-only-borrow",
+          "output": "owned contiguous NumPy array",
+          "source_acquisition": "held"
+        },
+        "sampling": "native-plan-before-execution",
+        "schema_version": 2,
+        "sink": {
+          "type": "return"
+        },
+        "source": {
+          "type": "array"
+        },
+        "steps": [
+          {
+            "allocation": "none",
+            "category": "color",
+            "execution": "in-place",
+            "fallback": "runtime-avx2-or-numeric-safety-scalar",
+            "input_materialization": "owned-input-copy",
+            "kernel_form": "owned-in-place",
+            "name": "ColorJitter",
+            "output_slot": "working-u8",
+            "pixel_passes": 2,
+            "policies": [
+              {
+                "name": "brightness",
+                "value": "[0.8,1.2]"
+              },
+              {
+                "name": "contrast",
+                "value": "[0.8,1.2]"
+              },
+              {
+                "name": "saturation",
+                "value": "[0.8,1.2]"
+              },
+              {
+                "name": "hue",
+                "value": "[-0,0]"
+              },
+              {
+                "name": "order",
+                "value": "uniform-random-permutation"
+              }
+            ],
+            "probability": 1.0,
+            "scratch_slots": [],
+            "selection_reason": "benchmark-policy:composed-color-matrix",
+            "status": "always"
+          }
+        ],
+        "transforms": [
+          "ColorJitter"
+        ],
+        "unit_specializations": [
+          "ColorJitter:composed-color-matrix"
+        ]
+      },
+      "images_per_sec": 20223.668844821572,
+      "iterations": 492,
+      "median_ms": 0.049447012195121945,
+      "observations_ms": [
+        0.04947090243902438,
+        0.04984285365853658,
+        0.04936431707317073,
+        0.04935360975609756,
+        0.04942312195121951,
+        0.05003017073170732,
+        0.04969553658536585,
+        0.0495389756097561,
+        0.04958995121951219,
+        0.04905065853658536,
+        0.049302365853658534,
+        0.0493379756097561
+      ],
+      "p95_ms": 0.05003017073170732,
       "participant": "variopinta",
       "reference_exact": true,
       "repetition": 3,
@@ -3752,7 +3656,7 @@
       "block_size": 8,
       "budget_ms": 100.0,
       "case_id": "catalog.color-jitter.matrix",
-      "case_order": 10,
+      "case_order": 6,
       "catalog_policy": "matrix",
       "environment": "rust",
       "environment_position": 1,
@@ -3891,61 +3795,61 @@
           "ColorJitter:composed-color-matrix"
         ]
       },
-      "images_per_sec": 3907.837559008347,
+      "images_per_sec": 3898.6772762670944,
       "iterations": 392,
-      "median_ms": 0.255896,
+      "median_ms": 0.25649725,
       "observations_ms": [
-        0.25309475,
-        0.257902125,
-        0.258207375,
-        0.257456,
-        0.2546085,
-        0.25471975,
-        0.25728975,
-        0.260166,
-        0.256087125,
-        0.25482475,
-        0.25583975,
-        0.25478225,
-        0.255952125,
-        0.254821,
-        0.25935725,
-        0.254506,
-        0.25591225,
-        0.25509975,
-        0.25961725,
-        0.25570475,
-        0.2551735,
-        0.254475875,
-        0.255896,
-        0.25525975,
-        0.253796,
-        0.256905875,
-        0.257746,
-        0.2570235,
-        0.25339475,
-        0.2570735,
-        0.253500875,
-        0.254766,
-        0.253527375,
-        0.256904625,
-        0.253741,
-        0.26092475,
-        0.2538585,
-        0.25774225,
-        0.25765225,
-        0.256112125,
-        0.2579085,
-        0.2543135,
-        0.25667225,
-        0.25757975,
-        0.2557235,
-        0.255567125,
-        0.25818725,
-        0.25354725,
-        0.257308625
+        0.254957125,
+        0.26176725,
+        0.25461725,
+        0.26137725,
+        0.255392125,
+        0.255328375,
+        0.258167125,
+        0.25582975,
+        0.25672725,
+        0.255324625,
+        0.25625225,
+        0.258000875,
+        0.255684625,
+        0.25604225,
+        0.25411475,
+        0.260265875,
+        0.254477125,
+        0.26168475,
+        0.255688375,
+        0.25869475,
+        0.25421225,
+        0.257482125,
+        0.254529625,
+        0.25762475,
+        0.254438375,
+        0.25649725,
+        0.256975875,
+        0.256501,
+        0.256243375,
+        0.257822125,
+        0.255701,
+        0.25860725,
+        0.259640875,
+        0.25450975,
+        0.257928375,
+        0.253817125,
+        0.25778475,
+        0.254339625,
+        0.25798975,
+        0.257780875,
+        0.2579835,
+        0.254445875,
+        0.25819975,
+        0.254562125,
+        0.2573035,
+        0.254479625,
+        0.25740225,
+        0.255042125,
+        0.26370725
       ],
-      "p95_ms": 0.25961725,
+      "p95_ms": 0.26168475,
       "participant": "variopinta",
       "reference_exact": true,
       "repetition": 3,
@@ -3975,7 +3879,7 @@
       "block_size": 2,
       "budget_ms": 100.0,
       "case_id": "catalog.color-jitter.matrix",
-      "case_order": 10,
+      "case_order": 6,
       "catalog_policy": "matrix",
       "environment": "rust",
       "environment_position": 1,
@@ -4114,60 +4018,60 @@
           "ColorJitter:composed-color-matrix"
         ]
       },
-      "images_per_sec": 959.5165571778316,
+      "images_per_sec": 954.2906697808353,
       "iterations": 96,
-      "median_ms": 1.0421915,
+      "median_ms": 1.0478987499999999,
       "observations_ms": [
-        1.0783995,
-        1.062164,
-        1.0694795,
-        1.0933595,
-        1.045464,
-        1.056579,
-        1.044824,
-        1.0798895,
-        1.037169,
-        1.1103795,
-        1.045224,
-        1.0544045,
-        1.038424,
-        1.046359,
-        1.039544,
-        1.049519,
-        1.0578945,
-        1.047634,
-        1.040144,
-        1.048214,
-        1.029584,
-        1.044614,
-        1.044974,
-        1.037434,
-        1.042574,
-        1.0392495,
-        1.0402095,
-        1.037859,
-        1.037959,
-        1.038979,
-        1.039889,
-        1.040179,
-        1.036129,
-        1.040654,
-        1.039794,
-        1.032594,
-        1.039119,
-        1.033129,
-        1.044099,
-        1.033949,
-        1.0585595,
-        1.041809,
-        1.0576295,
-        1.037794,
-        1.042899,
-        1.030764,
-        1.039904,
-        1.043969
+        1.0534185,
+        1.055669,
+        1.100769,
+        1.055164,
+        1.056279,
+        1.0480985,
+        1.065804,
+        1.0465835,
+        1.061189,
+        1.050194,
+        1.059684,
+        1.0351485,
+        1.048544,
+        1.0338385,
+        1.037569,
+        1.036009,
+        1.0374285,
+        1.0430885,
+        1.042819,
+        1.0629285,
+        1.038894,
+        1.051464,
+        1.055919,
+        1.0409385,
+        1.037024,
+        1.0466385,
+        1.032844,
+        1.037884,
+        1.0335785,
+        1.0352335,
+        1.034939,
+        1.068709,
+        1.033544,
+        1.0442685,
+        1.047974,
+        1.0522235,
+        1.050699,
+        1.057464,
+        1.045999,
+        1.0509035,
+        1.045629,
+        1.0516735,
+        1.0478235,
+        1.051089,
+        1.042179,
+        1.042844,
+        1.103679,
+        1.0806235
       ],
-      "p95_ms": 1.0798895,
+      "p95_ms": 1.0806235,
       "participant": "variopinta",
       "reference_exact": true,
       "repetition": 3,

@@ -116,36 +116,18 @@
         "catalog.affine.constant",
         "catalog.affine.reflect101",
         "catalog.affine.reflect101",
-        "catalog.center-crop.default",
-        "catalog.center-crop.default",
-        "catalog.coarse-dropout.eight-holes",
-        "catalog.coarse-dropout.eight-holes",
         "catalog.color-jitter.hue",
         "catalog.color-jitter.hue",
         "catalog.color-jitter.matrix",
         "catalog.color-jitter.matrix",
-        "catalog.gaussian-blur.fixed-sigma",
-        "catalog.gaussian-blur.fixed-sigma",
-        "catalog.gaussian-blur.sampled-sigma",
-        "catalog.gaussian-blur.sampled-sigma",
         "catalog.gaussian-noise.independent-rgb",
         "catalog.gaussian-noise.independent-rgb",
         "catalog.gaussian-noise.shared-rgb",
         "catalog.gaussian-noise.shared-rgb",
-        "catalog.grayscale.default",
-        "catalog.grayscale.default",
         "catalog.grid-distortion.bilinear",
         "catalog.grid-distortion.bilinear",
         "catalog.grid-distortion.nearest-reflect101",
         "catalog.grid-distortion.nearest-reflect101",
-        "catalog.horizontal-flip.default",
-        "catalog.horizontal-flip.default",
-        "catalog.invert.default",
-        "catalog.invert.default",
-        "catalog.normalize-to-torch.terminal",
-        "catalog.normalize-to-torch.terminal",
-        "catalog.normalize.default",
-        "catalog.normalize.default",
         "catalog.pad-if-needed.constant",
         "catalog.pad-if-needed.constant",
         "catalog.pad-if-needed.reflect101",
@@ -154,30 +136,14 @@
         "catalog.perspective.bilinear",
         "catalog.perspective.nearest-reflect101",
         "catalog.perspective.nearest-reflect101",
-        "catalog.posterize.default",
-        "catalog.posterize.default",
-        "catalog.random-crop.default",
-        "catalog.random-crop.default",
-        "catalog.random-resized-crop.bilinear",
-        "catalog.random-resized-crop.bilinear",
-        "catalog.random-resized-crop.bilinear-antialias",
-        "catalog.random-resized-crop.bilinear-antialias",
         "catalog.random-rotation.constant",
         "catalog.random-rotation.constant",
         "catalog.random-rotation.reflect101",
         "catalog.random-rotation.reflect101",
-        "catalog.resize.bilinear",
-        "catalog.resize.bilinear",
-        "catalog.resize.bilinear-antialias",
-        "catalog.resize.bilinear-antialias",
         "catalog.sharpen.cross-3x3",
         "catalog.sharpen.cross-3x3",
-        "catalog.solarize.default",
-        "catalog.solarize.default",
         "catalog.to-torch.default",
-        "catalog.to-torch.default",
-        "catalog.vertical-flip.default",
-        "catalog.vertical-flip.default"
+        "catalog.to-torch.default"
       ],
       "environment": "rust",
       "environment_position": 3,
@@ -190,36 +156,18 @@
         "catalog.affine.constant",
         "catalog.affine.reflect101",
         "catalog.affine.reflect101",
-        "catalog.center-crop.default",
-        "catalog.center-crop.default",
-        "catalog.coarse-dropout.eight-holes",
-        "catalog.coarse-dropout.eight-holes",
         "catalog.color-jitter.hue",
         "catalog.color-jitter.hue",
         "catalog.color-jitter.matrix",
         "catalog.color-jitter.matrix",
-        "catalog.gaussian-blur.fixed-sigma",
-        "catalog.gaussian-blur.fixed-sigma",
-        "catalog.gaussian-blur.sampled-sigma",
-        "catalog.gaussian-blur.sampled-sigma",
         "catalog.gaussian-noise.independent-rgb",
         "catalog.gaussian-noise.independent-rgb",
         "catalog.gaussian-noise.shared-rgb",
         "catalog.gaussian-noise.shared-rgb",
-        "catalog.grayscale.default",
-        "catalog.grayscale.default",
         "catalog.grid-distortion.bilinear",
         "catalog.grid-distortion.bilinear",
         "catalog.grid-distortion.nearest-reflect101",
         "catalog.grid-distortion.nearest-reflect101",
-        "catalog.horizontal-flip.default",
-        "catalog.horizontal-flip.default",
-        "catalog.invert.default",
-        "catalog.invert.default",
-        "catalog.normalize-to-torch.terminal",
-        "catalog.normalize-to-torch.terminal",
-        "catalog.normalize.default",
-        "catalog.normalize.default",
         "catalog.pad-if-needed.constant",
         "catalog.pad-if-needed.constant",
         "catalog.pad-if-needed.reflect101",
@@ -228,30 +176,14 @@
         "catalog.perspective.bilinear",
         "catalog.perspective.nearest-reflect101",
         "catalog.perspective.nearest-reflect101",
-        "catalog.posterize.default",
-        "catalog.posterize.default",
-        "catalog.random-crop.default",
-        "catalog.random-crop.default",
-        "catalog.random-resized-crop.bilinear",
-        "catalog.random-resized-crop.bilinear",
-        "catalog.random-resized-crop.bilinear-antialias",
-        "catalog.random-resized-crop.bilinear-antialias",
         "catalog.random-rotation.constant",
         "catalog.random-rotation.constant",
         "catalog.random-rotation.reflect101",
         "catalog.random-rotation.reflect101",
-        "catalog.resize.bilinear",
-        "catalog.resize.bilinear",
-        "catalog.resize.bilinear-antialias",
-        "catalog.resize.bilinear-antialias",
         "catalog.sharpen.cross-3x3",
         "catalog.sharpen.cross-3x3",
-        "catalog.solarize.default",
-        "catalog.solarize.default",
         "catalog.to-torch.default",
         "catalog.to-torch.default",
-        "catalog.vertical-flip.default",
-        "catalog.vertical-flip.default",
         "catalog.affine.constant"
       ],
       "environment": "rust",
@@ -264,36 +196,18 @@
       "cases": [
         "catalog.affine.reflect101",
         "catalog.affine.reflect101",
-        "catalog.center-crop.default",
-        "catalog.center-crop.default",
-        "catalog.coarse-dropout.eight-holes",
-        "catalog.coarse-dropout.eight-holes",
         "catalog.color-jitter.hue",
         "catalog.color-jitter.hue",
         "catalog.color-jitter.matrix",
         "catalog.color-jitter.matrix",
-        "catalog.gaussian-blur.fixed-sigma",
-        "catalog.gaussian-blur.fixed-sigma",
-        "catalog.gaussian-blur.sampled-sigma",
-        "catalog.gaussian-blur.sampled-sigma",
         "catalog.gaussian-noise.independent-rgb",
         "catalog.gaussian-noise.independent-rgb",
         "catalog.gaussian-noise.shared-rgb",
         "catalog.gaussian-noise.shared-rgb",
-        "catalog.grayscale.default",
-        "catalog.grayscale.default",
         "catalog.grid-distortion.bilinear",
         "catalog.grid-distortion.bilinear",
         "catalog.grid-distortion.nearest-reflect101",
         "catalog.grid-distortion.nearest-reflect101",
-        "catalog.horizontal-flip.default",
-        "catalog.horizontal-flip.default",
-        "catalog.invert.default",
-        "catalog.invert.default",
-        "catalog.normalize-to-torch.terminal",
-        "catalog.normalize-to-torch.terminal",
-        "catalog.normalize.default",
-        "catalog.normalize.default",
         "catalog.pad-if-needed.constant",
         "catalog.pad-if-needed.constant",
         "catalog.pad-if-needed.reflect101",
@@ -302,30 +216,14 @@
         "catalog.perspective.bilinear",
         "catalog.perspective.nearest-reflect101",
         "catalog.perspective.nearest-reflect101",
-        "catalog.posterize.default",
-        "catalog.posterize.default",
-        "catalog.random-crop.default",
-        "catalog.random-crop.default",
-        "catalog.random-resized-crop.bilinear",
-        "catalog.random-resized-crop.bilinear",
-        "catalog.random-resized-crop.bilinear-antialias",
-        "catalog.random-resized-crop.bilinear-antialias",
         "catalog.random-rotation.constant",
         "catalog.random-rotation.constant",
         "catalog.random-rotation.reflect101",
         "catalog.random-rotation.reflect101",
-        "catalog.resize.bilinear",
-        "catalog.resize.bilinear",
-        "catalog.resize.bilinear-antialias",
-        "catalog.resize.bilinear-antialias",
         "catalog.sharpen.cross-3x3",
         "catalog.sharpen.cross-3x3",
-        "catalog.solarize.default",
-        "catalog.solarize.default",
         "catalog.to-torch.default",
         "catalog.to-torch.default",
-        "catalog.vertical-flip.default",
-        "catalog.vertical-flip.default",
         "catalog.affine.constant",
         "catalog.affine.constant"
       ],
@@ -342,10 +240,10 @@
       "environments": {
         "rust": "c21434ab276976c811af1d8dc747f46be02b1f77bad36ecbae0c2a96fee16265"
       },
-      "source": "e1d09d18a4c6ff243cc5b504886208727031c75ef9e21dc521426b14c4f21c2c",
+      "source": "b313858541de0ae91339374efb0533a6ea656f3c02e0ab81de1fb48858cccb5d",
       "unclassified": []
     },
-    "digest": "9274312f6f16a491ede022ead875e5f86d55c45cea91de1bc225496f46e1e60f"
+    "digest": "15d330bf0944365bef86b1ac044b23db9c3900ee505c8aa0c16e345dcd2a2335"
   },
   "metadata": {
     "rust": {
@@ -412,14 +310,14 @@
   },
   "provenance": {
     "source_dirty": false,
-    "source_revision": "4a32c003085662b37e5d4fc6c47bdfa7628a7f94"
+    "source_revision": "c4c87f2694af5e45f1cc864e6e7928035c5d4ad8"
   },
   "rows": [
     {
-      "block_size": 3,
+      "block_size": 13,
       "budget_ms": 100.0,
       "case_id": "catalog.grid-distortion.bilinear",
-      "case_order": 23,
+      "case_order": 13,
       "catalog_policy": "bilinear",
       "environment": "rust",
       "environment_position": 3,
@@ -461,7 +359,7 @@
           }
         ],
         "fallbacks": [
-          "portable-scalar"
+          "runtime-avx2-or-scalar"
         ],
         "fusions": [],
         "input": {
@@ -516,10 +414,10 @@
         },
         "steps": [
           {
-            "allocation": "sampled-coordinate-maps+workspace-u8",
+            "allocation": "sampled-coordinate-maps+workspace-axis-remap+workspace-u8",
             "category": "geometry",
             "execution": "out-of-place",
-            "fallback": "portable-scalar",
+            "fallback": "runtime-avx2-or-scalar",
             "input_materialization": "borrowed-input",
             "kernel_form": "borrowed-to-owned",
             "name": "GridDistortion",
@@ -560,7 +458,9 @@
               }
             ],
             "probability": 1.0,
-            "scratch_slots": [],
+            "scratch_slots": [
+              "axis-remap"
+            ],
             "selection_reason": "benchmark-policy:elide-entry-copy",
             "status": "always"
           }
@@ -570,58 +470,57 @@
         ],
         "unit_specializations": []
       },
-      "images_per_sec": 1173.8708096480443,
-      "iterations": 120,
-      "median_ms": 0.8518824999999999,
+      "images_per_sec": 6047.698664575093,
+      "iterations": 507,
+      "median_ms": 0.16535215384615384,
       "observations_ms": [
-        0.849764,
-        0.8592276666666666,
-        0.8483109999999999,
-        0.8499573333333333,
-        0.8580206666666667,
-        0.8510806666666667,
-        0.854461,
-        0.853364,
-        0.8459706666666666,
-        0.8633673333333333,
-        0.853651,
-        0.850081,
-        0.855624,
-        0.8450973333333334,
-        0.8599276666666666,
-        0.8491706666666667,
-        0.8574106666666667,
-        0.8482606666666667,
-        0.8518606666666666,
-        0.8498876666666666,
-        0.8522276666666667,
-        0.8524973333333333,
-        0.8448873333333333,
-        0.8586906666666666,
-        0.8473906666666666,
-        0.8490673333333333,
-        0.848734,
-        0.854711,
-        0.8558443333333333,
-        0.855284,
-        0.8486673333333333,
-        0.8519043333333333,
-        0.848944,
-        0.8571573333333333,
-        0.8530773333333334,
-        0.8520706666666666,
-        0.8461409999999999,
-        0.8505973333333333,
-        0.8486743333333333,
-        0.8525839999999999
+        0.1618320769230769,
+        0.16493292307692306,
+        0.16535215384615384,
+        0.16648292307692308,
+        0.1657983076923077,
+        0.16385207692307693,
+        0.1684083076923077,
+        0.17336907692307693,
+        0.16332676923076922,
+        0.16912223076923077,
+        0.16242053846153848,
+        0.16725600000000002,
+        0.16269061538461538,
+        0.1663229230769231,
+        0.16820753846153844,
+        0.16586592307692308,
+        0.1622829230769231,
+        0.16631215384615386,
+        0.164556,
+        0.16394984615384617,
+        0.1652806153846154,
+        0.16642523076923077,
+        0.16661907692307693,
+        0.1623559230769231,
+        0.16632753846153847,
+        0.1620936923076923,
+        0.1660306153846154,
+        0.16215138461538461,
+        0.1661466923076923,
+        0.16528446153846155,
+        0.16554984615384616,
+        0.16318515384615384,
+        0.16446138461538462,
+        0.1648413846153846,
+        0.16256215384615386,
+        0.16943138461538462,
+        0.16639215384615386,
+        0.16546753846153847,
+        0.16230907692307694
       ],
-      "p95_ms": 0.8592276666666666,
+      "p95_ms": 0.16943138461538462,
       "participant": "variopinta",
       "reference_exact": true,
       "repetition": 1,
       "role": "public",
       "route_id": "variopinta.compiled",
-      "samples": 40,
+      "samples": 39,
       "size": 224,
       "valid": true,
       "validation": {
@@ -630,7 +529,7 @@
         "dtype": "uint8",
         "finite": true,
         "max": 255.0,
-        "min": 2.0,
+        "min": 0.0,
         "shape": [
           224,
           224,
@@ -642,10 +541,10 @@
       "worker": "rust-catalog-1"
     },
     {
-      "block_size": 1,
+      "block_size": 3,
       "budget_ms": 100.0,
       "case_id": "catalog.grid-distortion.bilinear",
-      "case_order": 23,
+      "case_order": 13,
       "catalog_policy": "bilinear",
       "environment": "rust",
       "environment_position": 3,
@@ -687,7 +586,7 @@
           }
         ],
         "fallbacks": [
-          "portable-scalar"
+          "runtime-avx2-or-scalar"
         ],
         "fusions": [],
         "input": {
@@ -742,10 +641,10 @@
         },
         "steps": [
           {
-            "allocation": "sampled-coordinate-maps+workspace-u8",
+            "allocation": "sampled-coordinate-maps+workspace-axis-remap+workspace-u8",
             "category": "geometry",
             "execution": "out-of-place",
-            "fallback": "portable-scalar",
+            "fallback": "runtime-avx2-or-scalar",
             "input_materialization": "borrowed-input",
             "kernel_form": "borrowed-to-owned",
             "name": "GridDistortion",
@@ -786,7 +685,9 @@
               }
             ],
             "probability": 1.0,
-            "scratch_slots": [],
+            "scratch_slots": [
+              "axis-remap"
+            ],
             "selection_reason": "benchmark-policy:elide-entry-copy",
             "status": "always"
           }
@@ -796,41 +697,59 @@
         ],
         "unit_specializations": []
       },
-      "images_per_sec": 225.29372669618016,
-      "iterations": 23,
-      "median_ms": 4.43865,
+      "images_per_sec": 1204.6359208779065,
+      "iterations": 123,
+      "median_ms": 0.8301263333333333,
       "observations_ms": [
-        4.458309,
-        4.441439,
-        4.443088,
-        4.43865,
-        4.434768,
-        4.498509,
-        4.434619,
-        4.433228,
-        4.433869,
-        4.47158,
-        4.426228,
-        4.443879,
-        4.438228,
-        4.481089,
-        4.45013,
-        4.439358,
-        4.436559,
-        4.433758,
-        4.47577,
-        4.434569,
-        4.438038,
-        4.462099,
-        4.435508
+        0.8331826666666666,
+        0.8305296666666666,
+        0.8465633333333332,
+        0.840073,
+        0.8288696666666667,
+        0.8341366666666666,
+        0.8333163333333333,
+        0.8250396666666666,
+        0.8319163333333334,
+        0.8378329999999999,
+        0.8240063333333333,
+        0.8331863333333334,
+        0.8208996666666667,
+        0.8282663333333334,
+        0.8254996666666666,
+        0.8420663333333334,
+        0.8280996666666667,
+        0.828113,
+        0.8206166666666667,
+        0.8326563333333333,
+        0.8214396666666667,
+        0.8449096666666667,
+        0.8301263333333333,
+        0.8291463333333334,
+        0.826953,
+        0.8321996666666666,
+        0.82628,
+        0.8304863333333333,
+        0.8365063333333334,
+        0.8267363333333333,
+        0.827876,
+        0.82911,
+        0.8313563333333334,
+        0.823293,
+        0.8418863333333334,
+        0.8309099999999999,
+        0.826253,
+        0.8284693333333334,
+        0.8361796666666667,
+        0.8261633333333332,
+        0.8353363333333333
       ],
-      "p95_ms": 4.481089,
+      "p95_ms": 0.8420663333333334,
       "participant": "variopinta",
       "reference_exact": true,
       "repetition": 1,
       "role": "public",
       "route_id": "variopinta.compiled",
-      "samples": 23,
+      "samples": 41,
       "size": 512,
       "valid": true,
       "validation": {
@@ -838,8 +757,8 @@
         "container": "numpy.ndarray",
         "dtype": "uint8",
         "finite": true,
-        "max": 213.0,
-        "min": 12.0,
+        "max": 255.0,
+        "min": 0.0,
         "shape": [
           512,
           512,
@@ -854,7 +773,7 @@
       "block_size": 1,
       "budget_ms": 100.0,
       "case_id": "catalog.grid-distortion.bilinear",
-      "case_order": 23,
+      "case_order": 13,
       "catalog_policy": "bilinear",
       "environment": "rust",
       "environment_position": 3,
@@ -896,7 +815,7 @@
           }
         ],
         "fallbacks": [
-          "portable-scalar"
+          "runtime-avx2-or-scalar"
         ],
         "fusions": [],
         "input": {
@@ -951,10 +870,10 @@
         },
         "steps": [
           {
-            "allocation": "sampled-coordinate-maps+workspace-u8",
+            "allocation": "sampled-coordinate-maps+workspace-axis-remap+workspace-u8",
             "category": "geometry",
             "execution": "out-of-place",
-            "fallback": "portable-scalar",
+            "fallback": "runtime-avx2-or-scalar",
             "input_materialization": "borrowed-input",
             "kernel_form": "borrowed-to-owned",
             "name": "GridDistortion",
@@ -995,7 +914,9 @@
               }
             ],
             "probability": 1.0,
-            "scratch_slots": [],
+            "scratch_slots": [
+              "axis-remap"
+            ],
             "selection_reason": "benchmark-policy:elide-entry-copy",
             "status": "always"
           }
@@ -1005,25 +926,49 @@
         ],
         "unit_specializations": []
       },
-      "images_per_sec": 55.56562836918715,
-      "iterations": 7,
-      "median_ms": 17.996737,
+      "images_per_sec": 304.2710836279945,
+      "iterations": 31,
+      "median_ms": 3.286543,
       "observations_ms": [
-        17.942877,
-        18.145307,
-        18.035698,
-        18.120058,
-        17.996737,
-        17.933157,
-        17.917076
+        3.264893,
+        3.309871,
+        3.271792,
+        3.294442,
+        3.280222,
+        3.275702,
+        3.295143,
+        3.296721,
+        3.278362,
+        3.274842,
+        3.277702,
+        3.314352,
+        3.286543,
+        3.317602,
+        3.289641,
+        3.267322,
+        3.317583,
+        3.261611,
+        3.291242,
+        3.276782,
+        3.310173,
+        3.276271,
+        3.267213,
+        3.291271,
+        3.273262,
+        3.347903,
+        3.289932,
+        3.282782,
+        3.257352,
+        3.313442,
+        3.311232
       ],
-      "p95_ms": 18.145307,
+      "p95_ms": 3.317602,
       "participant": "variopinta",
       "reference_exact": true,
       "repetition": 1,
       "role": "public",
       "route_id": "variopinta.compiled",
-      "samples": 7,
+      "samples": 31,
       "size": 1024,
       "valid": true,
       "validation": {
@@ -1044,10 +989,10 @@
       "worker": "rust-catalog-1"
     },
     {
-      "block_size": 3,
+      "block_size": 12,
       "budget_ms": 100.0,
       "case_id": "catalog.grid-distortion.bilinear",
-      "case_order": 24,
+      "case_order": 14,
       "catalog_policy": "bilinear",
       "environment": "rust",
       "environment_position": 3,
@@ -1096,7 +1041,7 @@
           }
         ],
         "fallbacks": [
-          "portable-scalar"
+          "runtime-avx2-or-scalar"
         ],
         "fusions": [],
         "input": {
@@ -1149,10 +1094,10 @@
         },
         "steps": [
           {
-            "allocation": "sampled-coordinate-maps+workspace-u8",
+            "allocation": "sampled-coordinate-maps+workspace-axis-remap+workspace-u8",
             "category": "geometry",
             "execution": "out-of-place",
-            "fallback": "portable-scalar",
+            "fallback": "runtime-avx2-or-scalar",
             "input_materialization": "owned-input-copy",
             "kernel_form": "owned-to-owned",
             "name": "GridDistortion",
@@ -1193,7 +1138,9 @@
               }
             ],
             "probability": 1.0,
-            "scratch_slots": [],
+            "scratch_slots": [
+              "axis-remap"
+            ],
             "selection_reason": "semantic-legality:owned-to-owned",
             "status": "always"
           }
@@ -1203,54 +1150,1420 @@
         ],
         "unit_specializations": []
       },
-      "images_per_sec": 1169.0104677093982,
-      "iterations": 117,
-      "median_ms": 0.8554243333333332,
+      "images_per_sec": 6075.574065804542,
+      "iterations": 504,
+      "median_ms": 0.1645935,
       "observations_ms": [
-        0.863004,
-        0.8663676666666666,
-        0.8481740000000001,
-        0.8646843333333334,
-        0.8485873333333332,
-        0.8598910000000001,
-        0.8603073333333334,
-        0.8542606666666667,
-        0.8608606666666666,
-        0.8557640000000001,
-        0.8559009999999999,
-        0.857204,
-        0.8603806666666666,
-        0.859411,
-        0.8556576666666666,
-        0.855644,
-        0.8586043333333334,
-        0.8631106666666667,
-        0.8506206666666666,
-        0.8491406666666667,
-        0.8554243333333332,
-        0.8455940000000001,
-        0.8535073333333334,
-        0.8726313333333334,
-        0.8552806666666667,
-        0.857074,
-        0.8529406666666667,
-        0.8459673333333333,
-        0.8546743333333334,
-        0.8493339999999999,
-        0.8542043333333332,
-        0.8650643333333333,
-        0.8459206666666667,
-        0.8644273333333333,
-        0.8494206666666666,
-        0.851501,
-        0.8498106666666666,
-        0.8517906666666667,
-        0.8518706666666667
+        0.16138808333333335,
+        0.16850233333333334,
+        0.16233058333333333,
+        0.16464225000000002,
+        0.16475641666666666,
+        0.1645315,
+        0.16470808333333334,
+        0.16396808333333332,
+        0.16490975,
+        0.17046225,
+        0.16454475,
+        0.16556641666666666,
+        0.16322566666666666,
+        0.16629641666666667,
+        0.16311558333333334,
+        0.16500058333333334,
+        0.16324816666666667,
+        0.17220308333333334,
+        0.16388558333333333,
+        0.16521225,
+        0.16304725,
+        0.16505066666666665,
+        0.16372224999999999,
+        0.16370308333333333,
+        0.16403808333333333,
+        0.16780733333333334,
+        0.16469808333333333,
+        0.16696141666666667,
+        0.16452733333333333,
+        0.16406391666666667,
+        0.16470308333333333,
+        0.16403058333333334,
+        0.16325399999999998,
+        0.16836225000000002,
+        0.16388891666666666,
+        0.16580391666666666,
+        0.16418558333333333,
+        0.16501475000000002,
+        0.1637415,
+        0.16411558333333334,
+        0.16464225000000002,
+        0.16497058333333334
       ],
-      "p95_ms": 0.8663676666666666,
+      "p95_ms": 0.16850233333333334,
       "participant": "variopinta",
       "reference_exact": true,
       "repetition": 1,
+      "role": "control",
+      "route_id": "variopinta.reference",
+      "samples": 42,
+      "size": 224,
+      "valid": true,
+      "validation": {
+        "c_contiguous": true,
+        "container": "numpy.ndarray",
+        "dtype": "uint8",
+        "finite": true,
+        "max": 255.0,
+        "min": 2.0,
+        "shape": [
+          224,
+          224,
+          3
+        ]
+      },
+      "variant": "reference",
+      "warmup_calls": 3,
+      "worker": "rust-catalog-1"
+    },
+    {
+      "block_size": 3,
+      "budget_ms": 100.0,
+      "case_id": "catalog.grid-distortion.bilinear",
+      "case_order": 14,
+      "catalog_policy": "bilinear",
+      "environment": "rust",
+      "environment_position": 3,
+      "explanation": {
+        "buffers": [
+          {
+            "condition": "always",
+            "dtype": "uint8",
+            "layout": "HWC",
+            "lifecycle": "borrowed-for-call",
+            "name": "input"
+          },
+          {
+            "condition": "always",
+            "dtype": "uint8",
+            "layout": "HWC",
+            "lifecycle": "owned-per-run-workspace-reusable",
+            "name": "working-u8"
+          },
+          {
+            "condition": "out-of-place-step-applied",
+            "dtype": "uint8",
+            "layout": "HWC",
+            "lifecycle": "owned-per-run-workspace-reusable",
+            "name": "scratch-u8"
+          }
+        ],
+        "copies": [
+          {
+            "condition": "non-contiguous-input",
+            "count": "0-or-1",
+            "reason": "normalize-to-contiguous-HWC",
+            "stage": "python-entry"
+          },
+          {
+            "condition": "always",
+            "count": "1",
+            "reason": "establish-owned-working-buffer",
+            "stage": "native-entry"
+          },
+          {
+            "condition": "always",
+            "count": "0",
+            "reason": "transfer-Rust-Vec-ownership-to-NumPy-storage",
+            "stage": "python-output"
+          }
+        ],
+        "fallbacks": [
+          "runtime-avx2-or-scalar"
+        ],
+        "fusions": [],
+        "input": {
+          "channels": "RGB",
+          "container": "borrowed-buffer",
+          "contiguous": true,
+          "dtype": "uint8",
+          "layout": "HWC",
+          "ownership": "caller"
+        },
+        "mode": "reference",
+        "optimizations": [],
+        "output": {
+          "channels": "RGB",
+          "container": "owned-buffer",
+          "contiguous": true,
+          "dtype": "uint8",
+          "layout": "HWC",
+          "ownership": "result"
+        },
+        "output_dtype": "uint8",
+        "output_layout": "HWC",
+        "passes": 1,
+        "pixel_passes": 1,
+        "python_boundary": {
+          "augmentation": "held",
+          "crossings_per_call": 1,
+          "decode": "not-applicable",
+          "delivery": "held-for-Python-output-transfer",
+          "gil": "held-during-augmentation",
+          "gil_stages": {
+            "arguments": "held",
+            "augmentation": "held",
+            "decode": "not-applicable",
+            "delivery": "held-for-Python-output-transfer",
+            "source": "held"
+          },
+          "input": "NumPy HWC RGB uint8",
+          "input_access": "read-only-borrow",
+          "output": "owned contiguous NumPy array",
+          "source_acquisition": "held"
+        },
+        "sampling": "native-plan-before-execution",
+        "schema_version": 2,
+        "sink": {
+          "type": "return"
+        },
+        "source": {
+          "type": "array"
+        },
+        "steps": [
+          {
+            "allocation": "sampled-coordinate-maps+workspace-axis-remap+workspace-u8",
+            "category": "geometry",
+            "execution": "out-of-place",
+            "fallback": "runtime-avx2-or-scalar",
+            "input_materialization": "owned-input-copy",
+            "kernel_form": "owned-to-owned",
+            "name": "GridDistortion",
+            "output_slot": "scratch-u8",
+            "pixel_passes": 1,
+            "policies": [
+              {
+                "name": "steps",
+                "value": "5"
+              },
+              {
+                "name": "distort-limit",
+                "value": "[-0.3,0.3]"
+              },
+              {
+                "name": "maps",
+                "value": "positive-monotonic-anchored"
+              },
+              {
+                "name": "small-axis",
+                "value": "reduce-steps-to-axis-minus-one"
+              },
+              {
+                "name": "interpolation",
+                "value": "bilinear"
+              },
+              {
+                "name": "border",
+                "value": "constant"
+              },
+              {
+                "name": "fill",
+                "value": "[0,0,0]"
+              },
+              {
+                "name": "sampler",
+                "value": "shared-inverse-q8"
+              }
+            ],
+            "probability": 1.0,
+            "scratch_slots": [
+              "axis-remap"
+            ],
+            "selection_reason": "semantic-legality:owned-to-owned",
+            "status": "always"
+          }
+        ],
+        "transforms": [
+          "GridDistortion"
+        ],
+        "unit_specializations": []
+      },
+      "images_per_sec": 1196.5589358123907,
+      "iterations": 120,
+      "median_ms": 0.8357298333333334,
+      "observations_ms": [
+        0.8372193333333334,
+        0.8413433333333334,
+        0.8399030000000001,
+        0.8320029999999999,
+        0.8326563333333333,
+        0.8349963333333333,
+        0.84651,
+        0.8352930000000001,
+        0.8307096666666666,
+        0.8318963333333333,
+        0.8408030000000001,
+        0.8337396666666667,
+        0.8537933333333334,
+        0.8387896666666667,
+        0.8332696666666667,
+        0.84083,
+        0.8276826666666667,
+        0.8332263333333333,
+        0.8510533333333333,
+        0.8334063333333334,
+        0.8353063333333334,
+        0.8373563333333333,
+        0.8343366666666667,
+        0.8343996666666667,
+        0.832993,
+        0.8573563333333333,
+        0.836703,
+        0.8324733333333333,
+        0.8328329999999999,
+        0.8415163333333333,
+        0.827826,
+        0.8517033333333334,
+        0.8350963333333333,
+        0.8401596666666666,
+        0.8361533333333333,
+        0.8312896666666667,
+        0.838153,
+        0.8389596666666667,
+        0.8524563333333334,
+        0.84278
+      ],
+      "p95_ms": 0.8524563333333334,
+      "participant": "variopinta",
+      "reference_exact": true,
+      "repetition": 1,
+      "role": "control",
+      "route_id": "variopinta.reference",
+      "samples": 40,
+      "size": 512,
+      "valid": true,
+      "validation": {
+        "c_contiguous": true,
+        "container": "numpy.ndarray",
+        "dtype": "uint8",
+        "finite": true,
+        "max": 255.0,
+        "min": 0.0,
+        "shape": [
+          512,
+          512,
+          3
+        ]
+      },
+      "variant": "reference",
+      "warmup_calls": 3,
+      "worker": "rust-catalog-1"
+    },
+    {
+      "block_size": 1,
+      "budget_ms": 100.0,
+      "case_id": "catalog.grid-distortion.bilinear",
+      "case_order": 14,
+      "catalog_policy": "bilinear",
+      "environment": "rust",
+      "environment_position": 3,
+      "explanation": {
+        "buffers": [
+          {
+            "condition": "always",
+            "dtype": "uint8",
+            "layout": "HWC",
+            "lifecycle": "borrowed-for-call",
+            "name": "input"
+          },
+          {
+            "condition": "always",
+            "dtype": "uint8",
+            "layout": "HWC",
+            "lifecycle": "owned-per-run-workspace-reusable",
+            "name": "working-u8"
+          },
+          {
+            "condition": "out-of-place-step-applied",
+            "dtype": "uint8",
+            "layout": "HWC",
+            "lifecycle": "owned-per-run-workspace-reusable",
+            "name": "scratch-u8"
+          }
+        ],
+        "copies": [
+          {
+            "condition": "non-contiguous-input",
+            "count": "0-or-1",
+            "reason": "normalize-to-contiguous-HWC",
+            "stage": "python-entry"
+          },
+          {
+            "condition": "always",
+            "count": "1",
+            "reason": "establish-owned-working-buffer",
+            "stage": "native-entry"
+          },
+          {
+            "condition": "always",
+            "count": "0",
+            "reason": "transfer-Rust-Vec-ownership-to-NumPy-storage",
+            "stage": "python-output"
+          }
+        ],
+        "fallbacks": [
+          "runtime-avx2-or-scalar"
+        ],
+        "fusions": [],
+        "input": {
+          "channels": "RGB",
+          "container": "borrowed-buffer",
+          "contiguous": true,
+          "dtype": "uint8",
+          "layout": "HWC",
+          "ownership": "caller"
+        },
+        "mode": "reference",
+        "optimizations": [],
+        "output": {
+          "channels": "RGB",
+          "container": "owned-buffer",
+          "contiguous": true,
+          "dtype": "uint8",
+          "layout": "HWC",
+          "ownership": "result"
+        },
+        "output_dtype": "uint8",
+        "output_layout": "HWC",
+        "passes": 1,
+        "pixel_passes": 1,
+        "python_boundary": {
+          "augmentation": "held",
+          "crossings_per_call": 1,
+          "decode": "not-applicable",
+          "delivery": "held-for-Python-output-transfer",
+          "gil": "held-during-augmentation",
+          "gil_stages": {
+            "arguments": "held",
+            "augmentation": "held",
+            "decode": "not-applicable",
+            "delivery": "held-for-Python-output-transfer",
+            "source": "held"
+          },
+          "input": "NumPy HWC RGB uint8",
+          "input_access": "read-only-borrow",
+          "output": "owned contiguous NumPy array",
+          "source_acquisition": "held"
+        },
+        "sampling": "native-plan-before-execution",
+        "schema_version": 2,
+        "sink": {
+          "type": "return"
+        },
+        "source": {
+          "type": "array"
+        },
+        "steps": [
+          {
+            "allocation": "sampled-coordinate-maps+workspace-axis-remap+workspace-u8",
+            "category": "geometry",
+            "execution": "out-of-place",
+            "fallback": "runtime-avx2-or-scalar",
+            "input_materialization": "owned-input-copy",
+            "kernel_form": "owned-to-owned",
+            "name": "GridDistortion",
+            "output_slot": "scratch-u8",
+            "pixel_passes": 1,
+            "policies": [
+              {
+                "name": "steps",
+                "value": "5"
+              },
+              {
+                "name": "distort-limit",
+                "value": "[-0.3,0.3]"
+              },
+              {
+                "name": "maps",
+                "value": "positive-monotonic-anchored"
+              },
+              {
+                "name": "small-axis",
+                "value": "reduce-steps-to-axis-minus-one"
+              },
+              {
+                "name": "interpolation",
+                "value": "bilinear"
+              },
+              {
+                "name": "border",
+                "value": "constant"
+              },
+              {
+                "name": "fill",
+                "value": "[0,0,0]"
+              },
+              {
+                "name": "sampler",
+                "value": "shared-inverse-q8"
+              }
+            ],
+            "probability": 1.0,
+            "scratch_slots": [
+              "axis-remap"
+            ],
+            "selection_reason": "semantic-legality:owned-to-owned",
+            "status": "always"
+          }
+        ],
+        "transforms": [
+          "GridDistortion"
+        ],
+        "unit_specializations": []
+      },
+      "images_per_sec": 299.8908097561678,
+      "iterations": 30,
+      "median_ms": 3.3345469999999997,
+      "observations_ms": [
+        3.426843,
+        3.345392,
+        3.332332,
+        3.339972,
+        3.335703,
+        3.400432,
+        3.335422,
+        3.333672,
+        3.316063,
+        3.309982,
+        3.347431,
+        3.410523,
+        3.336862,
+        3.325383,
+        3.409662,
+        3.399692,
+        3.329812,
+        3.322813,
+        3.307172,
+        3.307902,
+        3.347413,
+        3.367642,
+        3.337591,
+        3.306523,
+        3.312922,
+        3.322502,
+        3.361112,
+        3.312803,
+        3.329321,
+        3.307023
+      ],
+      "p95_ms": 3.410523,
+      "participant": "variopinta",
+      "reference_exact": true,
+      "repetition": 1,
+      "role": "control",
+      "route_id": "variopinta.reference",
+      "samples": 30,
+      "size": 1024,
+      "valid": true,
+      "validation": {
+        "c_contiguous": true,
+        "container": "numpy.ndarray",
+        "dtype": "uint8",
+        "finite": true,
+        "max": 230.0,
+        "min": 0.0,
+        "shape": [
+          1024,
+          1024,
+          3
+        ]
+      },
+      "variant": "reference",
+      "warmup_calls": 3,
+      "worker": "rust-catalog-1"
+    },
+    {
+      "block_size": 13,
+      "budget_ms": 100.0,
+      "case_id": "catalog.grid-distortion.bilinear",
+      "case_order": 12,
+      "catalog_policy": "bilinear",
+      "environment": "rust",
+      "environment_position": 2,
+      "explanation": {
+        "buffers": [
+          {
+            "condition": "always",
+            "dtype": "uint8",
+            "layout": "HWC",
+            "lifecycle": "borrowed-for-call",
+            "name": "input"
+          },
+          {
+            "condition": "always",
+            "dtype": "uint8",
+            "layout": "HWC",
+            "lifecycle": "owned-per-run-workspace-reusable",
+            "name": "working-u8"
+          }
+        ],
+        "copies": [
+          {
+            "condition": "non-contiguous-input",
+            "count": "0-or-1",
+            "reason": "normalize-to-contiguous-HWC",
+            "stage": "python-entry"
+          },
+          {
+            "condition": "always-elided",
+            "count": "0",
+            "reason": "establish-owned-working-buffer",
+            "stage": "native-entry"
+          },
+          {
+            "condition": "always",
+            "count": "0",
+            "reason": "transfer-Rust-Vec-ownership-to-NumPy-storage",
+            "stage": "python-output"
+          }
+        ],
+        "fallbacks": [
+          "runtime-avx2-or-scalar"
+        ],
+        "fusions": [],
+        "input": {
+          "channels": "RGB",
+          "container": "borrowed-buffer",
+          "contiguous": true,
+          "dtype": "uint8",
+          "layout": "HWC",
+          "ownership": "caller"
+        },
+        "mode": "compiled",
+        "optimizations": [
+          "input-copy-elision"
+        ],
+        "output": {
+          "channels": "RGB",
+          "container": "owned-buffer",
+          "contiguous": true,
+          "dtype": "uint8",
+          "layout": "HWC",
+          "ownership": "result"
+        },
+        "output_dtype": "uint8",
+        "output_layout": "HWC",
+        "passes": 1,
+        "pixel_passes": 1,
+        "python_boundary": {
+          "augmentation": "held",
+          "crossings_per_call": 1,
+          "decode": "not-applicable",
+          "delivery": "held-for-Python-output-transfer",
+          "gil": "held-during-augmentation",
+          "gil_stages": {
+            "arguments": "held",
+            "augmentation": "held",
+            "decode": "not-applicable",
+            "delivery": "held-for-Python-output-transfer",
+            "source": "held"
+          },
+          "input": "NumPy HWC RGB uint8",
+          "input_access": "read-only-borrow",
+          "output": "owned contiguous NumPy array",
+          "source_acquisition": "held"
+        },
+        "sampling": "native-plan-before-execution",
+        "schema_version": 2,
+        "sink": {
+          "type": "return"
+        },
+        "source": {
+          "type": "array"
+        },
+        "steps": [
+          {
+            "allocation": "sampled-coordinate-maps+workspace-axis-remap+workspace-u8",
+            "category": "geometry",
+            "execution": "out-of-place",
+            "fallback": "runtime-avx2-or-scalar",
+            "input_materialization": "borrowed-input",
+            "kernel_form": "borrowed-to-owned",
+            "name": "GridDistortion",
+            "output_slot": "working-u8",
+            "pixel_passes": 1,
+            "policies": [
+              {
+                "name": "steps",
+                "value": "5"
+              },
+              {
+                "name": "distort-limit",
+                "value": "[-0.3,0.3]"
+              },
+              {
+                "name": "maps",
+                "value": "positive-monotonic-anchored"
+              },
+              {
+                "name": "small-axis",
+                "value": "reduce-steps-to-axis-minus-one"
+              },
+              {
+                "name": "interpolation",
+                "value": "bilinear"
+              },
+              {
+                "name": "border",
+                "value": "constant"
+              },
+              {
+                "name": "fill",
+                "value": "[0,0,0]"
+              },
+              {
+                "name": "sampler",
+                "value": "shared-inverse-q8"
+              }
+            ],
+            "probability": 1.0,
+            "scratch_slots": [
+              "axis-remap"
+            ],
+            "selection_reason": "benchmark-policy:elide-entry-copy",
+            "status": "always"
+          }
+        ],
+        "transforms": [
+          "GridDistortion"
+        ],
+        "unit_specializations": []
+      },
+      "images_per_sec": 6110.409458537816,
+      "iterations": 507,
+      "median_ms": 0.16365515384615387,
+      "observations_ms": [
+        0.16173984615384615,
+        0.16353823076923077,
+        0.1650336923076923,
+        0.16485438461538462,
+        0.1641536923076923,
+        0.1690336923076923,
+        0.16228976923076924,
+        0.16587830769230769,
+        0.1623636923076923,
+        0.16558523076923076,
+        0.1649006153846154,
+        0.16580053846153844,
+        0.16228984615384615,
+        0.166136,
+        0.16232438461538462,
+        0.1657683076923077,
+        0.16223823076923077,
+        0.16808984615384615,
+        0.1621883076923077,
+        0.1658236923076923,
+        0.16275446153846154,
+        0.16365515384615387,
+        0.1631483076923077,
+        0.16376515384615387,
+        0.1643083076923077,
+        0.163586,
+        0.16293053846153846,
+        0.16274676923076925,
+        0.1628766923076923,
+        0.1634267692307692,
+        0.16285523076923078,
+        0.16481523076923077,
+        0.16305284615384613,
+        0.16406676923076924,
+        0.1646883076923077,
+        0.16406361538461536,
+        0.1622367692307692,
+        0.16495976923076924,
+        0.16243907692307694
+      ],
+      "p95_ms": 0.16808984615384615,
+      "participant": "variopinta",
+      "reference_exact": true,
+      "repetition": 2,
+      "role": "public",
+      "route_id": "variopinta.compiled",
+      "samples": 39,
+      "size": 224,
+      "valid": true,
+      "validation": {
+        "c_contiguous": true,
+        "container": "numpy.ndarray",
+        "dtype": "uint8",
+        "finite": true,
+        "max": 255.0,
+        "min": 0.0,
+        "shape": [
+          224,
+          224,
+          3
+        ]
+      },
+      "variant": "compiled",
+      "warmup_calls": 3,
+      "worker": "rust-catalog-2"
+    },
+    {
+      "block_size": 3,
+      "budget_ms": 100.0,
+      "case_id": "catalog.grid-distortion.bilinear",
+      "case_order": 12,
+      "catalog_policy": "bilinear",
+      "environment": "rust",
+      "environment_position": 2,
+      "explanation": {
+        "buffers": [
+          {
+            "condition": "always",
+            "dtype": "uint8",
+            "layout": "HWC",
+            "lifecycle": "borrowed-for-call",
+            "name": "input"
+          },
+          {
+            "condition": "always",
+            "dtype": "uint8",
+            "layout": "HWC",
+            "lifecycle": "owned-per-run-workspace-reusable",
+            "name": "working-u8"
+          }
+        ],
+        "copies": [
+          {
+            "condition": "non-contiguous-input",
+            "count": "0-or-1",
+            "reason": "normalize-to-contiguous-HWC",
+            "stage": "python-entry"
+          },
+          {
+            "condition": "always-elided",
+            "count": "0",
+            "reason": "establish-owned-working-buffer",
+            "stage": "native-entry"
+          },
+          {
+            "condition": "always",
+            "count": "0",
+            "reason": "transfer-Rust-Vec-ownership-to-NumPy-storage",
+            "stage": "python-output"
+          }
+        ],
+        "fallbacks": [
+          "runtime-avx2-or-scalar"
+        ],
+        "fusions": [],
+        "input": {
+          "channels": "RGB",
+          "container": "borrowed-buffer",
+          "contiguous": true,
+          "dtype": "uint8",
+          "layout": "HWC",
+          "ownership": "caller"
+        },
+        "mode": "compiled",
+        "optimizations": [
+          "input-copy-elision"
+        ],
+        "output": {
+          "channels": "RGB",
+          "container": "owned-buffer",
+          "contiguous": true,
+          "dtype": "uint8",
+          "layout": "HWC",
+          "ownership": "result"
+        },
+        "output_dtype": "uint8",
+        "output_layout": "HWC",
+        "passes": 1,
+        "pixel_passes": 1,
+        "python_boundary": {
+          "augmentation": "held",
+          "crossings_per_call": 1,
+          "decode": "not-applicable",
+          "delivery": "held-for-Python-output-transfer",
+          "gil": "held-during-augmentation",
+          "gil_stages": {
+            "arguments": "held",
+            "augmentation": "held",
+            "decode": "not-applicable",
+            "delivery": "held-for-Python-output-transfer",
+            "source": "held"
+          },
+          "input": "NumPy HWC RGB uint8",
+          "input_access": "read-only-borrow",
+          "output": "owned contiguous NumPy array",
+          "source_acquisition": "held"
+        },
+        "sampling": "native-plan-before-execution",
+        "schema_version": 2,
+        "sink": {
+          "type": "return"
+        },
+        "source": {
+          "type": "array"
+        },
+        "steps": [
+          {
+            "allocation": "sampled-coordinate-maps+workspace-axis-remap+workspace-u8",
+            "category": "geometry",
+            "execution": "out-of-place",
+            "fallback": "runtime-avx2-or-scalar",
+            "input_materialization": "borrowed-input",
+            "kernel_form": "borrowed-to-owned",
+            "name": "GridDistortion",
+            "output_slot": "working-u8",
+            "pixel_passes": 1,
+            "policies": [
+              {
+                "name": "steps",
+                "value": "5"
+              },
+              {
+                "name": "distort-limit",
+                "value": "[-0.3,0.3]"
+              },
+              {
+                "name": "maps",
+                "value": "positive-monotonic-anchored"
+              },
+              {
+                "name": "small-axis",
+                "value": "reduce-steps-to-axis-minus-one"
+              },
+              {
+                "name": "interpolation",
+                "value": "bilinear"
+              },
+              {
+                "name": "border",
+                "value": "constant"
+              },
+              {
+                "name": "fill",
+                "value": "[0,0,0]"
+              },
+              {
+                "name": "sampler",
+                "value": "shared-inverse-q8"
+              }
+            ],
+            "probability": 1.0,
+            "scratch_slots": [
+              "axis-remap"
+            ],
+            "selection_reason": "benchmark-policy:elide-entry-copy",
+            "status": "always"
+          }
+        ],
+        "transforms": [
+          "GridDistortion"
+        ],
+        "unit_specializations": []
+      },
+      "images_per_sec": 1206.8602765560552,
+      "iterations": 123,
+      "median_ms": 0.8285963333333334,
+      "observations_ms": [
+        0.8338566666666667,
+        0.8329696666666666,
+        0.8266363333333334,
+        0.8285963333333334,
+        0.8215796666666666,
+        0.8266126666666667,
+        0.8349030000000001,
+        0.8279230000000001,
+        0.825233,
+        0.8291430000000001,
+        0.8260063333333334,
+        0.8292163333333334,
+        0.8321363333333333,
+        0.826243,
+        0.8316596666666666,
+        0.8204463333333334,
+        0.8288993333333333,
+        0.8319763333333333,
+        0.8294229999999999,
+        0.8369663333333334,
+        0.82241,
+        0.8276163333333333,
+        0.8286063333333332,
+        0.8255893333333333,
+        0.8297196666666666,
+        0.830603,
+        0.8324729999999999,
+        0.8360563333333334,
+        0.8254963333333333,
+        0.8244030000000001,
+        0.8255896666666667,
+        0.828493,
+        0.8256563333333333,
+        0.8291563333333333,
+        0.825363,
+        0.8339026666666666,
+        0.8211363333333334,
+        0.8274266666666666,
+        0.8241063333333334,
+        0.8342663333333333,
+        0.8342963333333334
+      ],
+      "p95_ms": 0.8349030000000001,
+      "participant": "variopinta",
+      "reference_exact": true,
+      "repetition": 2,
+      "role": "public",
+      "route_id": "variopinta.compiled",
+      "samples": 41,
+      "size": 512,
+      "valid": true,
+      "validation": {
+        "c_contiguous": true,
+        "container": "numpy.ndarray",
+        "dtype": "uint8",
+        "finite": true,
+        "max": 255.0,
+        "min": 0.0,
+        "shape": [
+          512,
+          512,
+          3
+        ]
+      },
+      "variant": "compiled",
+      "warmup_calls": 3,
+      "worker": "rust-catalog-2"
+    },
+    {
+      "block_size": 1,
+      "budget_ms": 100.0,
+      "case_id": "catalog.grid-distortion.bilinear",
+      "case_order": 12,
+      "catalog_policy": "bilinear",
+      "environment": "rust",
+      "environment_position": 2,
+      "explanation": {
+        "buffers": [
+          {
+            "condition": "always",
+            "dtype": "uint8",
+            "layout": "HWC",
+            "lifecycle": "borrowed-for-call",
+            "name": "input"
+          },
+          {
+            "condition": "always",
+            "dtype": "uint8",
+            "layout": "HWC",
+            "lifecycle": "owned-per-run-workspace-reusable",
+            "name": "working-u8"
+          }
+        ],
+        "copies": [
+          {
+            "condition": "non-contiguous-input",
+            "count": "0-or-1",
+            "reason": "normalize-to-contiguous-HWC",
+            "stage": "python-entry"
+          },
+          {
+            "condition": "always-elided",
+            "count": "0",
+            "reason": "establish-owned-working-buffer",
+            "stage": "native-entry"
+          },
+          {
+            "condition": "always",
+            "count": "0",
+            "reason": "transfer-Rust-Vec-ownership-to-NumPy-storage",
+            "stage": "python-output"
+          }
+        ],
+        "fallbacks": [
+          "runtime-avx2-or-scalar"
+        ],
+        "fusions": [],
+        "input": {
+          "channels": "RGB",
+          "container": "borrowed-buffer",
+          "contiguous": true,
+          "dtype": "uint8",
+          "layout": "HWC",
+          "ownership": "caller"
+        },
+        "mode": "compiled",
+        "optimizations": [
+          "input-copy-elision"
+        ],
+        "output": {
+          "channels": "RGB",
+          "container": "owned-buffer",
+          "contiguous": true,
+          "dtype": "uint8",
+          "layout": "HWC",
+          "ownership": "result"
+        },
+        "output_dtype": "uint8",
+        "output_layout": "HWC",
+        "passes": 1,
+        "pixel_passes": 1,
+        "python_boundary": {
+          "augmentation": "held",
+          "crossings_per_call": 1,
+          "decode": "not-applicable",
+          "delivery": "held-for-Python-output-transfer",
+          "gil": "held-during-augmentation",
+          "gil_stages": {
+            "arguments": "held",
+            "augmentation": "held",
+            "decode": "not-applicable",
+            "delivery": "held-for-Python-output-transfer",
+            "source": "held"
+          },
+          "input": "NumPy HWC RGB uint8",
+          "input_access": "read-only-borrow",
+          "output": "owned contiguous NumPy array",
+          "source_acquisition": "held"
+        },
+        "sampling": "native-plan-before-execution",
+        "schema_version": 2,
+        "sink": {
+          "type": "return"
+        },
+        "source": {
+          "type": "array"
+        },
+        "steps": [
+          {
+            "allocation": "sampled-coordinate-maps+workspace-axis-remap+workspace-u8",
+            "category": "geometry",
+            "execution": "out-of-place",
+            "fallback": "runtime-avx2-or-scalar",
+            "input_materialization": "borrowed-input",
+            "kernel_form": "borrowed-to-owned",
+            "name": "GridDistortion",
+            "output_slot": "working-u8",
+            "pixel_passes": 1,
+            "policies": [
+              {
+                "name": "steps",
+                "value": "5"
+              },
+              {
+                "name": "distort-limit",
+                "value": "[-0.3,0.3]"
+              },
+              {
+                "name": "maps",
+                "value": "positive-monotonic-anchored"
+              },
+              {
+                "name": "small-axis",
+                "value": "reduce-steps-to-axis-minus-one"
+              },
+              {
+                "name": "interpolation",
+                "value": "bilinear"
+              },
+              {
+                "name": "border",
+                "value": "constant"
+              },
+              {
+                "name": "fill",
+                "value": "[0,0,0]"
+              },
+              {
+                "name": "sampler",
+                "value": "shared-inverse-q8"
+              }
+            ],
+            "probability": 1.0,
+            "scratch_slots": [
+              "axis-remap"
+            ],
+            "selection_reason": "benchmark-policy:elide-entry-copy",
+            "status": "always"
+          }
+        ],
+        "transforms": [
+          "GridDistortion"
+        ],
+        "unit_specializations": []
+      },
+      "images_per_sec": 305.71765384935213,
+      "iterations": 31,
+      "median_ms": 3.270992,
+      "observations_ms": [
+        3.252142,
+        3.303022,
+        3.277372,
+        3.274442,
+        3.267481,
+        3.279572,
+        3.292042,
+        3.267951,
+        3.270402,
+        3.259882,
+        3.280912,
+        3.260222,
+        3.292601,
+        3.308862,
+        3.269682,
+        3.269882,
+        3.266032,
+        3.295462,
+        3.258191,
+        3.304902,
+        3.270312,
+        3.287952,
+        3.278752,
+        3.269802,
+        3.267611,
+        3.265762,
+        3.327782,
+        3.288711,
+        3.270992,
+        3.264942,
+        3.331443
+      ],
+      "p95_ms": 3.327782,
+      "participant": "variopinta",
+      "reference_exact": true,
+      "repetition": 2,
+      "role": "public",
+      "route_id": "variopinta.compiled",
+      "samples": 31,
+      "size": 1024,
+      "valid": true,
+      "validation": {
+        "c_contiguous": true,
+        "container": "numpy.ndarray",
+        "dtype": "uint8",
+        "finite": true,
+        "max": 214.0,
+        "min": 8.0,
+        "shape": [
+          1024,
+          1024,
+          3
+        ]
+      },
+      "variant": "compiled",
+      "warmup_calls": 3,
+      "worker": "rust-catalog-2"
+    },
+    {
+      "block_size": 13,
+      "budget_ms": 100.0,
+      "case_id": "catalog.grid-distortion.bilinear",
+      "case_order": 13,
+      "catalog_policy": "bilinear",
+      "environment": "rust",
+      "environment_position": 2,
+      "explanation": {
+        "buffers": [
+          {
+            "condition": "always",
+            "dtype": "uint8",
+            "layout": "HWC",
+            "lifecycle": "borrowed-for-call",
+            "name": "input"
+          },
+          {
+            "condition": "always",
+            "dtype": "uint8",
+            "layout": "HWC",
+            "lifecycle": "owned-per-run-workspace-reusable",
+            "name": "working-u8"
+          },
+          {
+            "condition": "out-of-place-step-applied",
+            "dtype": "uint8",
+            "layout": "HWC",
+            "lifecycle": "owned-per-run-workspace-reusable",
+            "name": "scratch-u8"
+          }
+        ],
+        "copies": [
+          {
+            "condition": "non-contiguous-input",
+            "count": "0-or-1",
+            "reason": "normalize-to-contiguous-HWC",
+            "stage": "python-entry"
+          },
+          {
+            "condition": "always",
+            "count": "1",
+            "reason": "establish-owned-working-buffer",
+            "stage": "native-entry"
+          },
+          {
+            "condition": "always",
+            "count": "0",
+            "reason": "transfer-Rust-Vec-ownership-to-NumPy-storage",
+            "stage": "python-output"
+          }
+        ],
+        "fallbacks": [
+          "runtime-avx2-or-scalar"
+        ],
+        "fusions": [],
+        "input": {
+          "channels": "RGB",
+          "container": "borrowed-buffer",
+          "contiguous": true,
+          "dtype": "uint8",
+          "layout": "HWC",
+          "ownership": "caller"
+        },
+        "mode": "reference",
+        "optimizations": [],
+        "output": {
+          "channels": "RGB",
+          "container": "owned-buffer",
+          "contiguous": true,
+          "dtype": "uint8",
+          "layout": "HWC",
+          "ownership": "result"
+        },
+        "output_dtype": "uint8",
+        "output_layout": "HWC",
+        "passes": 1,
+        "pixel_passes": 1,
+        "python_boundary": {
+          "augmentation": "held",
+          "crossings_per_call": 1,
+          "decode": "not-applicable",
+          "delivery": "held-for-Python-output-transfer",
+          "gil": "held-during-augmentation",
+          "gil_stages": {
+            "arguments": "held",
+            "augmentation": "held",
+            "decode": "not-applicable",
+            "delivery": "held-for-Python-output-transfer",
+            "source": "held"
+          },
+          "input": "NumPy HWC RGB uint8",
+          "input_access": "read-only-borrow",
+          "output": "owned contiguous NumPy array",
+          "source_acquisition": "held"
+        },
+        "sampling": "native-plan-before-execution",
+        "schema_version": 2,
+        "sink": {
+          "type": "return"
+        },
+        "source": {
+          "type": "array"
+        },
+        "steps": [
+          {
+            "allocation": "sampled-coordinate-maps+workspace-axis-remap+workspace-u8",
+            "category": "geometry",
+            "execution": "out-of-place",
+            "fallback": "runtime-avx2-or-scalar",
+            "input_materialization": "owned-input-copy",
+            "kernel_form": "owned-to-owned",
+            "name": "GridDistortion",
+            "output_slot": "scratch-u8",
+            "pixel_passes": 1,
+            "policies": [
+              {
+                "name": "steps",
+                "value": "5"
+              },
+              {
+                "name": "distort-limit",
+                "value": "[-0.3,0.3]"
+              },
+              {
+                "name": "maps",
+                "value": "positive-monotonic-anchored"
+              },
+              {
+                "name": "small-axis",
+                "value": "reduce-steps-to-axis-minus-one"
+              },
+              {
+                "name": "interpolation",
+                "value": "bilinear"
+              },
+              {
+                "name": "border",
+                "value": "constant"
+              },
+              {
+                "name": "fill",
+                "value": "[0,0,0]"
+              },
+              {
+                "name": "sampler",
+                "value": "shared-inverse-q8"
+              }
+            ],
+            "probability": 1.0,
+            "scratch_slots": [
+              "axis-remap"
+            ],
+            "selection_reason": "semantic-legality:owned-to-owned",
+            "status": "always"
+          }
+        ],
+        "transforms": [
+          "GridDistortion"
+        ],
+        "unit_specializations": []
+      },
+      "images_per_sec": 6083.445214130252,
+      "iterations": 507,
+      "median_ms": 0.16438053846153847,
+      "observations_ms": [
+        0.16393984615384616,
+        0.16411438461538463,
+        0.16441676923076923,
+        0.16451907692307693,
+        0.16331984615384615,
+        0.16683676923076923,
+        0.163179,
+        0.1662183076923077,
+        0.16355823076923076,
+        0.16552138461538463,
+        0.16330292307692307,
+        0.16538899999999998,
+        0.16538753846153845,
+        0.16438053846153847,
+        0.16785446153846154,
+        0.16447915384615383,
+        0.16388053846153847,
+        0.16434753846153846,
+        0.1640552307692308,
+        0.16425515384615386,
+        0.16446830769230772,
+        0.16323823076923077,
+        0.16587523076923077,
+        0.1638283076923077,
+        0.16564746153846155,
+        0.16431753846153846,
+        0.16421676923076925,
+        0.1640429230769231,
+        0.1646236923076923,
+        0.16506746153846155,
+        0.16456984615384615,
+        0.1658420769230769,
+        0.16438907692307694,
+        0.1641767692307692,
+        0.16322746153846154,
+        0.16400369230769232,
+        0.1671683076923077,
+        0.16428446153846155,
+        0.16477984615384617
+      ],
+      "p95_ms": 0.1671683076923077,
+      "participant": "variopinta",
+      "reference_exact": true,
+      "repetition": 2,
       "role": "control",
       "route_id": "variopinta.reference",
       "samples": 39,
@@ -1261,1055 +2574,15 @@
         "container": "numpy.ndarray",
         "dtype": "uint8",
         "finite": true,
-        "max": 242.0,
-        "min": 12.0,
-        "shape": [
-          224,
-          224,
-          3
-        ]
-      },
-      "variant": "reference",
-      "warmup_calls": 3,
-      "worker": "rust-catalog-1"
-    },
-    {
-      "block_size": 1,
-      "budget_ms": 100.0,
-      "case_id": "catalog.grid-distortion.bilinear",
-      "case_order": 24,
-      "catalog_policy": "bilinear",
-      "environment": "rust",
-      "environment_position": 3,
-      "explanation": {
-        "buffers": [
-          {
-            "condition": "always",
-            "dtype": "uint8",
-            "layout": "HWC",
-            "lifecycle": "borrowed-for-call",
-            "name": "input"
-          },
-          {
-            "condition": "always",
-            "dtype": "uint8",
-            "layout": "HWC",
-            "lifecycle": "owned-per-run-workspace-reusable",
-            "name": "working-u8"
-          },
-          {
-            "condition": "out-of-place-step-applied",
-            "dtype": "uint8",
-            "layout": "HWC",
-            "lifecycle": "owned-per-run-workspace-reusable",
-            "name": "scratch-u8"
-          }
-        ],
-        "copies": [
-          {
-            "condition": "non-contiguous-input",
-            "count": "0-or-1",
-            "reason": "normalize-to-contiguous-HWC",
-            "stage": "python-entry"
-          },
-          {
-            "condition": "always",
-            "count": "1",
-            "reason": "establish-owned-working-buffer",
-            "stage": "native-entry"
-          },
-          {
-            "condition": "always",
-            "count": "0",
-            "reason": "transfer-Rust-Vec-ownership-to-NumPy-storage",
-            "stage": "python-output"
-          }
-        ],
-        "fallbacks": [
-          "portable-scalar"
-        ],
-        "fusions": [],
-        "input": {
-          "channels": "RGB",
-          "container": "borrowed-buffer",
-          "contiguous": true,
-          "dtype": "uint8",
-          "layout": "HWC",
-          "ownership": "caller"
-        },
-        "mode": "reference",
-        "optimizations": [],
-        "output": {
-          "channels": "RGB",
-          "container": "owned-buffer",
-          "contiguous": true,
-          "dtype": "uint8",
-          "layout": "HWC",
-          "ownership": "result"
-        },
-        "output_dtype": "uint8",
-        "output_layout": "HWC",
-        "passes": 1,
-        "pixel_passes": 1,
-        "python_boundary": {
-          "augmentation": "held",
-          "crossings_per_call": 1,
-          "decode": "not-applicable",
-          "delivery": "held-for-Python-output-transfer",
-          "gil": "held-during-augmentation",
-          "gil_stages": {
-            "arguments": "held",
-            "augmentation": "held",
-            "decode": "not-applicable",
-            "delivery": "held-for-Python-output-transfer",
-            "source": "held"
-          },
-          "input": "NumPy HWC RGB uint8",
-          "input_access": "read-only-borrow",
-          "output": "owned contiguous NumPy array",
-          "source_acquisition": "held"
-        },
-        "sampling": "native-plan-before-execution",
-        "schema_version": 2,
-        "sink": {
-          "type": "return"
-        },
-        "source": {
-          "type": "array"
-        },
-        "steps": [
-          {
-            "allocation": "sampled-coordinate-maps+workspace-u8",
-            "category": "geometry",
-            "execution": "out-of-place",
-            "fallback": "portable-scalar",
-            "input_materialization": "owned-input-copy",
-            "kernel_form": "owned-to-owned",
-            "name": "GridDistortion",
-            "output_slot": "scratch-u8",
-            "pixel_passes": 1,
-            "policies": [
-              {
-                "name": "steps",
-                "value": "5"
-              },
-              {
-                "name": "distort-limit",
-                "value": "[-0.3,0.3]"
-              },
-              {
-                "name": "maps",
-                "value": "positive-monotonic-anchored"
-              },
-              {
-                "name": "small-axis",
-                "value": "reduce-steps-to-axis-minus-one"
-              },
-              {
-                "name": "interpolation",
-                "value": "bilinear"
-              },
-              {
-                "name": "border",
-                "value": "constant"
-              },
-              {
-                "name": "fill",
-                "value": "[0,0,0]"
-              },
-              {
-                "name": "sampler",
-                "value": "shared-inverse-q8"
-              }
-            ],
-            "probability": 1.0,
-            "scratch_slots": [],
-            "selection_reason": "semantic-legality:owned-to-owned",
-            "status": "always"
-          }
-        ],
-        "transforms": [
-          "GridDistortion"
-        ],
-        "unit_specializations": []
-      },
-      "images_per_sec": 224.54108293469804,
-      "iterations": 23,
-      "median_ms": 4.453528,
-      "observations_ms": [
-        4.446099,
-        4.444679,
-        4.459189,
-        4.453528,
-        4.454299,
-        4.44885,
-        4.472869,
-        4.458758,
-        4.448659,
-        4.460229,
-        4.452529,
-        4.449009,
-        4.512799,
-        4.454949,
-        4.447688,
-        4.441209,
-        4.46476,
-        4.446228,
-        4.446779,
-        4.443518,
-        4.5015,
-        4.474879,
-        4.455089
-      ],
-      "p95_ms": 4.5015,
-      "participant": "variopinta",
-      "reference_exact": true,
-      "repetition": 1,
-      "role": "control",
-      "route_id": "variopinta.reference",
-      "samples": 23,
-      "size": 512,
-      "valid": true,
-      "validation": {
-        "c_contiguous": true,
-        "container": "numpy.ndarray",
-        "dtype": "uint8",
-        "finite": true,
-        "max": 213.0,
-        "min": 12.0,
-        "shape": [
-          512,
-          512,
-          3
-        ]
-      },
-      "variant": "reference",
-      "warmup_calls": 3,
-      "worker": "rust-catalog-1"
-    },
-    {
-      "block_size": 1,
-      "budget_ms": 100.0,
-      "case_id": "catalog.grid-distortion.bilinear",
-      "case_order": 24,
-      "catalog_policy": "bilinear",
-      "environment": "rust",
-      "environment_position": 3,
-      "explanation": {
-        "buffers": [
-          {
-            "condition": "always",
-            "dtype": "uint8",
-            "layout": "HWC",
-            "lifecycle": "borrowed-for-call",
-            "name": "input"
-          },
-          {
-            "condition": "always",
-            "dtype": "uint8",
-            "layout": "HWC",
-            "lifecycle": "owned-per-run-workspace-reusable",
-            "name": "working-u8"
-          },
-          {
-            "condition": "out-of-place-step-applied",
-            "dtype": "uint8",
-            "layout": "HWC",
-            "lifecycle": "owned-per-run-workspace-reusable",
-            "name": "scratch-u8"
-          }
-        ],
-        "copies": [
-          {
-            "condition": "non-contiguous-input",
-            "count": "0-or-1",
-            "reason": "normalize-to-contiguous-HWC",
-            "stage": "python-entry"
-          },
-          {
-            "condition": "always",
-            "count": "1",
-            "reason": "establish-owned-working-buffer",
-            "stage": "native-entry"
-          },
-          {
-            "condition": "always",
-            "count": "0",
-            "reason": "transfer-Rust-Vec-ownership-to-NumPy-storage",
-            "stage": "python-output"
-          }
-        ],
-        "fallbacks": [
-          "portable-scalar"
-        ],
-        "fusions": [],
-        "input": {
-          "channels": "RGB",
-          "container": "borrowed-buffer",
-          "contiguous": true,
-          "dtype": "uint8",
-          "layout": "HWC",
-          "ownership": "caller"
-        },
-        "mode": "reference",
-        "optimizations": [],
-        "output": {
-          "channels": "RGB",
-          "container": "owned-buffer",
-          "contiguous": true,
-          "dtype": "uint8",
-          "layout": "HWC",
-          "ownership": "result"
-        },
-        "output_dtype": "uint8",
-        "output_layout": "HWC",
-        "passes": 1,
-        "pixel_passes": 1,
-        "python_boundary": {
-          "augmentation": "held",
-          "crossings_per_call": 1,
-          "decode": "not-applicable",
-          "delivery": "held-for-Python-output-transfer",
-          "gil": "held-during-augmentation",
-          "gil_stages": {
-            "arguments": "held",
-            "augmentation": "held",
-            "decode": "not-applicable",
-            "delivery": "held-for-Python-output-transfer",
-            "source": "held"
-          },
-          "input": "NumPy HWC RGB uint8",
-          "input_access": "read-only-borrow",
-          "output": "owned contiguous NumPy array",
-          "source_acquisition": "held"
-        },
-        "sampling": "native-plan-before-execution",
-        "schema_version": 2,
-        "sink": {
-          "type": "return"
-        },
-        "source": {
-          "type": "array"
-        },
-        "steps": [
-          {
-            "allocation": "sampled-coordinate-maps+workspace-u8",
-            "category": "geometry",
-            "execution": "out-of-place",
-            "fallback": "portable-scalar",
-            "input_materialization": "owned-input-copy",
-            "kernel_form": "owned-to-owned",
-            "name": "GridDistortion",
-            "output_slot": "scratch-u8",
-            "pixel_passes": 1,
-            "policies": [
-              {
-                "name": "steps",
-                "value": "5"
-              },
-              {
-                "name": "distort-limit",
-                "value": "[-0.3,0.3]"
-              },
-              {
-                "name": "maps",
-                "value": "positive-monotonic-anchored"
-              },
-              {
-                "name": "small-axis",
-                "value": "reduce-steps-to-axis-minus-one"
-              },
-              {
-                "name": "interpolation",
-                "value": "bilinear"
-              },
-              {
-                "name": "border",
-                "value": "constant"
-              },
-              {
-                "name": "fill",
-                "value": "[0,0,0]"
-              },
-              {
-                "name": "sampler",
-                "value": "shared-inverse-q8"
-              }
-            ],
-            "probability": 1.0,
-            "scratch_slots": [],
-            "selection_reason": "semantic-legality:owned-to-owned",
-            "status": "always"
-          }
-        ],
-        "transforms": [
-          "GridDistortion"
-        ],
-        "unit_specializations": []
-      },
-      "images_per_sec": 55.909037338067854,
-      "iterations": 7,
-      "median_ms": 17.886196,
-      "observations_ms": [
-        17.855606,
-        17.862916,
-        17.907456,
-        17.902256,
-        17.946967,
-        17.879216,
-        17.886196
-      ],
-      "p95_ms": 17.946967,
-      "participant": "variopinta",
-      "reference_exact": true,
-      "repetition": 1,
-      "role": "control",
-      "route_id": "variopinta.reference",
-      "samples": 7,
-      "size": 1024,
-      "valid": true,
-      "validation": {
-        "c_contiguous": true,
-        "container": "numpy.ndarray",
-        "dtype": "uint8",
-        "finite": true,
-        "max": 214.0,
-        "min": 8.0,
-        "shape": [
-          1024,
-          1024,
-          3
-        ]
-      },
-      "variant": "reference",
-      "warmup_calls": 3,
-      "worker": "rust-catalog-1"
-    },
-    {
-      "block_size": 3,
-      "budget_ms": 100.0,
-      "case_id": "catalog.grid-distortion.bilinear",
-      "case_order": 22,
-      "catalog_policy": "bilinear",
-      "environment": "rust",
-      "environment_position": 2,
-      "explanation": {
-        "buffers": [
-          {
-            "condition": "always",
-            "dtype": "uint8",
-            "layout": "HWC",
-            "lifecycle": "borrowed-for-call",
-            "name": "input"
-          },
-          {
-            "condition": "always",
-            "dtype": "uint8",
-            "layout": "HWC",
-            "lifecycle": "owned-per-run-workspace-reusable",
-            "name": "working-u8"
-          }
-        ],
-        "copies": [
-          {
-            "condition": "non-contiguous-input",
-            "count": "0-or-1",
-            "reason": "normalize-to-contiguous-HWC",
-            "stage": "python-entry"
-          },
-          {
-            "condition": "always-elided",
-            "count": "0",
-            "reason": "establish-owned-working-buffer",
-            "stage": "native-entry"
-          },
-          {
-            "condition": "always",
-            "count": "0",
-            "reason": "transfer-Rust-Vec-ownership-to-NumPy-storage",
-            "stage": "python-output"
-          }
-        ],
-        "fallbacks": [
-          "portable-scalar"
-        ],
-        "fusions": [],
-        "input": {
-          "channels": "RGB",
-          "container": "borrowed-buffer",
-          "contiguous": true,
-          "dtype": "uint8",
-          "layout": "HWC",
-          "ownership": "caller"
-        },
-        "mode": "compiled",
-        "optimizations": [
-          "input-copy-elision"
-        ],
-        "output": {
-          "channels": "RGB",
-          "container": "owned-buffer",
-          "contiguous": true,
-          "dtype": "uint8",
-          "layout": "HWC",
-          "ownership": "result"
-        },
-        "output_dtype": "uint8",
-        "output_layout": "HWC",
-        "passes": 1,
-        "pixel_passes": 1,
-        "python_boundary": {
-          "augmentation": "held",
-          "crossings_per_call": 1,
-          "decode": "not-applicable",
-          "delivery": "held-for-Python-output-transfer",
-          "gil": "held-during-augmentation",
-          "gil_stages": {
-            "arguments": "held",
-            "augmentation": "held",
-            "decode": "not-applicable",
-            "delivery": "held-for-Python-output-transfer",
-            "source": "held"
-          },
-          "input": "NumPy HWC RGB uint8",
-          "input_access": "read-only-borrow",
-          "output": "owned contiguous NumPy array",
-          "source_acquisition": "held"
-        },
-        "sampling": "native-plan-before-execution",
-        "schema_version": 2,
-        "sink": {
-          "type": "return"
-        },
-        "source": {
-          "type": "array"
-        },
-        "steps": [
-          {
-            "allocation": "sampled-coordinate-maps+workspace-u8",
-            "category": "geometry",
-            "execution": "out-of-place",
-            "fallback": "portable-scalar",
-            "input_materialization": "borrowed-input",
-            "kernel_form": "borrowed-to-owned",
-            "name": "GridDistortion",
-            "output_slot": "working-u8",
-            "pixel_passes": 1,
-            "policies": [
-              {
-                "name": "steps",
-                "value": "5"
-              },
-              {
-                "name": "distort-limit",
-                "value": "[-0.3,0.3]"
-              },
-              {
-                "name": "maps",
-                "value": "positive-monotonic-anchored"
-              },
-              {
-                "name": "small-axis",
-                "value": "reduce-steps-to-axis-minus-one"
-              },
-              {
-                "name": "interpolation",
-                "value": "bilinear"
-              },
-              {
-                "name": "border",
-                "value": "constant"
-              },
-              {
-                "name": "fill",
-                "value": "[0,0,0]"
-              },
-              {
-                "name": "sampler",
-                "value": "shared-inverse-q8"
-              }
-            ],
-            "probability": 1.0,
-            "scratch_slots": [],
-            "selection_reason": "benchmark-policy:elide-entry-copy",
-            "status": "always"
-          }
-        ],
-        "transforms": [
-          "GridDistortion"
-        ],
-        "unit_specializations": []
-      },
-      "images_per_sec": 1175.2780267081932,
-      "iterations": 120,
-      "median_ms": 0.8508625,
-      "observations_ms": [
-        0.8493940000000001,
-        0.8483839999999999,
-        0.8643073333333334,
-        0.857101,
-        0.8500909999999999,
-        0.847894,
-        0.853074,
-        0.8484673333333334,
-        0.853651,
-        0.8563373333333333,
-        0.8536573333333334,
-        0.8518006666666667,
-        0.8435973333333333,
-        0.8495676666666667,
-        0.8606576666666667,
-        0.8602773333333333,
-        0.8503173333333334,
-        0.8507676666666667,
-        0.8486273333333334,
-        0.8513706666666666,
-        0.8433673333333332,
-        0.8555906666666666,
-        0.851594,
-        0.8463043333333333,
-        0.8509573333333332,
-        0.851001,
-        0.8486006666666667,
-        0.8477206666666667,
-        0.864364,
-        0.8435239999999999,
-        0.8517873333333333,
-        0.8474176666666667,
-        0.8513473333333333,
-        0.8512143333333334,
-        0.8496873333333334,
-        0.8560806666666667,
-        0.8465206666666667,
-        0.8481073333333334,
-        0.846971,
-        0.8533506666666667
-      ],
-      "p95_ms": 0.8606576666666667,
-      "participant": "variopinta",
-      "reference_exact": true,
-      "repetition": 2,
-      "role": "public",
-      "route_id": "variopinta.compiled",
-      "samples": 40,
-      "size": 224,
-      "valid": true,
-      "validation": {
-        "c_contiguous": true,
-        "container": "numpy.ndarray",
-        "dtype": "uint8",
-        "finite": true,
         "max": 255.0,
-        "min": 2.0,
+        "min": 0.0,
         "shape": [
           224,
           224,
           3
         ]
       },
-      "variant": "compiled",
-      "warmup_calls": 3,
-      "worker": "rust-catalog-2"
-    },
-    {
-      "block_size": 1,
-      "budget_ms": 100.0,
-      "case_id": "catalog.grid-distortion.bilinear",
-      "case_order": 22,
-      "catalog_policy": "bilinear",
-      "environment": "rust",
-      "environment_position": 2,
-      "explanation": {
-        "buffers": [
-          {
-            "condition": "always",
-            "dtype": "uint8",
-            "layout": "HWC",
-            "lifecycle": "borrowed-for-call",
-            "name": "input"
-          },
-          {
-            "condition": "always",
-            "dtype": "uint8",
-            "layout": "HWC",
-            "lifecycle": "owned-per-run-workspace-reusable",
-            "name": "working-u8"
-          }
-        ],
-        "copies": [
-          {
-            "condition": "non-contiguous-input",
-            "count": "0-or-1",
-            "reason": "normalize-to-contiguous-HWC",
-            "stage": "python-entry"
-          },
-          {
-            "condition": "always-elided",
-            "count": "0",
-            "reason": "establish-owned-working-buffer",
-            "stage": "native-entry"
-          },
-          {
-            "condition": "always",
-            "count": "0",
-            "reason": "transfer-Rust-Vec-ownership-to-NumPy-storage",
-            "stage": "python-output"
-          }
-        ],
-        "fallbacks": [
-          "portable-scalar"
-        ],
-        "fusions": [],
-        "input": {
-          "channels": "RGB",
-          "container": "borrowed-buffer",
-          "contiguous": true,
-          "dtype": "uint8",
-          "layout": "HWC",
-          "ownership": "caller"
-        },
-        "mode": "compiled",
-        "optimizations": [
-          "input-copy-elision"
-        ],
-        "output": {
-          "channels": "RGB",
-          "container": "owned-buffer",
-          "contiguous": true,
-          "dtype": "uint8",
-          "layout": "HWC",
-          "ownership": "result"
-        },
-        "output_dtype": "uint8",
-        "output_layout": "HWC",
-        "passes": 1,
-        "pixel_passes": 1,
-        "python_boundary": {
-          "augmentation": "held",
-          "crossings_per_call": 1,
-          "decode": "not-applicable",
-          "delivery": "held-for-Python-output-transfer",
-          "gil": "held-during-augmentation",
-          "gil_stages": {
-            "arguments": "held",
-            "augmentation": "held",
-            "decode": "not-applicable",
-            "delivery": "held-for-Python-output-transfer",
-            "source": "held"
-          },
-          "input": "NumPy HWC RGB uint8",
-          "input_access": "read-only-borrow",
-          "output": "owned contiguous NumPy array",
-          "source_acquisition": "held"
-        },
-        "sampling": "native-plan-before-execution",
-        "schema_version": 2,
-        "sink": {
-          "type": "return"
-        },
-        "source": {
-          "type": "array"
-        },
-        "steps": [
-          {
-            "allocation": "sampled-coordinate-maps+workspace-u8",
-            "category": "geometry",
-            "execution": "out-of-place",
-            "fallback": "portable-scalar",
-            "input_materialization": "borrowed-input",
-            "kernel_form": "borrowed-to-owned",
-            "name": "GridDistortion",
-            "output_slot": "working-u8",
-            "pixel_passes": 1,
-            "policies": [
-              {
-                "name": "steps",
-                "value": "5"
-              },
-              {
-                "name": "distort-limit",
-                "value": "[-0.3,0.3]"
-              },
-              {
-                "name": "maps",
-                "value": "positive-monotonic-anchored"
-              },
-              {
-                "name": "small-axis",
-                "value": "reduce-steps-to-axis-minus-one"
-              },
-              {
-                "name": "interpolation",
-                "value": "bilinear"
-              },
-              {
-                "name": "border",
-                "value": "constant"
-              },
-              {
-                "name": "fill",
-                "value": "[0,0,0]"
-              },
-              {
-                "name": "sampler",
-                "value": "shared-inverse-q8"
-              }
-            ],
-            "probability": 1.0,
-            "scratch_slots": [],
-            "selection_reason": "benchmark-policy:elide-entry-copy",
-            "status": "always"
-          }
-        ],
-        "transforms": [
-          "GridDistortion"
-        ],
-        "unit_specializations": []
-      },
-      "images_per_sec": 223.74623239312928,
-      "iterations": 23,
-      "median_ms": 4.469349,
-      "observations_ms": [
-        4.468559,
-        4.446129,
-        4.451799,
-        4.446659,
-        4.441029,
-        4.440008,
-        4.458089,
-        4.456389,
-        4.458739,
-        4.482149,
-        4.55929,
-        4.549469,
-        4.519389,
-        4.47191,
-        4.447749,
-        4.486419,
-        4.465209,
-        4.474828,
-        4.5522,
-        4.47505,
-        4.484109,
-        4.469349,
-        4.484228
-      ],
-      "p95_ms": 4.5522,
-      "participant": "variopinta",
-      "reference_exact": true,
-      "repetition": 2,
-      "role": "public",
-      "route_id": "variopinta.compiled",
-      "samples": 23,
-      "size": 512,
-      "valid": true,
-      "validation": {
-        "c_contiguous": true,
-        "container": "numpy.ndarray",
-        "dtype": "uint8",
-        "finite": true,
-        "max": 213.0,
-        "min": 12.0,
-        "shape": [
-          512,
-          512,
-          3
-        ]
-      },
-      "variant": "compiled",
-      "warmup_calls": 3,
-      "worker": "rust-catalog-2"
-    },
-    {
-      "block_size": 1,
-      "budget_ms": 100.0,
-      "case_id": "catalog.grid-distortion.bilinear",
-      "case_order": 22,
-      "catalog_policy": "bilinear",
-      "environment": "rust",
-      "environment_position": 2,
-      "explanation": {
-        "buffers": [
-          {
-            "condition": "always",
-            "dtype": "uint8",
-            "layout": "HWC",
-            "lifecycle": "borrowed-for-call",
-            "name": "input"
-          },
-          {
-            "condition": "always",
-            "dtype": "uint8",
-            "layout": "HWC",
-            "lifecycle": "owned-per-run-workspace-reusable",
-            "name": "working-u8"
-          }
-        ],
-        "copies": [
-          {
-            "condition": "non-contiguous-input",
-            "count": "0-or-1",
-            "reason": "normalize-to-contiguous-HWC",
-            "stage": "python-entry"
-          },
-          {
-            "condition": "always-elided",
-            "count": "0",
-            "reason": "establish-owned-working-buffer",
-            "stage": "native-entry"
-          },
-          {
-            "condition": "always",
-            "count": "0",
-            "reason": "transfer-Rust-Vec-ownership-to-NumPy-storage",
-            "stage": "python-output"
-          }
-        ],
-        "fallbacks": [
-          "portable-scalar"
-        ],
-        "fusions": [],
-        "input": {
-          "channels": "RGB",
-          "container": "borrowed-buffer",
-          "contiguous": true,
-          "dtype": "uint8",
-          "layout": "HWC",
-          "ownership": "caller"
-        },
-        "mode": "compiled",
-        "optimizations": [
-          "input-copy-elision"
-        ],
-        "output": {
-          "channels": "RGB",
-          "container": "owned-buffer",
-          "contiguous": true,
-          "dtype": "uint8",
-          "layout": "HWC",
-          "ownership": "result"
-        },
-        "output_dtype": "uint8",
-        "output_layout": "HWC",
-        "passes": 1,
-        "pixel_passes": 1,
-        "python_boundary": {
-          "augmentation": "held",
-          "crossings_per_call": 1,
-          "decode": "not-applicable",
-          "delivery": "held-for-Python-output-transfer",
-          "gil": "held-during-augmentation",
-          "gil_stages": {
-            "arguments": "held",
-            "augmentation": "held",
-            "decode": "not-applicable",
-            "delivery": "held-for-Python-output-transfer",
-            "source": "held"
-          },
-          "input": "NumPy HWC RGB uint8",
-          "input_access": "read-only-borrow",
-          "output": "owned contiguous NumPy array",
-          "source_acquisition": "held"
-        },
-        "sampling": "native-plan-before-execution",
-        "schema_version": 2,
-        "sink": {
-          "type": "return"
-        },
-        "source": {
-          "type": "array"
-        },
-        "steps": [
-          {
-            "allocation": "sampled-coordinate-maps+workspace-u8",
-            "category": "geometry",
-            "execution": "out-of-place",
-            "fallback": "portable-scalar",
-            "input_materialization": "borrowed-input",
-            "kernel_form": "borrowed-to-owned",
-            "name": "GridDistortion",
-            "output_slot": "working-u8",
-            "pixel_passes": 1,
-            "policies": [
-              {
-                "name": "steps",
-                "value": "5"
-              },
-              {
-                "name": "distort-limit",
-                "value": "[-0.3,0.3]"
-              },
-              {
-                "name": "maps",
-                "value": "positive-monotonic-anchored"
-              },
-              {
-                "name": "small-axis",
-                "value": "reduce-steps-to-axis-minus-one"
-              },
-              {
-                "name": "interpolation",
-                "value": "bilinear"
-              },
-              {
-                "name": "border",
-                "value": "constant"
-              },
-              {
-                "name": "fill",
-                "value": "[0,0,0]"
-              },
-              {
-                "name": "sampler",
-                "value": "shared-inverse-q8"
-              }
-            ],
-            "probability": 1.0,
-            "scratch_slots": [],
-            "selection_reason": "benchmark-policy:elide-entry-copy",
-            "status": "always"
-          }
-        ],
-        "transforms": [
-          "GridDistortion"
-        ],
-        "unit_specializations": []
-      },
-      "images_per_sec": 56.002659006249615,
-      "iterations": 7,
-      "median_ms": 17.856295,
-      "observations_ms": [
-        17.848936,
-        17.823536,
-        17.856295,
-        18.951035,
-        17.872436,
-        17.789416,
-        17.862805
-      ],
-      "p95_ms": 18.951035,
-      "participant": "variopinta",
-      "reference_exact": true,
-      "repetition": 2,
-      "role": "public",
-      "route_id": "variopinta.compiled",
-      "samples": 7,
-      "size": 1024,
-      "valid": true,
-      "validation": {
-        "c_contiguous": true,
-        "container": "numpy.ndarray",
-        "dtype": "uint8",
-        "finite": true,
-        "max": 214.0,
-        "min": 8.0,
-        "shape": [
-          1024,
-          1024,
-          3
-        ]
-      },
-      "variant": "compiled",
+      "variant": "reference",
       "warmup_calls": 3,
       "worker": "rust-catalog-2"
     },
@@ -2317,7 +2590,7 @@
       "block_size": 3,
       "budget_ms": 100.0,
       "case_id": "catalog.grid-distortion.bilinear",
-      "case_order": 23,
+      "case_order": 13,
       "catalog_policy": "bilinear",
       "environment": "rust",
       "environment_position": 2,
@@ -2366,7 +2639,7 @@
           }
         ],
         "fallbacks": [
-          "portable-scalar"
+          "runtime-avx2-or-scalar"
         ],
         "fusions": [],
         "input": {
@@ -2419,10 +2692,10 @@
         },
         "steps": [
           {
-            "allocation": "sampled-coordinate-maps+workspace-u8",
+            "allocation": "sampled-coordinate-maps+workspace-axis-remap+workspace-u8",
             "category": "geometry",
             "execution": "out-of-place",
-            "fallback": "portable-scalar",
+            "fallback": "runtime-avx2-or-scalar",
             "input_materialization": "owned-input-copy",
             "kernel_form": "owned-to-owned",
             "name": "GridDistortion",
@@ -2463,7 +2736,9 @@
               }
             ],
             "probability": 1.0,
-            "scratch_slots": [],
+            "scratch_slots": [
+              "axis-remap"
+            ],
             "selection_reason": "semantic-legality:owned-to-owned",
             "status": "always"
           }
@@ -2473,272 +2748,58 @@
         ],
         "unit_specializations": []
       },
-      "images_per_sec": 1174.546634786861,
+      "images_per_sec": 1198.9190545803904,
       "iterations": 120,
-      "median_ms": 0.8513923333333333,
+      "median_ms": 0.8340846666666667,
       "observations_ms": [
-        0.856341,
-        0.846194,
-        0.8566106666666666,
-        0.8597543333333334,
-        0.847254,
-        0.8571810000000001,
-        0.8483740000000001,
-        0.8488606666666666,
-        0.854904,
-        0.8516143333333334,
-        0.847344,
-        0.8550840000000001,
-        0.8450506666666667,
-        0.8546476666666667,
-        0.852154,
-        0.852741,
-        0.853954,
-        0.8471906666666666,
-        0.8482906666666666,
-        0.8478773333333334,
-        0.8515739999999999,
-        0.847104,
-        0.8549476666666668,
-        0.8445109999999999,
-        0.8542673333333334,
-        0.852834,
-        0.8446906666666667,
-        0.8547773333333333,
-        0.8521876666666667,
-        0.8495006666666667,
-        0.8512106666666667,
-        0.8527673333333333,
-        0.8490506666666667,
-        0.8509373333333333,
-        0.8501576666666667,
-        0.855784,
-        0.8474173333333334,
-        0.8489843333333332,
-        0.8543306666666667,
-        0.8466173333333334
+        0.8370829999999999,
+        0.8338396666666666,
+        0.8363996666666668,
+        0.8299629999999999,
+        0.8435196666666666,
+        0.8341596666666667,
+        0.8277293333333334,
+        0.83255,
+        0.8320896666666666,
+        0.8360263333333333,
+        0.8325330000000001,
+        0.8338196666666667,
+        0.8359396666666666,
+        0.839713,
+        0.8284996666666666,
+        0.8351596666666666,
+        0.830763,
+        0.8346629999999999,
+        0.8390496666666666,
+        0.8309896666666666,
+        0.841173,
+        0.8338396666666666,
+        0.8316563333333334,
+        0.8309663333333334,
+        0.8399663333333334,
+        0.8375663333333333,
+        0.83959,
+        0.834906,
+        0.8393296666666666,
+        0.8288163333333333,
+        0.8340096666666666,
+        0.8333096666666666,
+        0.8355229999999999,
+        0.8320196666666666,
+        0.839123,
+        0.829643,
+        0.833513,
+        0.836413,
+        0.8330996666666667,
+        0.835153
       ],
-      "p95_ms": 0.8566106666666666,
+      "p95_ms": 0.8399663333333334,
       "participant": "variopinta",
       "reference_exact": true,
       "repetition": 2,
       "role": "control",
       "route_id": "variopinta.reference",
       "samples": 40,
-      "size": 224,
-      "valid": true,
-      "validation": {
-        "c_contiguous": true,
-        "container": "numpy.ndarray",
-        "dtype": "uint8",
-        "finite": true,
-        "max": 255.0,
-        "min": 2.0,
-        "shape": [
-          224,
-          224,
-          3
-        ]
-      },
-      "variant": "reference",
-      "warmup_calls": 3,
-      "worker": "rust-catalog-2"
-    },
-    {
-      "block_size": 1,
-      "budget_ms": 100.0,
-      "case_id": "catalog.grid-distortion.bilinear",
-      "case_order": 23,
-      "catalog_policy": "bilinear",
-      "environment": "rust",
-      "environment_position": 2,
-      "explanation": {
-        "buffers": [
-          {
-            "condition": "always",
-            "dtype": "uint8",
-            "layout": "HWC",
-            "lifecycle": "borrowed-for-call",
-            "name": "input"
-          },
-          {
-            "condition": "always",
-            "dtype": "uint8",
-            "layout": "HWC",
-            "lifecycle": "owned-per-run-workspace-reusable",
-            "name": "working-u8"
-          },
-          {
-            "condition": "out-of-place-step-applied",
-            "dtype": "uint8",
-            "layout": "HWC",
-            "lifecycle": "owned-per-run-workspace-reusable",
-            "name": "scratch-u8"
-          }
-        ],
-        "copies": [
-          {
-            "condition": "non-contiguous-input",
-            "count": "0-or-1",
-            "reason": "normalize-to-contiguous-HWC",
-            "stage": "python-entry"
-          },
-          {
-            "condition": "always",
-            "count": "1",
-            "reason": "establish-owned-working-buffer",
-            "stage": "native-entry"
-          },
-          {
-            "condition": "always",
-            "count": "0",
-            "reason": "transfer-Rust-Vec-ownership-to-NumPy-storage",
-            "stage": "python-output"
-          }
-        ],
-        "fallbacks": [
-          "portable-scalar"
-        ],
-        "fusions": [],
-        "input": {
-          "channels": "RGB",
-          "container": "borrowed-buffer",
-          "contiguous": true,
-          "dtype": "uint8",
-          "layout": "HWC",
-          "ownership": "caller"
-        },
-        "mode": "reference",
-        "optimizations": [],
-        "output": {
-          "channels": "RGB",
-          "container": "owned-buffer",
-          "contiguous": true,
-          "dtype": "uint8",
-          "layout": "HWC",
-          "ownership": "result"
-        },
-        "output_dtype": "uint8",
-        "output_layout": "HWC",
-        "passes": 1,
-        "pixel_passes": 1,
-        "python_boundary": {
-          "augmentation": "held",
-          "crossings_per_call": 1,
-          "decode": "not-applicable",
-          "delivery": "held-for-Python-output-transfer",
-          "gil": "held-during-augmentation",
-          "gil_stages": {
-            "arguments": "held",
-            "augmentation": "held",
-            "decode": "not-applicable",
-            "delivery": "held-for-Python-output-transfer",
-            "source": "held"
-          },
-          "input": "NumPy HWC RGB uint8",
-          "input_access": "read-only-borrow",
-          "output": "owned contiguous NumPy array",
-          "source_acquisition": "held"
-        },
-        "sampling": "native-plan-before-execution",
-        "schema_version": 2,
-        "sink": {
-          "type": "return"
-        },
-        "source": {
-          "type": "array"
-        },
-        "steps": [
-          {
-            "allocation": "sampled-coordinate-maps+workspace-u8",
-            "category": "geometry",
-            "execution": "out-of-place",
-            "fallback": "portable-scalar",
-            "input_materialization": "owned-input-copy",
-            "kernel_form": "owned-to-owned",
-            "name": "GridDistortion",
-            "output_slot": "scratch-u8",
-            "pixel_passes": 1,
-            "policies": [
-              {
-                "name": "steps",
-                "value": "5"
-              },
-              {
-                "name": "distort-limit",
-                "value": "[-0.3,0.3]"
-              },
-              {
-                "name": "maps",
-                "value": "positive-monotonic-anchored"
-              },
-              {
-                "name": "small-axis",
-                "value": "reduce-steps-to-axis-minus-one"
-              },
-              {
-                "name": "interpolation",
-                "value": "bilinear"
-              },
-              {
-                "name": "border",
-                "value": "constant"
-              },
-              {
-                "name": "fill",
-                "value": "[0,0,0]"
-              },
-              {
-                "name": "sampler",
-                "value": "shared-inverse-q8"
-              }
-            ],
-            "probability": 1.0,
-            "scratch_slots": [],
-            "selection_reason": "semantic-legality:owned-to-owned",
-            "status": "always"
-          }
-        ],
-        "transforms": [
-          "GridDistortion"
-        ],
-        "unit_specializations": []
-      },
-      "images_per_sec": 224.81564555025764,
-      "iterations": 23,
-      "median_ms": 4.448089,
-      "observations_ms": [
-        4.474299,
-        4.460929,
-        4.445048,
-        4.453199,
-        4.444219,
-        4.438579,
-        4.445049,
-        4.456608,
-        4.448079,
-        4.445599,
-        4.460628,
-        4.447329,
-        4.441389,
-        4.451759,
-        4.443009,
-        4.434588,
-        4.469319,
-        4.449329,
-        4.458108,
-        4.437359,
-        4.450389,
-        4.448089,
-        4.452929
-      ],
-      "p95_ms": 4.469319,
-      "participant": "variopinta",
-      "reference_exact": true,
-      "repetition": 2,
-      "role": "control",
-      "route_id": "variopinta.reference",
-      "samples": 23,
       "size": 512,
       "valid": true,
       "validation": {
@@ -2746,8 +2807,8 @@
         "container": "numpy.ndarray",
         "dtype": "uint8",
         "finite": true,
-        "max": 213.0,
-        "min": 12.0,
+        "max": 255.0,
+        "min": 0.0,
         "shape": [
           512,
           512,
@@ -2762,7 +2823,7 @@
       "block_size": 1,
       "budget_ms": 100.0,
       "case_id": "catalog.grid-distortion.bilinear",
-      "case_order": 23,
+      "case_order": 13,
       "catalog_policy": "bilinear",
       "environment": "rust",
       "environment_position": 2,
@@ -2811,7 +2872,7 @@
           }
         ],
         "fallbacks": [
-          "portable-scalar"
+          "runtime-avx2-or-scalar"
         ],
         "fusions": [],
         "input": {
@@ -2864,10 +2925,10 @@
         },
         "steps": [
           {
-            "allocation": "sampled-coordinate-maps+workspace-u8",
+            "allocation": "sampled-coordinate-maps+workspace-axis-remap+workspace-u8",
             "category": "geometry",
             "execution": "out-of-place",
-            "fallback": "portable-scalar",
+            "fallback": "runtime-avx2-or-scalar",
             "input_materialization": "owned-input-copy",
             "kernel_form": "owned-to-owned",
             "name": "GridDistortion",
@@ -2908,7 +2969,9 @@
               }
             ],
             "probability": 1.0,
-            "scratch_slots": [],
+            "scratch_slots": [
+              "axis-remap"
+            ],
             "selection_reason": "semantic-legality:owned-to-owned",
             "status": "always"
           }
@@ -2918,25 +2981,49 @@
         ],
         "unit_specializations": []
       },
-      "images_per_sec": 55.89791163166228,
-      "iterations": 7,
-      "median_ms": 17.889756,
+      "images_per_sec": 300.6287349362457,
+      "iterations": 31,
+      "median_ms": 3.326362,
       "observations_ms": [
-        17.928326,
-        17.889756,
-        17.959447,
-        17.882245,
-        17.837196,
-        17.918755,
-        17.883216
+        3.299123,
+        3.330521,
+        3.314462,
+        3.352372,
+        3.332592,
+        3.332662,
+        3.338213,
+        3.335591,
+        3.291782,
+        3.305772,
+        3.356382,
+        3.328702,
+        3.308162,
+        3.306652,
+        3.316642,
+        3.329842,
+        3.297742,
+        3.331331,
+        3.345662,
+        3.322612,
+        3.313553,
+        3.298642,
+        3.376972,
+        3.353352,
+        3.297881,
+        3.326362,
+        3.318112,
+        3.303772,
+        3.340513,
+        3.313661,
+        3.339012
       ],
-      "p95_ms": 17.959447,
+      "p95_ms": 3.356382,
       "participant": "variopinta",
       "reference_exact": true,
       "repetition": 2,
       "role": "control",
       "route_id": "variopinta.reference",
-      "samples": 7,
+      "samples": 31,
       "size": 1024,
       "valid": true,
       "validation": {
@@ -2957,10 +3044,10 @@
       "worker": "rust-catalog-2"
     },
     {
-      "block_size": 3,
+      "block_size": 13,
       "budget_ms": 100.0,
       "case_id": "catalog.grid-distortion.bilinear",
-      "case_order": 21,
+      "case_order": 11,
       "catalog_policy": "bilinear",
       "environment": "rust",
       "environment_position": 1,
@@ -3002,7 +3089,7 @@
           }
         ],
         "fallbacks": [
-          "portable-scalar"
+          "runtime-avx2-or-scalar"
         ],
         "fusions": [],
         "input": {
@@ -3057,10 +3144,10 @@
         },
         "steps": [
           {
-            "allocation": "sampled-coordinate-maps+workspace-u8",
+            "allocation": "sampled-coordinate-maps+workspace-axis-remap+workspace-u8",
             "category": "geometry",
             "execution": "out-of-place",
-            "fallback": "portable-scalar",
+            "fallback": "runtime-avx2-or-scalar",
             "input_materialization": "borrowed-input",
             "kernel_form": "borrowed-to-owned",
             "name": "GridDistortion",
@@ -3101,7 +3188,9 @@
               }
             ],
             "probability": 1.0,
-            "scratch_slots": [],
+            "scratch_slots": [
+              "axis-remap"
+            ],
             "selection_reason": "benchmark-policy:elide-entry-copy",
             "status": "always"
           }
@@ -3111,58 +3200,57 @@
         ],
         "unit_specializations": []
       },
-      "images_per_sec": 1175.6209139825608,
-      "iterations": 120,
-      "median_ms": 0.8506143333333334,
+      "images_per_sec": 6137.350118828541,
+      "iterations": 507,
+      "median_ms": 0.16293676923076922,
       "observations_ms": [
-        0.8555273333333333,
-        0.8501273333333333,
-        0.8509143333333333,
-        0.8630573333333333,
-        0.8464373333333333,
-        0.8577573333333333,
-        0.849271,
-        0.8546706666666667,
-        0.8608276666666667,
-        0.8457073333333334,
-        0.8577276666666668,
-        0.8482073333333333,
-        0.8461706666666666,
-        0.851404,
-        0.851264,
-        0.8570139999999999,
-        0.8476873333333333,
-        0.8542376666666667,
-        0.8466373333333334,
-        0.850314,
-        0.8438373333333334,
-        0.8551506666666667,
-        0.8528006666666667,
-        0.8475773333333333,
-        0.8503143333333334,
-        0.8513706666666666,
-        0.8474943333333332,
-        0.8475606666666667,
-        0.8683176666666667,
-        0.844064,
-        0.8500139999999999,
-        0.844144,
-        0.856634,
-        0.8476773333333334,
-        0.8537906666666667,
-        0.851264,
-        0.851034,
-        0.8447706666666667,
-        0.8491606666666667,
-        0.8529939999999999
+        0.1627666923076923,
+        0.1624683076923077,
+        0.16232361538461537,
+        0.16296138461538462,
+        0.16255599999999998,
+        0.1627406153846154,
+        0.16407976923076922,
+        0.1622436923076923,
+        0.16434215384615386,
+        0.16231907692307693,
+        0.1625913076923077,
+        0.16150830769230767,
+        0.16352053846153847,
+        0.16221907692307694,
+        0.16460215384615384,
+        0.16220061538461536,
+        0.16306830769230768,
+        0.16238515384615385,
+        0.16282446153846156,
+        0.16232823076923075,
+        0.16309215384615383,
+        0.16420600000000002,
+        0.16293676923076922,
+        0.16436823076923077,
+        0.16284446153846155,
+        0.16841061538461538,
+        0.16360215384615387,
+        0.16254446153846153,
+        0.16405515384615385,
+        0.162066,
+        0.16347292307692307,
+        0.16328061538461539,
+        0.16295215384615383,
+        0.16311746153846154,
+        0.16498061538461536,
+        0.16312130769230768,
+        0.16279984615384613,
+        0.16332215384615384,
+        0.16260292307692306
       ],
-      "p95_ms": 0.8608276666666667,
+      "p95_ms": 0.16498061538461536,
       "participant": "variopinta",
       "reference_exact": true,
       "repetition": 3,
       "role": "public",
       "route_id": "variopinta.compiled",
-      "samples": 40,
+      "samples": 39,
       "size": 224,
       "valid": true,
       "validation": {
@@ -3171,7 +3259,7 @@
         "dtype": "uint8",
         "finite": true,
         "max": 255.0,
-        "min": 2.0,
+        "min": 0.0,
         "shape": [
           224,
           224,
@@ -3183,10 +3271,10 @@
       "worker": "rust-catalog-3"
     },
     {
-      "block_size": 1,
+      "block_size": 3,
       "budget_ms": 100.0,
       "case_id": "catalog.grid-distortion.bilinear",
-      "case_order": 21,
+      "case_order": 11,
       "catalog_policy": "bilinear",
       "environment": "rust",
       "environment_position": 1,
@@ -3228,7 +3316,7 @@
           }
         ],
         "fallbacks": [
-          "portable-scalar"
+          "runtime-avx2-or-scalar"
         ],
         "fusions": [],
         "input": {
@@ -3283,10 +3371,10 @@
         },
         "steps": [
           {
-            "allocation": "sampled-coordinate-maps+workspace-u8",
+            "allocation": "sampled-coordinate-maps+workspace-axis-remap+workspace-u8",
             "category": "geometry",
             "execution": "out-of-place",
-            "fallback": "portable-scalar",
+            "fallback": "runtime-avx2-or-scalar",
             "input_materialization": "borrowed-input",
             "kernel_form": "borrowed-to-owned",
             "name": "GridDistortion",
@@ -3327,7 +3415,9 @@
               }
             ],
             "probability": 1.0,
-            "scratch_slots": [],
+            "scratch_slots": [
+              "axis-remap"
+            ],
             "selection_reason": "benchmark-policy:elide-entry-copy",
             "status": "always"
           }
@@ -3337,41 +3427,59 @@
         ],
         "unit_specializations": []
       },
-      "images_per_sec": 225.23547242464636,
-      "iterations": 23,
-      "median_ms": 4.439798,
+      "images_per_sec": 1208.654449318903,
+      "iterations": 123,
+      "median_ms": 0.8273663333333333,
       "observations_ms": [
-        4.436368,
-        4.455869,
-        4.474649,
-        4.438318,
-        4.435009,
-        4.448118,
-        4.464129,
-        4.432059,
-        4.434769,
-        4.448809,
-        4.464698,
-        4.433529,
-        4.432918,
-        4.442669,
-        4.438598,
-        4.439798,
-        4.451919,
-        4.459078,
-        4.433699,
-        4.439889,
-        4.443569,
-        4.429608,
-        4.435179
+        0.826533,
+        0.8252893333333334,
+        0.8282266666666667,
+        0.823573,
+        0.8251063333333333,
+        0.8301596666666667,
+        0.8227093333333334,
+        0.82244,
+        0.8336229999999999,
+        0.8205096666666667,
+        0.8375296666666667,
+        0.8326563333333333,
+        0.8218263333333334,
+        0.832013,
+        0.8212596666666667,
+        0.8287496666666666,
+        0.8295496666666667,
+        0.8263163333333333,
+        0.8352966666666667,
+        0.8228993333333333,
+        0.828973,
+        0.8286196666666666,
+        0.8256199999999999,
+        0.8245396666666666,
+        0.8462863333333334,
+        0.8318059999999999,
+        0.8303833333333334,
+        0.825733,
+        0.824213,
+        0.8348296666666667,
+        0.8209529999999999,
+        0.8354463333333334,
+        0.8290596666666666,
+        0.8273663333333333,
+        0.8268496666666666,
+        0.823553,
+        0.8258463333333333,
+        0.8317333333333333,
+        0.8296826666666667,
+        0.8271229999999999,
+        0.829603
       ],
-      "p95_ms": 4.464698,
+      "p95_ms": 0.8354463333333334,
       "participant": "variopinta",
       "reference_exact": true,
       "repetition": 3,
       "role": "public",
       "route_id": "variopinta.compiled",
-      "samples": 23,
+      "samples": 41,
       "size": 512,
       "valid": true,
       "validation": {
@@ -3379,8 +3487,8 @@
         "container": "numpy.ndarray",
         "dtype": "uint8",
         "finite": true,
-        "max": 213.0,
-        "min": 12.0,
+        "max": 255.0,
+        "min": 0.0,
         "shape": [
           512,
           512,
@@ -3395,7 +3503,7 @@
       "block_size": 1,
       "budget_ms": 100.0,
       "case_id": "catalog.grid-distortion.bilinear",
-      "case_order": 21,
+      "case_order": 11,
       "catalog_policy": "bilinear",
       "environment": "rust",
       "environment_position": 1,
@@ -3437,7 +3545,7 @@
           }
         ],
         "fallbacks": [
-          "portable-scalar"
+          "runtime-avx2-or-scalar"
         ],
         "fusions": [],
         "input": {
@@ -3492,10 +3600,10 @@
         },
         "steps": [
           {
-            "allocation": "sampled-coordinate-maps+workspace-u8",
+            "allocation": "sampled-coordinate-maps+workspace-axis-remap+workspace-u8",
             "category": "geometry",
             "execution": "out-of-place",
-            "fallback": "portable-scalar",
+            "fallback": "runtime-avx2-or-scalar",
             "input_materialization": "borrowed-input",
             "kernel_form": "borrowed-to-owned",
             "name": "GridDistortion",
@@ -3536,7 +3644,9 @@
               }
             ],
             "probability": 1.0,
-            "scratch_slots": [],
+            "scratch_slots": [
+              "axis-remap"
+            ],
             "selection_reason": "benchmark-policy:elide-entry-copy",
             "status": "always"
           }
@@ -3546,25 +3656,49 @@
         ],
         "unit_specializations": []
       },
-      "images_per_sec": 56.119257912604915,
-      "iterations": 7,
-      "median_ms": 17.819195,
+      "images_per_sec": 305.05075587001545,
+      "iterations": 31,
+      "median_ms": 3.278143,
       "observations_ms": [
-        17.819195,
-        17.832626,
-        17.805774,
-        17.808675,
-        17.825785,
-        17.815235,
-        17.834316
+        3.283552,
+        3.262472,
+        3.274242,
+        3.286041,
+        3.288252,
+        3.286903,
+        3.276481,
+        3.279313,
+        3.266832,
+        3.283191,
+        3.277362,
+        3.280063,
+        3.281861,
+        3.274322,
+        3.288392,
+        3.293812,
+        3.270402,
+        3.281432,
+        3.265962,
+        3.289912,
+        3.316292,
+        3.267592,
+        3.275132,
+        3.297392,
+        3.261101,
+        3.278143,
+        3.273092,
+        3.277981,
+        3.288912,
+        3.272423,
+        3.267941
       ],
-      "p95_ms": 17.834316,
+      "p95_ms": 3.297392,
       "participant": "variopinta",
       "reference_exact": true,
       "repetition": 3,
       "role": "public",
       "route_id": "variopinta.compiled",
-      "samples": 7,
+      "samples": 31,
       "size": 1024,
       "valid": true,
       "validation": {
@@ -3585,10 +3719,10 @@
       "worker": "rust-catalog-3"
     },
     {
-      "block_size": 3,
+      "block_size": 13,
       "budget_ms": 100.0,
       "case_id": "catalog.grid-distortion.bilinear",
-      "case_order": 22,
+      "case_order": 12,
       "catalog_policy": "bilinear",
       "environment": "rust",
       "environment_position": 1,
@@ -3637,7 +3771,7 @@
           }
         ],
         "fallbacks": [
-          "portable-scalar"
+          "runtime-avx2-or-scalar"
         ],
         "fusions": [],
         "input": {
@@ -3690,10 +3824,10 @@
         },
         "steps": [
           {
-            "allocation": "sampled-coordinate-maps+workspace-u8",
+            "allocation": "sampled-coordinate-maps+workspace-axis-remap+workspace-u8",
             "category": "geometry",
             "execution": "out-of-place",
-            "fallback": "portable-scalar",
+            "fallback": "runtime-avx2-or-scalar",
             "input_materialization": "owned-input-copy",
             "kernel_form": "owned-to-owned",
             "name": "GridDistortion",
@@ -3734,7 +3868,9 @@
               }
             ],
             "probability": 1.0,
-            "scratch_slots": [],
+            "scratch_slots": [
+              "axis-remap"
+            ],
             "selection_reason": "semantic-legality:owned-to-owned",
             "status": "always"
           }
@@ -3744,58 +3880,57 @@
         ],
         "unit_specializations": []
       },
-      "images_per_sec": 1172.6456938984313,
-      "iterations": 120,
-      "median_ms": 0.8527724999999999,
+      "images_per_sec": 6068.7033235020335,
+      "iterations": 507,
+      "median_ms": 0.16477984615384617,
       "observations_ms": [
-        0.855284,
-        0.8539876666666667,
-        0.8597706666666666,
-        0.8559706666666668,
-        0.853024,
-        0.8516876666666667,
-        0.8514873333333334,
-        0.8566539999999999,
-        0.8484273333333333,
-        0.8523806666666666,
-        0.8498410000000001,
-        0.8502976666666666,
-        0.8515073333333333,
-        0.8565573333333334,
-        0.8546676666666667,
-        0.8497306666666667,
-        0.8566973333333333,
-        0.8552873333333334,
-        0.846494,
-        0.8506140000000001,
-        0.856431,
-        0.8519273333333334,
-        0.8487106666666667,
-        0.847064,
-        0.855534,
-        0.850181,
-        0.8530906666666667,
-        0.848544,
-        0.8563143333333333,
-        0.8620543333333334,
-        0.857584,
-        0.849564,
-        0.8586906666666666,
-        0.852521,
-        0.8457306666666667,
-        0.8545006666666667,
-        0.8484873333333334,
-        0.8466473333333333,
-        0.8590306666666666,
-        0.853881
+        0.1634329230769231,
+        0.16612676923076922,
+        0.1641436153846154,
+        0.16717907692307693,
+        0.16455992307692308,
+        0.16597823076923077,
+        0.16691061538461538,
+        0.164056,
+        0.16557976923076925,
+        0.16480915384615386,
+        0.16627753846153848,
+        0.164719,
+        0.16421369230769228,
+        0.16405207692307694,
+        0.1642283076923077,
+        0.1661876153846154,
+        0.16397207692307691,
+        0.16580984615384614,
+        0.1644836153846154,
+        0.16542830769230768,
+        0.16328523076923077,
+        0.16556984615384615,
+        0.16491676923076926,
+        0.16477984615384617,
+        0.16338361538461538,
+        0.16730907692307692,
+        0.16532984615384613,
+        0.16572907692307692,
+        0.16333215384615382,
+        0.16555592307692307,
+        0.16321446153846153,
+        0.1661583076923077,
+        0.1638713846153846,
+        0.16487830769230769,
+        0.16434746153846153,
+        0.16603138461538464,
+        0.16403753846153846,
+        0.1645906153846154,
+        0.164236
       ],
-      "p95_ms": 0.8590306666666666,
+      "p95_ms": 0.16717907692307693,
       "participant": "variopinta",
       "reference_exact": true,
       "repetition": 3,
       "role": "control",
       "route_id": "variopinta.reference",
-      "samples": 40,
+      "samples": 39,
       "size": 224,
       "valid": true,
       "validation": {
@@ -3804,7 +3939,7 @@
         "dtype": "uint8",
         "finite": true,
         "max": 255.0,
-        "min": 2.0,
+        "min": 0.0,
         "shape": [
           224,
           224,
@@ -3816,10 +3951,10 @@
       "worker": "rust-catalog-3"
     },
     {
-      "block_size": 1,
+      "block_size": 3,
       "budget_ms": 100.0,
       "case_id": "catalog.grid-distortion.bilinear",
-      "case_order": 22,
+      "case_order": 12,
       "catalog_policy": "bilinear",
       "environment": "rust",
       "environment_position": 1,
@@ -3868,7 +4003,7 @@
           }
         ],
         "fallbacks": [
-          "portable-scalar"
+          "runtime-avx2-or-scalar"
         ],
         "fusions": [],
         "input": {
@@ -3921,10 +4056,10 @@
         },
         "steps": [
           {
-            "allocation": "sampled-coordinate-maps+workspace-u8",
+            "allocation": "sampled-coordinate-maps+workspace-axis-remap+workspace-u8",
             "category": "geometry",
             "execution": "out-of-place",
-            "fallback": "portable-scalar",
+            "fallback": "runtime-avx2-or-scalar",
             "input_materialization": "owned-input-copy",
             "kernel_form": "owned-to-owned",
             "name": "GridDistortion",
@@ -3965,7 +4100,9 @@
               }
             ],
             "probability": 1.0,
-            "scratch_slots": [],
+            "scratch_slots": [
+              "axis-remap"
+            ],
             "selection_reason": "semantic-legality:owned-to-owned",
             "status": "always"
           }
@@ -3975,41 +4112,58 @@
         ],
         "unit_specializations": []
       },
-      "images_per_sec": 224.7110721212433,
-      "iterations": 23,
-      "median_ms": 4.450159,
+      "images_per_sec": 1191.860072449201,
+      "iterations": 120,
+      "median_ms": 0.8390246666666666,
       "observations_ms": [
-        4.436489,
-        4.470489,
-        4.443428,
-        4.450159,
-        4.447459,
-        4.475438,
-        4.454389,
-        4.448539,
-        4.450448,
-        4.444899,
-        4.45183,
-        4.440978,
-        4.452809,
-        4.444648,
-        4.471229,
-        4.449839,
-        4.448988,
-        4.435539,
-        4.458449,
-        4.451678,
-        4.45453,
-        4.445809,
-        4.465688
+        0.8341166666666666,
+        0.839363,
+        0.840553,
+        0.851103,
+        0.8414596666666667,
+        0.8297866666666667,
+        0.8427696666666668,
+        0.8335596666666666,
+        0.8306429999999999,
+        0.845433,
+        0.84264,
+        0.8281826666666667,
+        0.8358963333333334,
+        0.8286363333333333,
+        0.8425766666666666,
+        0.8414496666666667,
+        0.8329896666666667,
+        0.8335463333333334,
+        0.8428096666666667,
+        0.8287296666666667,
+        0.8395100000000001,
+        0.832383,
+        0.8408263333333333,
+        0.8428096666666667,
+        0.8300996666666666,
+        0.8360563333333334,
+        0.841593,
+        0.8327963333333334,
+        0.837453,
+        0.8428599999999999,
+        0.8409996666666667,
+        0.8402796666666666,
+        0.8327563333333333,
+        0.833273,
+        0.8434066666666666,
+        0.8396696666666666,
+        0.835973,
+        0.8386863333333333,
+        0.8350529999999999,
+        0.8394963333333334
       ],
-      "p95_ms": 4.471229,
+      "p95_ms": 0.8434066666666666,
       "participant": "variopinta",
       "reference_exact": true,
       "repetition": 3,
       "role": "control",
       "route_id": "variopinta.reference",
-      "samples": 23,
+      "samples": 40,
       "size": 512,
       "valid": true,
       "validation": {
@@ -4017,8 +4171,8 @@
         "container": "numpy.ndarray",
         "dtype": "uint8",
         "finite": true,
-        "max": 213.0,
-        "min": 12.0,
+        "max": 255.0,
+        "min": 0.0,
         "shape": [
           512,
           512,
@@ -4033,7 +4187,7 @@
       "block_size": 1,
       "budget_ms": 100.0,
       "case_id": "catalog.grid-distortion.bilinear",
-      "case_order": 22,
+      "case_order": 12,
       "catalog_policy": "bilinear",
       "environment": "rust",
       "environment_position": 1,
@@ -4082,7 +4236,7 @@
           }
         ],
         "fallbacks": [
-          "portable-scalar"
+          "runtime-avx2-or-scalar"
         ],
         "fusions": [],
         "input": {
@@ -4135,10 +4289,10 @@
         },
         "steps": [
           {
-            "allocation": "sampled-coordinate-maps+workspace-u8",
+            "allocation": "sampled-coordinate-maps+workspace-axis-remap+workspace-u8",
             "category": "geometry",
             "execution": "out-of-place",
-            "fallback": "portable-scalar",
+            "fallback": "runtime-avx2-or-scalar",
             "input_materialization": "owned-input-copy",
             "kernel_form": "owned-to-owned",
             "name": "GridDistortion",
@@ -4179,7 +4333,9 @@
               }
             ],
             "probability": 1.0,
-            "scratch_slots": [],
+            "scratch_slots": [
+              "axis-remap"
+            ],
             "selection_reason": "semantic-legality:owned-to-owned",
             "status": "always"
           }
@@ -4189,25 +4345,49 @@
         ],
         "unit_specializations": []
       },
-      "images_per_sec": 55.40271485491387,
-      "iterations": 7,
-      "median_ms": 18.049657,
+      "images_per_sec": 301.7100017770719,
+      "iterations": 31,
+      "median_ms": 3.314441,
       "observations_ms": [
-        17.836214,
-        17.951787,
-        18.189138,
-        18.064617,
-        18.095358,
-        18.049657,
-        17.951107
+        3.280392,
+        3.319442,
+        3.316002,
+        3.331772,
+        3.380633,
+        3.335102,
+        3.308632,
+        3.339092,
+        3.310002,
+        3.301372,
+        3.310082,
+        3.299022,
+        3.315763,
+        3.310451,
+        3.300732,
+        3.314542,
+        3.307093,
+        3.301451,
+        3.294872,
+        3.340833,
+        3.305902,
+        3.314441,
+        3.316323,
+        3.327792,
+        3.303292,
+        3.304812,
+        3.320862,
+        3.383592,
+        3.384292,
+        3.315482,
+        3.297483
       ],
-      "p95_ms": 18.189138,
+      "p95_ms": 3.383592,
       "participant": "variopinta",
       "reference_exact": true,
       "repetition": 3,
       "role": "control",
       "route_id": "variopinta.reference",
-      "samples": 7,
+      "samples": 31,
       "size": 1024,
       "valid": true,
       "validation": {
