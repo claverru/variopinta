@@ -32,8 +32,30 @@ class TypedOutputTests(unittest.TestCase):
         class CustomOutput(R.OutputPort[object]):
             name = None
 
-        with self.assertRaisesRegex(TypeError, "built-in output ports"):
-            R.Image(outputs=(CustomOutput(),))
+        for outputs in (CustomOutput(), (CustomOutput(),)):
+            with (
+                self.subTest(outputs=outputs),
+                self.assertRaisesRegex(TypeError, "built-in output ports"),
+            ):
+                R.Image(outputs=outputs)
+
+    def test_single_output_ports_are_normalized_to_tuples(self) -> None:
+        outputs = (
+            R.ReturnArray(name="array"),
+            R.ReturnTensor(name="tensor"),
+            R.Encode("png", name="encoded"),
+            R.Write("png", name="written"),
+        )
+        for output in outputs:
+            with self.subTest(output=output):
+                target = R.Image(outputs=output)
+                self.assertEqual(target.outputs, (output,))
+
+        mask_output = R.ReturnArray(name="array")
+        self.assertEqual(R.Mask(outputs=mask_output).outputs, (mask_output,))
+
+        with self.assertRaisesRegex(TypeError, "an output port or a sequence"):
+            R.Image(outputs=object())
 
     def test_names_and_scopes_are_validated(self) -> None:
         for name in ("", "not-valid", "_private", "class", "key"):

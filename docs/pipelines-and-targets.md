@@ -38,8 +38,8 @@ A target combines three decisions:
 ```python
 image_array = vp.ReturnArray(name="array")
 labels_array = vp.ReturnArray(name="array")
-image_target = vp.Image(name="image", outputs=(image_array,))
-labels_target = vp.Mask(name="labels", outputs=(labels_array,), fill=255)
+image_target = vp.Image(name="image", outputs=image_array)
+labels_target = vp.Mask(name="labels", outputs=labels_array, fill=255)
 
 pipeline = vp.Pipeline(
     [vp.RandomCrop(256, 256), vp.HorizontalFlip(p=0.5)],
@@ -52,6 +52,9 @@ Every explicit target and output must have a name. A name must be a public
 Python identifier: it cannot start with `_`, be a keyword, or be `key`. Target
 names are unique across the pipeline; output names are unique within their
 target.
+
+Pass one output port directly. Use a tuple or another sequence when a target
+has multiple outputs. `target.outputs` is always stored as a tuple.
 
 Explicit calls are keyword-only and must bind every declared target exactly
 once. A binding belongs to the target object that created it:
@@ -99,11 +102,6 @@ normally `uint8`, or `float32` after `Normalize`. Mask arrays and tensors are HW
 `uint8`; tensor output does not add a channel or convert labels to `int64`.
 PyTorch is imported only for a declared `ReturnTensor` route.
 
-Every returned mutable sibling owns independent storage. Encoding and writing
-read the common final raster, never an intermediate transform state. A target
-is transformed once even if it has several outputs; binding the same source to
-two targets executes that target route twice.
-
 JPEG image output accepts `quality` from 1 through 100 and defaults to 95. PNG
 image output accepts `compression` from 0 through 9 and defaults to 6. Mask
 encoding and writing are always lossless 8-bit grayscale PNG.
@@ -125,7 +123,7 @@ import variopinta as vp
 png = vp.Encode("png", compression=3, name="png")
 image_target = vp.Image(
     vp.Encoded(max_encoded_bytes=8 * 1024 * 1024),
-    outputs=(png,),
+    outputs=png,
     name="image",
 )
 pipeline = vp.Pipeline(
@@ -141,19 +139,45 @@ response_bytes = result.image.png
 `request_bytes` is a complete JPEG or PNG payload. `response_bytes` is a PNG
 `bytes` object.
 
-## Write bindings
+## Multiple outputs
 
-A `Write` output is part of the static target signature, but its destination is
-bound per call:
+A target is transformed once before its final raster is delivered to every
+declared output. Return an array alongside encoded bytes by declaring both
+ports in the target signature:
+
+```python
+import numpy as np
+import variopinta as vp
+
+array = vp.ReturnArray(name="array")
+jpeg = vp.Encode("jpeg", quality=90, name="jpeg")
+image_target = vp.Image(name="image", outputs=(array, jpeg))
+pipeline = vp.Pipeline(
+    [vp.Resize(224, 224)],
+    targets=(image_target,),
+).compile()
+
+image = np.zeros((320, 480, 3), dtype=np.uint8)
+result = pipeline(image=image_target.bind(image), key=7)
+
+assert result.image.array.shape == (224, 224, 3)
+assert isinstance(result.image.jpeg, bytes)
+```
+
+Returned mutable siblings own independent storage. Encoding and writing read
+the common final raster, never an intermediate transform state. Binding the
+same source to two targets still executes both target routes.
+
+Outputs can also combine returned data with a destination bound for each call:
 
 ```python
 from pathlib import Path
 
 import variopinta as vp
 
-jpeg = vp.Write("jpeg", quality=90, name="jpeg")
+array = vp.ReturnArray(name="array")
 png = vp.Write("png", compression=3, name="png")
-image_target = vp.Image(vp.Path(), outputs=(jpeg, png), name="image")
+image_target = vp.Image(vp.Path(), outputs=(array, png), name="image")
 
 pipeline = vp.Pipeline(
     [vp.Resize(512, 512)],
@@ -164,13 +188,21 @@ result = pipeline(
     image=image_target.bind(
         "input.png",
         png.bind("output.png"),
-        jpeg.bind("output.jpg"),
     ),
     key=7,
 )
 
-assert result.image.jpeg == Path("output.jpg")
+assert result.image.array.shape == (512, 512, 3)
+assert result.image.png == Path("output.png")
 ```
+
+Declaration order controls output introspection, while named and identity
+lookups remain independent of that order.
+
+## Write bindings
+
+A `Write` output is part of the static target signature, but its destination is
+bound per call as shown above.
 
 `Write(format=None)` infers JPEG or PNG from the destination suffix. A known
 suffix must agree with an explicit format. Target binding rejects missing,
@@ -193,7 +225,7 @@ import numpy as np
 import variopinta as vp
 
 image_array = vp.ReturnArray(name="array")
-image_target = vp.Image(outputs=(image_array,), name="image")
+image_target = vp.Image(outputs=image_array, name="image")
 pipeline = vp.Pipeline([], targets=(image_target,))
 image = np.zeros((8, 8, 3), dtype=np.uint8)
 result = pipeline(image=image_target.bind(image), key=0)

@@ -100,8 +100,8 @@ import variopinta as vp
 
 image_array = vp.ReturnArray(name="array")
 mask_array = vp.ReturnArray(name="array")
-image_target = vp.Image(name="image", outputs=(image_array,))
-mask_target = vp.Mask(name="labels", outputs=(mask_array,), fill=255)
+image_target = vp.Image(name="image", outputs=image_array)
+mask_target = vp.Mask(name="labels", outputs=mask_array, fill=255)
 
 pipeline = vp.Pipeline(
     [
@@ -141,7 +141,7 @@ import numpy as np
 import variopinta as vp
 
 tensor = vp.ReturnTensor(name="tensor")
-image_target = vp.Image(outputs=(tensor,), name="image")
+image_target = vp.Image(outputs=tensor, name="image")
 pipeline = vp.Pipeline(
     [vp.Resize(224, 224), vp.Normalize()],
     targets=(image_target,),
@@ -154,7 +154,8 @@ assert tuple(result.image.tensor.shape) == (3, 224, 224)
 ```
 
 For encoded buffers, local paths, file outputs, and output fan-out, continue to
-[Pipelines and targets](pipelines-and-targets.md). For standalone codecs, see
+[Pipelines and targets](pipelines-and-targets.md), including its dedicated
+[multiple-output examples](pipelines-and-targets.md#multiple-outputs). For standalone codecs, see
 [Image I/O](image-io.md).
 
 ## Common errors

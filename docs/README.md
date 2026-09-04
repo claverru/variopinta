@@ -22,7 +22,8 @@ you need masks, encoded data, files, tensors, or more than one output.
 |---|---|
 | NumPy image in, NumPy image out | The [default pipeline](getting-started.md#default-image-to-image-pipeline) |
 | Image and semantic mask together | [Image and mask](getting-started.md#add-a-semantic-mask) |
-| Tensor, bytes, path, or multiple outputs | [Explicit targets](pipelines-and-targets.md#explicit-targets) |
+| Tensor, bytes, or path input/output | [Explicit targets](pipelines-and-targets.md#explicit-targets) |
+| Multiple outputs from one target | [Multiple outputs](pipelines-and-targets.md#multiple-outputs) |
 | Standalone JPEG or PNG conversion | [Image I/O](image-io.md) |
 | Constructor or parameter lookup | [Transform reference](transforms.md) |
 

@@ -214,7 +214,7 @@ class BoundTarget(Generic[_Result]):
 @dataclass(frozen=True, slots=True, eq=False)
 class Image:
     carrier: Carrier = Array()
-    outputs: Sequence[OutputPort[object]] = (ReturnArray(),)
+    outputs: Output | Sequence[OutputPort[object]] = (ReturnArray(),)
     name: str | None = None
 
     def __post_init__(self) -> None:
@@ -237,7 +237,7 @@ class Image:
 @dataclass(frozen=True, slots=True, eq=False)
 class Mask:
     carrier: Carrier = Array()
-    outputs: Sequence[OutputPort[object]] = (ReturnArray(),)
+    outputs: Output | Sequence[OutputPort[object]] = (ReturnArray(),)
     fill: int = 0
     name: str | None = None
 
@@ -279,9 +279,12 @@ def _validate_target(
     if not isinstance(carrier, Array | Encoded | Path):
         raise TypeError("carrier must be Array, Encoded, or Path")
     _validate_name(name, "target")
-    if isinstance(outputs, str | bytes) or not isinstance(outputs, Sequence):
-        raise TypeError("outputs must be a sequence of output ports")
-    normalized = tuple(outputs)
+    if isinstance(outputs, OutputPort):
+        normalized = (outputs,)
+    else:
+        if isinstance(outputs, str | bytes) or not isinstance(outputs, Sequence):
+            raise TypeError("outputs must be an output port or a sequence of output ports")
+        normalized = tuple(outputs)
     if not normalized:
         raise ValueError("outputs must contain at least one output port")
     if not all(type(output) in (ReturnArray, ReturnTensor, Encode, Write) for output in normalized):
