@@ -31,7 +31,7 @@ def smoke_base(expected_version: str) -> np.ndarray:
     contiguous = ((values * 73 + values // 7 * 19) & 255).astype(np.uint8).reshape(13, 19, 3)
     source = contiguous[:, ::2]
     snapshot = source.copy()
-    reference = V.Compose([V.Invert(), V.HorizontalFlip(p=1.0), V.Normalize()], seed=137)
+    reference = V.Pipeline([V.Invert(), V.HorizontalFlip(p=1.0), V.Normalize()], seed=137)
     expected = reference(source, key=11)
     output = reference.compile()(source, key=11)
     np.testing.assert_array_equal(output, expected)
@@ -58,24 +58,34 @@ def smoke_base(expected_version: str) -> np.ndarray:
         V.write_image(path, source)
         np.testing.assert_array_equal(V.read_image(path), source)
 
-        expected = V.Compose([V.Invert()], seed=137)(source, key=11)
-        encoded_pipeline = V.Compose(
+        expected = V.Pipeline([V.Invert()], seed=137)(source, key=11)
+        encoded_port = V.Image(
+            V.Encoded(), outputs=(V.Encode("png", name="encoded"),), name="image"
+        )
+        encoded_pipeline = V.Pipeline(
             [V.Invert()],
             seed=137,
-            input=V.EncodedInput(),
-            output=V.EncodedOutput(format="png"),
+            targets=(encoded_port,),
         ).compile()
-        encoded_result = encoded_pipeline(encoded_png, key=11)
+        encoded_result = encoded_pipeline(
+            image=encoded_port.bind(encoded_png), key=11
+        ).image.encoded
         np.testing.assert_array_equal(V.decode_image(encoded_result), expected)
 
-        path_pipeline = V.Compose(
+        written = V.Write("png", name="written")
+        path_port = V.Image(V.Path(), outputs=(written,), name="image")
+        path_pipeline = V.Pipeline(
             [V.Invert()],
             seed=137,
-            input=V.PathInput(),
-            output=V.PathOutput(format="png"),
+            targets=(path_port,),
         ).compile()
         destination = root / "pipeline.png"
-        assert path_pipeline(path, destination=destination, key=11) is None
+        assert (
+            path_pipeline(
+                image=path_port.bind(path, written.bind(destination)), key=11
+            ).image.written
+            == destination
+        )
         np.testing.assert_array_equal(V.read_image(destination), expected)
 
     identity = {
@@ -94,12 +104,12 @@ def smoke_base(expected_version: str) -> np.ndarray:
         {**identity, "contrast": (1_000.0, 1_000.0)},
         {**identity, "saturation": (1_000.0, 1_000.0)},
     ):
-        jitter = V.Compose([V.ColorJitter(**configuration)], seed=137)
+        jitter = V.Pipeline([V.ColorJitter(**configuration)], seed=137)
         np.testing.assert_array_equal(
             jitter(jitter_source, key=29), jitter.compile()(jitter_source, key=29)
         )
     positive = np.array([[[255, 2, 3], [0, 0, 0]]], dtype=np.uint8)
-    brightness = V.Compose(
+    brightness = V.Pipeline(
         [V.ColorJitter(**{**identity, "brightness": (1_000.0, 1_000.0)})], seed=137
     )
     saturated = np.where(positive == 0, 0, 255).astype(np.uint8)
@@ -107,7 +117,7 @@ def smoke_base(expected_version: str) -> np.ndarray:
     np.testing.assert_array_equal(brightness.compile()(positive, key=29), saturated)
 
     blur_source = np.full((3, 4, 3), 73, dtype=np.uint8)
-    wide_blur = V.Compose([V.GaussianBlur(101, 1_000_000.0)], seed=137)
+    wide_blur = V.Pipeline([V.GaussianBlur(101, 1_000_000.0)], seed=137)
     blurred = wide_blur.compile()(blur_source, key=29)
     np.testing.assert_array_equal(blurred, wide_blur(blur_source, key=29))
     np.testing.assert_array_equal(blurred, blur_source)
@@ -116,19 +126,21 @@ def smoke_base(expected_version: str) -> np.ndarray:
 
 
 def smoke_torch(source: np.ndarray, required: bool) -> None:
-    pipeline = V.Compose([V.Normalize(), V.ToTorch()], seed=137).compile()
+    tensor = V.ReturnTensor(name="tensor")
+    target = V.Image(name="image", outputs=(tensor,))
+    pipeline = V.Pipeline([V.Normalize()], seed=137, targets=(target,)).compile()
     if not required:
         try:
-            pipeline(source, key=11)
+            pipeline(image=target.bind(source), key=11)
         except ImportError as error:
-            assert "ToTorch requires PyTorch" in str(error)
+            assert "ReturnTensor requires PyTorch" in str(error)
             return
-        raise AssertionError("ToTorch unexpectedly succeeded without PyTorch")
+        raise AssertionError("ReturnTensor unexpectedly succeeded without PyTorch")
 
     import torch
 
-    expected = V.Compose([V.Normalize()], seed=137)(source, key=11)
-    output = pipeline(source, key=11)
+    expected = V.Pipeline([V.Normalize()], seed=137)(source, key=11)
+    output = pipeline(image=target.bind(source), key=11).image.tensor
     assert isinstance(output, torch.Tensor)
     assert output.dtype == torch.float32
     assert output.device.type == "cpu"

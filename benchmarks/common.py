@@ -48,7 +48,7 @@ FOCUSED_CASES = (
     "grid-distortion-nearest-reflect101",
     "pad-constant",
     "pad-reflect101",
-    "to-torch",
+    "return-tensor",
 )
 FOCUSED_LABELS = {
     "affine-reflect101": "Affine (bilinear, reflect101)",
@@ -67,7 +67,7 @@ FOCUSED_LABELS = {
     "grid-distortion-nearest-reflect101": "GridDistortion (nearest, reflect101)",
     "pad-constant": "PadIfNeeded (constant, +8 px)",
     "pad-reflect101": "PadIfNeeded (reflect101, +8 px)",
-    "to-torch": "ToTorch (contiguous uint8 CHW)",
+    "return-tensor": "ReturnTensor (contiguous uint8 CHW)",
 }
 SEED = 137
 MEAN = (0.485, 0.456, 0.406)

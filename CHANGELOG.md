@@ -1,5 +1,23 @@
 # Changelog
 
+## 0.4.0
+
+- Replace pipeline-global I/O and special-case masks with immutable `Image` and
+  `Mask` targets. Each target selects an `Array`, `Encoded`, or `Path` carrier
+  and fans its final raster out to named `ReturnArray`, `ReturnTensor`, `Encode`,
+  and `Write` ports.
+- Replace positional explicit calls and arity-collapsing tuples with keyword
+  target bindings plus immutable `PipelineResult`/`TargetResult` values.
+- Remove the `Return` output and `ToTorch` transform. `ReturnTensor` now owns
+  the optional Torch adapter and the CHW terminal layout.
+- Rename the public reference executor to `Pipeline`; `.compile()` returns
+  `CompiledPipeline` with the same static target signature.
+- Move semantic border fill to each `Mask` port, keep mask rasterization nearest
+  and lossless, and make standalone I/O generic. PNG `unchanged` decoding
+  preserves grayscale samples and palette indices from static 1/2/4/8-bit PNG.
+- Make target writes atomic per file after all sources are acquired and every
+  encoded result is prepared. Multiple destinations are not one transaction.
+
 ## 0.3.1
 
 - Accelerate the dominant single-image CPU paths for padding, sharpening,

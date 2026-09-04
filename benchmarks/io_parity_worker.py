@@ -272,6 +272,10 @@ def convert_expected(image: np.ndarray, color: str, mode: str) -> np.ndarray:
 
 def pillow_expected(fixture: Fixture, mode: str) -> np.ndarray:
     if mode == "unchanged":
+        if fixture.format == "png":
+            source = Image.open(BytesIO(fixture.encoded))
+            if source.mode == "P":
+                return np.asarray(source).copy()
         return fixture.expected
     pillow_mode = {"gray": "L", "rgb": "RGB", "rgba": "RGBA"}[mode]
     with warnings.catch_warnings():

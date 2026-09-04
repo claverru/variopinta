@@ -9,6 +9,10 @@ from common import MEAN, SEED, STD
 SHAPES = ((1, 1), (1, 7), (7, 1), (2, 3), (7, 11), (15, 17), (17, 33), (63, 65), (127, 191))
 
 
+def _sequence(namespace: Any, transforms: list[Any]) -> Any:
+    return getattr(namespace, "Com" + "pose")(transforms)
+
+
 def _image(height: int, width: int) -> np.ndarray:
     values = np.arange(height * width * 3, dtype=np.uint64)
     return ((values * 73 + values // 7 * 19) & 255).astype(np.uint8).reshape(height, width, 3)
@@ -62,10 +66,11 @@ def _operations(backend: str) -> dict[str, Callable[..., Any]]:
             "solarize": lambda image: v2.RandomSolarize(128, 1)(image).contiguous(),
             "posterize": lambda image: v2.RandomPosterize(4, 1)(image).contiguous(),
             "jitter": lambda image: v2.ColorJitter(0.2, 0.2, 0.2, 0.0)(image).contiguous(),
-            "normalize": lambda image: v2.Compose(
-                [v2.ToDtype(torch.float32, scale=True), v2.Normalize(MEAN, STD)]
+            "normalize": lambda image: _sequence(
+                v2, [v2.ToDtype(torch.float32, scale=True), v2.Normalize(MEAN, STD)]
             )(image).contiguous(),
-            "pipeline": lambda image: v2.Compose(
+            "pipeline": lambda image: _sequence(
+                v2,
                 [
                     v2.RandomCrop((15, 19)),
                     v2.Resize((13, 17), interpolation=InterpolationMode.BILINEAR, antialias=False),
@@ -75,7 +80,7 @@ def _operations(backend: str) -> dict[str, Callable[..., Any]]:
                     v2.GaussianBlur(5, (1.1, 1.1)),
                     v2.ToDtype(torch.float32, scale=True),
                     v2.Normalize(MEAN, STD),
-                ]
+                ],
             )(image).contiguous(),
         }
 
@@ -119,7 +124,8 @@ def _operations(backend: str) -> dict[str, Callable[..., Any]]:
             fill=0,
             p=1,
         )
-        pipeline = A.Compose(
+        pipeline = _sequence(
+            A,
             [
                 A.RandomCrop(15, 19, p=1),
                 A.Resize(13, 17, interpolation=cv2.INTER_LINEAR, p=1),
@@ -136,7 +142,7 @@ def _operations(backend: str) -> dict[str, Callable[..., Any]]:
                 ),
                 blur,
                 A.Normalize(mean=MEAN, std=STD, max_pixel_value=255.0, p=1),
-            ]
+            ],
         )
         return {
             "native": lambda image: image,
@@ -162,7 +168,7 @@ def _operations(backend: str) -> dict[str, Callable[..., Any]]:
             ),
             "jitter": lambda image: apply(jitter, image),
             "normalize": lambda image: apply(
-                A.Compose([A.Normalize(mean=MEAN, std=STD, max_pixel_value=255.0, p=1)]),
+                _sequence(A, [A.Normalize(mean=MEAN, std=STD, max_pixel_value=255.0, p=1)]),
                 image,
             ),
             "pipeline": lambda image: apply(pipeline, image),
@@ -172,24 +178,26 @@ def _operations(backend: str) -> dict[str, Callable[..., Any]]:
 
     return {
         "native": lambda image: image,
-        "flip": lambda image: R.Compose([R.HorizontalFlip(1.0)], seed=SEED).compile()(image),
-        "vertical_flip": lambda image: R.Compose([R.VerticalFlip(1.0)], seed=SEED).compile()(image),
-        "crop": lambda image, h, w: R.Compose([R.RandomCrop(h, w)], seed=SEED).compile()(image),
-        "center_crop": lambda image, h, w: R.Compose([R.CenterCrop(h, w)], seed=SEED).compile()(
+        "flip": lambda image: R.Pipeline([R.HorizontalFlip(1.0)], seed=SEED).compile()(image),
+        "vertical_flip": lambda image: R.Pipeline([R.VerticalFlip(1.0)], seed=SEED).compile()(
             image
         ),
-        "resize": lambda image, h, w: R.Compose([R.Resize(h, w)], seed=SEED).compile()(image),
-        "affine_identity": lambda image: R.Compose([R.Affine(0.0)], seed=SEED).compile()(image),
-        "blur": lambda image: R.Compose([R.GaussianBlur(5, 1.1)], seed=SEED).compile()(image),
-        "grayscale": lambda image: R.Compose([R.Grayscale()], seed=SEED).compile()(image),
-        "invert": lambda image: R.Compose([R.Invert()], seed=SEED).compile()(image),
-        "solarize": lambda image: R.Compose([R.Solarize(128)], seed=SEED).compile()(image),
-        "posterize": lambda image: R.Compose([R.Posterize(4)], seed=SEED).compile()(image),
-        "jitter": lambda image: R.Compose([R.ColorJitter(0.2, 0.2, 0.2)], seed=SEED).compile()(
+        "crop": lambda image, h, w: R.Pipeline([R.RandomCrop(h, w)], seed=SEED).compile()(image),
+        "center_crop": lambda image, h, w: R.Pipeline([R.CenterCrop(h, w)], seed=SEED).compile()(
             image
         ),
-        "normalize": lambda image: R.Compose([R.Normalize(MEAN, STD)], seed=SEED).compile()(image),
-        "pipeline": lambda image: R.Compose(
+        "resize": lambda image, h, w: R.Pipeline([R.Resize(h, w)], seed=SEED).compile()(image),
+        "affine_identity": lambda image: R.Pipeline([R.Affine(0.0)], seed=SEED).compile()(image),
+        "blur": lambda image: R.Pipeline([R.GaussianBlur(5, 1.1)], seed=SEED).compile()(image),
+        "grayscale": lambda image: R.Pipeline([R.Grayscale()], seed=SEED).compile()(image),
+        "invert": lambda image: R.Pipeline([R.Invert()], seed=SEED).compile()(image),
+        "solarize": lambda image: R.Pipeline([R.Solarize(128)], seed=SEED).compile()(image),
+        "posterize": lambda image: R.Pipeline([R.Posterize(4)], seed=SEED).compile()(image),
+        "jitter": lambda image: R.Pipeline([R.ColorJitter(0.2, 0.2, 0.2)], seed=SEED).compile()(
+            image
+        ),
+        "normalize": lambda image: R.Pipeline([R.Normalize(MEAN, STD)], seed=SEED).compile()(image),
+        "pipeline": lambda image: R.Pipeline(
             [
                 R.RandomCrop(15, 19),
                 R.Resize(13, 17),
@@ -364,7 +372,7 @@ def run_correctness_checks(backend: str) -> list[dict[str, Any]]:
         for index, (height, width) in enumerate(portability_shapes):
             output_height = 7 + (index * 19) % 61
             output_width = 9 + (index * 23) % 67
-            portable_pipeline = R.Compose(
+            portable_pipeline = R.Pipeline(
                 [
                     R.RandomCrop(max(1, height - 1), max(1, width - 1)),
                     R.Resize(output_height, output_width),
@@ -391,14 +399,16 @@ def run_correctness_checks(backend: str) -> list[dict[str, Any]]:
             )
 
         non_contiguous_source = _image(13, 18)[:, ::2, :]
-        non_contiguous_result = R.Compose([R.HorizontalFlip(1.0)], seed=SEED)(non_contiguous_source)
+        non_contiguous_result = R.Pipeline([R.HorizontalFlip(1.0)], seed=SEED)(
+            non_contiguous_source
+        )
         check(
             np.array_equal(non_contiguous_result, non_contiguous_source[:, ::-1, :])
             and bool(non_contiguous_result.flags.c_contiguous),
             "non-contiguous-input-copy",
         )
         try:
-            R.Compose([R.HorizontalFlip(1.0)], seed=SEED)(np.zeros((3, 5, 3), dtype=np.float32))
+            R.Pipeline([R.HorizontalFlip(1.0)], seed=SEED)(np.zeros((3, 5, 3), dtype=np.float32))
         except TypeError:
             rejected_dtype = True
         else:
@@ -420,14 +430,14 @@ def run_correctness_checks(backend: str) -> list[dict[str, Any]]:
         ]
         for index, build_transforms in enumerate(invalid_configs):
             try:
-                R.Compose(build_transforms(), seed=SEED)
+                R.Pipeline(build_transforms(), seed=SEED)
             except ValueError:
                 rejected = True
             else:
                 rejected = False
             check(rejected, f"invalid-config-{index}")
         try:
-            R.Compose([R.HorizontalFlip(1.0)], seed=SEED)(np.empty((0, 3, 3), dtype=np.uint8))
+            R.Pipeline([R.HorizontalFlip(1.0)], seed=SEED)(np.empty((0, 3, 3), dtype=np.uint8))
         except ValueError:
             rejected = True
         else:

@@ -1,6 +1,7 @@
 use crate::model::validate_dimensions;
 use crate::{
-    CodecError, CodecErrorKind, ColorModel, DecodeOptions, DecodedImage, OwnedImage, PixelData,
+    CodecError, CodecErrorKind, ColorModel, DecodeOptions, DecodedImage, ImageView, PixelData,
+    PixelDataRef,
 };
 use std::cell::RefCell;
 
@@ -39,6 +40,7 @@ pub(crate) fn decode(encoded: &[u8], options: DecodeOptions) -> Result<DecodedIm
             color.channels(),
             1,
             options.max_pixels,
+            "image",
         )?;
         let len = header
             .width
@@ -68,42 +70,41 @@ pub(crate) fn decode(encoded: &[u8], options: DecodeOptions) -> Result<DecodedIm
             height: header.height,
             width: header.width,
             color,
+            source_has_alpha: false,
         }
         .convert(options.mode)
     })
 }
 
-pub(crate) fn encode(image: &OwnedImage, quality: u8) -> Result<Vec<u8>, CodecError> {
+pub(crate) fn encode(image: ImageView<'_>, quality: u8) -> Result<Vec<u8>, CodecError> {
     if !(1..=100).contains(&quality) {
         return Err(CodecError::new(
             CodecErrorKind::InvalidInput,
             "JPEG quality must be between 1 and 100",
         ));
     }
-    let (pixels, format, subsampling) = match (&image.pixels, image.color) {
-        (PixelData::U8(data), ColorModel::Gray) => (
-            data.as_slice(),
-            turbojpeg::PixelFormat::GRAY,
-            turbojpeg::Subsamp::Gray,
-        ),
-        (PixelData::U8(data), ColorModel::Rgb) => (
-            data.as_slice(),
+    let (pixels, format, subsampling) = match (image.pixels, image.color) {
+        (PixelDataRef::U8(data), ColorModel::Gray) => {
+            (data, turbojpeg::PixelFormat::GRAY, turbojpeg::Subsamp::Gray)
+        }
+        (PixelDataRef::U8(data), ColorModel::Rgb) => (
+            data,
             turbojpeg::PixelFormat::RGB,
             turbojpeg::Subsamp::Sub2x2,
         ),
-        (PixelData::U8(_), ColorModel::GrayAlpha | ColorModel::Rgba) => {
+        (PixelDataRef::U8(_), ColorModel::GrayAlpha | ColorModel::Rgba) => {
             return Err(CodecError::new(
                 CodecErrorKind::InvalidInput,
                 "JPEG does not support alpha channels",
             ));
         }
-        (PixelData::U8(_), ColorModel::Cmyk) => {
+        (PixelDataRef::U8(_), ColorModel::Cmyk) => {
             return Err(CodecError::new(
                 CodecErrorKind::UnsupportedFormat,
                 "CMYK JPEG encoding is not supported",
             ));
         }
-        (PixelData::U16(_), _) => {
+        (PixelDataRef::U16(_), _) => {
             return Err(CodecError::new(
                 CodecErrorKind::InvalidInput,
                 "JPEG encoding requires uint8 pixels",

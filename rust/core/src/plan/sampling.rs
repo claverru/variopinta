@@ -38,9 +38,6 @@ impl TransformPlan {
         width: usize,
         rng: &mut SmallRng,
     ) -> CoreResult<SampledTransform> {
-        if matches!(self, Self::ToTorch) {
-            return Ok(SampledTransform::ToTorch);
-        }
         let probability = match self {
             Self::Resize { p, .. }
             | Self::RandomCrop { p, .. }
@@ -63,23 +60,14 @@ impl TransformPlan {
             | Self::Solarize { p, .. }
             | Self::Posterize { p, .. }
             | Self::Normalize { p, .. } => *p,
-            Self::ToTorch => unreachable!(),
         };
         if !should_apply(probability, rng) {
             return Ok(SampledTransform::Skip);
         }
         Ok(match self {
-            Self::Resize {
-                height,
-                width,
-                interpolation,
-                antialias,
-                ..
-            } => SampledTransform::Resize {
+            Self::Resize { height, width, .. } => SampledTransform::Resize {
                 height: *height,
                 width: *width,
-                interpolation: *interpolation,
-                antialias: *antialias,
             },
             Self::RandomCrop {
                 height: crop_height,
@@ -101,15 +89,11 @@ impl TransformPlan {
                 width: output_width,
                 scale,
                 ratio,
-                interpolation,
-                antialias,
                 ..
             } => SampledTransform::RandomResizedCrop {
                 crop: sample_resized_crop(height, width, *scale, *ratio, rng),
                 height: *output_height,
                 width: *output_width,
-                interpolation: *interpolation,
-                antialias: *antialias,
             },
             Self::HorizontalFlip { .. } => SampledTransform::HorizontalFlip,
             Self::VerticalFlip { .. } => SampledTransform::VerticalFlip,
@@ -134,8 +118,6 @@ impl TransformPlan {
                 pad_height_divisor,
                 pad_width_divisor,
                 position,
-                border_mode,
-                fill,
                 ..
             } => {
                 let output_height = padded_dimension(height, *min_height, *pad_height_divisor)?;
@@ -149,8 +131,6 @@ impl TransformPlan {
                     left,
                     height: output_height,
                     width: output_width,
-                    border_mode: *border_mode,
-                    fill: *fill,
                 })
             }
             Self::CoarseDropout {
@@ -209,9 +189,6 @@ impl TransformPlan {
                 translate,
                 scale,
                 shear,
-                interpolation,
-                border_mode,
-                fill,
                 ..
             } => SampledTransform::Affine(AffineSample {
                 degrees: sample_uniform(*degrees, rng),
@@ -224,22 +201,12 @@ impl TransformPlan {
                     sample_uniform([shear[0], shear[1]], rng),
                     sample_uniform([shear[2], shear[3]], rng),
                 ],
-                interpolation: *interpolation,
-                border_mode: *border_mode,
-                fill: *fill,
             }),
-            Self::RandomRotation {
-                degrees,
-                interpolation,
-                border_mode,
-                fill,
-                ..
-            } => SampledTransform::RandomRotation(RotationSample {
-                degrees: sample_uniform(*degrees, rng),
-                interpolation: *interpolation,
-                border_mode: *border_mode,
-                fill: *fill,
-            }),
+            Self::RandomRotation { degrees, .. } => {
+                SampledTransform::RandomRotation(RotationSample {
+                    degrees: sample_uniform(*degrees, rng),
+                })
+            }
             Self::GaussianNoise {
                 mean,
                 std,
@@ -257,31 +224,16 @@ impl TransformPlan {
                 alpha: sample_uniform(*alpha, rng),
                 lightness: sample_uniform(*lightness, rng),
             }),
-            Self::Perspective {
-                scale,
-                interpolation,
-                border_mode,
-                fill,
-                ..
-            } => SampledTransform::Perspective(PerspectiveSample {
+            Self::Perspective { scale, .. } => SampledTransform::Perspective(PerspectiveSample {
                 inverse: sample_perspective(height, width, *scale, rng),
-                interpolation: *interpolation,
-                border_mode: *border_mode,
-                fill: *fill,
             }),
             Self::GridDistortion {
                 num_steps,
                 distort_limit,
-                interpolation,
-                border_mode,
-                fill,
                 ..
             } => SampledTransform::GridDistortion(GridDistortionSample {
                 x_map: sample_grid_map(width, *num_steps, *distort_limit, rng)?,
                 y_map: sample_grid_map(height, *num_steps, *distort_limit, rng)?,
-                interpolation: *interpolation,
-                border_mode: *border_mode,
-                fill: *fill,
             }),
             Self::GaussianBlur { sigma, .. } => SampledTransform::GaussianBlur {
                 sigma: sample_uniform(*sigma, rng),
@@ -293,7 +245,6 @@ impl TransformPlan {
             },
             Self::Posterize { bits, .. } => SampledTransform::Posterize { bits: *bits },
             Self::Normalize { .. } => SampledTransform::Normalize,
-            Self::ToTorch => SampledTransform::ToTorch,
         })
     }
 }

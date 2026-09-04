@@ -5,6 +5,7 @@ mod engine;
 mod error;
 mod explanation;
 mod kernels;
+mod mask;
 mod model;
 mod operations;
 mod optimization;
@@ -17,7 +18,9 @@ pub use engine::CompiledPipeline;
 pub use error::{CoreError, CoreResult};
 pub use model::{
     BorderMode, BufferExplanation, CopyExplanation, DropoutSizeRange, ExecutionMode,
-    ImageContractExplanation, Interpolation, PadPosition, PipelineExplanation, PipelineOutput,
-    PipelineSpec, PolicyExplanation, TransformExplanation, TransformSpec,
+    ImageContractExplanation, ImageOutput, Interpolation, MaskOutput, MaskPlanExplanation,
+    MaskTransformExplanation, PadPosition, PipelineExplanation, PipelineOutput, PipelineSpec,
+    PolicyExplanation, TargetBuffer, TargetInput, TargetOutput, TargetRequirements, TargetSpec,
+    TransformExplanation, TransformSpec,
 };
 pub use workspace::Workspace;

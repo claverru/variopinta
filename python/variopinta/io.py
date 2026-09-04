@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
 from glob import has_magic
 from os import PathLike, fspath
 from pathlib import Path
@@ -16,68 +15,6 @@ from ._variopinta import write_image as _write_image
 ImageFormat = Literal["jpeg", "png"]
 ImageMode = Literal["unchanged", "gray", "rgb", "rgba"]
 DEFAULT_MAX_PIXELS = 100_000_000
-
-
-@dataclass(frozen=True, slots=True)
-class ArrayInput:
-    pass
-
-
-@dataclass(frozen=True, slots=True)
-class EncodedInput:
-    max_pixels: int | None = DEFAULT_MAX_PIXELS
-    max_encoded_bytes: int | None = None
-
-    def __post_init__(self) -> None:
-        _validate_limit("max_pixels", self.max_pixels)
-        _validate_limit("max_encoded_bytes", self.max_encoded_bytes)
-
-
-@dataclass(frozen=True, slots=True)
-class PathInput:
-    max_pixels: int | None = DEFAULT_MAX_PIXELS
-    max_encoded_bytes: int | None = None
-
-    def __post_init__(self) -> None:
-        _validate_limit("max_pixels", self.max_pixels)
-        _validate_limit("max_encoded_bytes", self.max_encoded_bytes)
-
-
-@dataclass(frozen=True, slots=True)
-class ReturnOutput:
-    pass
-
-
-@dataclass(frozen=True, slots=True)
-class EncodedOutput:
-    format: ImageFormat
-    quality: int | None = None
-    compression: int | None = None
-
-    def __post_init__(self) -> None:
-        image_format = _normalize_format(self.format)
-        quality, compression = _validate_encode_options(
-            image_format, self.quality, self.compression
-        )
-        object.__setattr__(self, "format", image_format)
-        object.__setattr__(self, "quality", quality)
-        object.__setattr__(self, "compression", compression)
-
-
-@dataclass(frozen=True, slots=True)
-class PathOutput:
-    format: ImageFormat
-    quality: int | None = None
-    compression: int | None = None
-
-    def __post_init__(self) -> None:
-        image_format = _normalize_format(self.format)
-        quality, compression = _validate_encode_options(
-            image_format, self.quality, self.compression
-        )
-        object.__setattr__(self, "format", image_format)
-        object.__setattr__(self, "quality", quality)
-        object.__setattr__(self, "compression", compression)
 
 
 def read_image(

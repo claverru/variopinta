@@ -21,6 +21,7 @@ PYTHON_FILES = {
     "io.py",
     "pipeline.py",
     "py.typed",
+    "targets.py",
     "transforms.py",
 }
 FORBIDDEN_PARTS = {

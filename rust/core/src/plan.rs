@@ -175,7 +175,6 @@ pub(crate) enum TransformPlan {
         max_pixel_value: f32,
         p: f32,
     },
-    ToTorch,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq)]
@@ -192,8 +191,6 @@ pub(crate) struct PadSample {
     pub left: usize,
     pub height: usize,
     pub width: usize,
-    pub border_mode: BorderMode,
-    pub fill: [u8; 3],
 }
 
 #[derive(Debug, Clone, Copy, PartialEq)]
@@ -220,17 +217,11 @@ pub(crate) struct AffineSample {
     pub translate: [f32; 2],
     pub scale: f32,
     pub shear: [f32; 2],
-    pub interpolation: Interpolation,
-    pub border_mode: BorderMode,
-    pub fill: [u8; 3],
 }
 
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub(crate) struct RotationSample {
     pub degrees: f32,
-    pub interpolation: Interpolation,
-    pub border_mode: BorderMode,
-    pub fill: [u8; 3],
 }
 
 #[derive(Debug, Clone, Copy, PartialEq)]
@@ -250,18 +241,12 @@ pub(crate) struct SharpenSample {
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub(crate) struct PerspectiveSample {
     pub inverse: [f32; 9],
-    pub interpolation: Interpolation,
-    pub border_mode: BorderMode,
-    pub fill: [u8; 3],
 }
 
 #[derive(Debug, Clone, PartialEq)]
 pub(crate) struct GridDistortionSample {
     pub x_map: Vec<f32>,
     pub y_map: Vec<f32>,
-    pub interpolation: Interpolation,
-    pub border_mode: BorderMode,
-    pub fill: [u8; 3],
 }
 
 #[derive(Debug, Clone, PartialEq)]
@@ -270,16 +255,12 @@ pub(crate) enum SampledTransform {
     Resize {
         height: usize,
         width: usize,
-        interpolation: Interpolation,
-        antialias: bool,
     },
     RandomCrop(CropSample),
     RandomResizedCrop {
         crop: CropSample,
         height: usize,
         width: usize,
-        interpolation: Interpolation,
-        antialias: bool,
     },
     HorizontalFlip,
     VerticalFlip,
@@ -308,7 +289,6 @@ pub(crate) enum SampledTransform {
         bits: u8,
     },
     Normalize,
-    ToTorch,
 }
 
 impl TransformPlan {
@@ -1286,8 +1266,6 @@ mod tests {
                 },
                 height: 7,
                 width: 9,
-                interpolation: Interpolation::Bilinear,
-                antialias: true,
             }
         ));
         assert!(matches!(
@@ -1339,25 +1317,19 @@ mod tests {
     }
 
     #[test]
-    fn terminal_layout_rules_are_validated() {
-        TransformPlan::compile(vec![
+    fn normalize_must_be_terminal() {
+        let error = TransformPlan::compile(vec![
             TransformSpec::Normalize {
                 mean: [0.0; 3],
                 std: [1.0; 3],
                 max_pixel_value: 255.0,
                 p: 1.0,
             },
-            TransformSpec::ToTorch,
-        ])
-        .unwrap();
-
-        let error = TransformPlan::compile(vec![
-            TransformSpec::ToTorch,
             TransformSpec::Invert { p: 1.0 },
         ])
         .unwrap_err();
         assert!(
-            matches!(error, CoreError::Invalid(message) if message == "ToTorch must be terminal")
+            matches!(error, CoreError::Invalid(message) if message == "Normalize must be terminal")
         );
     }
 

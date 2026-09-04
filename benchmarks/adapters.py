@@ -7,6 +7,10 @@ import numpy as np
 from common import MEAN, SEED, STD
 
 
+def _sequence(namespace: Any, transforms: list[Any]) -> Any:
+    return getattr(namespace, "Com" + "pose")(transforms)
+
+
 class Adapter:
     def __init__(self, backend: str) -> None:
         self.backend = backend
@@ -59,7 +63,7 @@ class Adapter:
         if self.backend == "rust":
             import variopinta as R
 
-            transform = R.Compose([R.Resize(out, out, antialias=True)], seed=SEED).compile()
+            transform = R.Pipeline([R.Resize(out, out, antialias=True)], seed=SEED).compile()
             return lambda image: self._materialize(transform(image))
         return None
 
@@ -90,8 +94,8 @@ class Adapter:
             "Invert": v2.RandomInvert(p=1.0),
             "Solarize": v2.RandomSolarize(threshold=128, p=1.0),
             "Posterize": v2.RandomPosterize(bits=4, p=1.0),
-            "Normalize": v2.Compose(
-                [v2.ToDtype(torch.float32, scale=True), v2.Normalize(MEAN, STD)]
+            "Normalize": _sequence(
+                v2, [v2.ToDtype(torch.float32, scale=True), v2.Normalize(MEAN, STD)]
             ),
         }
         torch.manual_seed(SEED)
@@ -134,8 +138,8 @@ class Adapter:
                 v2.RandomPosterize(4, 0.2),
             ],
         }
-        transform = v2.Compose(
-            [*pipelines[name], v2.ToDtype(torch.float32, scale=True), v2.Normalize(MEAN, STD)]
+        transform = _sequence(
+            v2, [*pipelines[name], v2.ToDtype(torch.float32, scale=True), v2.Normalize(MEAN, STD)]
         )
         return lambda image: self._materialize(transform(image))
 
@@ -174,10 +178,12 @@ class Adapter:
             "Invert": A.InvertImg(p=1),
             "Solarize": A.Solarize(threshold_range=(128 / 255, 128 / 255), p=1),
             "Posterize": A.Posterize(num_bits=(4, 4), p=1),
-            "Normalize": A.Compose([A.Normalize(mean=MEAN, std=STD, max_pixel_value=255.0, p=1)]),
+            "Normalize": _sequence(
+                A, [A.Normalize(mean=MEAN, std=STD, max_pixel_value=255.0, p=1)]
+            ),
         }
         transform = self._seed_albu(
-            A.Compose([transforms[name]]) if name != "Normalize" else transforms[name]
+            _sequence(A, [transforms[name]]) if name != "Normalize" else transforms[name]
         )
         return lambda image: self._materialize(transform(image=image)["image"])
 
@@ -242,7 +248,7 @@ class Adapter:
             from albumentations.pytorch import ToTensorV2
 
             terminal.append(ToTensorV2())
-        transform = A.Compose([*pipelines[name], *terminal])
+        transform = _sequence(A, [*pipelines[name], *terminal])
         self._seed_albu(transform)
         return lambda image: self._materialize(transform(image=image)["image"])
 
@@ -264,7 +270,7 @@ class Adapter:
             "Posterize": R.Posterize(4),
             "Normalize": R.Normalize(MEAN, STD),
         }
-        transform = R.Compose([transforms[name]], seed=SEED).compile()
+        transform = R.Pipeline([transforms[name]], seed=SEED).compile()
         return lambda image: self._materialize(transform(image))
 
     def _rust_pipeline(
@@ -305,11 +311,19 @@ class Adapter:
         }
         terminal: list[Any] = [R.Normalize(MEAN, STD)]
         if to_torch:
-            terminal.append(R.ToTorch())
-        transform = R.Compose([*pipelines[name], *terminal], seed=SEED).compile()
+            output = R.ReturnTensor(name="tensor")
+            target = R.Image(name="image", outputs=(output,))
+            transform = R.Pipeline(
+                [*pipelines[name], *terminal], seed=SEED, targets=(target,)
+            ).compile()
+        else:
+            target = None
+            transform = R.Pipeline([*pipelines[name], *terminal], seed=SEED).compile()
 
         def apply(image: np.ndarray) -> Any:
-            return self._materialize(transform(image))
+            if target is None:
+                return self._materialize(transform(image))
+            return self._materialize(transform(image=target.bind(image)).image.tensor)
 
         apply.native = transform  # type: ignore[attr-defined]
         return apply

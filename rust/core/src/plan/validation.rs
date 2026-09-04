@@ -3,19 +3,8 @@ use super::*;
 impl TransformPlan {
     pub(crate) fn compile(specs: Vec<TransformSpec>) -> CoreResult<Vec<Self>> {
         for (index, transform) in specs.iter().enumerate() {
-            match transform {
-                TransformSpec::Normalize { .. }
-                    if index + 1 < specs.len()
-                        && !matches!(specs.get(index + 1), Some(TransformSpec::ToTorch)) =>
-                {
-                    return Err(CoreError::Invalid(
-                        "Normalize must be terminal or immediately precede ToTorch".into(),
-                    ));
-                }
-                TransformSpec::ToTorch if index + 1 < specs.len() => {
-                    return Err(CoreError::Invalid("ToTorch must be terminal".into()));
-                }
-                _ => {}
+            if matches!(transform, TransformSpec::Normalize { .. }) && index + 1 < specs.len() {
+                return Err(CoreError::Invalid("Normalize must be terminal".into()));
             }
         }
         specs.into_iter().map(Self::compile_one).collect()
@@ -377,7 +366,6 @@ impl TransformPlan {
                     p,
                 }
             }
-            TransformSpec::ToTorch => Self::ToTorch,
         })
     }
 }

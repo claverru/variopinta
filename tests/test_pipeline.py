@@ -9,8 +9,8 @@ from tests._helpers import image
 
 
 class PipelineTests(unittest.TestCase):
-    def pipeline(self) -> R.Compose:
-        return R.Compose(
+    def pipeline(self) -> R.Pipeline:
+        return R.Pipeline(
             [
                 R.RandomCrop(13, 17),
                 R.Resize(11, 15),
@@ -40,7 +40,7 @@ class PipelineTests(unittest.TestCase):
     def test_explain_reports_safe_optimization(self) -> None:
         reference = self.pipeline()
         compiled = reference.compile()
-        self.assertEqual(compiled.explain()["schema_version"], 2)
+        self.assertEqual(compiled.explain()["schema_version"], 4)
         self.assertEqual(reference.explain()["fusions"], [])
         self.assertEqual(compiled.explain()["fusions"], [])
         self.assertEqual(
@@ -48,18 +48,28 @@ class PipelineTests(unittest.TestCase):
             ["ColorJitter:composed-color-matrix"],
         )
         self.assertEqual(compiled.explain()["optimizations"], ["input-copy-elision"])
-        self.assertEqual(compiled.explain()["output_layout"], "HWC")
+        self.assertEqual(compiled.explain()["targets"][0]["outputs"][0]["layout"], "HWC")
         self.assertEqual(reference.explain()["sampling"], "native-plan-before-execution")
         self.assertEqual(compiled.explain()["sampling"], "native-plan-before-execution")
         self.assertEqual(compiled.explain()["passes"], 7)
         self.assertEqual(compiled.explain()["pixel_passes"], 9)
         self.assertEqual(compiled.explain()["python_boundary"]["crossings_per_call"], 1)
-        self.assertEqual(
-            [copy["count"] for copy in compiled.explain()["copies"]], ["0-or-1", "0", "0"]
+        target_explanation = compiled.explain()["targets"][0]
+        native_entry = next(
+            copy for copy in target_explanation["copies"] if copy["stage"] == "native-entry"
         )
+        self.assertEqual(native_entry["count"], "0")
         self.assertEqual(
-            {buffer["name"] for buffer in compiled.explain()["buffers"]},
-            {"input", "working-u8", "scratch-u8", "blur-temp", "output-f32"},
+            {buffer["name"] for buffer in target_explanation["buffers"]},
+            {
+                "target-array-input",
+                "input",
+                "working-u8",
+                "scratch-u8",
+                "blur-temp",
+                "output-f32",
+                "target-result",
+            },
         )
         self.assertEqual(compiled.explain()["steps"][0]["category"], "geometry")
         self.assertEqual(compiled.explain()["steps"][-1]["execution"], "terminal")
@@ -70,26 +80,45 @@ class PipelineTests(unittest.TestCase):
         self.assertEqual(affine["selection_reason"], "benchmark-policy:affine-copy-then-transform")
 
     def test_explain_distinguishes_conditional_and_unavailable_copy_elision(self) -> None:
-        conditional = R.Compose([R.Resize(7, 11, p=0.5)], seed=137).compile().explain()
-        unavailable = R.Compose([R.Grayscale()], seed=137).compile().explain()
+        conditional = R.Pipeline([R.Resize(7, 11, p=0.5)], seed=137).compile().explain()
+        unavailable = R.Pipeline([R.Grayscale()], seed=137).compile().explain()
         blocked = (
-            R.Compose([R.CenterCrop(7, 11, p=0.0), R.Resize(5, 9)], seed=137).compile().explain()
+            R.Pipeline([R.CenterCrop(7, 11, p=0.0), R.Resize(5, 9)], seed=137).compile().explain()
         )
-        conditional_dtype = R.Compose([R.Normalize(p=0.5)], seed=137).compile().explain()
-        self.assertEqual(conditional["copies"][1]["count"], "0-or-1")
-        self.assertEqual(conditional["copies"][1]["condition"], "sample-dependent")
-        self.assertEqual(unavailable["copies"][1]["count"], "1")
+        conditional_dtype = R.Pipeline([R.Normalize(p=0.5)], seed=137).compile().explain()
+        conditional_copy = next(
+            copy for copy in conditional["targets"][0]["copies"] if copy["stage"] == "native-entry"
+        )
+        unavailable_copy = next(
+            copy for copy in unavailable["targets"][0]["copies"] if copy["stage"] == "native-entry"
+        )
+        blocked_copy = next(
+            copy for copy in blocked["targets"][0]["copies"] if copy["stage"] == "native-entry"
+        )
+        self.assertEqual(conditional_copy["count"], "0-or-1")
+        self.assertEqual(conditional_copy["condition"], "sample-dependent")
+        self.assertEqual(unavailable_copy["count"], "1")
         self.assertEqual(unavailable["optimizations"], [])
         self.assertEqual(unavailable["fusions"], [])
-        self.assertEqual(blocked["copies"][1]["count"], "1")
+        self.assertEqual(blocked_copy["count"], "1")
         self.assertEqual(blocked["optimizations"], [])
-        self.assertEqual(conditional_dtype["output_dtype"], "uint8-or-float32")
-        self.assertEqual(conditional_dtype["buffers"][1]["condition"], "sample-dependent")
+        self.assertEqual(
+            conditional_dtype["targets"][0]["outputs"][0]["dtype"],
+            "uint8-or-float32",
+        )
+        working = next(
+            buffer
+            for buffer in conditional_dtype["targets"][0]["buffers"]
+            if buffer["name"] == "working-u8"
+        )
+        self.assertEqual(working["condition"], "sample-dependent")
 
     def test_crop_resize_copy_elision_is_not_reported_as_fusion(self) -> None:
-        explanation = R.Compose([R.CenterCrop(7, 11), R.Resize(5, 9)], seed=137).compile().explain()
+        explanation = (
+            R.Pipeline([R.CenterCrop(7, 11), R.Resize(5, 9)], seed=137).compile().explain()
+        )
         native_entry = next(
-            copy for copy in explanation["copies"] if copy["stage"] == "native-entry"
+            copy for copy in explanation["targets"][0]["copies"] if copy["stage"] == "native-entry"
         )
         self.assertEqual(explanation["fusions"], [])
         self.assertEqual(explanation["unit_specializations"], [])
@@ -97,8 +126,10 @@ class PipelineTests(unittest.TestCase):
         self.assertEqual(native_entry["count"], "0")
         self.assertEqual(explanation["pixel_passes"], 2)
 
-        crop = R.Compose([R.RandomCrop(5, 9)], seed=137).compile().explain()
-        crop_entry = next(copy for copy in crop["copies"] if copy["stage"] == "native-entry")
+        crop = R.Pipeline([R.RandomCrop(5, 9)], seed=137).compile().explain()
+        crop_entry = next(
+            copy for copy in crop["targets"][0]["copies"] if copy["stage"] == "native-entry"
+        )
         self.assertEqual(crop_entry["count"], "0")
         self.assertEqual(crop["optimizations"], ["input-copy-elision"])
 
@@ -108,17 +139,19 @@ class PipelineTests(unittest.TestCase):
             R.Solarize(128),
             R.Posterize(4),
         ):
-            direct = R.Compose([transform], seed=137).compile().explain()
+            direct = R.Pipeline([transform], seed=137).compile().explain()
             direct_entry = next(
-                copy for copy in direct["copies"] if copy["stage"] == "native-entry"
+                copy for copy in direct["targets"][0]["copies"] if copy["stage"] == "native-entry"
             )
             self.assertEqual(direct_entry["count"], "0")
             self.assertEqual(direct["optimizations"], ["input-copy-elision"])
             self.assertEqual(direct["fusions"], [])
 
-        conditional_direct = R.Compose([R.Invert(0.5)], seed=137).compile().explain()
+        conditional_direct = R.Pipeline([R.Invert(0.5)], seed=137).compile().explain()
         conditional_entry = next(
-            copy for copy in conditional_direct["copies"] if copy["stage"] == "native-entry"
+            copy
+            for copy in conditional_direct["targets"][0]["copies"]
+            if copy["stage"] == "native-entry"
         )
         self.assertEqual(conditional_entry["count"], "0-or-1")
         self.assertEqual(conditional_entry["condition"], "sample-dependent")
@@ -127,14 +160,16 @@ class PipelineTests(unittest.TestCase):
         source = image(13, 17)
         for crop in (R.CenterCrop(7, 11), R.RandomCrop(7, 11)):
             with self.subTest(crop=crop):
-                reference = R.Compose([crop, R.Resize(5, 9, p=0.0)], seed=137)
+                reference = R.Pipeline([crop, R.Resize(5, 9, p=0.0)], seed=137)
                 compiled = reference.compile()
-                expected = R.Compose([crop], seed=137)(source, key=11)
+                expected = R.Pipeline([crop], seed=137)(source, key=11)
                 np.testing.assert_array_equal(reference(source, key=11), expected)
                 np.testing.assert_array_equal(compiled(source, key=11), expected)
                 explanation = compiled.explain()
                 native_entry = next(
-                    copy for copy in explanation["copies"] if copy["stage"] == "native-entry"
+                    copy
+                    for copy in explanation["targets"][0]["copies"]
+                    if copy["stage"] == "native-entry"
                 )
                 self.assertEqual(native_entry["count"], "0")
                 self.assertEqual(explanation["passes"], 1)
@@ -151,10 +186,12 @@ class PipelineTests(unittest.TestCase):
         )
         for transforms, expected_count in controls:
             with self.subTest(transforms=transforms):
-                pipeline = R.Compose(transforms, seed=137)
+                pipeline = R.Pipeline(transforms, seed=137)
                 compiled = pipeline.compile()
                 native_entry = next(
-                    copy for copy in compiled.explain()["copies"] if copy["stage"] == "native-entry"
+                    copy
+                    for copy in compiled.explain()["targets"][0]["copies"]
+                    if copy["stage"] == "native-entry"
                 )
                 self.assertEqual(native_entry["count"], expected_count)
                 for key in range(8):
@@ -163,36 +200,36 @@ class PipelineTests(unittest.TestCase):
                     )
 
     def test_explain_uses_the_effective_deterministic_route(self) -> None:
-        explanation = R.Compose([R.Normalize(p=0.0), R.ToTorch()], seed=137).compile().explain()
-        self.assertEqual(explanation["schema_version"], 2)
-        self.assertEqual(explanation["passes"], 1)
-        self.assertEqual(explanation["pixel_passes"], 1)
-        self.assertEqual(explanation["fusions"], [])
-        self.assertEqual(explanation["output_dtype"], "uint8")
-        self.assertEqual(
-            {buffer["name"] for buffer in explanation["buffers"]},
-            {"input", "working-u8", "output-u8"},
+        tensor = R.ReturnTensor(name="tensor")
+        target = R.Image(name="image", outputs=(tensor,))
+        explanation = (
+            R.Pipeline([R.Normalize(p=0.0)], seed=137, targets=(target,)).compile().explain()
         )
-        normalize, to_torch = explanation["steps"]
+        self.assertEqual(explanation["schema_version"], 4)
+        self.assertEqual(explanation["passes"], 0)
+        self.assertEqual(explanation["pixel_passes"], 0)
+        self.assertEqual(explanation["fusions"], [])
+        self.assertEqual(explanation["targets"][0]["outputs"][0]["dtype"], "uint8")
+        self.assertEqual(
+            {buffer["name"] for buffer in explanation["targets"][0]["buffers"]},
+            {"target-array-input", "input", "working-u8", "target-result"},
+        )
+        (normalize,) = explanation["steps"]
         self.assertEqual(normalize["status"], "never")
         self.assertEqual(normalize["execution"], "skipped")
         self.assertEqual(normalize["pixel_passes"], 0)
         self.assertEqual(normalize["allocation"], "none")
         self.assertEqual(normalize["kernel_form"], "skipped")
         self.assertEqual(normalize["selection_reason"], "probability-zero")
-        self.assertEqual(to_torch["status"], "always")
         native_entry = next(
-            copy for copy in explanation["copies"] if copy["stage"] == "native-entry"
+            copy for copy in explanation["targets"][0]["copies"] if copy["stage"] == "native-entry"
         )
-        terminal = next(
-            copy for copy in explanation["copies"] if copy["stage"] == "terminal-layout"
-        )
-        self.assertEqual((native_entry["count"], terminal["count"]), ("1", "1"))
+        self.assertEqual(native_entry["count"], "1")
 
     def test_input_contract_and_ownership(self) -> None:
         source = image(13, 18)[:, ::2]
         snapshot = source.copy()
-        output = R.Compose([R.HorizontalFlip(1.0)], seed=137)(source, key=0)
+        output = R.Pipeline([R.HorizontalFlip(1.0)], seed=137)(source, key=0)
         np.testing.assert_array_equal(source, snapshot)
         np.testing.assert_array_equal(output, source[:, ::-1])
         self.assertTrue(output.flags.c_contiguous)
@@ -200,12 +237,12 @@ class PipelineTests(unittest.TestCase):
 
     def test_probabilities(self) -> None:
         source = image(7, 11)
-        identity = R.Compose([R.HorizontalFlip(0.0)], seed=137).compile()
-        flipped = R.Compose([R.HorizontalFlip(1.0)], seed=137).compile()
+        identity = R.Pipeline([R.HorizontalFlip(0.0)], seed=137).compile()
+        flipped = R.Pipeline([R.HorizontalFlip(1.0)], seed=137).compile()
         np.testing.assert_array_equal(identity(source, key=0), source)
         np.testing.assert_array_equal(flipped(source, key=0), source[:, ::-1])
 
-        invert = R.Compose([R.Invert(0.5)], seed=137)
+        invert = R.Pipeline([R.Invert(0.5)], seed=137)
         for key in range(20):
             np.testing.assert_array_equal(
                 invert(source, key=key), invert.compile()(source, key=key)
@@ -293,7 +330,7 @@ class PipelineTests(unittest.TestCase):
         source = image(19, 23)[:, ::2]
         for transform in transforms:
             with self.subTest(transform=transform):
-                reference = R.Compose([transform], seed=137)
+                reference = R.Pipeline([transform], seed=137)
                 compiled = reference.compile()
                 for key in range(12):
                     expected = reference(source, key=key)
@@ -329,7 +366,7 @@ class PipelineTests(unittest.TestCase):
         source = image(3, 7)[:, ::2]
         for transform in transforms:
             with self.subTest(transform=transform):
-                reference = R.Compose([transform], seed=137)
+                reference = R.Pipeline([transform], seed=137)
                 for pipeline in (reference, reference.compile()):
                     actual = pipeline(source, key=3)
                     np.testing.assert_array_equal(actual, source)
@@ -381,7 +418,7 @@ class PipelineTests(unittest.TestCase):
     def test_public_float_configuration_is_canonical_float32(self) -> None:
         tiny_probability = R.Invert(p=1e-50)
         self.assertEqual(tiny_probability.p, 0.0)
-        pipeline = R.Compose([tiny_probability], seed=137)
+        pipeline = R.Pipeline([tiny_probability], seed=137)
         self.assertEqual(pipeline.transforms[0].p, 0.0)
         self.assertEqual(pipeline.explain()["steps"][0]["probability"], 0.0)
         self.assertEqual(pipeline.compile().explain()["steps"][0]["status"], "never")
@@ -398,7 +435,7 @@ class PipelineTests(unittest.TestCase):
                 transform = R.Invert(p=float(value))
                 self.assertEqual(transform.p, float(np.float32(value)))
                 self.assertEqual(
-                    R.Compose([transform], seed=137).explain()["steps"][0]["probability"],
+                    R.Pipeline([transform], seed=137).explain()["steps"][0]["probability"],
                     transform.p,
                 )
 
@@ -424,17 +461,17 @@ class PipelineTests(unittest.TestCase):
 
     def test_configuration_and_output_allocation_limits_fail_cleanly(self) -> None:
         with self.assertRaisesRegex(ValueError, "native backend limit"):
-            R.Compose([R.Resize(2**32, 1)], seed=137)
+            R.Pipeline([R.Resize(2**32, 1)], seed=137)
         with self.assertRaisesRegex(ValueError, "kernel_size"):
-            R.Compose([R.GaussianBlur(2**63 - 1, 1.0)], seed=137)
+            R.Pipeline([R.GaussianBlur(2**63 - 1, 1.0)], seed=137)
 
         source = image(1, 1)
-        huge_output = R.Compose([R.Resize(2_000_000_000, 2_000_000_000)], seed=137)
+        huge_output = R.Pipeline([R.Resize(2_000_000_000, 2_000_000_000)], seed=137)
         for pipeline in (huge_output, huge_output.compile()):
             with self.assertRaisesRegex(RuntimeError, "allocation failed"):
                 pipeline(source, key=3)
 
-        huge_dropout = R.Compose(
+        huge_dropout = R.Pipeline(
             [
                 R.CoarseDropout(
                     num_holes_range=(2**63 - 1, 2**63 - 1),
@@ -461,7 +498,7 @@ class PipelineTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             R.Posterize(0)
         with self.assertRaises(TypeError):
-            R.Compose([lambda value: value])
+            R.Pipeline([lambda value: value])
 
 
 if __name__ == "__main__":

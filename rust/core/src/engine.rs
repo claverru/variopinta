@@ -1,13 +1,15 @@
-use crate::capability::{ExecutionForm, OutputContract};
+use crate::capability::ExecutionForm;
 use crate::kernels::layout::{hwc_to_chw, hwc_u8_to_chw, normalize_hwc, normalize_hwc_to_chw};
 use crate::kernels::point;
+use crate::mask::{mask_len, MaskPlan};
 use crate::operations::*;
-use crate::optimization::{FusionRule, KernelSelection, LoweringPlan};
+use crate::optimization::{KernelSelection, LoweringPlan};
 use crate::plan::{
     derive_run_seed, make_gaussian_kernel, AffineSample, SampledTransform, TransformPlan,
 };
 use crate::{
-    CoreError, CoreResult, ExecutionMode, PipelineExplanation, PipelineOutput, PipelineSpec,
+    CoreError, CoreResult, ExecutionMode, ImageOutput, PipelineExplanation, PipelineOutput,
+    PipelineSpec, TargetBuffer, TargetInput, TargetOutput, TargetRequirements, TargetSpec,
     Workspace,
 };
 
@@ -19,16 +21,29 @@ struct ExecutionPlan {
     transforms: Vec<TransformPlan>,
     mode: ExecutionMode,
     lowering: LoweringPlan,
+    mask: MaskPlan,
+    targets: Vec<TargetSpec>,
+    requirements: Vec<TargetRequirements>,
     explanation: PipelineExplanation,
 }
 
 impl ExecutionPlan {
     fn compile(spec: PipelineSpec, mode: ExecutionMode) -> CoreResult<Self> {
-        let transforms = TransformPlan::compile(spec.into_transforms())?;
+        let (transform_specs, targets, requirements) = spec.into_parts();
+        if targets.is_empty() {
+            return Err(CoreError::Invalid(
+                "a pipeline requires at least one target".into(),
+            ));
+        }
+        let transforms = TransformPlan::compile(transform_specs)?;
+        let mask = MaskPlan::compile(&transforms)?;
         let lowering = LoweringPlan::compile(&transforms, mode)?;
-        let explanation = crate::explanation::build(&transforms, mode, &lowering);
+        let explanation = crate::explanation::build(&transforms, mode, &lowering, &mask);
         Ok(Self {
             lowering,
+            mask,
+            targets,
+            requirements,
             transforms,
             mode,
             explanation,
@@ -58,13 +73,87 @@ impl CompiledPipeline {
                 "expected a non-empty HWC RGB buffer".into(),
             ));
         }
-        self.run(
+        let mut output = self.sample_and_run_image(
             data,
             height,
             width,
             derive_run_seed(pipeline_seed, run_key),
             workspace,
-        )
+            TargetRequirements::HWC,
+        )?;
+        output
+            .hwc
+            .take()
+            .ok_or_else(|| CoreError::Runtime("missing HWC image output".into()))
+    }
+
+    pub fn apply_targets<'a>(
+        &self,
+        inputs: Vec<TargetInput<'a>>,
+        pipeline_seed: u64,
+        run_key: u64,
+        workspace: &mut Workspace,
+    ) -> CoreResult<Vec<TargetOutput>> {
+        self.validate_targets(&inputs)?;
+        let height = inputs[0].height;
+        let width = inputs[0].width;
+        let sampled = TransformPlan::sample(
+            &self.plan.transforms,
+            height,
+            width,
+            derive_run_seed(pipeline_seed, run_key),
+        )?;
+        let reuse = self.plan.mode != ExecutionMode::StagedFresh;
+        let mut outputs = Vec::new();
+        outputs
+            .try_reserve_exact(inputs.len())
+            .map_err(|_| CoreError::Runtime("target output allocation failed".into()))?;
+        for (input, requirements) in inputs.into_iter().zip(&self.plan.requirements) {
+            let output = match (input.role, input.data) {
+                (TargetSpec::Image, TargetBuffer::Borrowed(data)) => {
+                    TargetOutput::Image(self.run_image_outputs(
+                        data,
+                        height,
+                        width,
+                        &sampled,
+                        workspace,
+                        *requirements,
+                    )?)
+                }
+                (TargetSpec::Image, TargetBuffer::Owned(data)) => {
+                    TargetOutput::Image(self.run_image_outputs(
+                        &data,
+                        height,
+                        width,
+                        &sampled,
+                        workspace,
+                        *requirements,
+                    )?)
+                }
+                (TargetSpec::Mask { fill }, TargetBuffer::Borrowed(data)) => {
+                    TargetOutput::Mask(self.plan.mask.apply(
+                        data,
+                        (height, width),
+                        &sampled,
+                        fill,
+                        workspace,
+                        reuse,
+                    )?)
+                }
+                (TargetSpec::Mask { fill }, TargetBuffer::Owned(data)) => {
+                    TargetOutput::Mask(self.plan.mask.apply_owned(
+                        data,
+                        (height, width),
+                        &sampled,
+                        fill,
+                        workspace,
+                        reuse,
+                    )?)
+                }
+            };
+            outputs.push(output);
+        }
+        Ok(outputs)
     }
 
     pub fn explain(&self) -> PipelineExplanation {
@@ -72,24 +161,172 @@ impl CompiledPipeline {
     }
 }
 
+fn materialize_image_outputs(
+    output: PipelineOutput,
+    requirements: TargetRequirements,
+) -> CoreResult<ImageOutput> {
+    match output {
+        PipelineOutput::U8Hwc {
+            data,
+            height,
+            width,
+        } => {
+            let chw = requirements
+                .chw
+                .then(|| hwc_u8_to_chw(&data, height, width))
+                .transpose()?
+                .map(|data| PipelineOutput::U8Chw {
+                    data,
+                    height,
+                    width,
+                });
+            Ok(ImageOutput {
+                hwc: requirements.hwc.then_some(PipelineOutput::U8Hwc {
+                    data,
+                    height,
+                    width,
+                }),
+                chw,
+            })
+        }
+        PipelineOutput::F32Hwc {
+            data,
+            height,
+            width,
+        } => {
+            let chw = requirements
+                .chw
+                .then(|| hwc_to_chw(&data, height, width))
+                .transpose()?
+                .map(|data| PipelineOutput::F32Chw {
+                    data,
+                    height,
+                    width,
+                });
+            Ok(ImageOutput {
+                hwc: requirements.hwc.then_some(PipelineOutput::F32Hwc {
+                    data,
+                    height,
+                    width,
+                }),
+                chw,
+            })
+        }
+        output @ (PipelineOutput::U8Chw { .. } | PipelineOutput::F32Chw { .. }) => {
+            if requirements.hwc {
+                return Err(CoreError::Runtime(
+                    "direct CHW output cannot satisfy an HWC requirement".into(),
+                ));
+            }
+            Ok(ImageOutput {
+                hwc: None,
+                chw: requirements.chw.then_some(output),
+            })
+        }
+    }
+}
+
 impl CompiledPipeline {
-    fn run(
+    fn validate_targets(&self, inputs: &[TargetInput<'_>]) -> CoreResult<()> {
+        if inputs.len() != self.plan.targets.len() {
+            return Err(CoreError::Invalid(
+                "target input count does not match the pipeline signature".into(),
+            ));
+        }
+        if self.plan.requirements.len() != self.plan.targets.len() {
+            return Err(CoreError::Runtime(
+                "target requirements do not match the pipeline signature".into(),
+            ));
+        }
+        let Some(first) = inputs.first() else {
+            return Err(CoreError::Invalid(
+                "a pipeline call requires at least one target".into(),
+            ));
+        };
+        if first.height == 0 || first.width == 0 {
+            return Err(CoreError::Invalid(
+                "target dimensions must be positive".into(),
+            ));
+        }
+        for (index, (expected, input)) in self.plan.targets.iter().zip(inputs).enumerate() {
+            if expected != &input.role {
+                return Err(CoreError::Invalid(format!(
+                    "target {index} role does not match the pipeline signature"
+                )));
+            }
+            if (input.height, input.width) != (first.height, first.width) {
+                return Err(CoreError::Invalid(format!(
+                    "target {index} dimensions do not match the initial coordinate frame"
+                )));
+            }
+            let expected_len = match expected {
+                TargetSpec::Image => rgb_len(input.height, input.width)?,
+                TargetSpec::Mask { .. } => mask_len(input.height, input.width)?,
+            };
+            let actual_len = match &input.data {
+                TargetBuffer::Borrowed(data) => data.len(),
+                TargetBuffer::Owned(data) => data.len(),
+            };
+            if actual_len != expected_len {
+                return Err(CoreError::Invalid(format!(
+                    "target {index} buffer does not match its role and shape"
+                )));
+            }
+            let requirements = self.plan.requirements[index];
+            if matches!(expected, TargetSpec::Image) && !requirements.hwc && !requirements.chw {
+                return Err(CoreError::Invalid(format!(
+                    "target {index} requires at least one image layout"
+                )));
+            }
+        }
+        Ok(())
+    }
+
+    fn sample_and_run_image(
         &self,
         data: &[u8],
         height: usize,
         width: usize,
         run_seed: u64,
         workspace: &mut Workspace,
-    ) -> CoreResult<PipelineOutput> {
+        requirements: TargetRequirements,
+    ) -> CoreResult<ImageOutput> {
         let sampled = TransformPlan::sample(&self.plan.transforms, height, width, run_seed)?;
+        self.run_image_outputs(data, height, width, &sampled, workspace, requirements)
+    }
+
+    fn run_image_outputs(
+        &self,
+        data: &[u8],
+        height: usize,
+        width: usize,
+        sampled: &[SampledTransform],
+        workspace: &mut Workspace,
+        requirements: TargetRequirements,
+    ) -> CoreResult<ImageOutput> {
+        let output = self.run_image(data, height, width, sampled, workspace, requirements)?;
+        materialize_image_outputs(output, requirements)
+    }
+
+    fn run_image(
+        &self,
+        data: &[u8],
+        height: usize,
+        width: usize,
+        sampled: &[SampledTransform],
+        workspace: &mut Workspace,
+        requirements: TargetRequirements,
+    ) -> CoreResult<PipelineOutput> {
         let reuse = self.plan.mode != ExecutionMode::StagedFresh;
         if self.plan.mode == ExecutionMode::Compiled {
-            if let Some(output) = self.compiled_terminal_entry(data, height, width, &sampled)? {
+            if let Some(output) =
+                self.compiled_terminal_entry(data, height, width, sampled, requirements)?
+            {
                 return Ok(output);
             }
         }
         let (mut image, start) = if self.plan.mode == ExecutionMode::Compiled {
-            self.compiled_entry(data, height, width, &sampled, workspace)?
+            self.compiled_entry(data, height, width, sampled, workspace)?
         } else {
             (
                 ImageU8 {
@@ -110,13 +347,12 @@ impl CompiledPipeline {
             match (transform, sampled) {
                 (_, SampledTransform::Skip) => continue,
                 (
-                    TransformPlan::Resize { .. },
-                    SampledTransform::Resize {
-                        height,
-                        width,
+                    TransformPlan::Resize {
                         interpolation,
                         antialias,
+                        ..
                     },
+                    SampledTransform::Resize { height, width },
                 ) => {
                     let destination =
                         workspace.take_staged_u8(rgb_len(*height, *width)?, false, reuse)?;
@@ -151,13 +387,15 @@ impl CompiledPipeline {
                     image = next;
                 }
                 (
-                    TransformPlan::RandomResizedCrop { .. },
+                    TransformPlan::RandomResizedCrop {
+                        interpolation,
+                        antialias,
+                        ..
+                    },
                     SampledTransform::RandomResizedCrop {
                         crop,
                         height,
                         width,
-                        interpolation,
-                        antialias,
                     },
                 ) => {
                     let crop_destination = workspace.take_staged_u8(
@@ -211,7 +449,12 @@ impl CompiledPipeline {
                     workspace.recycle_staged_u8(image.data, reuse);
                     image = next;
                 }
-                (TransformPlan::PadIfNeeded { .. }, SampledTransform::PadIfNeeded(sample)) => {
+                (
+                    TransformPlan::PadIfNeeded {
+                        border_mode, fill, ..
+                    },
+                    SampledTransform::PadIfNeeded(sample),
+                ) => {
                     if sample.height == image.height && sample.width == image.width {
                         continue;
                     }
@@ -220,8 +463,15 @@ impl CompiledPipeline {
                         false,
                         reuse,
                     )?;
-                    let next =
-                        pad_raw(&image.data, image.height, image.width, *sample, destination)?;
+                    let next = pad_raw(
+                        &image.data,
+                        image.height,
+                        image.width,
+                        *sample,
+                        *border_mode,
+                        *fill,
+                        destination,
+                    )?;
                     workspace.recycle_staged_u8(image.data, reuse);
                     image = next;
                 }
@@ -236,15 +486,38 @@ impl CompiledPipeline {
                         color_jitter_staged(&mut image, sample);
                     }
                 }
-                (TransformPlan::Affine { .. }, SampledTransform::Affine(sample)) => {
+                (
+                    TransformPlan::Affine {
+                        interpolation,
+                        border_mode,
+                        fill,
+                        ..
+                    },
+                    SampledTransform::Affine(sample),
+                ) => {
                     let destination = workspace.take_staged_u8(image.data.len(), false, reuse)?;
-                    let next =
-                        rotate_raw(&image.data, image.height, image.width, *sample, destination)?;
+                    let next = rotate_raw(
+                        &image.data,
+                        image.height,
+                        image.width,
+                        *sample,
+                        RgbRasterPolicy {
+                            interpolation: *interpolation,
+                            border_mode: *border_mode,
+                            fill: *fill,
+                        },
+                        destination,
+                    )?;
                     workspace.recycle_staged_u8(image.data, reuse);
                     image = next;
                 }
                 (
-                    TransformPlan::RandomRotation { .. },
+                    TransformPlan::RandomRotation {
+                        interpolation,
+                        border_mode,
+                        fill,
+                        ..
+                    },
                     SampledTransform::RandomRotation(sample),
                 ) => {
                     let destination = workspace.take_staged_u8(image.data.len(), false, reuse)?;
@@ -253,12 +526,19 @@ impl CompiledPipeline {
                         translate: [0.0, 0.0],
                         scale: 1.0,
                         shear: [0.0, 0.0],
-                        interpolation: sample.interpolation,
-                        border_mode: sample.border_mode,
-                        fill: sample.fill,
                     };
-                    let next =
-                        rotate_raw(&image.data, image.height, image.width, affine, destination)?;
+                    let next = rotate_raw(
+                        &image.data,
+                        image.height,
+                        image.width,
+                        affine,
+                        RgbRasterPolicy {
+                            interpolation: *interpolation,
+                            border_mode: *border_mode,
+                            fill: *fill,
+                        },
+                        destination,
+                    )?;
                     workspace.recycle_staged_u8(image.data, reuse);
                     image = next;
                 }
@@ -272,20 +552,38 @@ impl CompiledPipeline {
                     workspace.recycle_staged_u8(image.data, reuse);
                     image = next;
                 }
-                (TransformPlan::Perspective { .. }, SampledTransform::Perspective(sample)) => {
+                (
+                    TransformPlan::Perspective {
+                        interpolation,
+                        border_mode,
+                        fill,
+                        ..
+                    },
+                    SampledTransform::Perspective(sample),
+                ) => {
                     let destination = workspace.take_staged_u8(image.data.len(), false, reuse)?;
                     let next = perspective_raw(
                         &image.data,
                         image.height,
                         image.width,
                         *sample,
+                        RgbRasterPolicy {
+                            interpolation: *interpolation,
+                            border_mode: *border_mode,
+                            fill: *fill,
+                        },
                         destination,
                     )?;
                     workspace.recycle_staged_u8(image.data, reuse);
                     image = next;
                 }
                 (
-                    TransformPlan::GridDistortion { .. },
+                    TransformPlan::GridDistortion {
+                        interpolation,
+                        border_mode,
+                        fill,
+                        ..
+                    },
                     SampledTransform::GridDistortion(sample),
                 ) => {
                     let destination = workspace.take_staged_u8(image.data.len(), false, reuse)?;
@@ -294,6 +592,11 @@ impl CompiledPipeline {
                         image.height,
                         image.width,
                         sample,
+                        RgbRasterPolicy {
+                            interpolation: *interpolation,
+                            border_mode: *border_mode,
+                            fill: *fill,
+                        },
                         destination,
                         workspace.axis_remap(),
                     )?;
@@ -344,12 +647,7 @@ impl CompiledPipeline {
                 ) => {
                     let height = image.height;
                     let width = image.width;
-                    if self
-                        .plan
-                        .lowering
-                        .fusion_at(index)
-                        .is_some_and(|selection| selection.is_active())
-                    {
+                    if requirements.chw && !requirements.hwc {
                         return Ok(PipelineOutput::F32Chw {
                             data: normalize_hwc_to_chw(
                                 &image.data,
@@ -365,32 +663,10 @@ impl CompiledPipeline {
                     }
                     let output = normalize_hwc(&image.data, *mean, *std, *max_pixel_value)?;
                     workspace.recycle_staged_u8(image.data, reuse);
-                    if self
-                        .plan
-                        .lowering
-                        .nodes()
-                        .get(index + 1)
-                        .is_some_and(|node| {
-                            node.capabilities.output == OutputContract::TerminalLayout
-                        })
-                    {
-                        return Ok(PipelineOutput::F32Chw {
-                            data: hwc_to_chw(&output, height, width)?,
-                            height,
-                            width,
-                        });
-                    }
                     return Ok(PipelineOutput::F32Hwc {
                         data: output,
                         height,
                         width,
-                    });
-                }
-                (TransformPlan::ToTorch, SampledTransform::ToTorch) => {
-                    return Ok(PipelineOutput::U8Chw {
-                        data: hwc_u8_to_chw(&image.data, image.height, image.width)?,
-                        height: image.height,
-                        width: image.width,
                     });
                 }
                 _ => {
@@ -401,11 +677,19 @@ impl CompiledPipeline {
             }
         }
 
-        Ok(PipelineOutput::U8Hwc {
-            data: image.data,
-            height: image.height,
-            width: image.width,
-        })
+        if requirements.chw && !requirements.hwc {
+            Ok(PipelineOutput::U8Chw {
+                data: hwc_u8_to_chw(&image.data, image.height, image.width)?,
+                height: image.height,
+                width: image.width,
+            })
+        } else {
+            Ok(PipelineOutput::U8Hwc {
+                data: image.data,
+                height: image.height,
+                width: image.width,
+            })
+        }
     }
 
     fn compiled_terminal_entry(
@@ -414,54 +698,19 @@ impl CompiledPipeline {
         height: usize,
         width: usize,
         sampled: &[SampledTransform],
+        requirements: TargetRequirements,
     ) -> CoreResult<Option<PipelineOutput>> {
-        if let Some(fusion) = self
-            .plan
-            .lowering
-            .fusion()
-            .filter(|selection| selection.first == 0)
+        if requirements.chw
+            && !requirements.hwc
+            && sampled
+                .iter()
+                .all(|sampled| matches!(sampled, SampledTransform::Skip))
         {
-            match (fusion.rule, self.plan.transforms.as_slice(), sampled) {
-                (
-                    FusionRule::NormalizeToTorch,
-                    [TransformPlan::Normalize {
-                        mean,
-                        std,
-                        max_pixel_value,
-                        ..
-                    }, TransformPlan::ToTorch],
-                    [SampledTransform::Normalize, SampledTransform::ToTorch],
-                ) => {
-                    return Ok(Some(PipelineOutput::F32Chw {
-                        data: normalize_hwc_to_chw(
-                            data,
-                            height,
-                            width,
-                            *mean,
-                            *std,
-                            *max_pixel_value,
-                        )?,
-                        height,
-                        width,
-                    }));
-                }
-                (
-                    FusionRule::NormalizeToTorch,
-                    [TransformPlan::Normalize { .. }, TransformPlan::ToTorch],
-                    [SampledTransform::Skip, SampledTransform::ToTorch],
-                ) => {
-                    return Ok(Some(PipelineOutput::U8Chw {
-                        data: hwc_u8_to_chw(data, height, width)?,
-                        height,
-                        width,
-                    }));
-                }
-                _ => {
-                    return Err(CoreError::Runtime(
-                        "selected fusion does not match sampled plan".into(),
-                    ));
-                }
-            }
+            return Ok(Some(PipelineOutput::U8Chw {
+                data: hwc_u8_to_chw(data, height, width)?,
+                height,
+                width,
+            }));
         }
         if !matches!(
             self.plan.lowering.nodes(),
@@ -471,13 +720,6 @@ impl CompiledPipeline {
             return Ok(None);
         }
         match (self.plan.transforms.as_slice(), sampled) {
-            ([TransformPlan::ToTorch], [SampledTransform::ToTorch]) => {
-                Ok(Some(PipelineOutput::U8Chw {
-                    data: hwc_u8_to_chw(data, height, width)?,
-                    height,
-                    width,
-                }))
-            }
             (
                 [TransformPlan::Normalize {
                     mean,
@@ -486,10 +728,18 @@ impl CompiledPipeline {
                     ..
                 }],
                 [SampledTransform::Normalize],
-            ) => Ok(Some(PipelineOutput::F32Hwc {
-                data: normalize_hwc(data, *mean, *std, *max_pixel_value)?,
-                height,
-                width,
+            ) => Ok(Some(if requirements.chw && !requirements.hwc {
+                PipelineOutput::F32Chw {
+                    data: normalize_hwc_to_chw(data, height, width, *mean, *std, *max_pixel_value)?,
+                    height,
+                    width,
+                }
+            } else {
+                PipelineOutput::F32Hwc {
+                    data: normalize_hwc(data, *mean, *std, *max_pixel_value)?,
+                    height,
+                    width,
+                }
             })),
             _ => Ok(None),
         }
@@ -524,13 +774,15 @@ impl CompiledPipeline {
         }
         match (self.plan.transforms.first(), sampled.first()) {
             (
-                Some(TransformPlan::RandomResizedCrop { .. }),
+                Some(TransformPlan::RandomResizedCrop {
+                    interpolation,
+                    antialias,
+                    ..
+                }),
                 Some(SampledTransform::RandomResizedCrop {
                     crop,
                     height: out_h,
                     width: out_w,
-                    interpolation,
-                    antialias,
                 }),
             ) => {
                 let crop_destination =
@@ -552,12 +804,14 @@ impl CompiledPipeline {
                 Ok((resized, 1))
             }
             (
-                Some(TransformPlan::Resize { .. }),
+                Some(TransformPlan::Resize {
+                    interpolation,
+                    antialias,
+                    ..
+                }),
                 Some(SampledTransform::Resize {
                     height: out_h,
                     width: out_w,
-                    interpolation,
-                    antialias,
                 }),
             ) => {
                 let destination = workspace.take_u8(rgb_len(*out_h, *out_w)?, false)?;
@@ -587,12 +841,25 @@ impl CompiledPipeline {
                 ))
             }
             (
-                Some(TransformPlan::PadIfNeeded { .. }),
+                Some(TransformPlan::PadIfNeeded {
+                    border_mode, fill, ..
+                }),
                 Some(SampledTransform::PadIfNeeded(sample)),
             ) => {
                 let destination =
                     workspace.take_u8(rgb_len(sample.height, sample.width)?, false)?;
-                Ok((pad_raw(data, height, width, *sample, destination)?, 1))
+                Ok((
+                    pad_raw(
+                        data,
+                        height,
+                        width,
+                        *sample,
+                        *border_mode,
+                        *fill,
+                        destination,
+                    )?,
+                    1,
+                ))
             }
             (Some(TransformPlan::VerticalFlip { .. }), Some(SampledTransform::VerticalFlip)) => {
                 let mut destination = workspace.take_u8(data.len(), false)?;
@@ -650,17 +917,38 @@ impl CompiledPipeline {
                 Ok((sharpen_raw(data, height, width, *sample, destination)?, 1))
             }
             (
-                Some(TransformPlan::Perspective { .. }),
+                Some(TransformPlan::Perspective {
+                    interpolation,
+                    border_mode,
+                    fill,
+                    ..
+                }),
                 Some(SampledTransform::Perspective(sample)),
             ) => {
                 let destination = workspace.take_u8(data.len(), false)?;
                 Ok((
-                    perspective_raw(data, height, width, *sample, destination)?,
+                    perspective_raw(
+                        data,
+                        height,
+                        width,
+                        *sample,
+                        RgbRasterPolicy {
+                            interpolation: *interpolation,
+                            border_mode: *border_mode,
+                            fill: *fill,
+                        },
+                        destination,
+                    )?,
                     1,
                 ))
             }
             (
-                Some(TransformPlan::GridDistortion { .. }),
+                Some(TransformPlan::GridDistortion {
+                    interpolation,
+                    border_mode,
+                    fill,
+                    ..
+                }),
                 Some(SampledTransform::GridDistortion(sample)),
             ) => {
                 let destination = workspace.take_u8(data.len(), false)?;
@@ -670,6 +958,11 @@ impl CompiledPipeline {
                         height,
                         width,
                         sample,
+                        RgbRasterPolicy {
+                            interpolation: *interpolation,
+                            border_mode: *border_mode,
+                            fill: *fill,
+                        },
                         destination,
                         workspace.axis_remap(),
                     )?,
@@ -680,5 +973,125 @@ impl CompiledPipeline {
                 "selected borrowed-to-owned lowering does not match sampled plan".into(),
             )),
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::{Compiler, PipelineSpec, TargetBuffer, TargetInput, TargetOutput, TargetSpec};
+
+    #[test]
+    fn target_entry_validates_all_buffers_before_allocating_output() {
+        let pipeline = Compiler::new(ExecutionMode::Compiled)
+            .compile(PipelineSpec::with_targets(
+                Vec::new(),
+                vec![TargetSpec::Image, TargetSpec::Mask { fill: 0 }],
+            ))
+            .unwrap();
+        let image = vec![7; 2 * 3 * 3];
+        let mut workspace = Workspace::default();
+        assert!(matches!(
+            pipeline.apply_targets(
+                vec![
+                    TargetInput {
+                        role: TargetSpec::Image,
+                        data: TargetBuffer::Borrowed(&image),
+                        height: 2,
+                        width: 3,
+                    },
+                    TargetInput {
+                        role: TargetSpec::Mask { fill: 0 },
+                        data: TargetBuffer::Borrowed(&[1; 5]),
+                        height: 2,
+                        width: 3,
+                    },
+                ],
+                137,
+                3,
+                &mut workspace,
+            ),
+            Err(CoreError::Invalid(message)) if message.contains("target 1 buffer")
+        ));
+        assert_eq!(workspace.retained_bytes(), 0);
+
+        let mut outputs = pipeline
+            .apply_targets(
+                vec![
+                    TargetInput {
+                        role: TargetSpec::Image,
+                        data: TargetBuffer::Borrowed(&image),
+                        height: 2,
+                        width: 3,
+                    },
+                    TargetInput {
+                        role: TargetSpec::Mask { fill: 0 },
+                        data: TargetBuffer::Borrowed(&[0, 1, 2, 3, 254, 255]),
+                        height: 2,
+                        width: 3,
+                    },
+                ],
+                137,
+                3,
+                &mut workspace,
+            )
+            .unwrap();
+        assert!(matches!(
+            outputs.remove(0),
+            TargetOutput::Image(ImageOutput {
+                hwc: Some(PipelineOutput::U8Hwc {
+                    data,
+                    height: 2,
+                    width: 3,
+                }),
+                chw: None,
+            }) if data == image
+        ));
+        assert!(matches!(
+            outputs.remove(0),
+            TargetOutput::Mask(output)
+                if output.data == [0, 1, 2, 3, 254, 255]
+                    && (output.height, output.width) == (2, 3)
+        ));
+    }
+
+    #[test]
+    fn owned_mask_target_adopts_the_input_buffer() {
+        let pipeline = Compiler::new(ExecutionMode::Compiled)
+            .compile(PipelineSpec::with_targets(
+                Vec::new(),
+                vec![TargetSpec::Image, TargetSpec::Mask { fill: 0 }],
+            ))
+            .unwrap();
+        let image = vec![7; 2 * 3 * 3];
+        let mask = vec![0, 1, 2, 3, 254, 255];
+        let input_pointer = mask.as_ptr();
+        let mut workspace = Workspace::default();
+        let mut outputs = pipeline
+            .apply_targets(
+                vec![
+                    TargetInput {
+                        role: TargetSpec::Image,
+                        data: TargetBuffer::Borrowed(&image),
+                        height: 2,
+                        width: 3,
+                    },
+                    TargetInput {
+                        role: TargetSpec::Mask { fill: 0 },
+                        data: TargetBuffer::Owned(mask),
+                        height: 2,
+                        width: 3,
+                    },
+                ],
+                137,
+                3,
+                &mut workspace,
+            )
+            .unwrap();
+        let TargetOutput::Mask(output) = outputs.remove(1) else {
+            panic!("expected a mask output")
+        };
+        assert_eq!(output.data.as_ptr(), input_pointer);
+        assert_eq!(output.data, [0, 1, 2, 3, 254, 255]);
     }
 }

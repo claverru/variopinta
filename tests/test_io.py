@@ -41,7 +41,7 @@ class ImageIoTests(unittest.TestCase):
                 np.testing.assert_array_equal(output, source)
                 self.assertEqual(output.dtype, np.uint16)
 
-    def test_png_palette_and_transparency_expand(self) -> None:
+    def test_png_palette_preserves_indices_when_unchanged_and_expands_on_conversion(self) -> None:
         source = Image.new("P", (3, 2))
         source.putdata([0, 1, 2, 2, 1, 0])
         source.putpalette([255, 0, 0, 0, 255, 0, 0, 0, 255] + [0] * (256 * 3 - 9))
@@ -49,6 +49,8 @@ class ImageIoTests(unittest.TestCase):
         encoded = BytesIO()
         source.save(encoded, format="PNG", bits=2)
         output = R.decode_image(encoded.getvalue(), mode="unchanged")
+        np.testing.assert_array_equal(output, np.asarray(source))
+        output = R.decode_image(encoded.getvalue(), mode="rgba")
         expected = np.asarray(source.convert("RGBA"))
         np.testing.assert_array_equal(output, expected)
 

@@ -11,7 +11,7 @@ from tests._helpers import image
 class GeometryTests(unittest.TestCase):
     def test_random_resized_crop_contract_and_compilation(self) -> None:
         source = image(37, 53)[:, ::2]
-        reference = R.Compose(
+        reference = R.Pipeline(
             [
                 R.RandomResizedCrop(
                     11,
@@ -28,19 +28,21 @@ class GeometryTests(unittest.TestCase):
         for key in range(20):
             np.testing.assert_array_equal(reference(source, key=key), compiled(source, key=key))
 
-        output = R.Compose([R.RandomResizedCrop(11, 17)], seed=137).compile()(source, key=3)
+        output = R.Pipeline([R.RandomResizedCrop(11, 17)], seed=137).compile()(source, key=3)
         self.assertEqual(output.shape, (11, 17, 3))
         self.assertTrue(output.flags.c_contiguous)
         self.assertFalse(np.shares_memory(source, output))
 
-        skipped = R.Compose([R.RandomResizedCrop(11, 17, p=0.0)], seed=137).compile()(source, key=3)
+        skipped = R.Pipeline([R.RandomResizedCrop(11, 17, p=0.0)], seed=137).compile()(
+            source, key=3
+        )
         np.testing.assert_array_equal(skipped, source)
         self.assertTrue(skipped.flags.c_contiguous)
         self.assertFalse(np.shares_memory(source, skipped))
 
         explanation = compiled.explain()
         native_entry = next(
-            copy for copy in explanation["copies"] if copy["stage"] == "native-entry"
+            copy for copy in explanation["targets"][0]["copies"] if copy["stage"] == "native-entry"
         )
         policies = {
             policy["name"]: policy["value"] for policy in explanation["steps"][0]["policies"]
@@ -78,19 +80,19 @@ class GeometryTests(unittest.TestCase):
                         (R.Interpolation.BILINEAR, R.BorderMode.REFLECT101),
                     ):
                         transform = factory((0.0, 0.0), interpolation, border)
-                        reference = R.Compose([transform], seed=137)
+                        reference = R.Pipeline([transform], seed=137)
                         compiled = reference.compile()
                         np.testing.assert_array_equal(reference(source, key=3), source)
                         np.testing.assert_array_equal(compiled(source, key=3), source)
 
                     transform = factory((0.25, 0.25))
-                    reference = R.Compose([transform], seed=137)
+                    reference = R.Pipeline([transform], seed=137)
                     compiled = reference.compile()
                     np.testing.assert_array_equal(compiled(source, key=3), reference(source, key=3))
 
     def test_geometry_policies_cross_the_native_boundary(self) -> None:
         source = image(7, 11)
-        resize = R.Compose([R.Resize(13, 17, interpolation=R.Interpolation.NEAREST)], seed=137)
+        resize = R.Pipeline([R.Resize(13, 17, interpolation=R.Interpolation.NEAREST)], seed=137)
         np.testing.assert_array_equal(resize(source, key=3), resize.compile()(source, key=3))
         nearest_policies = {
             policy["name"]: policy["value"]
@@ -99,8 +101,8 @@ class GeometryTests(unittest.TestCase):
         self.assertEqual(nearest_policies["antialias"], "ignored")
 
         downscale_source = image(19, 17)
-        fixed = R.Compose([R.Resize(7, 11)], seed=137)
-        adaptive = R.Compose([R.Resize(7, 11, antialias=True)], seed=137)
+        fixed = R.Pipeline([R.Resize(7, 11)], seed=137)
+        adaptive = R.Pipeline([R.Resize(7, 11, antialias=True)], seed=137)
         for transform in (fixed, adaptive):
             np.testing.assert_array_equal(
                 transform(downscale_source, key=3),
@@ -120,7 +122,7 @@ class GeometryTests(unittest.TestCase):
         self.assertEqual(adaptive_policies["antialias"], "true")
 
         for border_mode in (R.BorderMode.CONSTANT, R.BorderMode.REFLECT101):
-            transform = R.Compose(
+            transform = R.Pipeline(
                 [
                     R.Affine(
                         0.0,
@@ -146,7 +148,7 @@ class GeometryTests(unittest.TestCase):
             R.PadPosition.BOTTOM_RIGHT: (3, 5),
         }
         for position, (top, left) in origins.items():
-            transform = R.Compose(
+            transform = R.Pipeline(
                 [
                     R.PadIfNeeded(
                         min_height=5,
@@ -163,12 +165,12 @@ class GeometryTests(unittest.TestCase):
             np.testing.assert_array_equal(transform(source, key=3), expected)
             np.testing.assert_array_equal(transform.compile()(source, key=3), expected)
 
-        divisible = R.Compose([R.PadIfNeeded(pad_height_divisor=4, pad_width_divisor=5)], seed=137)
+        divisible = R.Pipeline([R.PadIfNeeded(pad_height_divisor=4, pad_width_divisor=5)], seed=137)
         output = divisible.compile()(image(5, 7), key=3)
         self.assertEqual(output.shape, (8, 10, 3))
 
         unchanged_source = image(7, 11)[:, ::2]
-        unchanged = R.Compose([R.PadIfNeeded(min_height=3, min_width=5)], seed=137)
+        unchanged = R.Pipeline([R.PadIfNeeded(min_height=3, min_width=5)], seed=137)
         output = unchanged.compile()(unchanged_source, key=3)
         np.testing.assert_array_equal(output, unchanged_source)
         self.assertTrue(output.flags.c_contiguous)
@@ -176,7 +178,7 @@ class GeometryTests(unittest.TestCase):
 
     def test_pad_if_needed_reflect_random_and_compilation(self) -> None:
         source = np.repeat(np.arange(6, dtype=np.uint8).reshape(2, 3, 1), 3, axis=2)
-        reflect = R.Compose(
+        reflect = R.Pipeline(
             [
                 R.PadIfNeeded(
                     min_height=4,
@@ -195,7 +197,7 @@ class GeometryTests(unittest.TestCase):
         np.testing.assert_array_equal(reflect(source, key=3), expected)
         np.testing.assert_array_equal(reflect.compile()(source, key=3), expected)
 
-        random_pad = R.Compose(
+        random_pad = R.Pipeline(
             [
                 R.PadIfNeeded(
                     min_height=11,
@@ -219,7 +221,7 @@ class GeometryTests(unittest.TestCase):
             policy["name"]: policy["value"] for policy in explanation["steps"][0]["policies"]
         }
         native_entry = next(
-            copy for copy in explanation["copies"] if copy["stage"] == "native-entry"
+            copy for copy in explanation["targets"][0]["copies"] if copy["stage"] == "native-entry"
         )
         self.assertEqual(policies["height"], "minimum-11")
         self.assertEqual(policies["position"], "random")
@@ -228,7 +230,7 @@ class GeometryTests(unittest.TestCase):
 
     def test_coarse_dropout_pixel_and_fraction_ranges(self) -> None:
         source = image(7, 11)
-        full = R.Compose(
+        full = R.Pipeline(
             [
                 R.CoarseDropout(
                     num_holes_range=(1, 1),
@@ -245,7 +247,7 @@ class GeometryTests(unittest.TestCase):
         np.testing.assert_array_equal(full(source, key=3), expected)
         np.testing.assert_array_equal(full.compile()(source, key=3), expected)
 
-        ranged = R.Compose(
+        ranged = R.Pipeline(
             [
                 R.CoarseDropout(
                     num_holes_range=(2, 5),
@@ -266,7 +268,7 @@ class GeometryTests(unittest.TestCase):
             self.assertTrue(actual.flags.c_contiguous)
             self.assertFalse(np.shares_memory(actual, non_contiguous))
 
-        skipped = R.Compose([R.CoarseDropout(p=0.0)], seed=137).compile()(source, key=3)
+        skipped = R.Pipeline([R.CoarseDropout(p=0.0)], seed=137).compile()(source, key=3)
         np.testing.assert_array_equal(skipped, source)
         self.assertFalse(np.shares_memory(skipped, source))
 
@@ -370,7 +372,7 @@ class GeometryTests(unittest.TestCase):
             scale=(0.8, 1.3),
             shear=(-10.0, 20.0, -5.0, 7.0),
         )
-        explanation = R.Compose([transform], seed=137).compile().explain()
+        explanation = R.Pipeline([transform], seed=137).compile().explain()
         policies = {
             policy["name"]: policy["value"] for policy in explanation["steps"][0]["policies"]
         }
@@ -382,7 +384,7 @@ class GeometryTests(unittest.TestCase):
     def test_affine_full_surface_matches_reference_at_arbitrary_sizes(self) -> None:
         for interpolation in (R.Interpolation.NEAREST, R.Interpolation.BILINEAR):
             for border_mode in (R.BorderMode.CONSTANT, R.BorderMode.REFLECT101):
-                transform = R.Compose(
+                transform = R.Pipeline(
                     [
                         R.Affine(
                             degrees=(-17.0, 23.0),
@@ -413,7 +415,7 @@ class GeometryTests(unittest.TestCase):
         source = image(17, 23)
         for interpolation in (R.Interpolation.NEAREST, R.Interpolation.BILINEAR):
             for border_mode in (R.BorderMode.CONSTANT, R.BorderMode.REFLECT101):
-                rotation = R.Compose(
+                rotation = R.Pipeline(
                     [
                         R.RandomRotation(
                             (17.0, 17.0),
@@ -424,7 +426,7 @@ class GeometryTests(unittest.TestCase):
                     ],
                     seed=137,
                 )
-                affine = R.Compose(
+                affine = R.Pipeline(
                     [
                         R.Affine(
                             (17.0, 17.0),
@@ -444,13 +446,13 @@ class GeometryTests(unittest.TestCase):
 
     def test_perspective_identity_and_bounded_sampling(self) -> None:
         for interpolation in (R.Interpolation.NEAREST, R.Interpolation.BILINEAR):
-            identity = R.Compose([R.Perspective(scale=0.0, interpolation=interpolation)], seed=137)
+            identity = R.Pipeline([R.Perspective(scale=0.0, interpolation=interpolation)], seed=137)
             for height, width in ((1, 1), (1, 7), (7, 1), (17, 23)):
                 source = image(height, width)
                 np.testing.assert_array_equal(identity(source, key=3), source)
                 np.testing.assert_array_equal(identity.compile()(source, key=3), source)
 
-        perspective = R.Compose([R.Perspective(scale=(0.49, 0.49))], seed=137)
+        perspective = R.Pipeline([R.Perspective(scale=(0.49, 0.49))], seed=137)
         source = image(17, 23)
         np.testing.assert_array_equal(
             perspective.compile()(source, key=29), perspective(source, key=29)
@@ -459,13 +461,13 @@ class GeometryTests(unittest.TestCase):
             R.Perspective(scale=0.5)
 
     def test_grid_distortion_identity_and_small_axes(self) -> None:
-        identity = R.Compose([R.GridDistortion(num_steps=9, distort_limit=0.0)], seed=137)
+        identity = R.Pipeline([R.GridDistortion(num_steps=9, distort_limit=0.0)], seed=137)
         for height, width in ((1, 1), (1, 7), (7, 1), (7, 11)):
             source = image(height, width)
             np.testing.assert_array_equal(identity(source, key=3), source)
             np.testing.assert_array_equal(identity.compile()(source, key=3), source)
 
-        distorted = R.Compose([R.GridDistortion(num_steps=4, distort_limit=(-0.8, 0.8))], seed=137)
+        distorted = R.Pipeline([R.GridDistortion(num_steps=4, distort_limit=(-0.8, 0.8))], seed=137)
         source = image(13, 19)
         np.testing.assert_array_equal(
             distorted.compile()(source, key=29), distorted(source, key=29)

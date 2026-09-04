@@ -18,6 +18,13 @@ pub(crate) struct ImageU8 {
     pub(crate) width: usize,
 }
 
+#[derive(Clone, Copy)]
+pub(crate) struct RgbRasterPolicy {
+    pub(crate) interpolation: Interpolation,
+    pub(crate) border_mode: BorderMode,
+    pub(crate) fill: [u8; 3],
+}
+
 pub(crate) fn rgb_len(height: usize, width: usize) -> CoreResult<usize> {
     height
         .checked_mul(width)
@@ -54,6 +61,8 @@ pub(crate) fn pad_raw(
     input_height: usize,
     input_width: usize,
     sample: crate::plan::PadSample,
+    border_mode: BorderMode,
+    fill: [u8; 3],
     mut output: Vec<u8>,
 ) -> CoreResult<ImageU8> {
     let output_len = rgb_len(sample.height, sample.width)?;
@@ -66,7 +75,7 @@ pub(crate) fn pad_raw(
         ));
     }
     output.resize(output_len, 0);
-    match sample.border_mode {
+    match border_mode {
         BorderMode::Constant => pad::constant(
             input,
             input_height,
@@ -75,7 +84,7 @@ pub(crate) fn pad_raw(
             sample.left,
             sample.height,
             sample.width,
-            sample.fill,
+            fill,
             &mut output,
         ),
         BorderMode::Reflect101 => pad::reflect101(
@@ -499,6 +508,7 @@ pub(crate) fn perspective_raw(
     height: usize,
     width: usize,
     sample: PerspectiveSample,
+    policy: RgbRasterPolicy,
     output: Vec<u8>,
 ) -> CoreResult<ImageU8> {
     let expected = rgb_len(height, width)?;
@@ -513,9 +523,9 @@ pub(crate) fn perspective_raw(
         height,
         width,
         sample.inverse,
-        sample.interpolation,
-        sample.border_mode,
-        sample.fill,
+        policy.interpolation,
+        policy.border_mode,
+        policy.fill,
         &mut output,
     );
     Ok(ImageU8 {
@@ -530,6 +540,7 @@ pub(crate) fn grid_distortion_raw(
     height: usize,
     width: usize,
     sample: &GridDistortionSample,
+    policy: RgbRasterPolicy,
     output: Vec<u8>,
     scratch: &mut remap::AxisRemapScratch,
 ) -> CoreResult<ImageU8> {
@@ -551,9 +562,9 @@ pub(crate) fn grid_distortion_raw(
         width,
         &sample.x_map,
         &sample.y_map,
-        sample.interpolation,
-        sample.border_mode,
-        sample.fill,
+        policy.interpolation,
+        policy.border_mode,
+        policy.fill,
         &mut output,
         scratch,
     )?;
@@ -795,6 +806,7 @@ pub(crate) fn rotate_raw(
     height: usize,
     width: usize,
     sample: AffineSample,
+    policy: RgbRasterPolicy,
     destination: Vec<u8>,
 ) -> CoreResult<ImageU8> {
     if height > MAX_AFFINE_DIMENSION || width > MAX_AFFINE_DIMENSION {
@@ -808,18 +820,26 @@ pub(crate) fn rotate_raw(
             "Affine parameters produce non-finite coordinates".into(),
         ));
     }
-    if sample.interpolation == Interpolation::Nearest {
+    if policy.interpolation == Interpolation::Nearest {
         let mut destination = destination;
-        rotate_nearest(data, height, width, sample, matrix, &mut destination);
+        rotate_nearest(
+            data,
+            height,
+            width,
+            matrix,
+            policy.border_mode,
+            policy.fill,
+            &mut destination,
+        );
         return Ok(ImageU8 {
             data: destination,
             height,
             width,
         });
     }
-    if sample.border_mode == BorderMode::Reflect101 {
+    if policy.border_mode == BorderMode::Reflect101 {
         let mut destination = destination;
-        rotate_bilinear_border(data, height, width, sample, matrix, &mut destination, false);
+        rotate_bilinear_border(data, height, width, matrix, policy, &mut destination, false);
         return Ok(ImageU8 {
             data: destination,
             height,
@@ -831,7 +851,7 @@ pub(crate) fn rotate_raw(
         height,
         width,
     };
-    rotate_bilinear_border(data, height, width, sample, matrix, &mut image.data, true);
+    rotate_bilinear_border(data, height, width, matrix, policy, &mut image.data, true);
     Ok(image)
 }
 
@@ -875,11 +895,12 @@ pub(crate) fn rotate_nearest(
     data: &[u8],
     height: usize,
     width: usize,
-    sample: AffineSample,
     matrix: [f32; 6],
+    border_mode: BorderMode,
+    fill: [u8; 3],
     output: &mut [u8],
 ) {
-    match sample.border_mode {
+    match border_mode {
         BorderMode::Constant => {
             for y in 0..height {
                 let (sx0, sy0, dsx, dsy) = source_coordinates(y, matrix);
@@ -888,7 +909,7 @@ pub(crate) fn rotate_nearest(
                     let sy = (sy0 + dsy * x as f64).round() as isize;
                     let destination = (y * width + x) * 3;
                     if sx < 0 || sy < 0 || sx >= width as isize || sy >= height as isize {
-                        output[destination..destination + 3].copy_from_slice(&sample.fill);
+                        output[destination..destination + 3].copy_from_slice(&fill);
                     } else {
                         let source = (sy as usize * width + sx as usize) * 3;
                         output[destination..destination + 3]
@@ -916,8 +937,8 @@ pub(crate) fn rotate_bilinear_border(
     data: &[u8],
     height: usize,
     width: usize,
-    sample: AffineSample,
     matrix: [f32; 6],
+    policy: RgbRasterPolicy,
     output: &mut [u8],
     border_only: bool,
 ) {
@@ -949,7 +970,7 @@ pub(crate) fn rotate_bilinear_border(
                 );
                 return;
             }
-            if sample.border_mode == BorderMode::Reflect101 {
+            if policy.border_mode == BorderMode::Reflect101 {
                 let x0 = reflect101_index(x0, width);
                 let x1 = reflect101_index((sx.floor() as isize).saturating_add(1), width);
                 let y0 = reflect101_index(y0, height);
@@ -978,8 +999,8 @@ pub(crate) fn rotate_bilinear_border(
                     x0,
                     y0,
                     channel,
-                    sample.border_mode,
-                    sample.fill,
+                    policy.border_mode,
+                    policy.fill,
                 )) * (256 - wx)
                     + u32::from(border_sample(
                         data,
@@ -988,8 +1009,8 @@ pub(crate) fn rotate_bilinear_border(
                         x0 + 1,
                         y0,
                         channel,
-                        sample.border_mode,
-                        sample.fill,
+                        policy.border_mode,
+                        policy.fill,
                     )) * wx;
                 let bottom = u32::from(border_sample(
                     data,
@@ -998,8 +1019,8 @@ pub(crate) fn rotate_bilinear_border(
                     x0,
                     y0 + 1,
                     channel,
-                    sample.border_mode,
-                    sample.fill,
+                    policy.border_mode,
+                    policy.fill,
                 )) * (256 - wx)
                     + u32::from(border_sample(
                         data,
@@ -1008,8 +1029,8 @@ pub(crate) fn rotate_bilinear_border(
                         x0 + 1,
                         y0 + 1,
                         channel,
-                        sample.border_mode,
-                        sample.fill,
+                        policy.border_mode,
+                        policy.fill,
                     )) * wx;
                 output[destination + channel] =
                     ((top * (256 - wy) + bottom * wy + 32768) >> 16) as u8;
@@ -1240,16 +1261,17 @@ mod tests {
             .collect()
     }
 
-    fn affine_sample(
-        degrees: f32,
-        interpolation: Interpolation,
-        border_mode: BorderMode,
-    ) -> AffineSample {
+    fn affine_sample(degrees: f32) -> AffineSample {
         AffineSample {
             degrees,
             translate: [0.0, 0.0],
             scale: 1.0,
             shear: [0.0, 0.0],
+        }
+    }
+
+    fn rgb_policy(interpolation: Interpolation, border_mode: BorderMode) -> RgbRasterPolicy {
+        RgbRasterPolicy {
             interpolation,
             border_mode,
             fill: [3, 5, 7],
@@ -1261,6 +1283,8 @@ mod tests {
         input_height: usize,
         input_width: usize,
         sample: crate::plan::PadSample,
+        border_mode: BorderMode,
+        fill: [u8; 3],
     ) -> Vec<u8> {
         let mut output = vec![0xa5; sample.height * sample.width * 3];
         for y in 0..sample.height {
@@ -1268,13 +1292,13 @@ mod tests {
                 let destination = (y * sample.width + x) * 3;
                 let source_x = x as isize - sample.left as isize;
                 let source_y = y as isize - sample.top as isize;
-                if sample.border_mode == BorderMode::Constant
+                if border_mode == BorderMode::Constant
                     && (source_x < 0
                         || source_y < 0
                         || source_x >= input_width as isize
                         || source_y >= input_height as isize)
                 {
-                    output[destination..destination + 3].copy_from_slice(&sample.fill);
+                    output[destination..destination + 3].copy_from_slice(&fill);
                 } else {
                     let source_x = reflect101_index(source_x, input_width);
                     let source_y = reflect101_index(source_y, input_height);
@@ -1733,11 +1757,27 @@ mod tests {
             left: 2,
             height: 5,
             width: 8,
-            border_mode: BorderMode::Constant,
-            fill: [3, 5, 7],
         };
-        let clean = pad_raw(&source, 2, 3, sample, vec![0; 5 * 8 * 3]).unwrap();
-        let dirty = pad_raw(&source, 2, 3, sample, vec![0xa5; 5 * 8 * 3]).unwrap();
+        let clean = pad_raw(
+            &source,
+            2,
+            3,
+            sample,
+            BorderMode::Constant,
+            [3, 5, 7],
+            vec![0; 5 * 8 * 3],
+        )
+        .unwrap();
+        let dirty = pad_raw(
+            &source,
+            2,
+            3,
+            sample,
+            BorderMode::Constant,
+            [3, 5, 7],
+            vec![0xa5; 5 * 8 * 3],
+        )
+        .unwrap();
         assert_eq!(clean.data, dirty.data);
         for y in 0..5 {
             for x in 0..8 {
@@ -1763,10 +1803,17 @@ mod tests {
             left: 1,
             height: 4,
             width: 5,
-            border_mode: BorderMode::Reflect101,
-            fill: [0; 3],
         };
-        let output = pad_raw(&source, 2, 3, sample, Vec::new()).unwrap();
+        let output = pad_raw(
+            &source,
+            2,
+            3,
+            sample,
+            BorderMode::Reflect101,
+            [0; 3],
+            Vec::new(),
+        )
+        .unwrap();
         let expected = [
             [4, 3, 4, 5, 4],
             [1, 0, 1, 2, 1],
@@ -1806,15 +1853,22 @@ mod tests {
                             left,
                             height: top + input_height + bottom,
                             width: left + input_width + right,
-                            border_mode,
-                            fill: [3, 5, 7],
                         };
-                        let expected = pad_oracle(&source, input_height, input_width, sample);
+                        let expected = pad_oracle(
+                            &source,
+                            input_height,
+                            input_width,
+                            sample,
+                            border_mode,
+                            [3, 5, 7],
+                        );
                         let actual = pad_raw(
                             &source,
                             input_height,
                             input_width,
                             sample,
+                            border_mode,
+                            [3, 5, 7],
                             vec![0xa5; expected.len()],
                         )
                         .unwrap();
@@ -1874,7 +1928,8 @@ mod tests {
                 &source,
                 height,
                 width,
-                affine_sample(37.0, Interpolation::Bilinear, BorderMode::Reflect101),
+                affine_sample(37.0),
+                rgb_policy(Interpolation::Bilinear, BorderMode::Reflect101),
                 vec![0; source.len()],
             )
             .unwrap();
@@ -1884,7 +1939,8 @@ mod tests {
                 &source,
                 height,
                 width,
-                affine_sample(37.0, Interpolation::Nearest, BorderMode::Reflect101),
+                affine_sample(37.0),
+                rgb_policy(Interpolation::Nearest, BorderMode::Reflect101),
                 vec![0; source.len()],
             )
             .unwrap();
@@ -1896,7 +1952,8 @@ mod tests {
             &source,
             7,
             11,
-            affine_sample(37.0, Interpolation::Bilinear, BorderMode::Constant),
+            affine_sample(37.0),
+            rgb_policy(Interpolation::Bilinear, BorderMode::Constant),
             vec![0; source.len()],
         )
         .unwrap();
@@ -1907,16 +1964,39 @@ mod tests {
     fn affine_q16_boundary_matches_portable_oracle() {
         for (height, width) in [(1, 32_769), (1, 32_770), (32_769, 1), (32_770, 1)] {
             let source = pixels(height * width * 3);
-            let identity = affine_sample(0.0, Interpolation::Bilinear, BorderMode::Constant);
-            let output =
-                rotate_raw(&source, height, width, identity, vec![0xa5; source.len()]).unwrap();
+            let identity = affine_sample(0.0);
+            let output = rotate_raw(
+                &source,
+                height,
+                width,
+                identity,
+                rgb_policy(Interpolation::Bilinear, BorderMode::Constant),
+                vec![0xa5; source.len()],
+            )
+            .unwrap();
             assert_eq!(output.data, source, "identity {height}x{width}");
 
-            let sample = affine_sample(0.25, Interpolation::Bilinear, BorderMode::Constant);
+            let sample = affine_sample(0.25);
             let matrix = inverse_affine_matrix(width, height, sample);
             let mut expected = vec![0; source.len()];
-            rotate_bilinear_border(&source, height, width, sample, matrix, &mut expected, false);
-            let actual = rotate_raw(&source, height, width, sample, vec![0; source.len()]).unwrap();
+            rotate_bilinear_border(
+                &source,
+                height,
+                width,
+                matrix,
+                rgb_policy(Interpolation::Bilinear, BorderMode::Constant),
+                &mut expected,
+                false,
+            );
+            let actual = rotate_raw(
+                &source,
+                height,
+                width,
+                sample,
+                rgb_policy(Interpolation::Bilinear, BorderMode::Constant),
+                vec![0; source.len()],
+            )
+            .unwrap();
             assert_eq!(actual.data, expected, "non-identity {height}x{width}");
         }
     }
@@ -1927,7 +2007,8 @@ mod tests {
             &[],
             1,
             MAX_AFFINE_DIMENSION + 1,
-            affine_sample(0.0, Interpolation::Bilinear, BorderMode::Constant),
+            affine_sample(0.0),
+            rgb_policy(Interpolation::Bilinear, BorderMode::Constant),
             Vec::new(),
         ) {
             Err(error) => error,
@@ -1943,12 +2024,25 @@ mod tests {
             let source = pixels(height * width * 3);
             for interpolation in [Interpolation::Nearest, Interpolation::Bilinear] {
                 for border_mode in [BorderMode::Constant, BorderMode::Reflect101] {
-                    let sample = affine_sample(37.0, interpolation, border_mode);
-                    let clean =
-                        rotate_raw(&source, height, width, sample, vec![0; source.len()]).unwrap();
-                    let dirty =
-                        rotate_raw(&source, height, width, sample, vec![0xa5; source.len()])
-                            .unwrap();
+                    let sample = affine_sample(37.0);
+                    let clean = rotate_raw(
+                        &source,
+                        height,
+                        width,
+                        sample,
+                        rgb_policy(interpolation, border_mode),
+                        vec![0; source.len()],
+                    )
+                    .unwrap();
+                    let dirty = rotate_raw(
+                        &source,
+                        height,
+                        width,
+                        sample,
+                        rgb_policy(interpolation, border_mode),
+                        vec![0xa5; source.len()],
+                    )
+                    .unwrap();
                     assert_eq!(clean.data, dirty.data);
                 }
             }
@@ -1958,9 +2052,17 @@ mod tests {
     #[test]
     fn affine_translation_uses_inverse_mapping() {
         let source = pixels(3 * 3);
-        let mut sample = affine_sample(0.0, Interpolation::Nearest, BorderMode::Constant);
+        let mut sample = affine_sample(0.0);
         sample.translate = [1.0, 0.0];
-        let output = rotate_raw(&source, 1, 3, sample, vec![0; source.len()]).unwrap();
+        let output = rotate_raw(
+            &source,
+            1,
+            3,
+            sample,
+            rgb_policy(Interpolation::Nearest, BorderMode::Constant),
+            vec![0; source.len()],
+        )
+        .unwrap();
         assert_eq!(&output.data[..3], &[3, 5, 7]);
         assert_eq!(&output.data[3..], &source[..6]);
     }
@@ -1973,9 +2075,6 @@ mod tests {
                 for border_mode in [BorderMode::Constant, BorderMode::Reflect101] {
                     let perspective = PerspectiveSample {
                         inverse: [0.93, 0.07, -1.3, -0.04, 1.08, 0.6, 0.0007, -0.0004, 1.0],
-                        interpolation,
-                        border_mode,
-                        fill: [3, 5, 7],
                     };
                     let expected = remap_raw(
                         &source,
@@ -1983,7 +2082,7 @@ mod tests {
                         width,
                         interpolation,
                         border_mode,
-                        perspective.fill,
+                        [3, 5, 7],
                         vec![0xa5; source.len()],
                         |y, x| {
                             let x = x as f32;
@@ -2007,6 +2106,7 @@ mod tests {
                         height,
                         width,
                         perspective,
+                        rgb_policy(interpolation, border_mode),
                         vec![0x5a; source.len()],
                     )
                     .unwrap();
@@ -2022,9 +2122,6 @@ mod tests {
                         y_map: (0..height)
                             .map(|y| y as f32 * 0.91 - 0.7 + (y % 2) as f32 * 0.17)
                             .collect(),
-                        interpolation,
-                        border_mode,
-                        fill: [3, 5, 7],
                     };
                     let expected = remap_raw(
                         &source,
@@ -2032,7 +2129,7 @@ mod tests {
                         width,
                         interpolation,
                         border_mode,
-                        grid.fill,
+                        [3, 5, 7],
                         vec![0xa5; source.len()],
                         |y, x| Some((grid.y_map[y], grid.x_map[x])),
                     )
@@ -2042,6 +2139,7 @@ mod tests {
                         height,
                         width,
                         &grid,
+                        rgb_policy(interpolation, border_mode),
                         vec![0x5a; source.len()],
                         &mut remap::AxisRemapScratch::default(),
                     )
@@ -2065,10 +2163,8 @@ mod tests {
                 7,
                 PerspectiveSample {
                     inverse: [1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0],
-                    interpolation: Interpolation::Bilinear,
-                    border_mode,
-                    fill: [3, 5, 7],
                 },
+                rgb_policy(Interpolation::Bilinear, border_mode),
                 vec![0xa5; source.len()],
             )
             .unwrap();

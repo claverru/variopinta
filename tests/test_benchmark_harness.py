@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import json
+import subprocess
+import sys
 import time
 import unittest
 from importlib.metadata import PackageNotFoundError
@@ -16,6 +18,27 @@ from benchmarks.fingerprints import case_fingerprint, unclassified_measured_path
 from benchmarks.model import CaseSpec, PlannedCase, RouteSpec, TimingPolicy
 from benchmarks.registry import CASES
 from benchmarks.selection import Selectors, select_cases, validate_selector_values
+
+
+class LayerWorkerTests(unittest.TestCase):
+    def test_variopinta_routes_use_the_target_aware_native_api(self) -> None:
+        script = """
+import numpy as np
+from layer_worker import _rust_apply
+
+source = np.zeros((5, 7, 3), dtype=np.uint8)
+for mode in ("reference", "compiled"):
+    output = _rust_apply([{"type": "Invert", "p": 1.0}], mode)(source)
+    assert output.shape == source.shape
+"""
+        result = subprocess.run(
+            [sys.executable, "-c", script],
+            cwd=Path(__file__).parents[1] / "benchmarks",
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        self.assertEqual(result.returncode, 0, result.stderr)
 
 
 class AdaptiveTimingTests(unittest.TestCase):

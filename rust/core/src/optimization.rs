@@ -1,6 +1,6 @@
 use crate::capability::{
-    ExecutionForm, NumericBarrier, OutputContract, ReusableScratchSlot, ScratchRequirement,
-    TransformCapabilities, WriteCoverage,
+    ExecutionForm, OutputContract, ReusableScratchSlot, ScratchRequirement, TransformCapabilities,
+    WriteCoverage,
 };
 use crate::kernels::{self, KernelImplementation};
 use crate::plan::{SampledTransform, TransformPlan};
@@ -31,8 +31,6 @@ pub(crate) enum BufferSlot {
     NoiseBlock,
     AxisRemap,
     OutputF32Hwc,
-    OutputF32Chw,
-    OutputU8Chw,
 }
 
 impl BufferSlot {
@@ -44,8 +42,6 @@ impl BufferSlot {
             Self::NoiseBlock => "noise-f32-block",
             Self::AxisRemap => "axis-remap",
             Self::OutputF32Hwc => "output-f32-hwc",
-            Self::OutputF32Chw => "output-f32-chw",
-            Self::OutputU8Chw => "output-u8-chw",
         }
     }
 }
@@ -54,7 +50,6 @@ impl BufferSlot {
 pub(crate) enum OutputRoute {
     Always(BufferSlot),
     NormalizeHwcConditional,
-    NormalizeToTorchConditional,
 }
 
 impl OutputRoute {
@@ -62,7 +57,6 @@ impl OutputRoute {
         match self {
             Self::Always(slot) => slot.name(),
             Self::NormalizeHwcConditional => "output-f32-hwc-or-working-u8",
-            Self::NormalizeToTorchConditional => "output-f32-chw-or-output-u8-chw",
         }
     }
 
@@ -72,9 +66,6 @@ impl OutputRoute {
             Self::NormalizeHwcConditional => {
                 matches!(slot, BufferSlot::OutputF32Hwc | BufferSlot::WorkingU8)
             }
-            Self::NormalizeToTorchConditional => {
-                matches!(slot, BufferSlot::OutputF32Chw | BufferSlot::OutputU8Chw)
-            }
         }
     }
 }
@@ -82,8 +73,6 @@ impl OutputRoute {
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub(crate) enum KernelSelection {
     Form(ExecutionForm),
-    FusedIntoPrevious,
-    ConditionalFusion,
 }
 
 impl KernelSelection {
@@ -92,37 +81,7 @@ impl KernelSelection {
             Self::Form(ExecutionForm::BorrowedToOwned) => "borrowed-to-owned",
             Self::Form(ExecutionForm::OwnedToOwned) => "owned-to-owned",
             Self::Form(ExecutionForm::OwnedInPlace) => "owned-in-place",
-            Self::FusedIntoPrevious => "fused-into-previous",
-            Self::ConditionalFusion => "fused-into-previous-or-terminal-layout",
         }
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub(crate) enum FusionRule {
-    NormalizeToTorch,
-}
-
-impl FusionRule {
-    pub(crate) fn name(self) -> &'static str {
-        match self {
-            Self::NormalizeToTorch => "Normalize+ToTorch:direct-CHW",
-        }
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq)]
-pub(crate) struct FusionSelection {
-    pub rule: FusionRule,
-    pub first: usize,
-    pub second: usize,
-    pub probability: f32,
-    pub reason: &'static str,
-}
-
-impl FusionSelection {
-    pub(crate) fn is_active(self) -> bool {
-        self.probability > 0.0
     }
 }
 
@@ -133,7 +92,6 @@ pub(crate) struct LoweringNode {
     pub kernel: KernelSelection,
     pub output: OutputRoute,
     pub scratch: Vec<BufferSlot>,
-    pub fusion: Option<FusionRule>,
     pub unit_specialization: Option<&'static str>,
     pub selection_reason: &'static str,
 }
@@ -148,14 +106,12 @@ pub(crate) struct CopyPolicy {
 #[derive(Debug, Clone, PartialEq)]
 pub(crate) struct LoweringPlan {
     nodes: Vec<LoweringNode>,
-    fusion: Option<FusionSelection>,
     entry_prerequisites: usize,
     copy_policy: CopyPolicy,
 }
 
 impl LoweringPlan {
     pub(crate) fn compile(transforms: &[TransformPlan], mode: ExecutionMode) -> CoreResult<Self> {
-        let fusion = approved_fusion(transforms, mode);
         let mut nodes = Vec::new();
         nodes
             .try_reserve_exact(transforms.len())
@@ -165,24 +121,6 @@ impl LoweringPlan {
             let capabilities = transform.capabilities();
             let implementations = kernels::implementations(transform);
             validate_implementations(capabilities, implementations)?;
-
-            if let Some(selection) = fusion.filter(|selection| selection.second == index) {
-                nodes.push(LoweringNode {
-                    capabilities,
-                    input: InputMaterialization::PreviousOutput,
-                    kernel: if selection.probability == 1.0 {
-                        KernelSelection::FusedIntoPrevious
-                    } else {
-                        KernelSelection::ConditionalFusion
-                    },
-                    output: fused_output_route(selection.probability),
-                    scratch: Vec::new(),
-                    fusion: fusion.map(|selection| selection.rule),
-                    unit_specialization: None,
-                    selection_reason: "equivalence-tested-fusion:normalize-to-torch",
-                });
-                continue;
-            }
 
             let borrowed_entry = mode == ExecutionMode::Compiled
                 && index == 0
@@ -207,12 +145,7 @@ impl LoweringPlan {
                     InputMaterialization::PreviousOutput
                 }
             };
-            let selected_fusion = fusion.filter(|selection| selection.first == index);
-            let output = if let Some(selection) = selected_fusion {
-                fused_output_route(selection.probability)
-            } else {
-                output_route(transforms, index, capabilities.output, form)
-            };
+            let output = output_route(transforms, index, capabilities.output, form);
             let mut scratch = scratch_slots(capabilities.scratch);
             scratch.sort_unstable_by_key(|slot| slot.name());
             scratch.dedup();
@@ -230,20 +163,15 @@ impl LoweringPlan {
                 kernel: KernelSelection::Form(form),
                 output,
                 scratch,
-                fusion: selected_fusion.map(|selection| selection.rule),
                 unit_specialization,
-                selection_reason: selected_fusion.map_or_else(
-                    || selection_reason(transform, implementation),
-                    |selection| selection.reason,
-                ),
+                selection_reason: selection_reason(transform, implementation),
             });
         }
 
-        let entry_prerequisites = entry_prerequisites(&nodes, fusion);
+        let entry_prerequisites = entry_prerequisites(&nodes);
         let copy_policy = copy_policy(transforms, &nodes, entry_prerequisites, mode);
         Ok(Self {
             nodes,
-            fusion,
             entry_prerequisites,
             copy_policy,
         })
@@ -255,14 +183,6 @@ impl LoweringPlan {
 
     pub(crate) fn node(&self, index: usize) -> &LoweringNode {
         &self.nodes[index]
-    }
-
-    pub(crate) fn fusion(&self) -> Option<FusionSelection> {
-        self.fusion
-    }
-
-    pub(crate) fn fusion_at(&self, index: usize) -> Option<FusionSelection> {
-        self.fusion.filter(|selection| selection.first == index)
     }
 
     pub(crate) fn copy_policy(&self) -> CopyPolicy {
@@ -378,20 +298,6 @@ fn output_route(
                 OutputRoute::NormalizeHwcConditional,
             );
         }
-        OutputContract::TerminalLayout => {
-            if let Some(TransformPlan::Normalize { p, .. }) = index
-                .checked_sub(1)
-                .and_then(|previous| transforms.get(previous))
-            {
-                return probability_route(
-                    *p,
-                    BufferSlot::OutputF32Chw,
-                    BufferSlot::OutputU8Chw,
-                    OutputRoute::NormalizeToTorchConditional,
-                );
-            }
-            BufferSlot::OutputU8Chw
-        }
         OutputContract::ShapePreserving
         | OutputContract::StaticallySized
         | OutputContract::SampleSized => match form {
@@ -400,15 +306,6 @@ fn output_route(
         },
     };
     OutputRoute::Always(slot)
-}
-
-fn fused_output_route(probability: f32) -> OutputRoute {
-    probability_route(
-        probability,
-        BufferSlot::OutputF32Chw,
-        BufferSlot::OutputU8Chw,
-        OutputRoute::NormalizeToTorchConditional,
-    )
 }
 
 fn probability_route(
@@ -448,44 +345,12 @@ fn scratch_slots(contract: ScratchRequirement) -> Vec<BufferSlot> {
     }
 }
 
-fn approved_fusion(transforms: &[TransformPlan], mode: ExecutionMode) -> Option<FusionSelection> {
-    if mode != ExecutionMode::Compiled {
-        return None;
-    }
-    transforms
-        .windows(2)
-        .enumerate()
-        .find_map(|(index, pair)| match pair {
-            [TransformPlan::Normalize { p, .. }, TransformPlan::ToTorch] => {
-                let normalize = pair[0].capabilities();
-                let layout = pair[1].capabilities();
-                (normalize.output == OutputContract::TerminalType
-                    && normalize.write == WriteCoverage::TerminalConversion
-                    && normalize.barriers == [NumericBarrier::Rounding]
-                    && layout.output == OutputContract::TerminalLayout
-                    && layout.write == WriteCoverage::TerminalConversion
-                    && layout.barriers.is_empty())
-                .then_some(FusionSelection {
-                    rule: FusionRule::NormalizeToTorch,
-                    first: index,
-                    second: index + 1,
-                    probability: *p,
-                    reason: "equivalence-tested-fusion:normalize-to-torch",
-                })
-            }
-            _ => None,
-        })
-}
-
-fn entry_prerequisites(nodes: &[LoweringNode], fusion: Option<FusionSelection>) -> usize {
+fn entry_prerequisites(nodes: &[LoweringNode]) -> usize {
     if !matches!(
         nodes.first().map(|node| node.kernel),
         Some(KernelSelection::Form(ExecutionForm::BorrowedToOwned))
     ) {
         return 0;
-    }
-    if fusion.is_some_and(|selection| selection.first == 0) {
-        return 2;
     }
     1
 }
@@ -597,31 +462,6 @@ mod tests {
     }
 
     #[test]
-    fn normalize_to_torch_uses_the_approved_fusion_registry() {
-        let transforms = plans(vec![
-            TransformSpec::Normalize {
-                mean: [0.0; 3],
-                std: [1.0; 3],
-                max_pixel_value: 255.0,
-                p: 0.5,
-            },
-            TransformSpec::ToTorch,
-        ]);
-        let lowering = LoweringPlan::compile(&transforms, ExecutionMode::Compiled).unwrap();
-        assert_eq!(
-            lowering.fusion().unwrap().rule,
-            FusionRule::NormalizeToTorch
-        );
-        assert_eq!(lowering.copy_policy().count, "0-or-1");
-        assert_eq!(lowering.node(1).kernel, KernelSelection::ConditionalFusion);
-        assert_eq!(
-            lowering.node(0).output,
-            OutputRoute::NormalizeToTorchConditional
-        );
-        assert_eq!(lowering.node(1).output, lowering.node(0).output);
-    }
-
-    #[test]
     fn crop_entry_depends_only_on_the_crop_node() {
         let transforms = plans(vec![
             TransformSpec::CenterCrop {
@@ -648,23 +488,6 @@ mod tests {
             }),
             SampledTransform::Skip,
         ]));
-    }
-
-    #[test]
-    fn conditional_terminal_fusion_reports_its_real_copy_policy() {
-        for (probability, expected) in [(0.0, "1"), (0.5, "0-or-1"), (1.0, "0")] {
-            let transforms = plans(vec![
-                TransformSpec::Normalize {
-                    mean: [0.0; 3],
-                    std: [1.0; 3],
-                    max_pixel_value: 255.0,
-                    p: probability,
-                },
-                TransformSpec::ToTorch,
-            ]);
-            let lowering = LoweringPlan::compile(&transforms, ExecutionMode::Compiled).unwrap();
-            assert_eq!(lowering.copy_policy().count, expected);
-        }
     }
 
     #[test]

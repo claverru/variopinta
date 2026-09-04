@@ -102,13 +102,6 @@ impl TransformPlan {
                 "owned-f32-output",
                 owned_simd_fallback(),
             ),
-            Self::ToTorch => (
-                "layout",
-                "terminal",
-                1,
-                "owned-chw-output",
-                layout_simd_fallback(),
-            ),
         };
         let probability = self.probability();
         TransformExplanation {
@@ -158,7 +151,6 @@ impl TransformPlan {
             | Self::Solarize { p, .. }
             | Self::Posterize { p, .. }
             | Self::Normalize { p, .. } => *p,
-            Self::ToTorch => 1.0,
         }
     }
 
@@ -393,30 +385,10 @@ impl TransformPlan {
             Self::Normalize {
                 max_pixel_value, ..
             } => vec![policy("max-pixel-value", max_pixel_value.to_string())],
-            Self::ToTorch => vec![
-                policy("layout", "CHW".into()),
-                policy("dtype", "preserve".into()),
-                policy("device", "cpu".into()),
-            ],
             Self::HorizontalFlip { .. } | Self::VerticalFlip { .. } | Self::Invert { .. } => {
                 Vec::new()
             }
         }
-    }
-}
-
-fn layout_simd_fallback() -> &'static str {
-    #[cfg(target_arch = "x86_64")]
-    {
-        "runtime-ssse3-or-portable-scalar"
-    }
-    #[cfg(target_arch = "aarch64")]
-    {
-        "neon-or-portable-scalar"
-    }
-    #[cfg(not(any(target_arch = "x86_64", target_arch = "aarch64")))]
-    {
-        "portable-scalar"
     }
 }
 

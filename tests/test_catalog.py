@@ -26,17 +26,16 @@ class CatalogTests(unittest.TestCase):
         self.assertEqual(native, public)
         for name, (_, fixture) in _TRANSFORM_CATALOG.items():
             with self.subTest(name=name):
-                compiled = R.Compose([fixture(1.0)], seed=137).compile()
+                compiled = R.Pipeline([fixture(1.0)], seed=137).compile()
                 self.assertEqual(compiled.explain()["steps"][0]["name"], name)
 
     def test_fallback_explanations_match_the_native_architecture(self) -> None:
         from variopinta.transforms import _TRANSFORM_CATALOG
 
         explanations = [
-            R.Compose([fixture(1.0)], seed=137).compile().explain()
+            R.Pipeline([fixture(1.0)], seed=137).compile().explain()
             for _, fixture in _TRANSFORM_CATALOG.values()
         ]
-        explanations.append(R.Compose([R.Normalize(), R.ToTorch()], seed=137).compile().explain())
         fallbacks = [
             fallback for explanation in explanations for fallback in explanation["fallbacks"]
         ]
@@ -55,7 +54,7 @@ class CatalogTests(unittest.TestCase):
                     with self.subTest(
                         name=name, height=height, width=width, probability=probability
                     ):
-                        reference = R.Compose([fixture(probability)], seed=137)
+                        reference = R.Pipeline([fixture(probability)], seed=137)
                         compiled = reference.compile()
                         for key in (3, 19):
                             expected = as_array(reference(source, key=key))
@@ -74,7 +73,7 @@ class CatalogTests(unittest.TestCase):
         keys = (3, 7, 19, 29)
         for name, (_, fixture) in _TRANSFORM_CATALOG.items():
             with self.subTest(name=name):
-                compiled = R.Compose([fixture(1.0)], seed=137).compile()
+                compiled = R.Pipeline([fixture(1.0)], seed=137).compile()
                 expected = [as_array(compiled(source, key=key)) for key in keys]
                 with ThreadPoolExecutor(max_workers=len(keys)) as executor:
                     actual = list(
@@ -86,20 +85,20 @@ class CatalogTests(unittest.TestCase):
     def test_extended_catalog_is_correct_at_arbitrary_sizes(self) -> None:
         for height, width in ((1, 1), (3, 5), (17, 33), (63, 65)):
             source = image(height, width)
-            vertical = R.Compose([R.VerticalFlip(1.0)], seed=137).compile()(source, key=1)
+            vertical = R.Pipeline([R.VerticalFlip(1.0)], seed=137).compile()(source, key=1)
             np.testing.assert_array_equal(vertical, source[::-1])
 
-            inverted = R.Compose([R.Invert()], seed=137).compile()(source, key=1)
+            inverted = R.Pipeline([R.Invert()], seed=137).compile()(source, key=1)
             np.testing.assert_array_equal(inverted, 255 - source)
 
-            solarized = R.Compose([R.Solarize(128)], seed=137).compile()(source, key=1)
+            solarized = R.Pipeline([R.Solarize(128)], seed=137).compile()(source, key=1)
             expected_solarized = np.where(source >= 128, 255 - source, source).astype(np.uint8)
             np.testing.assert_array_equal(solarized, expected_solarized)
 
-            posterized = R.Compose([R.Posterize(4)], seed=137).compile()(source, key=1)
+            posterized = R.Pipeline([R.Posterize(4)], seed=137).compile()(source, key=1)
             np.testing.assert_array_equal(posterized, source & 0xF0)
 
-            gray = R.Compose([R.Grayscale()], seed=137).compile()(source, key=1)
+            gray = R.Pipeline([R.Grayscale()], seed=137).compile()(source, key=1)
             self.assertTrue(np.array_equal(gray[..., 0], gray[..., 1]))
             self.assertTrue(np.array_equal(gray[..., 1], gray[..., 2]))
             expected_gray = (
@@ -115,7 +114,7 @@ class CatalogTests(unittest.TestCase):
 
             crop_height = max(1, height - 1)
             crop_width = max(1, width - 1)
-            centered = R.Compose([R.CenterCrop(crop_height, crop_width)], seed=137).compile()(
+            centered = R.Pipeline([R.CenterCrop(crop_height, crop_width)], seed=137).compile()(
                 source, key=1
             )
             top = (height - crop_height) // 2
@@ -124,7 +123,7 @@ class CatalogTests(unittest.TestCase):
                 centered, source[top : top + crop_height, left : left + crop_width]
             )
 
-            resized_crop = R.Compose(
+            resized_crop = R.Pipeline(
                 [R.RandomResizedCrop(5, 7, scale=(0.2, 1.0), ratio=(0.5, 2.0))],
                 seed=137,
             )
@@ -135,7 +134,7 @@ class CatalogTests(unittest.TestCase):
 
     def test_extended_catalog_reference_matches_compiled(self) -> None:
         source = image(37, 53)
-        reference = R.Compose(
+        reference = R.Pipeline(
             [
                 R.CenterCrop(31, 47),
                 R.VerticalFlip(0.5),

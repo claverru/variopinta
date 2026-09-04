@@ -283,6 +283,16 @@ def _image(value: np.ndarray) -> np.ndarray:
     return np.ascontiguousarray(value)
 
 
+def _mask(value: np.ndarray) -> np.ndarray:
+    if not isinstance(value, np.ndarray) or value.dtype != np.uint8:
+        raise TypeError("expected an HW uint8 NumPy mask")
+    if value.ndim != 2:
+        raise TypeError("expected an HW uint8 NumPy mask")
+    if value.shape[0] == 0 or value.shape[1] == 0:
+        raise ValueError("mask dimensions must be positive")
+    return np.ascontiguousarray(value)
+
+
 def _key(value: int | None) -> int | None:
     if value is not None and (
         isinstance(value, bool) or not isinstance(value, int) or not 0 <= value < 2**64
@@ -298,6 +308,6 @@ def _torch_module():
         if error.name != "torch":
             raise
         raise ImportError(
-            "ToTorch requires PyTorch; install the appropriate torch build for your platform"
+            "ReturnTensor requires PyTorch; install the appropriate torch build for your platform"
         ) from error
     return torch

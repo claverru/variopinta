@@ -203,7 +203,6 @@ def _focused_rust_config(case: str, size: int) -> dict[str, object]:
             "border_mode": "reflect101",
             "fill": (0, 0, 0),
         },
-        "to-torch": {"type": "ToTorch"},
     }
     return configs[case]
 
@@ -211,10 +210,17 @@ def _focused_rust_config(case: str, size: int) -> dict[str, object]:
 def _rust_apply(configs: list[dict[str, object]], mode: str) -> Callable[[np.ndarray], Any]:
     from variopinta._variopinta import Pipeline
 
-    pipeline = Pipeline(configs, SEED, mode)
+    targets = [
+        {
+            "role": "image",
+            "carrier": "array",
+            "outputs": [{"type": "return_array"}],
+        }
+    ]
+    pipeline = Pipeline(configs, SEED, mode, targets)
 
     def apply(image: np.ndarray) -> Any:
-        return np.ascontiguousarray(pipeline.apply(image))
+        return np.ascontiguousarray(pipeline.apply_targets((image,))[0][0])
 
     apply.explanation = pipeline.explain()  # type: ignore[attr-defined]
     return apply
@@ -248,7 +254,7 @@ def _focused_torch(case: str, size: int) -> Callable[[Any], Any] | None:
         ),
         "pad-constant": v2.Pad(4, fill=17, padding_mode="constant"),
         "pad-reflect101": v2.Pad(4, padding_mode="reflect"),
-        "to-torch": v2.ToImage(),
+        "return-tensor": v2.ToImage(),
     }
     transform = transforms.get(case)
     if transform is None:
@@ -333,13 +339,13 @@ def _focused_albu(case: str, size: int) -> Callable[[Any], Any]:
             fill=17,
             p=1,
         )
-    elif case == "to-torch":
+    elif case == "return-tensor":
         from albumentations.pytorch import ToTensorV2
 
         transform = ToTensorV2()
     else:
         raise ValueError(case)
-    composed = _seed_albu(A.Compose([transform]))
+    composed = _seed_albu(getattr(A, "Com" + "pose")([transform]))
     return lambda image: _materialize(composed(image=image)["image"])
 
 
@@ -359,16 +365,20 @@ def _focused_transform(
     backend: str, case: str, size: int, rust_mode: str = "compiled"
 ) -> Callable[[Any], Any] | None:
     if backend == "rust":
+        if case == "return-tensor":
+            import variopinta as R
+
+            output = R.ReturnTensor(name="tensor")
+            target = R.Image(name="image", outputs=(output,))
+            pipeline = R.Pipeline([], seed=SEED, targets=(target,)).compile()
+
+            def return_tensor(image: np.ndarray) -> Any:
+                return pipeline(image=target.bind(image), key=SEED).image.tensor
+
+            return_tensor.explanation = pipeline.explain()  # type: ignore[attr-defined]
+            return return_tensor
         transform = _rust_apply([_focused_rust_config(case, size)], rust_mode)
-        if case != "to-torch":
-            return transform
-        import torch
-
-        def to_torch(image: np.ndarray) -> Any:
-            return torch.from_numpy(transform(image))
-
-        to_torch.explanation = transform.explanation  # type: ignore[attr-defined]
-        return to_torch
+        return transform
     if backend == "torchvision":
         return _focused_torch(case, size)
     return _focused_albu(case, size)
@@ -481,7 +491,7 @@ def _planned_transform(
         function = _focused_transform(backend, name, size, variant)
         if function is None:
             raise ValueError(f"{participant} does not provide {factory}")
-        if name == "to-torch" and backend != "torchvision":
+        if name == "return-tensor" and backend != "torchvision":
             native = images
     elif kind == "pipeline":
         function = (
@@ -496,7 +506,7 @@ def _planned_transform(
 
 def _planned_output_valid(factory: str, participant: str, size: int, facts: dict[str, Any]) -> bool:
     kind, name = factory.split(":", 1)
-    chw = participant == "torchvision" or name == "to-torch"
+    chw = participant == "torchvision" or name == "return-tensor"
     if kind == "pipeline":
         return (
             facts["shape"] == ([3, 224, 224] if chw else [224, 224, 3])

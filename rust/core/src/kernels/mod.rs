@@ -66,8 +66,7 @@ pub(crate) fn implementations(transform: &TransformPlan) -> &'static [KernelImpl
         | TransformPlan::Normalize { .. }
         | TransformPlan::Sharpen { .. }
         | TransformPlan::Perspective { .. }
-        | TransformPlan::GridDistortion { .. }
-        | TransformPlan::ToTorch => OUT_OF_PLACE,
+        | TransformPlan::GridDistortion { .. } => OUT_OF_PLACE,
         TransformPlan::HorizontalFlip { .. }
         | TransformPlan::CoarseDropout { .. }
         | TransformPlan::GaussianBlur { .. }

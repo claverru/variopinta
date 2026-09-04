@@ -12,13 +12,13 @@ from tests._helpers import image
 class ColorTests(unittest.TestCase):
     def test_gaussian_noise_has_stable_uint8_units_and_channel_policy(self) -> None:
         source = np.full((3, 5, 3), [10, 20, 30], dtype=np.uint8)
-        shifted = R.Compose([R.GaussianNoise(mean=250.0, std=0.0)], seed=137)
+        shifted = R.Pipeline([R.GaussianNoise(mean=250.0, std=0.0)], seed=137)
         expected = np.full_like(source, 255)
         np.testing.assert_array_equal(shifted(source, key=3), expected)
         np.testing.assert_array_equal(shifted.compile()(source, key=3), expected)
 
-        independent = R.Compose([R.GaussianNoise(std=10.0)], seed=137).compile()
-        shared = R.Compose([R.GaussianNoise(std=10.0, per_channel=False)], seed=137).compile()
+        independent = R.Pipeline([R.GaussianNoise(std=10.0)], seed=137).compile()
+        shared = R.Pipeline([R.GaussianNoise(std=10.0, per_channel=False)], seed=137).compile()
         np.testing.assert_array_equal(independent(source, key=7), independent(source, key=7))
         neutral = np.full((3, 5, 3), 128, dtype=np.uint8)
         shared_delta = shared(neutral, key=7).astype(np.int16) - neutral.astype(np.int16)
@@ -32,11 +32,11 @@ class ColorTests(unittest.TestCase):
 
     def test_sharpen_identity_constant_and_impulse_oracles(self) -> None:
         source = image(7, 11)
-        identity = R.Compose([R.Sharpen(alpha=0.0, lightness=5.0)], seed=137)
+        identity = R.Pipeline([R.Sharpen(alpha=0.0, lightness=5.0)], seed=137)
         np.testing.assert_array_equal(identity.compile()(source, key=3), source)
 
         constant = np.full((5, 7, 3), 73, dtype=np.uint8)
-        sharpen = R.Compose([R.Sharpen(alpha=0.5, lightness=1.0)], seed=137)
+        sharpen = R.Pipeline([R.Sharpen(alpha=0.5, lightness=1.0)], seed=137)
         np.testing.assert_array_equal(sharpen.compile()(constant, key=3), constant)
 
         impulse = np.zeros((3, 3, 3), dtype=np.uint8)
@@ -62,7 +62,7 @@ class ColorTests(unittest.TestCase):
             saturation=(0.5, 1.5),
             hue=(-0.25, 0.3),
         )
-        explanation = R.Compose([transform], seed=137).compile().explain()
+        explanation = R.Pipeline([transform], seed=137).compile().explain()
         policies = {
             policy["name"]: policy["value"] for policy in explanation["steps"][0]["policies"]
         }
@@ -79,7 +79,7 @@ class ColorTests(unittest.TestCase):
             "contrast": (1.0, 1.0),
             "saturation": (1.0, 1.0),
         }
-        hue = R.Compose([R.ColorJitter(**identity_ranges, hue=(1.0 / 3.0, 1.0 / 3.0))], seed=137)
+        hue = R.Pipeline([R.ColorJitter(**identity_ranges, hue=(1.0 / 3.0, 1.0 / 3.0))], seed=137)
         primaries = np.array(
             [[[255, 0, 0], [0, 255, 0], [0, 0, 255], [73, 73, 73]]], dtype=np.uint8
         )
@@ -87,7 +87,7 @@ class ColorTests(unittest.TestCase):
         np.testing.assert_array_equal(hue(primaries, key=3), expected)
         np.testing.assert_array_equal(hue.compile()(primaries, key=3), expected)
 
-        ranged = R.Compose(
+        ranged = R.Pipeline(
             [
                 R.ColorJitter(
                     brightness=(0.7, 1.4),
@@ -123,7 +123,7 @@ class ColorTests(unittest.TestCase):
         )
         for configuration in configurations:
             with self.subTest(configuration=configuration):
-                reference = R.Compose([R.ColorJitter(**configuration)], seed=137)
+                reference = R.Pipeline([R.ColorJitter(**configuration)], seed=137)
                 expected = reference(source, key=29)
                 actual = reference.compile()(source, key=29)
                 np.testing.assert_array_equal(actual, expected)
@@ -131,7 +131,7 @@ class ColorTests(unittest.TestCase):
                 self.assertTrue(actual.flags.c_contiguous)
                 self.assertFalse(np.shares_memory(source, actual))
 
-        brightness = R.Compose([R.ColorJitter(**configurations[0])], seed=137)
+        brightness = R.Pipeline([R.ColorJitter(**configurations[0])], seed=137)
         positive = np.array([[[255, 2, 3], [0, 0, 0]]], dtype=np.uint8)
         expected = np.where(positive == 0, 0, 255).astype(np.uint8)
         np.testing.assert_array_equal(brightness(positive, key=29), expected)
@@ -150,7 +150,7 @@ class ColorTests(unittest.TestCase):
         expected_sigma = float(np.float32(1.1))
         self.assertEqual(fixed.sigma, (expected_sigma, expected_sigma))
 
-        ranged = R.Compose([R.GaussianBlur(5, (0.6, 2.0))], seed=137)
+        ranged = R.Pipeline([R.GaussianBlur(5, (0.6, 2.0))], seed=137)
         explanation = ranged.compile().explain()
         policies = {
             policy["name"]: policy["value"] for policy in explanation["steps"][0]["policies"]
@@ -171,7 +171,7 @@ class ColorTests(unittest.TestCase):
 
     def test_wide_gaussian_blur_is_normalized_in_reference_and_compiled(self) -> None:
         source = np.full((3, 4, 3), 73, dtype=np.uint8)
-        reference = R.Compose([R.GaussianBlur(101, 1_000_000.0)], seed=137)
+        reference = R.Pipeline([R.GaussianBlur(101, 1_000_000.0)], seed=137)
         for pipeline in (reference, reference.compile()):
             actual = pipeline(source, key=29)
             np.testing.assert_array_equal(actual, source)

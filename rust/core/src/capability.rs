@@ -6,7 +6,6 @@ pub(crate) enum OutputContract {
     StaticallySized,
     SampleSized,
     TerminalType,
-    TerminalLayout,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -248,14 +247,6 @@ impl TransformPlan {
                 legal_forms: OUT_OF_PLACE,
                 scratch: ScratchRequirement::None,
                 barriers: ROUNDING,
-            },
-            Self::ToTorch => TransformCapabilities {
-                output: OutputContract::TerminalLayout,
-                read: ReadFootprint::Pointwise,
-                write: WriteCoverage::TerminalConversion,
-                legal_forms: OUT_OF_PLACE,
-                scratch: ScratchRequirement::None,
-                barriers: NO_BARRIERS,
             },
         }
     }

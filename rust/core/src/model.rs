@@ -152,21 +152,86 @@ pub enum TransformSpec {
         max_pixel_value: f32,
         p: f32,
     },
-    ToTorch,
 }
 
 pub struct PipelineSpec {
     transforms: Vec<TransformSpec>,
+    targets: Vec<TargetSpec>,
+    requirements: Vec<TargetRequirements>,
 }
 
 impl PipelineSpec {
     pub fn new(transforms: Vec<TransformSpec>) -> Self {
-        Self { transforms }
+        Self {
+            transforms,
+            targets: vec![TargetSpec::Image],
+            requirements: vec![TargetRequirements::HWC],
+        }
     }
 
-    pub(crate) fn into_transforms(self) -> Vec<TransformSpec> {
-        self.transforms
+    pub fn with_targets(transforms: Vec<TransformSpec>, targets: Vec<TargetSpec>) -> Self {
+        let requirements = targets
+            .iter()
+            .map(|target| match target {
+                TargetSpec::Image => TargetRequirements::HWC,
+                TargetSpec::Mask { .. } => TargetRequirements::HW,
+            })
+            .collect();
+        Self {
+            transforms,
+            targets,
+            requirements,
+        }
     }
+
+    pub fn with_target_requirements(
+        transforms: Vec<TransformSpec>,
+        targets: Vec<(TargetSpec, TargetRequirements)>,
+    ) -> Self {
+        let (targets, requirements) = targets.into_iter().unzip();
+        Self {
+            transforms,
+            targets,
+            requirements,
+        }
+    }
+
+    pub(crate) fn into_parts(
+        self,
+    ) -> (Vec<TransformSpec>, Vec<TargetSpec>, Vec<TargetRequirements>) {
+        (self.transforms, self.targets, self.requirements)
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum TargetSpec {
+    Image,
+    Mask { fill: u8 },
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct TargetRequirements {
+    pub hwc: bool,
+    pub chw: bool,
+}
+
+impl TargetRequirements {
+    pub const HWC: Self = Self {
+        hwc: true,
+        chw: false,
+    };
+    pub const CHW: Self = Self {
+        hwc: false,
+        chw: true,
+    };
+    pub const HWC_AND_CHW: Self = Self {
+        hwc: true,
+        chw: true,
+    };
+    pub const HW: Self = Self {
+        hwc: true,
+        chw: false,
+    };
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -183,6 +248,7 @@ impl ExecutionMode {
     }
 }
 
+#[derive(Clone)]
 pub enum PipelineOutput {
     U8Hwc {
         data: Vec<u8>,
@@ -207,6 +273,63 @@ pub enum PipelineOutput {
 }
 
 #[derive(Clone)]
+pub struct MaskOutput {
+    pub data: Vec<u8>,
+    pub height: usize,
+    pub width: usize,
+}
+
+pub enum TargetBuffer<'a> {
+    Borrowed(&'a [u8]),
+    Owned(Vec<u8>),
+}
+
+pub struct TargetInput<'a> {
+    pub role: TargetSpec,
+    pub data: TargetBuffer<'a>,
+    pub height: usize,
+    pub width: usize,
+}
+
+#[derive(Clone)]
+pub enum TargetOutput {
+    Image(ImageOutput),
+    Mask(MaskOutput),
+}
+
+#[derive(Clone)]
+pub struct ImageOutput {
+    pub hwc: Option<PipelineOutput>,
+    pub chw: Option<PipelineOutput>,
+}
+
+#[derive(Clone)]
+pub struct MaskPlanExplanation {
+    pub supported: bool,
+    pub input_dtype: &'static str,
+    pub input_layout: &'static str,
+    pub output_dtype: &'static str,
+    pub output_layout: &'static str,
+    pub contiguous: bool,
+    pub ownership: &'static str,
+    pub gil: &'static str,
+    pub steps: Vec<MaskTransformExplanation>,
+    pub copies: Vec<CopyExplanation>,
+    pub buffers: Vec<BufferExplanation>,
+    pub pixel_passes: usize,
+    pub fallback: &'static str,
+}
+
+#[derive(Clone)]
+pub struct MaskTransformExplanation {
+    pub name: &'static str,
+    pub classification: &'static str,
+    pub raster_policy: &'static str,
+    pub pixel_passes: usize,
+    pub fill: Option<u8>,
+}
+
+#[derive(Clone)]
 pub struct PipelineExplanation {
     pub mode: &'static str,
     pub sampling: &'static str,
@@ -224,6 +347,7 @@ pub struct PipelineExplanation {
     pub buffers: Vec<BufferExplanation>,
     pub copies: Vec<CopyExplanation>,
     pub fallbacks: Vec<&'static str>,
+    pub mask_plan: MaskPlanExplanation,
 }
 
 #[derive(Clone)]

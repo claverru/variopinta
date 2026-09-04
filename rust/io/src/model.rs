@@ -77,13 +77,6 @@ impl PixelData {
             Self::U16(data) => data.is_empty(),
         }
     }
-
-    fn sample_bytes(&self) -> usize {
-        match self {
-            Self::U8(_) => 1,
-            Self::U16(_) => 2,
-        }
-    }
 }
 
 #[derive(Debug)]
@@ -92,6 +85,7 @@ pub struct DecodedImage {
     pub height: usize,
     pub width: usize,
     pub color: ColorModel,
+    pub source_has_alpha: bool,
 }
 
 impl DecodedImage {
@@ -114,6 +108,7 @@ impl DecodedImage {
             height: self.height,
             width: self.width,
             color: target,
+            source_has_alpha: self.source_has_alpha,
         })
     }
 }
@@ -128,6 +123,42 @@ pub struct OwnedImage {
 
 impl OwnedImage {
     pub fn validate(&self) -> Result<(), CodecError> {
+        ImageView::from(self).validate()
+    }
+}
+
+#[derive(Clone, Copy, Debug)]
+pub enum PixelDataRef<'a> {
+    U8(&'a [u8]),
+    U16(&'a [u16]),
+}
+
+impl PixelDataRef<'_> {
+    fn len(self) -> usize {
+        match self {
+            Self::U8(data) => data.len(),
+            Self::U16(data) => data.len(),
+        }
+    }
+
+    fn sample_bytes(self) -> usize {
+        match self {
+            Self::U8(_) => 1,
+            Self::U16(_) => 2,
+        }
+    }
+}
+
+#[derive(Clone, Copy, Debug)]
+pub struct ImageView<'a> {
+    pub pixels: PixelDataRef<'a>,
+    pub height: usize,
+    pub width: usize,
+    pub color: ColorModel,
+}
+
+impl ImageView<'_> {
+    pub fn validate(self) -> Result<(), CodecError> {
         if self.height == 0 || self.width == 0 {
             return Err(CodecError::new(
                 CodecErrorKind::InvalidInput,
@@ -151,6 +182,20 @@ impl OwnedImage {
     }
 }
 
+impl<'a> From<&'a OwnedImage> for ImageView<'a> {
+    fn from(image: &'a OwnedImage) -> Self {
+        Self {
+            pixels: match &image.pixels {
+                PixelData::U8(data) => PixelDataRef::U8(data),
+                PixelData::U16(data) => PixelDataRef::U16(data),
+            },
+            height: image.height,
+            width: image.width,
+            color: image.color,
+        }
+    }
+}
+
 #[derive(Clone, Copy, Debug)]
 pub enum EncodeOptions {
     Jpeg { quality: u8 },
@@ -163,18 +208,19 @@ pub(crate) fn validate_dimensions(
     channels: usize,
     sample_bytes: usize,
     max_pixels: Option<usize>,
+    role: &str,
 ) -> Result<(), CodecError> {
     if width == 0 || height == 0 {
         return Err(CodecError::new(
             CodecErrorKind::Decode,
-            "image dimensions must be positive",
+            format!("{role} dimensions must be positive"),
         ));
     }
     let pixels = width.checked_mul(height).ok_or_else(output_too_large)?;
     if max_pixels.is_some_and(|limit| pixels > limit) {
         return Err(CodecError::new(
             CodecErrorKind::LimitExceeded,
-            format!("image has {pixels} pixels, exceeding the configured limit"),
+            format!("{role} has {pixels} pixels, exceeding the configured limit"),
         ));
     }
     let bytes = pixels

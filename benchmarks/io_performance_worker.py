@@ -78,14 +78,14 @@ def opencv_encode(image: np.ndarray, format: str) -> bytes:
     return output.tobytes()
 
 
-def three_call_encoded(data: bytes, pipeline: R.CompiledCompose, format: str) -> bytes:
+def three_call_encoded(data: bytes, pipeline: R.CompiledPipeline, format: str) -> bytes:
     decoded = R.decode_image(data)
     transformed = pipeline(decoded, key=11)
     return R.encode_image(transformed, format=format)
 
 
 def three_call_path(
-    source: Path, destination: Path, pipeline: R.CompiledCompose, format: str
+    source: Path, destination: Path, pipeline: R.CompiledPipeline, format: str
 ) -> None:
     decoded = R.read_image(source)
     transformed = pipeline(decoded, key=11)
@@ -102,26 +102,37 @@ def run_planned(items: list[dict[str, Any]], quick: bool, repetition: int) -> li
             encoded = pillow_encode(image, format_name)
             input_path = root / f"input.{format_name}"
             input_path.write_bytes(encoded)
-            array_pipeline = R.Compose([R.Resize(448, 448), R.Invert()], seed=137).compile()
-            encoded_input_pipeline = R.Compose(
-                [R.Resize(448, 448), R.Invert()], seed=137, input=R.EncodedInput()
-            ).compile()
-            encoded_output_pipeline = R.Compose(
+            array_pipeline = R.Pipeline([R.Resize(448, 448), R.Invert()], seed=137).compile()
+            encoded_input_port = R.Image(
+                R.Encoded(), outputs=(R.ReturnArray(name="array"),), name="image"
+            )
+            encoded_input_pipeline = R.Pipeline(
                 [R.Resize(448, 448), R.Invert()],
                 seed=137,
-                output=R.EncodedOutput(format=format_name),
+                targets=(encoded_input_port,),
             ).compile()
-            encoded_pipeline = R.Compose(
+            encoded_output_port = R.Image(
+                outputs=(R.Encode(format_name, name="encoded"),), name="image"
+            )
+            encoded_output_pipeline = R.Pipeline(
                 [R.Resize(448, 448), R.Invert()],
                 seed=137,
-                input=R.EncodedInput(),
-                output=R.EncodedOutput(format=format_name),
+                targets=(encoded_output_port,),
             ).compile()
-            path_pipeline = R.Compose(
+            encoded_port = R.Image(
+                R.Encoded(), outputs=(R.Encode(format_name, name="encoded"),), name="image"
+            )
+            encoded_pipeline = R.Pipeline(
                 [R.Resize(448, 448), R.Invert()],
                 seed=137,
-                input=R.PathInput(),
-                output=R.PathOutput(format=format_name),
+                targets=(encoded_port,),
+            ).compile()
+            path_output = R.Write(format_name, name="written")
+            path_port = R.Image(R.Path(), outputs=(path_output,), name="image")
+            path_pipeline = R.Pipeline(
+                [R.Resize(448, 448), R.Invert()],
+                seed=137,
+                targets=(path_port,),
             ).compile()
             functions: dict[tuple[str, str], Callable[[], Any]] = {
                 ("decode", "variopinta"): lambda data=encoded: R.decode_image(data),
@@ -159,16 +170,24 @@ def run_planned(items: list[dict[str, Any]], quick: bool, repetition: int) -> li
                 pipeline=array_pipeline,
                 fmt=format_name: three_call_path(source, root / f"three-call.{fmt}", pipeline, fmt),
                 ("pipeline-encoded-return", "variopinta"): lambda data=encoded,
-                pipeline=encoded_input_pipeline: pipeline(data, key=11),
+                pipeline=encoded_input_pipeline,
+                port=encoded_input_port: pipeline(image=port.bind(data), key=11).image.array,
                 (
                     "pipeline-array-encoded",
                     "variopinta",
-                ): lambda pipeline=encoded_output_pipeline: pipeline(image, key=11),
+                ): lambda pipeline=encoded_output_pipeline, port=encoded_output_port: pipeline(
+                    image=port.bind(image), key=11
+                ).image.encoded,
                 ("pipeline-encoded-encoded", "variopinta"): lambda data=encoded,
-                pipeline=encoded_pipeline: pipeline(data, key=11),
+                pipeline=encoded_pipeline,
+                port=encoded_port: pipeline(image=port.bind(data), key=11).image.encoded,
                 ("pipeline-path-path", "variopinta"): lambda source=input_path,
                 pipeline=path_pipeline,
-                fmt=format_name: pipeline(source, destination=root / f"native.{fmt}", key=11),
+                port=path_port,
+                output=path_output,
+                fmt=format_name: pipeline(
+                    image=port.bind(source, output.bind(root / f"native.{fmt}")), key=11
+                ).image.written,
             }
             contexts[format_name] = functions
 

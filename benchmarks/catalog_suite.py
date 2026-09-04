@@ -124,8 +124,6 @@ def catalog_cases(size: int) -> list[tuple[str, str, list[Any]]]:
         ("Solarize", "default", [R.Solarize(128, 1.0)]),
         ("Posterize", "default", [R.Posterize(4, 1.0)]),
         ("Normalize", "default", [R.Normalize(MEAN, STD)]),
-        ("ToTorch", "default", [R.ToTorch()]),
-        ("Normalize+ToTorch", "terminal", [R.Normalize(MEAN, STD), R.ToTorch()]),
     ]
 
 
@@ -153,12 +151,11 @@ def validate_catalog_coverage(cases: list[tuple[str, str, list[Any]]]) -> None:
 
 def validate_output(transform: str, value: Any) -> tuple[dict[str, Any], bool]:
     facts = output_facts(value)
-    to_torch = "ToTorch" in transform
     valid = (
         facts["finite"]
         and facts["c_contiguous"]
-        and facts["container"] == ("torch.Tensor" if to_torch else "numpy.ndarray")
-        and facts["shape"][0 if to_torch else -1] == 3
+        and facts["container"] == "numpy.ndarray"
+        and facts["shape"][-1] == 3
         and facts["dtype"] == ("float32" if "Normalize" in transform else "uint8")
     )
     return facts, valid
@@ -183,7 +180,7 @@ def run_planned(
         route = item["route"]
         for size in item["sizes"]:
             transform, policy, transforms = _case_transforms(item["factory"], size)
-            reference = R.Compose(transforms, seed=SEED)
+            reference = R.Pipeline(transforms, seed=SEED)
             compiled = reference.compile()
             reference_output = reference(make_images(size, count=1)[0], key=SEED)
             compiled_output = compiled(make_images(size, count=1)[0], key=SEED)

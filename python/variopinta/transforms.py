@@ -551,12 +551,6 @@ class Normalize:
         }
 
 
-@dataclass(frozen=True, slots=True)
-class ToTorch:
-    def _spec(self) -> dict[str, object]:
-        return {"type": "ToTorch"}
-
-
 Transform: TypeAlias = (
     Resize
     | RandomCrop
@@ -579,7 +573,6 @@ Transform: TypeAlias = (
     | Solarize
     | Posterize
     | Normalize
-    | ToTorch
 )
 _TRANSFORM_CATALOG = {
     "Resize": (Resize, lambda p: Resize(1, 1, p=p)),
@@ -609,6 +602,5 @@ _TRANSFORM_CATALOG = {
     "Solarize": (Solarize, lambda p: Solarize(p=p)),
     "Posterize": (Posterize, lambda p: Posterize(p=p)),
     "Normalize": (Normalize, lambda p: Normalize(p=p)),
-    "ToTorch": (ToTorch, lambda _p: ToTorch()),
 }
 _TRANSFORM_TYPES = tuple(entry[0] for entry in _TRANSFORM_CATALOG.values())

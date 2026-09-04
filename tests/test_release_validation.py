@@ -85,6 +85,15 @@ def build_sdist(directory: Path, *, extra: str | None = None) -> Path:
 
 
 class ReleaseValidationTests(unittest.TestCase):
+    def test_package_file_allowlist_matches_the_source_package(self) -> None:
+        package = Path(__file__).parents[1] / "python" / PACKAGE
+        actual = {
+            path.name
+            for path in package.iterdir()
+            if path.is_file() and (path.suffix == ".py" or path.name == "py.typed")
+        }
+        self.assertEqual(actual, PYTHON_FILES)
+
     def test_complete_two_platform_artifact_set_is_valid(self) -> None:
         with TemporaryDirectory() as directory:
             root = Path(directory)

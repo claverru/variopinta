@@ -5,8 +5,8 @@ mod png_codec;
 
 pub use error::{CodecError, CodecErrorKind};
 pub use model::{
-    ColorModel, DecodeMode, DecodeOptions, DecodedImage, EncodeOptions, ImageFormat, OwnedImage,
-    PixelData,
+    ColorModel, DecodeMode, DecodeOptions, DecodedImage, EncodeOptions, ImageFormat, ImageView,
+    OwnedImage, PixelData, PixelDataRef,
 };
 
 pub fn decode_image(encoded: &[u8], options: DecodeOptions) -> Result<DecodedImage, CodecError> {
@@ -17,6 +17,13 @@ pub fn decode_image(encoded: &[u8], options: DecodeOptions) -> Result<DecodedIma
 }
 
 pub fn encode_image(image: &OwnedImage, options: EncodeOptions) -> Result<Vec<u8>, CodecError> {
+    encode_image_view(image.into(), options)
+}
+
+pub fn encode_image_view(
+    image: ImageView<'_>,
+    options: EncodeOptions,
+) -> Result<Vec<u8>, CodecError> {
     image.validate()?;
     match options {
         EncodeOptions::Jpeg { quality } => jpeg::encode(image, quality),

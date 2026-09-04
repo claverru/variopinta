@@ -155,7 +155,6 @@ transform_catalog! {
         max_pixel_value: 255.0,
         p: 1.0,
     },
-    ToTorch: TransformPlan::ToTorch => crate::TransformSpec::ToTorch,
 }
 
 #[cfg(test)]

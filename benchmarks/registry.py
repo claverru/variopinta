@@ -50,7 +50,7 @@ FOCUSED_IDS = {
     "grid-distortion-nearest-reflect101": "transforms.grid-distortion.nearest-reflect101",
     "pad-constant": "transforms.pad-if-needed.constant",
     "pad-reflect101": "transforms.pad-if-needed.reflect101",
-    "to-torch": "transforms.to-torch.contiguous-uint8-chw",
+    "return-tensor": "outputs.return-tensor.contiguous-uint8-chw",
 }
 
 FOCUSED_PARTICIPANTS = {
@@ -70,7 +70,7 @@ FOCUSED_PARTICIPANTS = {
     "grid-distortion-nearest-reflect101": (AX,),
     "pad-constant": (TV, AX),
     "pad-reflect101": (TV, AX),
-    "to-torch": (TV, AX),
+    "return-tensor": (TV, AX),
 }
 
 CATALOG_POLICIES = (
@@ -105,8 +105,6 @@ CATALOG_POLICIES = (
     ("Solarize", "default"),
     ("Posterize", "default"),
     ("Normalize", "default"),
-    ("ToTorch", "default"),
-    ("Normalize+ToTorch", "terminal"),
 )
 
 IO_OPERATIONS = (
@@ -157,12 +155,19 @@ def _transform_cases() -> list[CaseSpec]:
         )
     )
     for focused in FOCUSED_CASES:
+        case_id = FOCUSED_IDS[focused]
+        suite = case_id.partition(".")[0]
+        category = "output" if suite == "outputs" else "transform"
         cases.append(
             CaseSpec(
-                id=FOCUSED_IDS[focused],
-                suite="transforms",
+                id=case_id,
+                suite=suite,
                 label=FOCUSED_LABELS[focused],
-                tags=("transform", f"transform:{FOCUSED_LABELS[focused].split(' ')[0]}", "focused"),
+                tags=(
+                    category,
+                    f"{category}:{FOCUSED_LABELS[focused].split(' ')[0]}",
+                    "focused",
+                ),
                 routes=(
                     *FOCUSED_PARTICIPANTS[focused],
                     RUST_FRESH,
@@ -173,7 +178,7 @@ def _transform_cases() -> list[CaseSpec]:
                 executor="layers",
                 factory=f"focused:{focused}",
                 comparability="operational",
-                scopes=("transforms", "variopinta"),
+                scopes=(suite, "variopinta"),
                 timing=DEFAULT_TIMING,
             )
         )
