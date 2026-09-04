@@ -16,7 +16,7 @@ checksum = "330a5ed07fa54e4702c9d6c4174f74427fc0ef6e214bbd677ae50a5099946470"
 
 [[package]]
 name = "augment-core"
-version = "0.4.0"
+version = "0.4.1"
 dependencies = [
  "fast_image_resize",
  "rand",
@@ -25,7 +25,7 @@ dependencies = [
 
 [[package]]
 name = "augment-io"
-version = "0.4.0"
+version = "0.4.1"
 dependencies = [
  "png",
  "turbojpeg",
@@ -33,7 +33,7 @@ dependencies = [
 
 [[package]]
 name = "augment-pyext"
-version = "0.4.0"
+version = "0.4.1"
 dependencies = [
  "augment-core",
  "augment-io",

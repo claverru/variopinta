@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.4.1
+
+- Accept a single output port directly in `Image` and `Mask` target signatures,
+  while preserving tuple and sequence declarations for multiple outputs.
+- Add focused examples for returning, encoding, and writing multiple outputs
+  from one transformed target.
+
 ## 0.4.0
 
 - Replace pipeline-global I/O and special-case masks with immutable `Image` and
