@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.4.3
+
+- Infer NumPy array and `PipelineResult` return types for implicit and explicit
+  calls to both pipeline executors, preserving typed output-port lookup.
+- Accept sequences of differently typed output ports in static type checking.
+
 ## 0.4.2
 
 - Accept a single `Image` or `Mask` directly in `Pipeline(targets=...)`, with

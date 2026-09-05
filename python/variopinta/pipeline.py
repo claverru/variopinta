@@ -3,7 +3,7 @@ from __future__ import annotations
 from collections.abc import Sequence
 from pathlib import Path
 from types import MappingProxyType
-from typing import Any, TypeAlias, TypeVar, overload
+from typing import Any, TypeVar, overload
 
 import numpy as np
 
@@ -21,7 +21,6 @@ from .targets import (
 )
 from .transforms import _TRANSFORM_TYPES, Transform
 
-_Result: TypeAlias = object
 _Value = TypeVar("_Value")
 
 
@@ -187,12 +186,20 @@ class Pipeline:
     def targets(self) -> tuple[Target, ...]:
         return self._targets
 
+    @overload
+    def __call__(self, image: np.ndarray, /, *, key: int | None = None) -> np.ndarray: ...
+
+    @overload
+    def __call__(
+        self, *, key: int | None = None, **bindings: BoundTarget[object]
+    ) -> PipelineResult: ...
+
     def __call__(
         self,
         *values: object,
         key: int | None = None,
         **bindings: BoundTarget[object],
-    ) -> _Result:
+    ) -> np.ndarray | PipelineResult:
         normalized = _normalize_call(self, values, bindings)
         torch = _torch_for_presentation(self)
         output = self._pipeline.apply_targets(normalized, _key(key))
@@ -240,12 +247,20 @@ class CompiledPipeline:
     def targets(self) -> tuple[Target, ...]:
         return self._targets
 
+    @overload
+    def __call__(self, image: np.ndarray, /, *, key: int | None = None) -> np.ndarray: ...
+
+    @overload
+    def __call__(
+        self, *, key: int | None = None, **bindings: BoundTarget[object]
+    ) -> PipelineResult: ...
+
     def __call__(
         self,
         *values: object,
         key: int | None = None,
         **bindings: BoundTarget[object],
-    ) -> _Result:
+    ) -> np.ndarray | PipelineResult:
         normalized = _normalize_call(self, values, bindings)
         torch = _torch_for_presentation(self)
         output = self._pipeline.apply_targets(normalized, _key(key))
@@ -306,7 +321,7 @@ def _present(
     bindings: tuple[BoundTarget[object], ...] | tuple[np.ndarray],
     output: object,
     torch: Any | None,
-) -> object:
+) -> np.ndarray | PipelineResult:
     if not pipeline._explicit_targets:
         if not isinstance(output, tuple) or len(output) != 1:
             raise RuntimeError("native target output does not match the implicit signature")

@@ -24,6 +24,7 @@ from .io import (
 )
 
 _Result = TypeVar("_Result")
+_OutputValue = TypeVar("_OutputValue", covariant=True)
 _BIND_TOKEN = object()
 _RESERVED_NAMES = frozenset({"key"})
 
@@ -62,7 +63,7 @@ class Path:
         _validate_limit("max_encoded_bytes", self.max_encoded_bytes)
 
 
-class OutputPort(Generic[_Result]):
+class OutputPort(Generic[_OutputValue]):
     __slots__ = ()
 
     name: str | None

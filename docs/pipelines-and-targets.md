@@ -99,7 +99,10 @@ assert result.labels.array.shape == (256, 256)
 ```
 
 The result containers are immutable; the returned arrays and tensors remain
-mutable. Identity lookup preserves the output port's static result type.
+mutable. Both executors infer `np.ndarray` for positional-array calls and
+`PipelineResult` for keyword-binding calls. Identity lookup preserves each
+output port's static result type; named output lookup is dynamic. The configured
+call mode, binding names, and port identities are validated at runtime.
 String indexing is not supported. Result `repr()` values show compact shape
 and type facts without raster, source, or destination payloads.
 
