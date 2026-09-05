@@ -331,5 +331,6 @@ clipping behavior. It does not promise pixel or random-stream identity with
 another library. Reference and compiled pipelines do produce the same result
 for the same sampled execution.
 
-See [Pipelines and targets](pipelines-and-targets.md) for target signatures,
-result layouts, deterministic keys, and compiled-plan inspection.
+See [Pipelines and targets](pipelines-and-targets.md) for target signatures and
+result layouts, and [execution](execution.md) for deterministic keys and
+compiled-plan inspection.

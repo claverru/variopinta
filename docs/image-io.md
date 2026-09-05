@@ -1,5 +1,9 @@
 # Image I/O
 
+For decode, augmentation, and encode in one pipeline, start with
+[encoded inputs and outputs](pipelines-and-targets.md#encoded-request-and-response).
+Use the helpers below when you need standalone image conversion or file I/O.
+
 Variopinta exposes standalone JPEG and PNG helpers. Pipeline `Encoded` and
 `Path` carriers use the same native codecs and resource-limit model; pipeline
 `Encode` and `Write` outputs use the same format options.

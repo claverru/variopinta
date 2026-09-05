@@ -1,15 +1,19 @@
 # Pipelines and targets
 
+Connect input acquisition, augmentation, and output delivery in one pipeline.
+Use [encoded inputs and outputs](#encoded-request-and-response) to keep decode,
+augmentation, and encode inside one native call, or declare
+[multiple outputs](#multiple-outputs) to transform each target once for every
+requested output.
+
 ## Pipeline executors
 
 ```text
 vp.Pipeline(transforms, seed=None, *, targets=None)
 ```
 
-`Pipeline` is the semantic reference executor. `.compile()` returns an
-immutable `CompiledPipeline` with the same transforms, seed, target signature,
-call shape, and keyed results. Both executors are callable and expose
-`.transforms`, `.seed`, `.targets`, and `.explain()`.
+`Pipeline` and its compiled executor share the input and output contracts below.
+See [compilation](execution.md#compile-a-pipeline) for execution semantics.
 
 With `targets=None` (the default), the pipeline has an implicit image target.
 It accepts exactly one positional HWC RGB `uint8` NumPy array and directly
@@ -35,6 +39,9 @@ A target combines three decisions:
 2. its input carrier: `Array`, `Encoded`, or `Path`;
 3. one or more output ports.
 
+For segmentation, declare an image and a mask. Geometry is sampled once and
+shared by both; image-only color and filtering operations leave the mask alone.
+
 ```python
 import numpy as np
 import variopinta as vp
@@ -45,7 +52,7 @@ image_target = vp.Image(name="image", outputs=image_array)
 labels_target = vp.Mask(name="labels", outputs=labels_array, fill=255)
 
 pipeline = vp.Pipeline(
-    [vp.RandomCrop(256, 256), vp.HorizontalFlip(p=0.5)],
+    [vp.RandomCrop(256, 256), vp.HorizontalFlip(p=0.5), vp.ColorJitter(p=0.3)],
     seed=42,
     targets=(image_target, labels_target),
 ).compile()
@@ -135,7 +142,34 @@ An image route with `Normalize(p>0)` cannot declare `Encode` or `Write`, because
 the final raster may be `float32`. `Normalize(p=0)` is a never-executed route
 and remains compatible.
 
-### Encoded request and response
+## Return a tensor
+
+Output choice belongs to the target signature. The following pipeline returns
+a contiguous CPU CHW tensor and imports PyTorch only when the output is
+presented:
+
+```python
+import numpy as np
+import variopinta as vp
+
+tensor = vp.ReturnTensor(name="tensor")
+image_target = vp.Image(outputs=tensor, name="image")
+pipeline = vp.Pipeline(
+    [vp.Resize(224, 224), vp.Normalize()],
+    targets=image_target,
+).compile()
+
+image = np.zeros((320, 480, 3), dtype=np.uint8)
+result = pipeline(image=image_target.bind(image), key=0)
+
+assert tuple(result.image.tensor.shape) == (3, 224, 224)
+```
+
+For this tensor-only target, compiled normalization writes `float32` values
+directly in CHW layout. Adding an array output requires an HWC raster as well;
+inspect the selected route with [`.explain()`](execution.md#inspect-the-execution-plan).
+
+## Encoded request and response
 
 An encoded service route can keep decode, augmentation, and encode inside one
 native call:
@@ -189,9 +223,9 @@ assert result.image.array.shape == (224, 224, 3)
 assert isinstance(result.image.jpeg, bytes)
 ```
 
-Returned mutable siblings own independent storage. Encoding and writing read
-the common final raster, never an intermediate transform state. Binding the
-same source to two targets still executes both target routes.
+Encoding and writing read the common final raster, never an intermediate
+transform state. Binding the same source to two targets still executes both
+target routes.
 
 Declaration order controls output introspection, while named and identity
 lookups remain independent of that order.
@@ -200,7 +234,11 @@ lookups remain independent of that order.
 
 A `Write` output declares a file output, and `Write.bind()` supplies its
 destination for each call. Pass that binding after the source in
-`target.bind()`. A target can return an array and write the same final raster:
+`target.bind()`.
+
+This example reads an image from disk into a NumPy array, transforms it once,
+and both returns the resulting array and writes it to a PNG file. These are
+two outputs of one image target:
 
 ```python
 from pathlib import Path
@@ -209,16 +247,17 @@ import variopinta as vp
 
 array = vp.ReturnArray(name="array")
 png = vp.Write("png", compression=3, name="png")
-image_target = vp.Image(vp.Path(), outputs=(array, png), name="image")
+image_target = vp.Image(outputs=(array, png), name="image")
 
 pipeline = vp.Pipeline(
     [vp.Resize(512, 512)],
     targets=image_target,
 ).compile()
 
+image = vp.read_image("input.png")
 result = pipeline(
     image=image_target.bind(
-        "input.png",
+        image,
         png.bind("output.png"),
     ),
     key=7,
@@ -227,6 +266,12 @@ result = pipeline(
 assert result.image.array.shape == (512, 512, 3)
 assert result.image.png == Path("output.png")
 ```
+
+`result.image.array` contains the transformed pixels; `result.image.png`
+contains the written path. The PNG stores the same pixels as the returned
+array, and the input array is unchanged. To include reading and decoding in the
+native pipeline call as well, declare the image target with `vp.Path()` and
+bind the source path instead of a preloaded array.
 
 `Write(format=None)` infers JPEG or PNG from the destination suffix. A known
 suffix must agree with an explicit format. Target binding rejects missing,
@@ -249,38 +294,13 @@ distortion apply to masks with nearest interpolation and no antialiasing.
 Constant borders use each mask target's own scalar `fill`. Color, filtering,
 noise, dropout, and normalization are image-only.
 
-## Ownership and concurrency
+## Ownership
 
 Inputs are never mutated. Non-contiguous arrays are copied to contiguous
 storage once per target. Returned arrays own their storage and are
-C-contiguous.
+C-contiguous. Returned mutable siblings own independent storage.
 
-A call containing any `Array` carrier retains the Python GIL during aggregate
-augmentation. Calls whose inputs are entirely `Encoded` or `Path` release the
-GIL through acquisition, augmentation, encoding, and delivery. Compiled
-pipelines are safe to share across workers.
-
-Use an explicit unsigned 64-bit `key` when output must not depend on call order
-or worker scheduling. Without a key, successful calls advance the sequence
-associated with the pipeline's unsigned 64-bit seed. Failed calls do not
-advance it.
-
-## Inspect the execution plan
-
-```python
-plan = pipeline.explain()
-```
-
-`explain()` describes transforms, target carriers, ordered outputs, operations,
-pixel passes, buffers, copies, dtype and layout changes, fusion, portable
-fallbacks, codec options, and delivery. Operations are marked `always`,
-`conditional`, or `never`; exact `p=0` routes report only work that can execute.
-
-The report distinguishes semantic transform passes from output fan-out,
-including a normalized raster written directly as CHW and a terminal HWC-to-CHW
-copy when direct production is unavailable. Declaration order is introspection
-order, not call order. Runtime arrays, tensors, encoded contents, source paths,
-and destination paths are never inspected or included.
-
-Standalone codec functions and their full data matrix are documented in
+See [execution](execution.md) for compilation, deterministic keys, worker and
+GIL behavior, execution-plan inspection, and performance evidence. Standalone
+codec functions and their full data matrix are documented in
 [Image I/O](image-io.md).

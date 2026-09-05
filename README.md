@@ -1,16 +1,27 @@
 # Variopinta
 
-Variopinta is an experimental CPU image-augmentation compiler. Pipelines are
-configured in Python and executed by optimized Rust kernels, with whole-pipeline
-planning for buffer reuse, kernel selection, and fewer Python/native crossings.
-
-> *Variopinta* is the feminine form of the Spanish *variopinto*: “varied in
-> color or appearance,” from Italian *variopinto*, “varied” and “painted.”
-> — [RAE](https://dle.rae.es/variopinto)
+Variopinta is a CPU image-augmentation compiler: define a pipeline in Python,
+then compile it for optimized native execution in Rust, with reproducible
+randomness and an inspectable execution plan.
 
 Variopinta is pre-alpha. The public API may change between `0.y.0` releases;
 patch releases preserve documented signatures and data contracts unless a
 correctness or security fix requires otherwise.
+
+## Why Variopinta?
+
+- **One pipeline, from input to output.** Decode, augment, and deliver arrays,
+  tensors, or encoded images in one native call. Compilation plans buffer reuse,
+  copy avoidance, and output layout; each target is transformed once for all
+  its outputs. See [pipelines and outputs](https://github.com/claverru/variopinta/blob/main/docs/pipelines-and-targets.md#encoded-request-and-response).
+- **Reproduce results regardless of worker order.** Use a pipeline seed and a
+  per-call `key` to replay an augmentation independently of call order or worker
+  assignment, within the same release and execution environment. See
+  [control randomness](https://github.com/claverru/variopinta/blob/main/docs/execution.md#control-randomness).
+- **See what the compiler actually does.** `explain()` exposes the execution
+  plan, including pixel passes, buffers, copies, and layout changes, so you can
+  inspect which optimizations your pipeline uses. See
+  [execution-plan inspection](https://github.com/claverru/variopinta/blob/main/docs/execution.md#inspect-the-execution-plan).
 
 ## Install
 
@@ -41,26 +52,27 @@ pipeline = vp.Pipeline(
     seed=42,
 ).compile()
 
-image = np.zeros((320, 320, 3), dtype=np.uint8)
+image = np.random.default_rng(0).integers(0, 256, (320, 320, 3), dtype=np.uint8)
 output = pipeline(image, key=0)
+replayed = pipeline(image, key=0)
 
+assert np.array_equal(output, replayed)
 print(output.shape, output.dtype)  # (224, 224, 3) float32
 print(pipeline.explain())
 ```
 
 `Pipeline` is the semantic reference executor. `.compile()` selects the
 optimized execution plan while keeping the same call signature and keyed
-result. Use `pipeline.explain()` to inspect the operations, buffers, copies,
-fusion, dtypes, layouts, and target routes in that plan.
+result.
 
-Repeated calls with the same pipeline, input, seed, and key are deterministic
-for the same installed release and execution environment. Exact replay is not
-guaranteed across releases, builds, or platforms.
+Keep the pipeline, input, seed, and key fixed to replay a result. Exact replay
+is not guaranteed across releases, builds, or platforms.
 
 ## Documentation
 
 - [Getting started](https://github.com/claverru/variopinta/blob/main/docs/getting-started.md)
 - [Pipelines and targets](https://github.com/claverru/variopinta/blob/main/docs/pipelines-and-targets.md)
+- [Compile, reproduce, and inspect](https://github.com/claverru/variopinta/blob/main/docs/execution.md)
 - [Image I/O](https://github.com/claverru/variopinta/blob/main/docs/image-io.md)
 - [Transform reference](https://github.com/claverru/variopinta/blob/main/docs/transforms.md)
 
@@ -70,12 +82,20 @@ native batches, or Python callbacks inside a pipeline.
 
 ## Project information
 
+Performance depends on the pipeline, image sizes, output formats, and hardware.
+The [benchmark harness](https://github.com/claverru/variopinta/tree/main/benchmarks)
+and [recorded evidence](https://github.com/claverru/variopinta/tree/main/benchmarks/evidence)
+support comparisons for specific tested configurations.
+
 - [Changelog](https://github.com/claverru/variopinta/blob/main/CHANGELOG.md)
 - [Contributing](https://github.com/claverru/variopinta/blob/main/CONTRIBUTING.md)
 - [Security policy](https://github.com/claverru/variopinta/blob/main/SECURITY.md)
-- [Benchmark harness](https://github.com/claverru/variopinta/tree/main/benchmarks)
 
 Variopinta is licensed under the
 [Apache License 2.0](https://github.com/claverru/variopinta/blob/main/LICENSE).
 Native-wheel attributions are in
 [THIRD_PARTY_NOTICES](https://github.com/claverru/variopinta/blob/main/THIRD_PARTY_NOTICES).
+
+*Variopinta* is the feminine form of the Spanish *variopinto*: “varied in
+color or appearance,” from Italian *variopinto*, “varied” and “painted.”
+— [RAE](https://dle.rae.es/variopinto)

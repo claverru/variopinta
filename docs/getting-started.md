@@ -1,5 +1,8 @@
 # Getting started
 
+Install Variopinta and run a compiled pipeline on a NumPy image. The example
+creates its own input, so you can run it without an image file or PyTorch.
+
 ## Requirements
 
 Published wheels support CPython 3.10–3.13 on:
@@ -24,22 +27,6 @@ requires a PyTorch build compatible with your Python and platform:
 python -m pip install torch
 ```
 
-### Build from source
-
-A source build needs Rust 1.87 or newer and CMake. Linux x86-64 also needs a
-C/C++ toolchain and NASM:
-
-```bash
-sudo apt-get update
-sudo apt-get install build-essential cmake nasm
-python -m pip install .
-```
-
-On Apple Silicon, install the Xcode command-line tools and CMake; NASM is not
-required. Builds use Maturin through Python build isolation and compile the
-locked vendored libjpeg-turbo statically. They do not use Homebrew or MacPorts
-codec libraries.
-
 ## Default image-to-image pipeline
 
 The default API accepts one HWC RGB `uint8` NumPy array and returns one owned,
@@ -56,107 +43,29 @@ pipeline = vp.Pipeline(
         vp.Normalize(),
     ],
     seed=42,
-)
-
-image = vp.read_image("input.jpg")
-reference = pipeline(image, key=17)
-compiled = pipeline.compile()
-optimized = compiled(image, key=17)
-
-assert reference.shape == (224, 224, 3)
-assert reference.dtype == np.float32
-assert np.array_equal(reference, optimized)
-```
-
-Use the reference `Pipeline` while checking semantics and `.compile()` for the
-optimized executor. Both expose `.transforms`, `.seed`, `.targets`, and
-`.explain()`.
-
-## Control randomness
-
-`seed` initializes the pipeline's random stream. A call can additionally take
-an unsigned 64-bit `key`:
-
-```python
-first = compiled(image, key=100)
-second = compiled(image, key=100)
-assert np.array_equal(first, second)
-```
-
-Use explicit keys when results must be independent of request order, retries,
-or worker assignment. If `key` is omitted, successful calls advance the
-sequence owned by that pipeline instance. Validation, acquisition, execution,
-encoding, or delivery failures do not consume a sequence position.
-
-## Add a semantic mask
-
-Explicit targets give each input a role and give each output a name. Geometry
-is sampled once and shared by all targets; image-only color and filtering
-operations do not change masks.
-
-```python
-import numpy as np
-import variopinta as vp
-
-image_array = vp.ReturnArray(name="array")
-mask_array = vp.ReturnArray(name="array")
-image_target = vp.Image(name="image", outputs=image_array)
-mask_target = vp.Mask(name="labels", outputs=mask_array, fill=255)
-
-pipeline = vp.Pipeline(
-    [
-        vp.RandomCrop(256, 256),
-        vp.HorizontalFlip(p=0.5),
-        vp.ColorJitter(p=0.3),
-    ],
-    seed=42,
-    targets=(image_target, mask_target),
 ).compile()
 
-image = np.zeros((320, 320, 3), dtype=np.uint8)
-mask = np.zeros((320, 320), dtype=np.uint8)
-result = pipeline(
-    image=image_target.bind(image),
-    labels=mask_target.bind(mask),
-    key=17,
-)
+image = np.random.default_rng(0).integers(0, 256, (320, 320, 3), dtype=np.uint8)
+output = pipeline(image, key=17)
 
-assert result.image.array.shape == (256, 256, 3)
-assert result.labels.array.shape == (256, 256)
-assert result[image_target][image_array] is result.image.array
+print(output.shape, output.dtype)  # (224, 224, 3) float32
 ```
 
-All target inputs must start with the same height and width. Masks use nearest
-interpolation without antialiasing, and constant borders use the mask target's
-scalar `fill` rather than an image transform's RGB `fill`.
+The pipeline crops and resizes the image, may flip it, then normalizes it to
+`float32`. `.compile()` selects the optimized execution plan. The seed and
+`key` let you replay this result with the same input and environment; see
+[control randomness](execution.md#control-randomness) for the complete contract.
 
-## Return a tensor
+## Next steps
 
-Output choice belongs to the target signature. The following pipeline returns
-a contiguous CPU CHW tensor and imports PyTorch only when the output is
-presented:
-
-```python
-import numpy as np
-import variopinta as vp
-
-tensor = vp.ReturnTensor(name="tensor")
-image_target = vp.Image(outputs=tensor, name="image")
-pipeline = vp.Pipeline(
-    [vp.Resize(224, 224), vp.Normalize()],
-    targets=image_target,
-).compile()
-
-image = np.zeros((320, 480, 3), dtype=np.uint8)
-result = pipeline(image=image_target.bind(image), key=0)
-
-assert tuple(result.image.tensor.shape) == (3, 224, 224)
-```
-
-For encoded buffers, local paths, file outputs, and output fan-out, continue to
-[Pipelines and targets](pipelines-and-targets.md), including its dedicated
-[multiple-output examples](pipelines-and-targets.md#multiple-outputs). For standalone codecs, see
-[Image I/O](image-io.md).
+- [Connect inputs and outputs](pipelines-and-targets.md): transform images and
+  masks together, decode and encode within a pipeline, or return tensors and
+  multiple outputs.
+- [Compile, reproduce, and inspect](execution.md): compare reference and
+  compiled execution, replay samples independently of worker order, and see a
+  concrete optimization in `explain()`.
+- [Choose transforms](transforms.md): look up constructors, defaults, and
+  image/mask behavior.
 
 ## Common errors
 
@@ -173,3 +82,19 @@ For encoded buffers, local paths, file outputs, and output fan-out, continue to
 The [transform reference](transforms.md) lists constructor constraints. The
 [pipeline guide](pipelines-and-targets.md) gives the complete input and output
 contract.
+
+## Build from source
+
+A source build needs Rust 1.87 or newer and CMake. Linux x86-64 also needs a
+C/C++ toolchain and NASM:
+
+```bash
+sudo apt-get update
+sudo apt-get install build-essential cmake nasm
+python -m pip install .
+```
+
+On Apple Silicon, install the Xcode command-line tools and CMake; NASM is not
+required. Builds use Maturin through Python build isolation and compile the
+locked vendored libjpeg-turbo statically. They do not use Homebrew or MacPorts
+codec libraries.
