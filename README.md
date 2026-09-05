@@ -4,14 +4,18 @@ Variopinta is an experimental CPU image-augmentation compiler. Pipelines are
 configured in Python and executed by optimized Rust kernels, with whole-pipeline
 planning for buffer reuse, kernel selection, and fewer Python/native crossings.
 
+> *Variopinta* is the feminine form of the Spanish *variopinto*: “varied in
+> color or appearance,” from Italian *variopinto*, “varied” and “painted.”
+> — [RAE](https://dle.rae.es/variopinto)
+
 Variopinta is pre-alpha. The public API may change between `0.y.0` releases;
 patch releases preserve documented signatures and data contracts unless a
 correctness or security fix requires otherwise.
 
 ## Install
 
-Variopinta supports CPython 3.10–3.13 on supported 64-bit Linux and Apple
-Silicon macOS systems.
+Variopinta supports CPython 3.10–3.13 on 64-bit x86 Linux with glibc 2.34 or
+newer and on macOS 11 or newer running natively on Apple Silicon.
 
 ```bash
 python -m pip install variopinta
@@ -41,12 +45,17 @@ image = np.zeros((320, 320, 3), dtype=np.uint8)
 output = pipeline(image, key=0)
 
 print(output.shape, output.dtype)  # (224, 224, 3) float32
+print(pipeline.explain())
 ```
 
 `Pipeline` is the semantic reference executor. `.compile()` selects the
 optimized execution plan while keeping the same call signature and keyed
 result. Use `pipeline.explain()` to inspect the operations, buffers, copies,
 fusion, dtypes, layouts, and target routes in that plan.
+
+Repeated calls with the same pipeline, input, seed, and key are deterministic
+for the same installed release and execution environment. Exact replay is not
+guaranteed across releases, builds, or platforms.
 
 ## Documentation
 
