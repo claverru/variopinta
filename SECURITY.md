@@ -1,12 +1,8 @@
 # Security policy
 
-Variopinta is experimental. Security fixes are provided for the latest patch of
-the current `0.1` release line.
-
-| Version | Supported |
-|---|---|
-| Latest `0.1.x` | Yes |
-| Earlier releases | No |
+Variopinta is experimental. Only the latest published release receives security
+fixes. Earlier releases are not supported; upgrade to the latest release to
+receive fixes.
 
 ## Reporting a vulnerability
 

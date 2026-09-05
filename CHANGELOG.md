@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.4.2
+
+- Accept a single `Image` or `Mask` directly in `Pipeline(targets=...)`, with
+  the same bindings and result structure as a one-element sequence.
+
 ## 0.4.1
 
 - Accept a single output port directly in `Image` and `Mask` target signatures,

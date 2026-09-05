@@ -144,7 +144,7 @@ tensor = vp.ReturnTensor(name="tensor")
 image_target = vp.Image(outputs=tensor, name="image")
 pipeline = vp.Pipeline(
     [vp.Resize(224, 224), vp.Normalize()],
-    targets=(image_target,),
+    targets=image_target,
 ).compile()
 
 image = np.zeros((320, 480, 3), dtype=np.uint8)

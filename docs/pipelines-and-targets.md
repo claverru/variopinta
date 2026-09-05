@@ -11,9 +11,9 @@ immutable `CompiledPipeline` with the same transforms, seed, target signature,
 call shape, and keyed results. Both executors are callable and expose
 `.transforms`, `.seed`, `.targets`, and `.explain()`.
 
-Without `targets`, the pipeline has an implicit image target. It accepts exactly
-one positional HWC RGB `uint8` NumPy array and directly returns one owned,
-C-contiguous NumPy array:
+With `targets=None` (the default), the pipeline has an implicit image target.
+It accepts exactly one positional HWC RGB `uint8` NumPy array and directly
+returns one owned, C-contiguous NumPy array:
 
 ```python
 import numpy as np
@@ -36,6 +36,9 @@ A target combines three decisions:
 3. one or more output ports.
 
 ```python
+import numpy as np
+import variopinta as vp
+
 image_array = vp.ReturnArray(name="array")
 labels_array = vp.ReturnArray(name="array")
 image_target = vp.Image(name="image", outputs=image_array)
@@ -53,13 +56,18 @@ Python identifier: it cannot start with `_`, be a keyword, or be `key`. Target
 names are unique across the pipeline; output names are unique within their
 target.
 
-Pass one output port directly. Use a tuple or another sequence when a target
-has multiple outputs. `target.outputs` is always stored as a tuple.
+Both `targets` and `outputs` accept a single port or a non-empty sequence:
+`targets=image_target` or `targets=(image_target, labels_target)`, and
+`outputs=image_array` or `outputs=(image_array, jpeg)`. The attributes
+`pipeline.targets` and `target.outputs` always contain tuples. Repeating the
+same target within a pipeline or the same output within a target is rejected.
 
 Explicit calls are keyword-only and must bind every declared target exactly
 once. A binding belongs to the target object that created it:
 
 ```python
+image = np.zeros((320, 320, 3), dtype=np.uint8)
+mask = np.zeros((320, 320), dtype=np.uint8)
 result = pipeline(
     labels=labels_target.bind(mask),
     image=image_target.bind(image),
@@ -69,6 +77,24 @@ result = pipeline(
 
 Keyword order is irrelevant. Missing, extra, positional, or foreign bindings
 are rejected before native execution.
+
+## Reading results
+
+Explicit pipelines always return a `PipelineResult` containing one
+`TargetResult` per target, even with `targets=image_target` and one output.
+Read values using names or the original port objects:
+
+```python
+array_by_name = result.image.array
+array_by_identity = result[image_target][image_array]
+assert array_by_name is array_by_identity
+assert result.labels.array.shape == (256, 256)
+```
+
+The result containers are immutable; the returned arrays and tensors remain
+mutable. Identity lookup preserves the output port's static result type.
+String indexing is not supported. Result `repr()` values show compact shape
+and type facts without raster, source, or destination payloads.
 
 ## Carriers
 
@@ -102,9 +128,8 @@ normally `uint8`, or `float32` after `Normalize`. Mask arrays and tensors are HW
 `uint8`; tensor output does not add a channel or convert labels to `int64`.
 PyTorch is imported only for a declared `ReturnTensor` route.
 
-JPEG image output accepts `quality` from 1 through 100 and defaults to 95. PNG
-image output accepts `compression` from 0 through 9 and defaults to 6. Mask
-encoding and writing are always lossless 8-bit grayscale PNG.
+Codec options and defaults are listed in [Image I/O](image-io.md#encode-and-write).
+Mask encoding and writing are always lossless 8-bit grayscale PNG.
 
 An image route with `Normalize(p>0)` cannot declare `Encode` or `Write`, because
 the final raster may be `float32`. `Normalize(p=0)` is a never-executed route
@@ -128,7 +153,7 @@ image_target = vp.Image(
 )
 pipeline = vp.Pipeline(
     [vp.Resize(224, 224)],
-    targets=(image_target,),
+    targets=image_target,
 ).compile()
 
 request_bytes = Path("input.jpg").read_bytes()
@@ -154,7 +179,7 @@ jpeg = vp.Encode("jpeg", quality=90, name="jpeg")
 image_target = vp.Image(name="image", outputs=(array, jpeg))
 pipeline = vp.Pipeline(
     [vp.Resize(224, 224)],
-    targets=(image_target,),
+    targets=image_target,
 ).compile()
 
 image = np.zeros((320, 480, 3), dtype=np.uint8)
@@ -168,7 +193,14 @@ Returned mutable siblings own independent storage. Encoding and writing read
 the common final raster, never an intermediate transform state. Binding the
 same source to two targets still executes both target routes.
 
-Outputs can also combine returned data with a destination bound for each call:
+Declaration order controls output introspection, while named and identity
+lookups remain independent of that order.
+
+## Write bindings
+
+A `Write` output declares a file output, and `Write.bind()` supplies its
+destination for each call. Pass that binding after the source in
+`target.bind()`. A target can return an array and write the same final raster:
 
 ```python
 from pathlib import Path
@@ -181,7 +213,7 @@ image_target = vp.Image(vp.Path(), outputs=(array, png), name="image")
 
 pipeline = vp.Pipeline(
     [vp.Resize(512, 512)],
-    targets=(image_target,),
+    targets=image_target,
 ).compile()
 
 result = pipeline(
@@ -196,14 +228,6 @@ assert result.image.array.shape == (512, 512, 3)
 assert result.image.png == Path("output.png")
 ```
 
-Declaration order controls output introspection, while named and identity
-lookups remain independent of that order.
-
-## Write bindings
-
-A `Write` output is part of the static target signature, but its destination is
-bound per call as shown above.
-
 `Write(format=None)` infers JPEG or PNG from the destination suffix. A known
 suffix must agree with an explicit format. Target binding rejects missing,
 duplicate, or foreign `Write` bindings.
@@ -214,30 +238,6 @@ targets, and prepares every encoding. Exact duplicate destinations are rejected
 globally. Each file is installed through a sibling temporary file and atomic
 rename where the platform supports it. Multiple files do not form one
 cross-file transaction.
-
-## Reading results
-
-Explicit pipelines always return an immutable `PipelineResult`, even with one
-target and one output. Read values using names or the original port objects:
-
-```python
-import numpy as np
-import variopinta as vp
-
-image_array = vp.ReturnArray(name="array")
-image_target = vp.Image(outputs=image_array, name="image")
-pipeline = vp.Pipeline([], targets=(image_target,))
-image = np.zeros((8, 8, 3), dtype=np.uint8)
-result = pipeline(image=image_target.bind(image), key=0)
-
-array_by_name = result.image.array
-array_by_identity = result[image_target][image_array]
-assert array_by_name is array_by_identity
-```
-
-Identity lookup preserves the output port's static result type. String indexing
-is not supported. Result `repr()` values show compact shape and type facts but
-do not include raster, source, or destination payloads.
 
 ## Image and mask behavior
 

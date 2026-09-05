@@ -147,13 +147,18 @@ class Pipeline:
         transforms: Sequence[Transform],
         seed: int | None = None,
         *,
-        targets: Sequence[Target] | None = None,
+        targets: Target | Sequence[Target] | None = None,
     ) -> None:
         normalized_transforms = tuple(transforms)
         if not all(isinstance(transform, _TRANSFORM_TYPES) for transform in normalized_transforms):
             raise TypeError("Pipeline only accepts built-in transforms")
         explicit_targets = targets is not None
-        normalized_targets = (Image(),) if targets is None else tuple(targets)
+        if targets is None:
+            normalized_targets = (Image(),)
+        elif isinstance(targets, Image | Mask):
+            normalized_targets = (targets,)
+        else:
+            normalized_targets = tuple(targets)
         if not normalized_targets:
             raise ValueError("targets must contain at least one target port")
         if not all(isinstance(target, Image | Mask) for target in normalized_targets):

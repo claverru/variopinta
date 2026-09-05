@@ -57,6 +57,44 @@ class TypedOutputTests(unittest.TestCase):
         with self.assertRaisesRegex(TypeError, "an output port or a sequence"):
             R.Image(outputs=object())
 
+    def test_single_targets_preserve_explicit_execution_and_results(self) -> None:
+        for target_type, source in (
+            (R.Image, image(5, 7)[:, ::-1]),
+            (R.Mask, np.arange(35, dtype=np.uint8).reshape(5, 7)[:, ::-1]),
+        ):
+            output = R.ReturnArray(name="value")
+            target = target_type(name="view", outputs=output)
+            for declaration in (target, (target,), [target]):
+                reference = R.Pipeline([R.HorizontalFlip(1.0)], targets=declaration)
+                for pipeline in (reference, reference.compile()):
+                    with self.subTest(
+                        target=target_type, pipeline=type(pipeline), declaration=type(declaration)
+                    ):
+                        self.assertEqual(pipeline.targets, (target,))
+                        result = pipeline(view=target.bind(source), key=3)
+                        self.assertIsInstance(result, R.PipelineResult)
+                        self.assertIsInstance(result.view, R.TargetResult)
+                        self.assertIs(result.view.value, result[target][output])
+                        np.testing.assert_array_equal(result.view.value, source[:, ::-1])
+                        self.assertEqual(result.view.value.dtype, np.uint8)
+                        self.assertTrue(result.view.value.flags.c_contiguous)
+                        self.assertFalse(np.shares_memory(result.view.value, source))
+                        with self.assertRaises(TypeError):
+                            pipeline(source)
+                        with self.assertRaisesRegex(TypeError, "missing"):
+                            pipeline()
+                        foreign = target_type(name="view", outputs=output)
+                        with self.assertRaisesRegex(ValueError, "different port"):
+                            pipeline(view=foreign.bind(source))
+
+    def test_single_targets_require_explicit_names(self) -> None:
+        for target_type in (R.Image, R.Mask):
+            with self.subTest(target=target_type):
+                with self.assertRaisesRegex(ValueError, "target must have a name"):
+                    R.Pipeline([], targets=target_type(outputs=R.ReturnArray(name="value")))
+                with self.assertRaisesRegex(ValueError, "must have a name"):
+                    R.Pipeline([], targets=target_type(name="view"))
+
     def test_names_and_scopes_are_validated(self) -> None:
         for name in ("", "not-valid", "_private", "class", "key"):
             with self.subTest(name=name), self.assertRaises(ValueError):
