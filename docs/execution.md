@@ -73,7 +73,7 @@ must not affect which augmentation a sample receives.
 
 ## Share a compiled pipeline
 
-Compiled pipelines are safe to share across workers. Each run owns its random
+Compiled pipelines are safe to share across threads. Each run owns its random
 state and working buffers; explicit keys make results independent of worker
 assignment.
 
@@ -81,6 +81,43 @@ A call containing any `Array` carrier retains the Python GIL during aggregate
 augmentation. Calls whose inputs are entirely `Encoded` or `Path` release it
 through acquisition, augmentation, encoding, and delivery. Calls without a key
 serialize their sequence commit so a failed call does not consume a key.
+
+## Pickle and multiprocessing
+
+`Pipeline` and `CompiledPipeline` support standard-library `pickle`, including
+after execution. Loading preserves the executor class, transforms, resolved seed
+(also when constructed with `seed=None`), target signature, and next implicit
+key. Native execution is rebuilt before loading returns, with an independent
+counter and empty workspace cache. `.compile()` still starts a new sequence.
+
+```python
+import pickle
+
+restored = pickle.loads(pickle.dumps(compiled))
+assert np.array_equal(compiled(image), restored(image))
+```
+
+Serialize a Dataset and its pipeline together to preserve shared target/output
+port identities. `copy.copy()` shares configuration ports but rebuilds native
+execution; `copy.deepcopy()` copies the configuration graph and rebuilds native
+execution. Both resume at the saved sequence position. These are same-release
+round trips, not a cross-release pickle, pixel, or RNG compatibility promise.
+Unknown private state versions fail explicitly. Pickle is separate from JSON
+configuration and sampled-plan replay; only load pickles from trusted sources.
+
+A Dataset can hold a compiled pipeline directly when using `spawn` or
+`forkserver`. Its class must be importable by worker processes. No custom Dataset
+serialization or worker-side compilation is required. Each copy starts at the
+same saved sequence position; the library does not reseed workers automatically.
+Use explicit sample/epoch keys for scheduling-independent augmentation: for a
+fixed dataset of size `N`, `key = epoch * N + sample_index` (within u64). With
+persistent workers, pass epoch/index pairs through a sampler instead of changing
+only a parent Dataset attribute. Validation can use the sample index alone.
+
+Use `spawn` for GPU training, as in the
+[Imagenette notebook](../examples/imagenette.ipynb). A controlled `fork` of an
+idle pipeline works, but fork does not invoke pickle hooks and is unsafe if
+another parent thread holds a native lock. No at-fork repair is provided.
 
 ## Inspect the execution plan
 

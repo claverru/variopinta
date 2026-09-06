@@ -70,6 +70,10 @@ is not guaranteed across releases, builds, or platforms.
 
 ## Documentation
 
+- [Visual Imagenette training notebook](https://github.com/claverru/variopinta/blob/main/examples/imagenette.ipynb):
+  download and run a standalone tutorial with augmentation visualizations,
+  keyed replay, and PyTorch Lightning training on a CUDA GPU with multiple workers.
+
 - [Getting started](https://github.com/claverru/variopinta/blob/main/docs/getting-started.md)
 - [Pipelines and targets](https://github.com/claverru/variopinta/blob/main/docs/pipelines-and-targets.md)
 - [Compile, reproduce, and inspect](https://github.com/claverru/variopinta/blob/main/docs/execution.md)

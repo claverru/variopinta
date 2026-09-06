@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from collections.abc import Sequence
+from dataclasses import replace
 from pathlib import Path
 from types import MappingProxyType
 from typing import Any, TypeVar, overload
@@ -10,10 +11,12 @@ import numpy as np
 from ._validation import _key, _seed, _torch_module
 from ._variopinta import Pipeline as _NativePipeline
 from .targets import (
+    Array,
     BoundTarget,
     Image,
     Mask,
     OutputPort,
+    ReturnArray,
     ReturnTensor,
     Target,
     Write,
@@ -22,6 +25,7 @@ from .targets import (
 from .transforms import _TRANSFORM_TYPES, Transform
 
 _Value = TypeVar("_Value")
+_STATE_VERSION = 1
 
 
 class TargetResult:
@@ -214,6 +218,12 @@ class Pipeline:
             self._explicit_targets,
         )
 
+    def __getstate__(self) -> dict[str, object]:
+        return _pipeline_state(self)
+
+    def __setstate__(self, state: object) -> None:
+        _restore_pipeline(self, state, "reference")
+
     def explain(self) -> dict[str, object]:
         return self._pipeline.explain()
 
@@ -268,6 +278,88 @@ class CompiledPipeline:
 
     def explain(self) -> dict[str, object]:
         return self._pipeline.explain()
+
+    def __getstate__(self) -> dict[str, object]:
+        return _pipeline_state(self)
+
+    def __setstate__(self, state: object) -> None:
+        _restore_pipeline(self, state, "compiled")
+
+
+def _pipeline_state(pipeline: Pipeline | CompiledPipeline) -> dict[str, object]:
+    return {
+        "version": _STATE_VERSION,
+        "transforms": pipeline._transforms,
+        "seed": pipeline._seed,
+        "targets": pipeline._targets,
+        "explicit_targets": pipeline._explicit_targets,
+        "next_key": pipeline._pipeline._snapshot_next_key(),
+    }
+
+
+def _restore_pipeline(pipeline: Pipeline | CompiledPipeline, state: object, mode: str) -> None:
+    if not isinstance(state, dict) or state.keys() != {
+        "version",
+        "transforms",
+        "seed",
+        "targets",
+        "explicit_targets",
+        "next_key",
+    }:
+        raise ValueError("invalid pipeline pickle state fields")
+    if type(state["version"]) is not int or state["version"] != _STATE_VERSION:
+        raise ValueError("unsupported pipeline pickle state version")
+    for name in ("seed", "next_key"):
+        value = state[name]
+        if isinstance(value, bool) or not isinstance(value, int) or not 0 <= value < 2**64:
+            raise ValueError(f"{name} must be an unsigned 64-bit integer")
+    transforms, targets = state["transforms"], state["targets"]
+    explicit = state["explicit_targets"]
+    if type(explicit) is not bool:
+        raise ValueError("explicit_targets must be a boolean")
+    if not isinstance(transforms, tuple) or not all(
+        isinstance(transform, _TRANSFORM_TYPES) for transform in transforms
+    ):
+        raise TypeError("pipeline pickle transforms must be a tuple of built-in transforms")
+    if (
+        not isinstance(targets, tuple)
+        or not targets
+        or not all(isinstance(target, Image | Mask) for target in targets)
+    ):
+        raise TypeError("pipeline pickle targets must be a nonempty tuple of Image or Mask ports")
+    if len({id(target) for target in targets}) != len(targets):
+        raise ValueError("the same target port cannot appear more than once")
+    # Dataclass unpickling skips constructors. Validate without replacing the shared graph.
+    for transform in transforms:
+        replace(transform)
+    for target in targets:
+        replace(target)
+        replace(target.carrier)
+        for output in target.outputs:
+            replace(output)
+    if explicit:
+        _validate_explicit_signature(targets)
+    elif not (
+        len(targets) == 1
+        and type(targets[0]) is Image
+        and type(targets[0].carrier) is Array
+        and targets[0].name is None
+        and len(targets[0].outputs) == 1
+        and type(targets[0].outputs[0]) is ReturnArray
+        and targets[0].outputs[0].name is None
+    ):
+        raise ValueError("invalid implicit image signature in pipeline pickle state")
+    specs = [transform._spec() for transform in transforms]
+    native = _NativePipeline._restore(
+        specs, state["seed"], mode, [_route(target) for target in targets], state["next_key"]
+    )
+    pipeline._transforms = transforms
+    pipeline._targets = targets
+    pipeline._explicit_targets = explicit
+    pipeline._seed = state["seed"]
+    if isinstance(pipeline, Pipeline):
+        pipeline._specs = specs
+    pipeline._pipeline = native
 
 
 def _validate_explicit_signature(targets: tuple[Target, ...]) -> None:

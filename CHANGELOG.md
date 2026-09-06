@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.4.4
+
+- Support standard-library pickle for `Pipeline` and `CompiledPipeline`,
+  preserving execution mode, random sequence position, and shared target/output
+  port identities while rebuilding independent native execution state.
+- Allow Datasets to own compiled pipelines directly with `spawn` and `forkserver`
+  workers, without custom serialization or lazy compilation.
+- Add an executed Imagenette notebook with augmentation examples, keyed replay,
+  and ten epochs of Lightning GPU training using four persistent workers per loader.
+
 ## 0.4.3
 
 - Infer NumPy array and `PipelineResult` return types for implicit and explicit

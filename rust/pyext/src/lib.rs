@@ -13,8 +13,8 @@ use numpy::{IntoPyArray, PyArray2, PyArrayMethods, PyReadonlyArrayDyn, PyUntyped
 use pyo3::exceptions::{PyOSError, PyRuntimeError, PyValueError};
 use pyo3::prelude::*;
 use pyo3::types::{
-    PyAny, PyByteArray, PyByteArrayMethods, PyBytes, PyBytesMethods, PyDict, PyList, PyMemoryView,
-    PyTuple,
+    PyAny, PyBool, PyByteArray, PyByteArrayMethods, PyBytes, PyBytesMethods, PyDict, PyInt, PyList,
+    PyMemoryView, PyTuple,
 };
 use std::collections::HashSet;
 use std::io::{Read, Write};
@@ -227,6 +227,39 @@ impl PyPipeline {
     fn explain<'py>(&self, py: Python<'py>) -> PyResult<Py<PyAny>> {
         explanation_to_python(py, self.core.explain(), &self.targets)
     }
+
+    #[staticmethod]
+    fn _restore(
+        specs: &Bound<'_, PyAny>,
+        seed: &Bound<'_, PyAny>,
+        mode: &str,
+        targets: &Bound<'_, PyAny>,
+        next_key: &Bound<'_, PyAny>,
+    ) -> PyResult<Self> {
+        let seed = pickle_u64(seed, "seed")?;
+        let next_key = pickle_u64(next_key, "next_key")?;
+        let mut pipeline = Self::new(specs, seed, mode, Some(targets))?;
+        pipeline.next_key = Mutex::new(next_key);
+        Ok(pipeline)
+    }
+
+    fn _snapshot_next_key(&self, py: Python<'_>) -> PyResult<u64> {
+        // Owned calls can hold this lock without the GIL; never wait with the GIL held.
+        py.allow_threads(|| {
+            self.next_key
+                .lock()
+                .map(|key| *key)
+                .map_err(|_| PyRuntimeError::new_err("pipeline sequence lock is poisoned"))
+        })
+    }
+}
+
+fn pickle_u64(value: &Bound<'_, PyAny>, name: &str) -> PyResult<u64> {
+    let invalid = || PyValueError::new_err(format!("{name} must be an unsigned 64-bit integer"));
+    if value.is_instance_of::<PyBool>() || !value.is_instance_of::<PyInt>() {
+        return Err(invalid());
+    }
+    value.extract::<u64>().map_err(|_| invalid())
 }
 
 impl PyPipeline {
