@@ -12,6 +12,25 @@ from tests._helpers import image
 
 
 class TypedOutputTests(unittest.TestCase):
+    def test_configuration_arguments_are_keyword_only(self) -> None:
+        output = R.ReturnArray(name="array")
+        self.assertIsInstance(R.Image(R.Array(), name="image", output_specs=output), R.Image)
+        self.assertIsInstance(R.Mask(R.Array(), name="mask", output_specs=output), R.Mask)
+        for constructor in (
+            lambda: R.Encoded(100),
+            lambda: R.Path(100),
+            lambda: R.Image(R.Array(), output, name="image"),
+            lambda: R.Mask(R.Array(), output, name="mask"),
+            lambda: R.Pipeline([], 42),
+            lambda: R.Resize(3, 5, 1.0),
+            lambda: R.HorizontalFlip(0.5),
+            lambda: R.Solarize(128, 0.5),
+            lambda: R.Posterize(4, 0.5),
+            lambda: R.RandomRotation((-10.0, 10.0), R.Interpolation.NEAREST),
+        ):
+            with self.subTest(constructor=constructor), self.assertRaises(TypeError):
+                constructor()
+
     def test_ports_and_targets_are_identity_bearing_immutable_values(self) -> None:
         with self.assertRaisesRegex(TypeError, "abstract"):
             R.OutputPort()
@@ -22,9 +41,9 @@ class TypedOutputTests(unittest.TestCase):
         with self.assertRaises(dataclasses.FrozenInstanceError):
             first.name = "changed"
 
-        target = R.Image(name="image", outputs=[first])
-        self.assertIsInstance(target.carrier, R.Array)
-        self.assertEqual(target.outputs, (first,))
+        target = R.Image(name="image", output_specs=[first])
+        self.assertIsInstance(target.input_spec, R.Array)
+        self.assertEqual(target.output_specs, (first,))
         with self.assertRaises(dataclasses.FrozenInstanceError):
             target.name = "changed"
 
@@ -34,10 +53,10 @@ class TypedOutputTests(unittest.TestCase):
 
         for outputs in (CustomOutput(), (CustomOutput(),)):
             with (
-                self.subTest(outputs=outputs),
+                self.subTest(output_specs=outputs),
                 self.assertRaisesRegex(TypeError, "built-in output ports"),
             ):
-                R.Image(outputs=outputs)
+                R.Image(name="image", output_specs=outputs)
 
     def test_single_output_ports_are_normalized_to_tuples(self) -> None:
         outputs = (
@@ -48,14 +67,14 @@ class TypedOutputTests(unittest.TestCase):
         )
         for output in outputs:
             with self.subTest(output=output):
-                target = R.Image(outputs=output)
-                self.assertEqual(target.outputs, (output,))
+                target = R.Image(name="image", output_specs=output)
+                self.assertEqual(target.output_specs, (output,))
 
         mask_output = R.ReturnArray(name="array")
-        self.assertEqual(R.Mask(outputs=mask_output).outputs, (mask_output,))
+        self.assertEqual(R.Mask(name="mask", output_specs=mask_output).output_specs, (mask_output,))
 
         with self.assertRaisesRegex(TypeError, "an output port or a sequence"):
-            R.Image(outputs=object())
+            R.Image(name="image", output_specs=object())
 
     def test_single_targets_preserve_explicit_execution_and_results(self) -> None:
         for target_type, source in (
@@ -63,9 +82,9 @@ class TypedOutputTests(unittest.TestCase):
             (R.Mask, np.arange(35, dtype=np.uint8).reshape(5, 7)[:, ::-1]),
         ):
             output = R.ReturnArray(name="value")
-            target = target_type(name="view", outputs=output)
+            target = target_type(name="view", output_specs=output)
             for declaration in (target, (target,), [target]):
-                reference = R.Pipeline([R.HorizontalFlip(1.0)], targets=declaration)
+                reference = R.Pipeline([R.HorizontalFlip(p=1.0)], targets=declaration)
                 for pipeline in (reference, reference.compile()):
                     with self.subTest(
                         target=target_type, pipeline=type(pipeline), declaration=type(declaration)
@@ -83,42 +102,59 @@ class TypedOutputTests(unittest.TestCase):
                             pipeline(source)
                         with self.assertRaisesRegex(TypeError, "missing"):
                             pipeline()
-                        foreign = target_type(name="view", outputs=output)
+                        foreign = target_type(name="view", output_specs=output)
                         with self.assertRaisesRegex(ValueError, "different port"):
                             pipeline(view=foreign.bind(source))
 
     def test_single_targets_require_explicit_names(self) -> None:
         for target_type in (R.Image, R.Mask):
             with self.subTest(target=target_type):
-                with self.assertRaisesRegex(ValueError, "target must have a name"):
-                    R.Pipeline([], targets=target_type(outputs=R.ReturnArray(name="value")))
-                with self.assertRaisesRegex(ValueError, "must have a name"):
-                    R.Pipeline([], targets=target_type(name="view"))
+                with self.assertRaises(TypeError):
+                    target_type()
+                with self.assertRaises(ValueError):
+                    target_type(name=None)
+                target = target_type(name="view")
+                self.assertEqual(target.output_specs[0].name, "array")
+                self.assertEqual(R.Pipeline([], targets=target).targets, (target,))
 
     def test_names_and_scopes_are_validated(self) -> None:
         for name in ("", "not-valid", "_private", "class", "key"):
             with self.subTest(name=name), self.assertRaises(ValueError):
                 R.ReturnArray(name=name)
+        for output_type, arguments in (
+            (R.ReturnArray, ()),
+            (R.ReturnTensor, ()),
+            (R.Encode, ("png",)),
+            (R.Write, ("png",)),
+        ):
+            with self.subTest(output=output_type), self.assertRaises(TypeError):
+                output_type(*arguments)
+            with self.subTest(output=output_type), self.assertRaises(ValueError):
+                output_type(*arguments, name=None)
         with self.assertRaisesRegex(ValueError, "output names"):
-            R.Image(outputs=(R.ReturnArray(name="value"), R.ReturnTensor(name="value")))
+            R.Image(
+                name="image",
+                output_specs=(R.ReturnArray(name="value"), R.ReturnTensor(name="value")),
+            )
         with self.assertRaisesRegex(ValueError, "target names"):
             R.Pipeline(
                 [],
                 targets=(
-                    R.Image(name="same", outputs=(R.ReturnArray(name="value"),)),
-                    R.Mask(name="same", outputs=(R.ReturnArray(name="value"),)),
+                    R.Image(name="same", output_specs=(R.ReturnArray(name="value"),)),
+                    R.Mask(name="same", output_specs=(R.ReturnArray(name="value"),)),
                 ),
             )
-        with self.assertRaisesRegex(ValueError, "target must have a name"):
-            R.Pipeline([], targets=(R.Image(outputs=(R.ReturnArray(name="value"),)),))
-        with self.assertRaisesRegex(ValueError, "must have a name"):
-            R.Pipeline([], targets=(R.Image(name="image"),))
+        for output_type in (R.ReturnArray, R.ReturnTensor):
+            with self.assertRaises(TypeError):
+                output_type()
+            with self.assertRaises(ValueError):
+                output_type(name=None)
 
     def test_write_bindings_require_exact_port_identity_and_hide_paths(self) -> None:
         first = R.Write("png", name="first")
         second = R.Write("png", name="second")
         foreign = R.Write("png", name="foreign")
-        target = R.Image(name="image", outputs=(first, second))
+        target = R.Image(name="image", output_specs=(first, second))
         source = image(3, 5)
         with TemporaryDirectory() as directory:
             first_binding = first.bind(Path(directory) / "first.png")
@@ -146,8 +182,8 @@ class TypedOutputTests(unittest.TestCase):
     def test_explicit_calls_are_nominal_and_results_never_collapse(self) -> None:
         image_output = R.ReturnArray(name="value")
         mask_output = R.ReturnArray(name="value")
-        image_target = R.Image(name="image", outputs=(image_output,))
-        mask_target = R.Mask(name="labels", outputs=(mask_output,))
+        image_target = R.Image(name="image", output_specs=(image_output,))
+        mask_target = R.Mask(name="labels", output_specs=(mask_output,))
         pipeline = R.Pipeline([], targets=(image_target, mask_target))
         source = image(3, 5)
         labels = np.arange(15, dtype=np.uint8).reshape(3, 5)
@@ -159,6 +195,12 @@ class TypedOutputTests(unittest.TestCase):
         )
         self.assertIsInstance(result, R.PipelineResult)
         self.assertIsInstance(result.image, R.TargetResult)
+        with self.assertRaises(TypeError):
+            R.PipelineResult()
+        with self.assertRaises(TypeError):
+            R.TargetResult()
+        with self.assertRaises(TypeError):
+            R.CompiledPipeline()
         self.assertIs(result.image.value, result[image_target][image_output])
         self.assertIs(result.labels.value, result[mask_target][mask_output])
         self.assertIn("image", dir(result))
@@ -182,7 +224,9 @@ class TypedOutputTests(unittest.TestCase):
             )
         with self.assertRaisesRegex(ValueError, "different port"):
             pipeline(
-                image=R.Image(name="other", outputs=(R.ReturnArray(name="value"),)).bind(source),
+                image=R.Image(name="other", output_specs=(R.ReturnArray(name="value"),)).bind(
+                    source
+                ),
                 labels=mask_target.bind(labels),
             )
 
@@ -191,6 +235,14 @@ class TypedOutputTests(unittest.TestCase):
         output = R.Pipeline([])(source)
         self.assertIsInstance(output, np.ndarray)
         np.testing.assert_array_equal(output, source)
+
+    def test_default_outputs_are_named_and_identity_bearing(self) -> None:
+        image_target = R.Image(name="image")
+        other_target = R.Image(name="other")
+        mask_target = R.Mask(name="mask")
+        self.assertEqual(image_target.output_specs[0].name, "array")
+        self.assertEqual(mask_target.output_specs[0].name, "array")
+        self.assertIsNot(image_target.output_specs[0], other_target.output_specs[0])
 
 
 if __name__ == "__main__":

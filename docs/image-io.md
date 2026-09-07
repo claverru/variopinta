@@ -5,7 +5,7 @@ For decode, augmentation, and encode in one pipeline, start with
 Use the helpers below when you need standalone image conversion or file I/O.
 
 Variopinta exposes standalone JPEG and PNG helpers. Pipeline `Encoded` and
-`Path` carriers use the same native codecs and resource-limit model; pipeline
+`Path` input specifications use the same native codecs and resource-limit model; pipeline
 `Encode` and `Write` outputs use the same format options.
 
 ## Read and decode
@@ -66,7 +66,7 @@ vp.encode_image(
     *,
     format,
     quality=None,
-    compression=None,
+    compression_level=None,
 ) -> bytes
 
 vp.write_image(
@@ -75,7 +75,7 @@ vp.write_image(
     *,
     format=None,
     quality=None,
-    compression=None,
+    compression_level=None,
 ) -> None
 ```
 
@@ -84,7 +84,7 @@ Supported output arrays and options are:
 | Format | Array | Option |
 |---|---|---|
 | JPEG | HW grayscale or HWC RGB `uint8` | `quality=1..100`, default 95 |
-| PNG | HW or HWC with 1–4 channels, `uint8` or `uint16` | `compression=0..9`, default 6 |
+| PNG | HW or HWC with 1–4 channels, `uint8` or `uint16` | `compression_level=0..9`, default 6 |
 
 `format` accepts `"jpeg"`, `"jpg"`, `"png"`, and their dotted forms.
 `write_image(format=None)` infers JPEG or PNG from the destination suffix. If a
@@ -95,7 +95,7 @@ import numpy as np
 import variopinta as vp
 
 image = np.zeros((32, 48, 3), dtype=np.uint8)
-payload = vp.encode_image(image, format="png", compression=3)
+payload = vp.encode_image(image, format="png", compression_level=3)
 decoded = vp.decode_image(payload, mode="rgb")
 
 assert decoded.shape == image.shape
@@ -126,7 +126,7 @@ image = vp.decode_image(
 ```
 
 The same options are available on `Encoded(...)` and `Path(...)` pipeline
-carriers.
+input specifications.
 
 ## Deliberate omissions
 
@@ -137,4 +137,4 @@ the channel and dtype contracts above.
 Pipeline mask acquisition is intentionally narrower than generic image I/O:
 it accepts only static, non-transparent grayscale or indexed PNG with 1-, 2-,
 4-, or 8-bit samples. Pipeline mask encoding and writing always produce
-lossless 8-bit grayscale PNG. See [Pipelines and targets](pipelines-and-targets.md#carriers).
+lossless 8-bit grayscale PNG. See [Pipelines and targets](pipelines-and-targets.md#input-specifications).

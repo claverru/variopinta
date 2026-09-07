@@ -1,5 +1,38 @@
 # Changelog
 
+## Unreleased
+
+## 0.6.0
+
+- Rename target configuration to `input_spec` and `output_specs`, require names
+  for public targets and output ports, and give explicit targets a default
+  `ReturnArray(name="array")` output.
+- Make secondary pipeline, target, output, I/O, and transform configuration
+  keyword-only. Rename PNG `compression` to `compression_level`.
+- Replace sampled scalar shorthands with explicit `*_range` tuples, clarify
+  affine and crop units, and add explicit pixel/fraction units to
+  `CoarseDropout` hole sizes.
+- Construct compiled pipelines and result containers through pipeline methods
+  only. Pickles remain same-release artifacts; pickles from releases with the
+  earlier field names are not supported.
+
+Migration mappings for this breaking pre-1.0 release:
+
+| Earlier spelling | Current spelling |
+|---|---|
+| `Image(carrier=..., outputs=..., name=...)` | `Image(input_spec=..., name=..., output_specs=...)` |
+| `Encode(..., compression=n)` | `Encode(..., name=..., compression_level=n)` |
+| `RandomResizedCrop(..., scale=..., ratio=...)` | `RandomResizedCrop(..., area_range=..., aspect_ratio_range=...)` |
+| `Affine(degrees=d, translate=..., scale=s, shear=...)` | `Affine(degrees_range=(-d, d), translate_max_fraction=..., scale_range=(s, s), shear_x_range=..., shear_y_range=...)` |
+| `GaussianNoise(mean=m, std=s)` | `GaussianNoise(mean_range=(m, m), std_range=(s, s))` |
+| `Sharpen(alpha=a, lightness=s)` | `Sharpen(blend_weight_range=(a, a), strength_range=(s, s))` |
+
+Convert every other sampled scalar to an explicit two-endpoint range. For old
+ColorJitter scalar amounts, use the already-canonical factor endpoints:
+`brightness=0.2` becomes `brightness_range=(0.8, 1.2)`. Add
+`hole_height_unit="pixels"` or `hole_width_unit="pixels"` when migrating old
+integer dropout ranges; omitted units mean fractions.
+
 ## 0.5.0
 
 - Support native grayscale `uint8` images in HW and HWC1 layouts across the

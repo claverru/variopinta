@@ -369,7 +369,7 @@ def _focused_transform(
             import variopinta as R
 
             output = R.ReturnTensor(name="tensor")
-            target = R.Image(name="image", outputs=(output,))
+            target = R.Image(name="image", output_specs=(output,))
             pipeline = R.Pipeline([], seed=SEED, targets=(target,)).compile()
 
             def return_tensor(image: np.ndarray) -> Any:

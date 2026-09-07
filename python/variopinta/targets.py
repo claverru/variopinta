@@ -30,10 +30,8 @@ _RESERVED_NAMES = frozenset({"key"})
 
 
 def _validate_name(name: object, level: str) -> None:
-    if name is None:
-        return
     if not isinstance(name, str) or not name.isidentifier() or name.startswith("_"):
-        raise ValueError(f"{level} name must be a public Python identifier or None")
+        raise ValueError(f"{level} name must be a public Python identifier")
     if name in _RESERVED_NAMES or __import__("keyword").iskeyword(name):
         raise ValueError(f"{level} name {name!r} is reserved")
 
@@ -43,7 +41,7 @@ class Array:
     pass
 
 
-@dataclass(frozen=True, slots=True)
+@dataclass(frozen=True, slots=True, kw_only=True)
 class Encoded:
     max_pixels: int | None = DEFAULT_MAX_PIXELS
     max_encoded_bytes: int | None = None
@@ -53,7 +51,7 @@ class Encoded:
         _validate_limit("max_encoded_bytes", self.max_encoded_bytes)
 
 
-@dataclass(frozen=True, slots=True)
+@dataclass(frozen=True, slots=True, kw_only=True)
 class Path:
     max_pixels: int | None = DEFAULT_MAX_PIXELS
     max_encoded_bytes: int | None = None
@@ -66,7 +64,7 @@ class Path:
 class OutputPort(Generic[_OutputValue]):
     __slots__ = ()
 
-    name: str | None
+    name: str
 
     def __new__(cls, *args: object, **kwargs: object) -> OutputPort[object]:
         if cls is OutputPort:
@@ -74,64 +72,92 @@ class OutputPort(Generic[_OutputValue]):
         return super().__new__(cls)
 
 
-@dataclass(frozen=True, slots=True, eq=False)
+@dataclass(frozen=True, slots=True, eq=False, kw_only=True)
 class ReturnArray(OutputPort[np.ndarray]):
-    name: str | None = None
+    name: str
 
     def __post_init__(self) -> None:
         _validate_name(self.name, "output")
 
 
-@dataclass(frozen=True, slots=True, eq=False)
+@dataclass(frozen=True, slots=True, eq=False, kw_only=True)
 class ReturnTensor(OutputPort[_TorchTensor]):
-    name: str | None = None
+    name: str
 
     def __post_init__(self) -> None:
         _validate_name(self.name, "output")
 
 
-@dataclass(frozen=True, slots=True, eq=False)
+@dataclass(frozen=True, slots=True, eq=False, init=False)
 class Encode(OutputPort[bytes]):
     format: ImageFormat
-    quality: int | None = None
-    compression: int | None = None
-    name: str | None = None
+    name: str
+    quality: int | None
+    compression_level: int | None
+
+    def __init__(
+        self,
+        format: str,
+        *,
+        name: str,
+        quality: int | None = None,
+        compression_level: int | None = None,
+    ) -> None:
+        object.__setattr__(self, "format", format)
+        object.__setattr__(self, "name", name)
+        object.__setattr__(self, "quality", quality)
+        object.__setattr__(self, "compression_level", compression_level)
+        self.__post_init__()
 
     def __post_init__(self) -> None:
         _validate_name(self.name, "output")
         image_format = _normalize_format(self.format)
-        quality, compression = _validate_encode_options(
-            image_format, self.quality, self.compression
+        quality, compression_level = _validate_encode_options(
+            image_format, self.quality, self.compression_level
         )
         object.__setattr__(self, "format", image_format)
         object.__setattr__(self, "quality", quality)
-        object.__setattr__(self, "compression", compression)
+        object.__setattr__(self, "compression_level", compression_level)
 
 
-@dataclass(frozen=True, slots=True, eq=False)
+@dataclass(frozen=True, slots=True, eq=False, init=False)
 class Write(OutputPort[_Path]):
-    format: ImageFormat | None = None
-    quality: int | None = None
-    compression: int | None = None
-    name: str | None = None
+    format: ImageFormat | None
+    name: str
+    quality: int | None
+    compression_level: int | None
+
+    def __init__(
+        self,
+        format: str | None = None,
+        *,
+        name: str,
+        quality: int | None = None,
+        compression_level: int | None = None,
+    ) -> None:
+        object.__setattr__(self, "format", format)
+        object.__setattr__(self, "name", name)
+        object.__setattr__(self, "quality", quality)
+        object.__setattr__(self, "compression_level", compression_level)
+        self.__post_init__()
 
     def __post_init__(self) -> None:
         _validate_name(self.name, "output")
         if self.format is None:
-            if self.quality is not None and self.compression is not None:
-                raise TypeError("quality and compression require different output formats")
+            if self.quality is not None and self.compression_level is not None:
+                raise TypeError("quality and compression_level require different output formats")
             if self.quality is not None:
                 _validate_encode_options("jpeg", self.quality, None)
-            if self.compression is not None:
-                _validate_encode_options("png", None, self.compression)
+            if self.compression_level is not None:
+                _validate_encode_options("png", None, self.compression_level)
             return
         image_format = _normalize_format(self.format)
-        quality, compression = _validate_encode_options(
-            image_format, self.quality, self.compression
+        quality, compression_level = _validate_encode_options(
+            image_format, self.quality, self.compression_level
         )
         object.__setattr__(self, "format", image_format)
         object.__setattr__(self, "quality", quality)
-        object.__setattr__(self, "compression", compression)
+        object.__setattr__(self, "compression_level", compression_level)
 
     def bind(self, destination: str | PathLike[str]) -> WriteBinding:
         normalized = _path(destination, _output_label(self, "destination"))
@@ -143,7 +169,7 @@ class Write(OutputPort[_Path]):
             )
         if inferred is not None and inferred != image_format:
             raise ValueError("output format conflicts with the destination suffix")
-        _validate_encode_options(image_format, self.quality, self.compression)
+        _validate_encode_options(image_format, self.quality, self.compression_level)
         return WriteBinding(self, normalized, _token=_BIND_TOKEN)
 
 
@@ -207,25 +233,30 @@ class BoundTarget(Generic[_Result]):
     def __repr__(self) -> str:
         return (
             f"BoundTarget(target={_target_repr(self._target)}, "
-            f"carrier={type(self._target.carrier).__name__}, "
-            f"outputs={len(self._target.outputs)})"
+            f"input_spec={type(self._target.input_spec).__name__}, "
+            f"output_specs={len(self._target.output_specs)})"
         )
 
 
 @dataclass(frozen=True, slots=True, eq=False)
 class Image:
-    carrier: Carrier = Array()
-    outputs: Output | Sequence[OutputPort[object]] = (ReturnArray(),)
-    name: str | None = None
-
+    input_spec: Carrier = Array()
+    name: str = field(kw_only=True)
+    output_specs: Output | Sequence[OutputPort[object]] = field(
+        default_factory=lambda: (ReturnArray(name="array"),), kw_only=True
+    )
     decode_mode: Literal["rgb", "gray"] | None = field(default=None, kw_only=True)
 
     def __post_init__(self) -> None:
         if self.decode_mode not in (None, "rgb", "gray"):
             raise ValueError("decode_mode must be 'rgb', 'gray', or None")
-        if isinstance(self.carrier, Array) and self.decode_mode is not None:
+        if isinstance(self.input_spec, Array) and self.decode_mode is not None:
             raise ValueError("Array images infer channels; decode_mode must be None")
-        object.__setattr__(self, "outputs", _validate_target(self.carrier, self.outputs, self.name))
+        object.__setattr__(
+            self,
+            "output_specs",
+            _validate_target(self.input_spec, self.output_specs, self.name),
+        )
 
     @overload
     def bind(self, source: np.ndarray, *write_bindings: WriteBinding) -> BoundTarget[object]: ...
@@ -243,17 +274,19 @@ class Image:
 
 @dataclass(frozen=True, slots=True, eq=False)
 class Mask:
-    carrier: Carrier = Array()
-    outputs: Output | Sequence[OutputPort[object]] = (ReturnArray(),)
-    fill: int = 0
-    name: str | None = None
+    input_spec: Carrier = Array()
+    name: str = field(kw_only=True)
+    output_specs: Output | Sequence[OutputPort[object]] = field(
+        default_factory=lambda: (ReturnArray(name="array"),), kw_only=True
+    )
+    fill: int = field(default=0, kw_only=True)
 
     def __post_init__(self) -> None:
-        outputs = _validate_target(self.carrier, self.outputs, self.name)
-        object.__setattr__(self, "outputs", outputs)
+        output_specs = _validate_target(self.input_spec, self.output_specs, self.name)
+        object.__setattr__(self, "output_specs", output_specs)
         if type(self.fill) is not int or not 0 <= self.fill <= 255:
             raise ValueError("fill must be an integer in [0, 255]")
-        for output in outputs:
+        for output in output_specs:
             if isinstance(output, Encode) and output.format != "png":
                 raise ValueError("Mask Encode output must use PNG")
             if isinstance(output, Write) and output.format not in (None, "png"):
@@ -279,23 +312,23 @@ Target = Image | Mask
 
 
 def _validate_target(
-    carrier: object,
-    outputs: object,
+    input_spec: object,
+    output_specs: object,
     name: object,
 ) -> tuple[OutputPort[object], ...]:
-    if not isinstance(carrier, Array | Encoded | Path):
-        raise TypeError("carrier must be Array, Encoded, or Path")
+    if not isinstance(input_spec, Array | Encoded | Path):
+        raise TypeError("input_spec must be Array, Encoded, or Path")
     _validate_name(name, "target")
-    if isinstance(outputs, OutputPort):
-        normalized = (outputs,)
+    if isinstance(output_specs, OutputPort):
+        normalized = (output_specs,)
     else:
-        if isinstance(outputs, str | bytes) or not isinstance(outputs, Sequence):
-            raise TypeError("outputs must be an output port or a sequence of output ports")
-        normalized = tuple(outputs)
+        if isinstance(output_specs, str | bytes) or not isinstance(output_specs, Sequence):
+            raise TypeError("output_specs must be an output port or a sequence of output ports")
+        normalized = tuple(output_specs)
     if not normalized:
-        raise ValueError("outputs must contain at least one output port")
+        raise ValueError("output_specs must contain at least one output port")
     if not all(type(output) in (ReturnArray, ReturnTensor, Encode, Write) for output in normalized):
-        raise TypeError("outputs must contain only built-in output ports")
+        raise TypeError("output_specs must contain only built-in output ports")
     if len({id(output) for output in normalized}) != len(normalized):
         raise ValueError("the same output port cannot appear more than once")
     names = [output.name for output in normalized if output.name is not None]
@@ -309,11 +342,11 @@ def _bind(
     source: object,
     write_bindings: tuple[WriteBinding, ...],
 ) -> BoundTarget[object]:
-    if isinstance(target.carrier, Array):
+    if isinstance(target.input_spec, Array):
         if not isinstance(source, np.ndarray):
             raise TypeError(f"{_label(target)} source must be a NumPy array for Array")
         normalized_source = source
-    elif isinstance(target.carrier, Encoded):
+    elif isinstance(target.input_spec, Encoded):
         if not isinstance(source, bytes | bytearray | memoryview):
             raise TypeError(
                 f"{_label(target)} source must be bytes, bytearray, or memoryview for Encoded"
@@ -324,7 +357,7 @@ def _bind(
 
     if not all(isinstance(binding, WriteBinding) for binding in write_bindings):
         raise TypeError("target.bind() accepts only Write.bind() values after the source")
-    expected = tuple(output for output in target.outputs if isinstance(output, Write))
+    expected = tuple(output for output in target.output_specs if isinstance(output, Write))
     seen: set[int] = set()
     by_output: dict[int, WriteBinding] = {}
     for binding in write_bindings:
@@ -374,7 +407,7 @@ def _output_label(output: OutputPort[object], suffix: str) -> str:
 
 
 def _route(target: Target) -> dict[str, object]:
-    carrier = target.carrier
+    input_spec = target.input_spec
     return {
         "role": "image" if isinstance(target, Image) else "mask",
         "decode_mode": target.decode_mode if isinstance(target, Image) else None,
@@ -382,14 +415,14 @@ def _route(target: Target) -> dict[str, object]:
         "name": target.name,
         "carrier": (
             "array"
-            if isinstance(carrier, Array)
+            if isinstance(input_spec, Array)
             else "encoded"
-            if isinstance(carrier, Encoded)
+            if isinstance(input_spec, Encoded)
             else "path"
         ),
-        "max_pixels": carrier.max_pixels if isinstance(carrier, Encoded | Path) else None,
+        "max_pixels": input_spec.max_pixels if isinstance(input_spec, Encoded | Path) else None,
         "max_encoded_bytes": (
-            carrier.max_encoded_bytes if isinstance(carrier, Encoded | Path) else None
+            input_spec.max_encoded_bytes if isinstance(input_spec, Encoded | Path) else None
         ),
         "outputs": [
             {
@@ -405,8 +438,21 @@ def _route(target: Target) -> dict[str, object]:
                 ),
                 "format": output.format if isinstance(output, Encode | Write) else None,
                 "quality": output.quality if isinstance(output, Encode | Write) else None,
-                "compression": output.compression if isinstance(output, Encode | Write) else None,
+                "compression": (
+                    output.compression_level if isinstance(output, Encode | Write) else None
+                ),
             }
-            for output in target.outputs
+            for output in target.output_specs
         ],
     }
+
+
+def _implicit_image() -> Image:
+    output = object.__new__(ReturnArray)
+    object.__setattr__(output, "name", None)
+    target = object.__new__(Image)
+    object.__setattr__(target, "input_spec", Array())
+    object.__setattr__(target, "name", None)
+    object.__setattr__(target, "output_specs", (output,))
+    object.__setattr__(target, "decode_mode", None)
+    return target

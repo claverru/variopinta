@@ -18,13 +18,15 @@ class PipelineIoTests(unittest.TestCase):
     def test_target_configuration_is_normalized_immutable_and_preserved(self) -> None:
         carrier = R.Encoded(max_pixels=None, max_encoded_bytes=123)
         output = R.Encode(format=".JPG", quality=81, name="encoded")
-        target = R.Image(carrier, outputs=(output,), name="view")
+        target = R.Image(carrier, output_specs=(output,), name="view")
         pipeline = R.Pipeline([R.Invert()], seed=137, targets=(target,))
         compiled = pipeline.compile()
 
         self.assertEqual(output.format, "jpeg")
-        self.assertIs(target.carrier, carrier)
-        self.assertEqual(target.outputs, (output,))
+        self.assertEqual(R.Encode("png", name="png").compression_level, 6)
+        self.assertEqual(R.Write("png", name="png").compression_level, 6)
+        self.assertIs(target.input_spec, carrier)
+        self.assertEqual(target.output_specs, (output,))
         self.assertIs(pipeline.targets[0], target)
         self.assertIs(compiled.targets[0], target)
         for value in (carrier, output, target):
@@ -34,11 +36,11 @@ class PipelineIoTests(unittest.TestCase):
 
     def test_every_image_carrier_and_output_matches_standalone_oracles(self) -> None:
         source = image()
-        encoded = R.encode_image(source, format="png", compression=3)
-        transforms = [R.RandomCrop(11, 13), R.Resize(7, 9), R.Invert(0.5)]
+        encoded = R.encode_image(source, format="png", compression_level=3)
+        transforms = [R.RandomCrop(11, 13), R.Resize(7, 9), R.Invert(p=0.5)]
         key = 19
         expected = R.Pipeline(transforms, seed=137)(source, key=key)
-        expected_encoded = R.encode_image(expected, format="png", compression=3)
+        expected_encoded = R.encode_image(expected, format="png", compression_level=3)
 
         with TemporaryDirectory() as directory:
             root = Path(directory)
@@ -53,10 +55,10 @@ class PipelineIoTests(unittest.TestCase):
                 for carrier, value in sources:
                     for output in (
                         R.ReturnArray(name="value"),
-                        R.Encode("png", compression=3, name="value"),
-                        R.Write("png", compression=3, name="value"),
+                        R.Encode("png", compression_level=3, name="value"),
+                        R.Write("png", compression_level=3, name="value"),
                     ):
-                        port = R.Image(carrier, outputs=(output,), name="image")
+                        port = R.Image(carrier, output_specs=(output,), name="image")
                         pipeline = R.Pipeline(transforms, seed=137, targets=(port,))
                         if compiled:
                             pipeline = pipeline.compile()
@@ -68,7 +70,7 @@ class PipelineIoTests(unittest.TestCase):
                         )
                         with self.subTest(
                             compiled=compiled,
-                            carrier=type(carrier).__name__,
+                            input_spec=type(carrier).__name__,
                             output=type(output).__name__,
                         ):
                             result = pipeline(image=binding, key=key).image.value
@@ -82,19 +84,19 @@ class PipelineIoTests(unittest.TestCase):
 
     def test_image_fan_out_matches_independent_terminal_oracles(self) -> None:
         source = image(13, 17)
-        transforms = [R.RandomCrop(11, 13), R.Invert(0.5)]
+        transforms = [R.RandomCrop(11, 13), R.Invert(p=0.5)]
         expected = R.Pipeline(transforms, seed=137)(source, key=19)
-        expected_png = R.encode_image(expected, format="png", compression=3)
+        expected_png = R.encode_image(expected, format="png", compression_level=3)
         expected_jpeg = R.encode_image(expected, format="jpeg", quality=83)
 
         returned = R.ReturnArray(name="array")
-        png = R.Encode("png", compression=3, name="png")
+        png = R.Encode("png", compression_level=3, name="png")
         jpeg = R.Encode("jpeg", quality=83, name="jpeg")
-        first_write = R.Write("png", compression=3, name="first")
-        second_write = R.Write("png", compression=3, name="second")
+        first_write = R.Write("png", compression_level=3, name="first")
+        second_write = R.Write("png", compression_level=3, name="second")
         target = R.Image(
             name="image",
-            outputs=(returned, png, first_write, jpeg, second_write),
+            output_specs=(returned, png, first_write, jpeg, second_write),
         )
 
         with TemporaryDirectory() as directory:
@@ -128,16 +130,16 @@ class PipelineIoTests(unittest.TestCase):
             root = Path(directory)
             source_path = root / "source.png"
             source_path.write_bytes(encoded)
-            array_port = R.Image(name="array", outputs=(R.ReturnArray(name="value"),))
+            array_port = R.Image(name="array", output_specs=(R.ReturnArray(name="value"),))
             encoded_port = R.Image(
                 R.Encoded(),
-                outputs=(R.Encode("jpeg", quality=83, name="value"),),
+                output_specs=(R.Encode("jpeg", quality=83, name="value"),),
                 name="encoded",
             )
             written = R.Write(name="value")
-            path_port = R.Image(R.Path(), outputs=(written,), name="path")
+            path_port = R.Image(R.Path(), output_specs=(written,), name="path")
             pipeline = R.Pipeline(
-                [R.HorizontalFlip(1.0)],
+                [R.HorizontalFlip(p=1.0)],
                 targets=(array_port, encoded_port, path_port),
             ).compile()
             destination = source_path
@@ -162,7 +164,7 @@ class PipelineIoTests(unittest.TestCase):
         interleaved[::2] = encoded
         port = R.Image(
             R.Encoded(max_encoded_bytes=len(encoded)),
-            outputs=(R.ReturnArray(name="array"),),
+            output_specs=(R.ReturnArray(name="array"),),
             name="image",
         )
         pipeline = R.Pipeline([], targets=(port,))
@@ -178,7 +180,7 @@ class PipelineIoTests(unittest.TestCase):
 
         too_small = R.Image(
             R.Encoded(max_encoded_bytes=len(encoded) - 1),
-            outputs=(R.ReturnArray(name="array"),),
+            output_specs=(R.ReturnArray(name="array"),),
             name="image",
         )
         with self.assertRaisesRegex(ValueError, "exceeding"):
@@ -187,13 +189,13 @@ class PipelineIoTests(unittest.TestCase):
     def test_array_targets_preserve_logical_order_for_non_c_layouts(self) -> None:
         source = image(9, 13)
         for value in (np.asfortranarray(source), source[:, ::-1]):
-            port = R.Image(name="image", outputs=(R.ReturnArray(name="array"),))
+            port = R.Image(name="image", output_specs=(R.ReturnArray(name="array"),))
             output = R.Pipeline([], targets=(port,))(image=port.bind(value)).image.array
             np.testing.assert_array_equal(output, value)
             self.assertTrue(output.flags.c_contiguous)
         labels = np.arange(9 * 13, dtype=np.uint8).reshape(9, 13)
         for value in (np.asfortranarray(labels), labels[:, ::-1]):
-            port = R.Mask(name="mask", outputs=(R.ReturnArray(name="array"),))
+            port = R.Mask(name="mask", output_specs=(R.ReturnArray(name="array"),))
             output = R.Pipeline([], targets=(port,))(mask=port.bind(value)).mask.array
             np.testing.assert_array_equal(output, value)
             self.assertTrue(output.flags.c_contiguous)
@@ -206,7 +208,7 @@ class PipelineIoTests(unittest.TestCase):
             source_path = root / "source.png"
             source_path.write_bytes(encoded)
             written = R.Write(name="written")
-            port = R.Image(R.Path(), outputs=(written,), name="image")
+            port = R.Image(R.Path(), output_specs=(written,), name="image")
             pipeline = R.Pipeline([R.Invert()], targets=(port,))
             self.assertEqual(
                 pipeline(
@@ -218,8 +220,8 @@ class PipelineIoTests(unittest.TestCase):
 
             first_write = R.Write("png", name="written")
             second_write = R.Write("png", name="written")
-            first = R.Image(outputs=(first_write,), name="first")
-            second = R.Image(outputs=(second_write,), name="second")
+            first = R.Image(output_specs=(first_write,), name="first")
+            second = R.Image(output_specs=(second_write,), name="second")
             duplicate = root / "duplicate.png"
             with self.assertRaisesRegex(ValueError, "duplicate"):
                 R.Pipeline([], targets=(first, second))(
@@ -239,10 +241,10 @@ class PipelineIoTests(unittest.TestCase):
         encoded = R.encode_image(source, format="png")
 
         def make_pipeline() -> tuple[R.CompiledPipeline, R.Image]:
-            port = R.Image(R.Encoded(), outputs=(R.ReturnArray(name="array"),), name="image")
+            port = R.Image(R.Encoded(), output_specs=(R.ReturnArray(name="array"),), name="image")
             return (
                 R.Pipeline(
-                    [R.HorizontalFlip(0.5), R.Invert(0.5)],
+                    [R.HorizontalFlip(p=0.5), R.Invert(p=0.5)],
                     seed=137,
                     targets=(port,),
                 ).compile(),
@@ -259,10 +261,10 @@ class PipelineIoTests(unittest.TestCase):
 
         def make_writer() -> tuple[R.CompiledPipeline, R.Image]:
             write = R.Write("png", name="written")
-            write_port = R.Image(outputs=(write,), name="image")
+            write_port = R.Image(output_specs=(write,), name="image")
             return (
                 R.Pipeline(
-                    [R.HorizontalFlip(0.5), R.Invert(0.5)],
+                    [R.HorizontalFlip(p=0.5), R.Invert(p=0.5)],
                     seed=137,
                     targets=(write_port,),
                 ).compile(),
@@ -273,16 +275,16 @@ class PipelineIoTests(unittest.TestCase):
             root = Path(directory)
             writer, write_port = make_writer()
             with self.assertRaisesRegex(ValueError, "parent"):
-                write = write_port.outputs[0]
+                write = write_port.output_specs[0]
                 assert isinstance(write, R.Write)
                 writer(image=write_port.bind(source, write.bind(root / "missing" / "failed.png")))
             destination = root / "actual.png"
-            write = write_port.outputs[0]
+            write = write_port.output_specs[0]
             assert isinstance(write, R.Write)
             writer(image=write_port.bind(source, write.bind(destination)))
             fresh_writer, fresh_write_port = make_writer()
             expected_destination = root / "expected.png"
-            fresh_write = fresh_write_port.outputs[0]
+            fresh_write = fresh_write_port.output_specs[0]
             assert isinstance(fresh_write, R.Write)
             fresh_writer(
                 image=fresh_write_port.bind(source, fresh_write.bind(expected_destination))
@@ -292,7 +294,7 @@ class PipelineIoTests(unittest.TestCase):
             )
 
         def make_cropper() -> tuple[R.CompiledPipeline, R.Image]:
-            crop_port = R.Image(outputs=(R.ReturnArray(name="array"),), name="image")
+            crop_port = R.Image(output_specs=(R.ReturnArray(name="array"),), name="image")
             return (
                 R.Pipeline([R.RandomCrop(7, 11)], seed=137, targets=(crop_port,)).compile(),
                 crop_port,
@@ -309,9 +311,9 @@ class PipelineIoTests(unittest.TestCase):
     def test_owned_routes_are_thread_shareable_with_explicit_keys(self) -> None:
         source = image(31, 47)
         encoded = R.encode_image(source, format="png")
-        port = R.Image(R.Encoded(), outputs=(R.Encode("png", name="encoded"),), name="image")
+        port = R.Image(R.Encoded(), output_specs=(R.Encode("png", name="encoded"),), name="image")
         pipeline = R.Pipeline(
-            [R.RandomCrop(19, 23), R.Resize(11, 13), R.Invert(0.5)],
+            [R.RandomCrop(19, 23), R.Resize(11, 13), R.Invert(p=0.5)],
             seed=137,
             targets=(port,),
         ).compile()

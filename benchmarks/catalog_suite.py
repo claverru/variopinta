@@ -26,7 +26,14 @@ def catalog_cases(size: int) -> list[tuple[str, str, list[Any]]]:
         (
             "RandomResizedCrop",
             "bilinear",
-            [R.RandomResizedCrop(out, out, scale=(area, area), ratio=(1.0, 1.0))],
+            [
+                R.RandomResizedCrop(
+                    out,
+                    out,
+                    area_range=(area, area),
+                    aspect_ratio_range=(1.0, 1.0),
+                )
+            ],
         ),
         (
             "RandomResizedCrop",
@@ -35,8 +42,8 @@ def catalog_cases(size: int) -> list[tuple[str, str, list[Any]]]:
                 R.RandomResizedCrop(
                     out,
                     out,
-                    scale=(area, area),
-                    ratio=(1.0, 1.0),
+                    area_range=(area, area),
+                    aspect_ratio_range=(1.0, 1.0),
                     antialias=True,
                 )
             ],
@@ -70,36 +77,40 @@ def catalog_cases(size: int) -> list[tuple[str, str, list[Any]]]:
                 )
             ],
         ),
-        ("HorizontalFlip", "default", [R.HorizontalFlip(1.0)]),
-        ("VerticalFlip", "default", [R.VerticalFlip(1.0)]),
-        ("ColorJitter", "matrix", [R.ColorJitter(0.2, 0.2, 0.2)]),
-        ("ColorJitter", "hue", [R.ColorJitter(0.2, 0.2, 0.2, 0.1)]),
-        ("Affine", "constant", [R.Affine(10.0)]),
+        ("HorizontalFlip", "default", [R.HorizontalFlip(p=1.0)]),
+        ("VerticalFlip", "default", [R.VerticalFlip(p=1.0)]),
+        ("ColorJitter", "matrix", [R.ColorJitter()]),
+        ("ColorJitter", "hue", [R.ColorJitter(hue_range=(-0.1, 0.1))]),
+        ("Affine", "constant", [R.Affine(degrees_range=(-10.0, 10.0))]),
         (
             "Affine",
             "reflect101",
-            [R.Affine(10.0, border_mode=R.BorderMode.REFLECT101)],
+            [R.Affine(degrees_range=(-10.0, 10.0), border_mode=R.BorderMode.REFLECT101)],
         ),
-        ("RandomRotation", "constant", [R.RandomRotation(10.0)]),
+        ("RandomRotation", "constant", [R.RandomRotation((-10.0, 10.0))]),
         (
             "RandomRotation",
             "reflect101",
-            [R.RandomRotation(10.0, border_mode=R.BorderMode.REFLECT101)],
+            [R.RandomRotation((-10.0, 10.0), border_mode=R.BorderMode.REFLECT101)],
         ),
-        ("GaussianNoise", "independent-rgb", [R.GaussianNoise(std=10.0)]),
+        ("GaussianNoise", "independent-rgb", [R.GaussianNoise(std_range=(10.0, 10.0))]),
         (
             "GaussianNoise",
             "shared-rgb",
-            [R.GaussianNoise(std=10.0, per_channel=False)],
+            [R.GaussianNoise(std_range=(10.0, 10.0), per_channel=False)],
         ),
-        ("Sharpen", "cross-3x3", [R.Sharpen(alpha=0.5, lightness=1.0)]),
-        ("Perspective", "bilinear", [R.Perspective(scale=0.05)]),
+        ("Sharpen", "cross-3x3", [R.Sharpen()]),
+        (
+            "Perspective",
+            "bilinear",
+            [R.Perspective(distortion_scale_range=(0.05, 0.05))],
+        ),
         (
             "Perspective",
             "nearest-reflect101",
             [
                 R.Perspective(
-                    scale=0.05,
+                    distortion_scale_range=(0.05, 0.05),
                     interpolation=R.Interpolation.NEAREST,
                     border_mode=R.BorderMode.REFLECT101,
                 )
@@ -117,13 +128,21 @@ def catalog_cases(size: int) -> list[tuple[str, str, list[Any]]]:
                 )
             ],
         ),
-        ("GaussianBlur", "fixed-sigma", [R.GaussianBlur(5, 1.1)]),
-        ("GaussianBlur", "sampled-sigma", [R.GaussianBlur(5, (0.8, 1.4))]),
-        ("Grayscale", "default", [R.Grayscale(1.0)]),
-        ("Invert", "default", [R.Invert(1.0)]),
-        ("Solarize", "default", [R.Solarize(128, 1.0)]),
-        ("Posterize", "default", [R.Posterize(4, 1.0)]),
-        ("Normalize", "default", [R.Normalize(MEAN, STD)]),
+        (
+            "GaussianBlur",
+            "fixed-sigma",
+            [R.GaussianBlur(kernel_size=5, sigma_range=(1.1, 1.1))],
+        ),
+        (
+            "GaussianBlur",
+            "sampled-sigma",
+            [R.GaussianBlur(kernel_size=5, sigma_range=(0.8, 1.4))],
+        ),
+        ("Grayscale", "default", [R.Grayscale(p=1.0)]),
+        ("Invert", "default", [R.Invert(p=1.0)]),
+        ("Solarize", "default", [R.Solarize(128, p=1.0)]),
+        ("Posterize", "default", [R.Posterize(4, p=1.0)]),
+        ("Normalize", "default", [R.Normalize(mean=MEAN, std=STD)]),
     ]
 
 

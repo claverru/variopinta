@@ -31,7 +31,7 @@ class MaskTests(unittest.TestCase):
         np.testing.assert_array_equal(R.decode_image(encoded.getvalue(), mode="unchanged"), labels)
 
         for compression in (0, 3, 9):
-            encoded_labels = R.encode_image(labels, format="png", compression=compression)
+            encoded_labels = R.encode_image(labels, format="png", compression_level=compression)
             np.testing.assert_array_equal(R.decode_image(encoded_labels, mode="unchanged"), labels)
             decoded = PillowImage.open(BytesIO(encoded_labels))
             self.assertEqual((decoded.mode, decoded.size), ("L", (5, 2)))
@@ -48,7 +48,7 @@ class MaskTests(unittest.TestCase):
             encoded_inputs.append(encoded.getvalue())
 
         result = R.ReturnArray(name="array")
-        port = R.Mask(R.Encoded(), outputs=(result,), name="labels")
+        port = R.Mask(R.Encoded(), output_specs=(result,), name="labels")
         pipeline = R.Pipeline([], targets=(port,))
         for encoded in encoded_inputs:
             np.testing.assert_array_equal(R.decode_image(encoded, mode="unchanged"), labels)
@@ -57,8 +57,8 @@ class MaskTests(unittest.TestCase):
 
     def test_ports_and_bindings_use_identity_and_hide_payloads(self) -> None:
         source = image(3, 5)
-        first = R.Image(outputs=(R.ReturnArray(name="array"),), name="first")
-        second = R.Image(outputs=(R.ReturnArray(name="array"),), name="second")
+        first = R.Image(output_specs=(R.ReturnArray(name="array"),), name="first")
+        second = R.Image(output_specs=(R.ReturnArray(name="array"),), name="second")
         first_binding = first.bind(source)
         second_binding = second.bind(source)
         self.assertIsNot(first, second)
@@ -74,18 +74,18 @@ class MaskTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             R.Pipeline([], targets=(first, first))
         with self.assertRaises(ValueError):
-            R.Mask(R.Array(), fill=256)
+            R.Mask(R.Array(), name="mask", fill=256)
         with self.assertRaises(ValueError):
-            R.Mask(outputs=(R.Encode("jpeg", name="encoded"),))
+            R.Mask(name="mask", output_specs=(R.Encode("jpeg", name="encoded"),))
         with self.assertRaises(TypeError):
-            R.Mask(outputs=(R.Write(quality=90, name="written"),))
+            R.Mask(name="mask", output_specs=(R.Write(quality=90, name="written"),))
 
     def test_binding_arity_identity_order_and_values_fail_before_execution(self) -> None:
         source = image(3, 5)
         labels = semantic_mask(3, 5)
-        image_port = R.Image(name="image", outputs=(R.ReturnArray(name="array"),))
-        mask_port = R.Mask(name="labels", outputs=(R.ReturnArray(name="array"),))
-        foreign = R.Image(name="foreign", outputs=(R.ReturnArray(name="array"),))
+        image_port = R.Image(name="image", output_specs=(R.ReturnArray(name="array"),))
+        mask_port = R.Mask(name="labels", output_specs=(R.ReturnArray(name="array"),))
+        foreign = R.Image(name="foreign", output_specs=(R.ReturnArray(name="array"),))
         pipeline = R.Pipeline([], targets=(image_port, mask_port))
 
         for values in (
@@ -105,26 +105,36 @@ class MaskTests(unittest.TestCase):
     def test_repeated_images_and_masks_share_one_sampled_plan(self) -> None:
         source = image(19, 23)
         labels = semantic_mask(19, 23)
-        first_image = R.Image(name="first_image", outputs=(R.ReturnArray(name="array"),))
-        second_image = R.Image(name="second_image", outputs=(R.ReturnArray(name="array"),))
-        first_mask = R.Mask(name="first_mask", outputs=(R.ReturnArray(name="array"),), fill=251)
-        second_mask = R.Mask(name="second_mask", outputs=(R.ReturnArray(name="array"),), fill=252)
+        first_image = R.Image(name="first_image", output_specs=(R.ReturnArray(name="array"),))
+        second_image = R.Image(name="second_image", output_specs=(R.ReturnArray(name="array"),))
+        first_mask = R.Mask(
+            name="first_mask", output_specs=(R.ReturnArray(name="array"),), fill=251
+        )
+        second_mask = R.Mask(
+            name="second_mask", output_specs=(R.ReturnArray(name="array"),), fill=252
+        )
         pipeline = R.Pipeline(
             [
                 R.RandomCrop(17, 19, p=0.75),
                 R.Resize(15, 17),
-                R.HorizontalFlip(0.5),
-                R.ColorJitter(0.3, 0.2, 0.4, 0.1, p=0.75),
+                R.HorizontalFlip(p=0.5),
+                R.ColorJitter(
+                    brightness_range=(0.7, 1.3),
+                    contrast_range=(0.8, 1.2),
+                    saturation_range=(0.6, 1.4),
+                    hue_range=(-0.1, 0.1),
+                    p=0.75,
+                ),
                 R.Affine(
-                    degrees=(-17.0, 23.0),
-                    translate=(0.2, 0.1),
-                    scale=(0.8, 1.2),
-                    shear=(-7.0, 9.0),
+                    degrees_range=(-17.0, 23.0),
+                    translate_max_fraction=(0.2, 0.1),
+                    scale_range=(0.8, 1.2),
+                    shear_x_range=(-7.0, 9.0),
                     interpolation=R.Interpolation.NEAREST,
                     fill=7,
                     p=1.0,
                 ),
-                R.GaussianNoise(std=(0.0, 5.0), p=0.5),
+                R.GaussianNoise(std_range=(0.0, 5.0), p=0.5),
             ],
             seed=137,
             targets=(first_image, second_image, first_mask, second_mask),
@@ -167,35 +177,35 @@ class MaskTests(unittest.TestCase):
             R.CenterCrop(13, 15),
             R.RandomResizedCrop(11, 13, interpolation=R.Interpolation.NEAREST),
             R.Resize(11, 13, interpolation=R.Interpolation.NEAREST),
-            R.HorizontalFlip(1.0),
-            R.VerticalFlip(1.0),
+            R.HorizontalFlip(p=1.0),
+            R.VerticalFlip(p=1.0),
             R.PadIfNeeded(min_height=21, min_width=23, fill=251),
             R.Affine(
-                degrees=(-15.0, 20.0),
-                translate=(0.2, 0.1),
+                degrees_range=(-15.0, 20.0),
+                translate_max_fraction=(0.2, 0.1),
                 interpolation=R.Interpolation.NEAREST,
                 fill=251,
             ),
             R.RandomRotation(
-                degrees=(-15.0, 20.0),
+                degrees_range=(-15.0, 20.0),
                 interpolation=R.Interpolation.NEAREST,
                 fill=251,
             ),
             R.Perspective(
-                scale=0.2,
+                distortion_scale_range=(0.2, 0.2),
                 interpolation=R.Interpolation.NEAREST,
                 fill=251,
             ),
             R.GridDistortion(
                 num_steps=4,
-                distort_limit=0.4,
+                distortion_range=(-0.4, 0.4),
                 interpolation=R.Interpolation.NEAREST,
                 fill=251,
             ),
         )
         for transform in transforms:
-            image_port = R.Image(name="image", outputs=(R.ReturnArray(name="array"),))
-            mask_port = R.Mask(name="mask", outputs=(R.ReturnArray(name="array"),), fill=251)
+            image_port = R.Image(name="image", output_specs=(R.ReturnArray(name="array"),))
+            mask_port = R.Mask(name="mask", output_specs=(R.ReturnArray(name="array"),), fill=251)
             reference = R.Pipeline([transform], seed=137, targets=(image_port, mask_port))
             expected = reference(image=image_port.bind(source), mask=mask_port.bind(labels), key=29)
             actual = reference.compile()(
@@ -212,8 +222,8 @@ class MaskTests(unittest.TestCase):
     def test_image_only_and_terminal_transforms_do_not_change_masks(self) -> None:
         source = image(7, 11)
         labels = semantic_mask(7, 11)
-        image_port = R.Image(name="image", outputs=(R.ReturnArray(name="array"),))
-        mask_port = R.Mask(name="mask", outputs=(R.ReturnArray(name="array"),))
+        image_port = R.Image(name="image", output_specs=(R.ReturnArray(name="array"),))
+        mask_port = R.Mask(name="mask", output_specs=(R.ReturnArray(name="array"),))
         pipeline = R.Pipeline(
             [
                 R.CoarseDropout(p=1.0),
@@ -244,11 +254,11 @@ class MaskTests(unittest.TestCase):
         labels = semantic_mask(13, 17)
         encoded_source = R.encode_image(source, format="png")
         encoded_labels = R.encode_image(labels, format="png")
-        transforms = [R.RandomCrop(11, 15), R.Resize(7, 9), R.HorizontalFlip(0.5)]
+        transforms = [R.RandomCrop(11, 15), R.Resize(7, 9), R.HorizontalFlip(p=0.5)]
         key = 19
 
         oracle_image = R.Pipeline(transforms, seed=137)(source, key=key)
-        oracle_port = R.Mask(name="mask", outputs=(R.ReturnArray(name="array"),))
+        oracle_port = R.Mask(name="mask", output_specs=(R.ReturnArray(name="array"),))
         oracle_mask = R.Pipeline(transforms, seed=137, targets=(oracle_port,))(
             mask=oracle_port.bind(labels), key=key
         ).mask.array
@@ -257,12 +267,12 @@ class MaskTests(unittest.TestCase):
             root = Path(directory)
             labels_path = root / "labels.data"
             labels_path.write_bytes(encoded_labels)
-            image_port = R.Image(name="image", outputs=(R.ReturnArray(name="array"),))
+            image_port = R.Image(name="image", output_specs=(R.ReturnArray(name="array"),))
             view_port = R.Image(
-                R.Encoded(), name="view", outputs=(R.Encode("png", name="encoded"),)
+                R.Encoded(), name="view", output_specs=(R.Encode("png", name="encoded"),)
             )
             written = R.Write(name="written")
-            mask_port = R.Mask(R.Path(), name="mask", outputs=(written,))
+            mask_port = R.Mask(R.Path(), name="mask", output_specs=(written,))
             destination = root / "labels-output.png"
             pipeline = R.Pipeline(
                 transforms,
@@ -288,10 +298,10 @@ class MaskTests(unittest.TestCase):
         labels = semantic_mask(11, 13)
 
         def make_pipeline() -> tuple[R.Pipeline, R.Image, R.Mask]:
-            image_port = R.Image(name="view", outputs=(R.ReturnArray(name="array"),))
-            mask_port = R.Mask(name="labels", outputs=(R.ReturnArray(name="array"),))
+            image_port = R.Image(name="view", output_specs=(R.ReturnArray(name="array"),))
+            mask_port = R.Mask(name="labels", output_specs=(R.ReturnArray(name="array"),))
             pipeline = R.Pipeline(
-                [R.HorizontalFlip(0.5)],
+                [R.HorizontalFlip(p=0.5)],
                 seed=137,
                 targets=(image_port, mask_port),
             )
@@ -306,7 +316,9 @@ class MaskTests(unittest.TestCase):
         np.testing.assert_array_equal(actual.view.array, expected.view.array)
         np.testing.assert_array_equal(actual.labels.array, expected.labels.array)
 
-        encoded_port = R.Mask(R.Encoded(), name="labels", outputs=(R.ReturnArray(name="array"),))
+        encoded_port = R.Mask(
+            R.Encoded(), name="labels", output_specs=(R.ReturnArray(name="array"),)
+        )
         encoded_pipeline = R.Pipeline([], targets=(encoded_port,))
         with self.assertRaisesRegex(ValueError, r'target 0 \("labels"\)'):
             encoded_pipeline(labels=encoded_port.bind(R.encode_image(source, format="jpeg")))
@@ -314,11 +326,15 @@ class MaskTests(unittest.TestCase):
             encoded_pipeline(labels=encoded_port.bind(R.encode_image(source, format="png")))
 
     def test_explain_lists_each_static_target_without_runtime_values(self) -> None:
-        image_port = R.Image(R.Encoded(), outputs=(R.Encode("jpeg", name="encoded"),), name="view")
-        mask_port = R.Mask(R.Path(), outputs=(R.Write(name="written"),), fill=255, name="labels")
+        image_port = R.Image(
+            R.Encoded(), output_specs=(R.Encode("jpeg", name="encoded"),), name="view"
+        )
+        mask_port = R.Mask(
+            R.Path(), output_specs=(R.Write(name="written"),), fill=255, name="labels"
+        )
         explanation = (
             R.Pipeline(
-                [R.HorizontalFlip(1.0), R.ColorJitter()],
+                [R.HorizontalFlip(p=1.0), R.ColorJitter()],
                 targets=(image_port, mask_port),
             )
             .compile()
@@ -337,7 +353,7 @@ class MaskTests(unittest.TestCase):
         self.assertNotIn("mask_route", explanation)
 
     def test_mask_only_explain_reports_the_effective_output_contract(self) -> None:
-        port = R.Mask(name="mask", outputs=(R.ReturnTensor(name="tensor"),))
+        port = R.Mask(name="mask", output_specs=(R.ReturnTensor(name="tensor"),))
         explanation = R.Pipeline([R.Normalize()], targets=(port,)).compile().explain()
         output = explanation["targets"][0]["outputs"][0]
         self.assertEqual(output["dtype"], "uint8")

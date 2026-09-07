@@ -9,7 +9,7 @@ requested output.
 ## Pipeline executors
 
 ```text
-vp.Pipeline(transforms, seed=None, *, targets=None)
+vp.Pipeline(transforms, *, seed=None, targets=None)
 ```
 
 `Pipeline` and its compiled executor share the input and output contracts below.
@@ -37,8 +37,8 @@ encoding, writes, multiple inputs, or multiple outputs.
 A target combines three decisions:
 
 1. its semantic role: `Image` or `Mask`;
-2. its input carrier: `Array`, `Encoded`, or `Path`;
-3. one or more output ports.
+2. its `input_spec`: `Array`, `Encoded`, or `Path`;
+3. one or more `output_specs`.
 
 For segmentation, declare an image and a mask. Geometry is sampled once and
 shared by both; image-only color and filtering operations leave the mask alone.
@@ -49,8 +49,8 @@ import variopinta as vp
 
 image_array = vp.ReturnArray(name="array")
 labels_array = vp.ReturnArray(name="array")
-image_target = vp.Image(name="image", outputs=image_array)
-labels_target = vp.Mask(name="labels", outputs=labels_array, fill=255)
+image_target = vp.Image(name="image", output_specs=image_array)
+labels_target = vp.Mask(name="labels", output_specs=labels_array, fill=255)
 
 pipeline = vp.Pipeline(
     [vp.RandomCrop(256, 256), vp.HorizontalFlip(p=0.5), vp.ColorJitter(p=0.3)],
@@ -59,15 +59,16 @@ pipeline = vp.Pipeline(
 ).compile()
 ```
 
-Every explicit target and output must have a name. A name must be a public
+Every publicly constructed target and output must have a name. A name must be a public
 Python identifier: it cannot start with `_`, be a keyword, or be `key`. Target
 names are unique across the pipeline; output names are unique within their
-target.
+target. `Image(name="image")` and `Mask(name="mask")` each default to a distinct
+`ReturnArray(name="array")` output.
 
-Both `targets` and `outputs` accept a single port or a non-empty sequence:
+Both `targets` and `output_specs` accept a single port or a non-empty sequence:
 `targets=image_target` or `targets=(image_target, labels_target)`, and
-`outputs=image_array` or `outputs=(image_array, jpeg)`. The attributes
-`pipeline.targets` and `target.outputs` always contain tuples. Repeating the
+`output_specs=image_array` or `output_specs=(image_array, jpeg)`. The attributes
+`pipeline.targets` and `target.output_specs` always contain tuples. Repeating the
 same target within a pipeline or the same output within a target is rejected.
 
 Explicit calls are keyword-only and must bind every declared target exactly
@@ -107,9 +108,9 @@ call mode, binding names, and port identities are validated at runtime.
 String indexing is not supported. Result `repr()` values show compact shape
 and type facts without raster, source, or destination payloads.
 
-## Carriers
+## Input specifications
 
-| Carrier | Accepted source | Options |
+| Input specification | Accepted source | Options |
 |---|---|---|
 | `Array()` | image: NumPy HW/HWC1 grayscale or HWC3 RGB `uint8`; mask: NumPy HW `uint8` | none |
 | `Encoded(...)` | `bytes`, `bytearray`, or `memoryview` | `max_pixels=100_000_000`, `max_encoded_bytes=None` |
@@ -125,8 +126,9 @@ animated, transparent, and malformed files.
 URLs, glob syntax, and `bytes` paths are rejected. Mutable encoded inputs are
 snapshotted before native work.
 
-`Image(carrier, outputs, name, *, decode_mode=None)` infers channels from arrays;
-explicit decoder modes are rejected for `Array`. For `Encoded` and `Path`,
+`Image(input_spec=Array(), *, name, output_specs=..., decode_mode=None)` infers
+channels from arrays; explicit decoder modes are rejected for `Array`. `Mask`
+uses the same target arguments and adds keyword-only `fill=0`. For `Encoded` and `Path`,
 `None` and `"rgb"` decode RGB, while `"gray"` requests grayscale, including
 conversion from color files. Decoded 16-bit pixels are rejected by augmentation.
 Mask decoding retains its separate label-preserving rules.
@@ -162,17 +164,17 @@ not consume an implicit key. RGB arrays remain RGB even when their three
 channels have identical values.
 
 For native grayscale acquisition use
-`vp.Image(vp.Path(), name="image", outputs=vp.ReturnArray(name="array"), decode_mode="gray")`.
+`vp.Image(vp.Path(), name="image", output_specs=vp.ReturnArray(name="array"), decode_mode="gray")`.
 Grayscale `uint8` results may also be encoded or written as grayscale JPEG/PNG.
 
 ## Output ports
 
 | Output | Value | Options |
 |---|---|---|
-| `ReturnArray(name=...)` | owned C-contiguous NumPy array | name |
-| `ReturnTensor(name=...)` | contiguous CPU Torch tensor | name |
-| `Encode(format, quality=None, compression=None, name=...)` | Python `bytes` | JPEG or PNG options |
-| `Write(format=None, quality=None, compression=None, name=...)` | normalized `pathlib.Path` | JPEG or PNG options |
+| `ReturnArray(*, name)` | owned C-contiguous NumPy array | name |
+| `ReturnTensor(*, name)` | contiguous CPU Torch tensor | name |
+| `Encode(format, *, name, quality=None, compression_level=None)` | Python `bytes` | JPEG or PNG options |
+| `Write(format=None, *, name, quality=None, compression_level=None)` | normalized `pathlib.Path` | JPEG or PNG options |
 
 Image arrays preserve the input rank (HW, HWC1, or HWC3); decoded grayscale
 arrays are HW. Image tensors are CHW, including `(1, H, W)` for grayscale.
@@ -199,7 +201,7 @@ import numpy as np
 import variopinta as vp
 
 tensor = vp.ReturnTensor(name="tensor")
-image_target = vp.Image(outputs=tensor, name="image")
+image_target = vp.Image(output_specs=tensor, name="image")
 pipeline = vp.Pipeline(
     [vp.Resize(224, 224), vp.Normalize()],
     targets=image_target,
@@ -225,10 +227,10 @@ from pathlib import Path
 
 import variopinta as vp
 
-png = vp.Encode("png", compression=3, name="png")
+png = vp.Encode("png", compression_level=3, name="png")
 image_target = vp.Image(
     vp.Encoded(max_encoded_bytes=8 * 1024 * 1024),
-    outputs=png,
+    output_specs=png,
     name="image",
 )
 pipeline = vp.Pipeline(
@@ -256,7 +258,7 @@ import variopinta as vp
 
 array = vp.ReturnArray(name="array")
 jpeg = vp.Encode("jpeg", quality=90, name="jpeg")
-image_target = vp.Image(name="image", outputs=(array, jpeg))
+image_target = vp.Image(name="image", output_specs=(array, jpeg))
 pipeline = vp.Pipeline(
     [vp.Resize(224, 224)],
     targets=image_target,
@@ -292,8 +294,8 @@ from pathlib import Path
 import variopinta as vp
 
 array = vp.ReturnArray(name="array")
-png = vp.Write("png", compression=3, name="png")
-image_target = vp.Image(outputs=(array, png), name="image")
+png = vp.Write("png", compression_level=3, name="png")
+image_target = vp.Image(output_specs=(array, png), name="image")
 
 pipeline = vp.Pipeline(
     [vp.Resize(512, 512)],

@@ -14,10 +14,14 @@ class PipelineTests(unittest.TestCase):
             [
                 R.RandomCrop(13, 17),
                 R.Resize(11, 15),
-                R.HorizontalFlip(0.5),
-                R.ColorJitter(0.2, 0.2, 0.2),
-                R.Affine(10.0),
-                R.GaussianBlur(5, 1.1),
+                R.HorizontalFlip(p=0.5),
+                R.ColorJitter(
+                    brightness_range=(0.8, 1.2),
+                    contrast_range=(0.8, 1.2),
+                    saturation_range=(0.8, 1.2),
+                ),
+                R.Affine(degrees_range=(-10.0, 10.0)),
+                R.GaussianBlur(kernel_size=5, sigma_range=(1.1, 1.1)),
                 R.Normalize(),
             ],
             seed=137,
@@ -134,7 +138,7 @@ class PipelineTests(unittest.TestCase):
         self.assertEqual(crop["optimizations"], ["input-copy-elision"])
 
         for transform in (
-            R.VerticalFlip(1.0),
+            R.VerticalFlip(p=1.0),
             R.Invert(),
             R.Solarize(128),
             R.Posterize(4),
@@ -147,7 +151,7 @@ class PipelineTests(unittest.TestCase):
             self.assertEqual(direct["optimizations"], ["input-copy-elision"])
             self.assertEqual(direct["fusions"], [])
 
-        conditional_direct = R.Pipeline([R.Invert(0.5)], seed=137).compile().explain()
+        conditional_direct = R.Pipeline([R.Invert(p=0.5)], seed=137).compile().explain()
         conditional_entry = next(
             copy
             for copy in conditional_direct["targets"][0]["copies"]
@@ -201,7 +205,7 @@ class PipelineTests(unittest.TestCase):
 
     def test_explain_uses_the_effective_deterministic_route(self) -> None:
         tensor = R.ReturnTensor(name="tensor")
-        target = R.Image(name="image", outputs=(tensor,))
+        target = R.Image(name="image", output_specs=(tensor,))
         explanation = (
             R.Pipeline([R.Normalize(p=0.0)], seed=137, targets=(target,)).compile().explain()
         )
@@ -229,7 +233,7 @@ class PipelineTests(unittest.TestCase):
     def test_input_contract_and_ownership(self) -> None:
         source = image(13, 18)[:, ::2]
         snapshot = source.copy()
-        output = R.Pipeline([R.HorizontalFlip(1.0)], seed=137)(source, key=0)
+        output = R.Pipeline([R.HorizontalFlip(p=1.0)], seed=137)(source, key=0)
         np.testing.assert_array_equal(source, snapshot)
         np.testing.assert_array_equal(output, source[:, ::-1])
         self.assertTrue(output.flags.c_contiguous)
@@ -237,12 +241,12 @@ class PipelineTests(unittest.TestCase):
 
     def test_probabilities(self) -> None:
         source = image(7, 11)
-        identity = R.Pipeline([R.HorizontalFlip(0.0)], seed=137).compile()
-        flipped = R.Pipeline([R.HorizontalFlip(1.0)], seed=137).compile()
+        identity = R.Pipeline([R.HorizontalFlip(p=0.0)], seed=137).compile()
+        flipped = R.Pipeline([R.HorizontalFlip(p=1.0)], seed=137).compile()
         np.testing.assert_array_equal(identity(source, key=0), source)
         np.testing.assert_array_equal(flipped(source, key=0), source[:, ::-1])
 
-        invert = R.Pipeline([R.Invert(0.5)], seed=137)
+        invert = R.Pipeline([R.Invert(p=0.5)], seed=137)
         for key in range(20):
             np.testing.assert_array_equal(
                 invert(source, key=key), invert.compile()(source, key=key)
@@ -257,16 +261,16 @@ class PipelineTests(unittest.TestCase):
             R.RandomResizedCrop(
                 7,
                 9,
-                scale=(0.2, 0.9),
-                ratio=(0.5, 2.0),
+                area_range=(0.2, 0.9),
+                aspect_ratio_range=(0.5, 2.0),
                 p=0.75,
                 interpolation=R.Interpolation.NEAREST,
             ),
             R.RandomResizedCrop(
                 7,
                 9,
-                scale=(0.2, 0.9),
-                ratio=(0.5, 2.0),
+                area_range=(0.2, 0.9),
+                aspect_ratio_range=(0.5, 2.0),
                 p=0.75,
                 antialias=True,
             ),
@@ -279,8 +283,8 @@ class PipelineTests(unittest.TestCase):
                 p=0.75,
             ),
             R.PadIfNeeded(
-                pad_height_divisor=8,
-                pad_width_divisor=7,
+                height_divisor=8,
+                width_divisor=7,
                 border_mode=R.BorderMode.REFLECT101,
                 p=0.75,
             ),
@@ -288,38 +292,52 @@ class PipelineTests(unittest.TestCase):
                 num_holes_range=(1, 4),
                 hole_height_range=(0.1, 0.7),
                 hole_width_range=(2, 9),
+                hole_width_unit="pixels",
                 fill=(3, 5, 7),
                 p=0.75,
             ),
-            R.HorizontalFlip(0.75),
-            R.VerticalFlip(0.75),
-            R.ColorJitter(0.3, 0.4, 0.5, 0.0, p=0.75),
-            R.ColorJitter(0.3, 0.4, 0.5, 0.25, p=0.75),
+            R.HorizontalFlip(p=0.75),
+            R.VerticalFlip(p=0.75),
+            R.ColorJitter(
+                brightness_range=(0.7, 1.3),
+                contrast_range=(0.6, 1.4),
+                saturation_range=(0.5, 1.5),
+                p=0.75,
+            ),
+            R.ColorJitter(
+                brightness_range=(0.7, 1.3),
+                contrast_range=(0.6, 1.4),
+                saturation_range=(0.5, 1.5),
+                hue_range=(-0.25, 0.25),
+                p=0.75,
+            ),
             R.Affine(
-                degrees=(-25.0, 35.0),
-                translate=(0.4, 0.3),
-                scale=(0.7, 1.5),
-                shear=(-17.0, 19.0, -11.0, 13.0),
+                degrees_range=(-25.0, 35.0),
+                translate_max_fraction=(0.4, 0.3),
+                scale_range=(0.7, 1.5),
+                shear_x_range=(-17.0, 19.0),
+                shear_y_range=(-11.0, 13.0),
                 interpolation=R.Interpolation.NEAREST,
                 fill=(3, 5, 7),
                 p=0.75,
             ),
             R.Affine(
-                degrees=(-25.0, 35.0),
-                translate=(0.4, 0.3),
-                scale=(0.7, 1.5),
-                shear=(-17.0, 19.0, -11.0, 13.0),
+                degrees_range=(-25.0, 35.0),
+                translate_max_fraction=(0.4, 0.3),
+                scale_range=(0.7, 1.5),
+                shear_x_range=(-17.0, 19.0),
+                shear_y_range=(-11.0, 13.0),
                 border_mode=R.BorderMode.REFLECT101,
                 p=0.75,
             ),
-            R.GaussianBlur(5, 1.1, p=0.75),
-            R.GaussianBlur(7, (0.5, 2.5), p=0.75),
-            R.Grayscale(0.75),
-            R.Invert(0.75),
-            R.Solarize(0, 0.75),
-            R.Solarize(255, 0.75),
-            R.Posterize(1, 0.75),
-            R.Posterize(8, 0.75),
+            R.GaussianBlur(kernel_size=5, sigma_range=(1.1, 1.1), p=0.75),
+            R.GaussianBlur(kernel_size=7, sigma_range=(0.5, 2.5), p=0.75),
+            R.Grayscale(p=0.75),
+            R.Invert(p=0.75),
+            R.Solarize(0, p=0.75),
+            R.Solarize(255, p=0.75),
+            R.Posterize(1, p=0.75),
+            R.Posterize(8, p=0.75),
             R.Normalize(
                 mean=(-0.5, 0.25, 1.5),
                 std=(0.5, 1.25, 2.0),
@@ -347,8 +365,8 @@ class PipelineTests(unittest.TestCase):
             R.CenterCrop(100_000, 100_000, p=0.0),
             R.PadIfNeeded(min_height=100_000, min_width=100_000, p=0.0),
             R.CoarseDropout(num_holes_range=(10_000_000, 10_000_000), p=0.0),
-            R.HorizontalFlip(0.0),
-            R.VerticalFlip(0.0),
+            R.HorizontalFlip(p=0.0),
+            R.VerticalFlip(p=0.0),
             R.ColorJitter(p=0.0),
             R.Affine(p=0.0),
             R.RandomRotation(p=0.0),
@@ -357,8 +375,8 @@ class PipelineTests(unittest.TestCase):
             R.Sharpen(p=0.0),
             R.Perspective(p=0.0),
             R.GridDistortion(p=0.0),
-            R.Grayscale(0.0),
-            R.Invert(0.0),
+            R.Grayscale(p=0.0),
+            R.Invert(p=0.0),
             R.Solarize(p=0.0),
             R.Posterize(p=0.0),
             R.Normalize(p=0.0),
@@ -382,8 +400,8 @@ class PipelineTests(unittest.TestCase):
             lambda p: R.CenterCrop(3, 5, p=p),
             lambda p: R.PadIfNeeded(min_height=3, min_width=5, p=p),
             lambda p: R.CoarseDropout(p=p),
-            lambda p: R.HorizontalFlip(p),
-            lambda p: R.VerticalFlip(p),
+            lambda p: R.HorizontalFlip(p=p),
+            lambda p: R.VerticalFlip(p=p),
             lambda p: R.ColorJitter(p=p),
             lambda p: R.Affine(p=p),
             lambda p: R.RandomRotation(p=p),
@@ -392,8 +410,8 @@ class PipelineTests(unittest.TestCase):
             lambda p: R.Sharpen(p=p),
             lambda p: R.Perspective(p=p),
             lambda p: R.GridDistortion(p=p),
-            lambda p: R.Grayscale(p),
-            lambda p: R.Invert(p),
+            lambda p: R.Grayscale(p=p),
+            lambda p: R.Invert(p=p),
             lambda p: R.Solarize(p=p),
             lambda p: R.Posterize(p=p),
             lambda p: R.Normalize(p=p),
@@ -440,15 +458,19 @@ class PipelineTests(unittest.TestCase):
                 )
 
         smallest = float(np.nextafter(np.float32(0.0), np.float32(1.0), dtype=np.float32))
-        self.assertEqual(R.GaussianBlur(5, smallest).sigma, (smallest, smallest))
+        self.assertEqual(
+            R.GaussianBlur(kernel_size=5, sigma_range=(smallest, smallest)).sigma_range,
+            (smallest, smallest),
+        )
         with self.assertRaisesRegex(ValueError, "positive"):
-            R.GaussianBlur(5, smallest / 2.0)
+            R.GaussianBlur(kernel_size=5, sigma_range=(smallest / 2.0, smallest / 2.0))
         with self.assertRaisesRegex(ValueError, "float32"):
-            R.GaussianBlur(5, float(np.finfo(np.float32).max) * 2.0)
+            value = float(np.finfo(np.float32).max) * 2.0
+            R.GaussianBlur(kernel_size=5, sigma_range=(value, value))
 
         below_ninety = float(np.nextafter(90.0, 0.0))
         with self.assertRaisesRegex(ValueError, "strictly between"):
-            R.Affine(shear=below_ninety)
+            R.Affine(shear_x_range=(below_ninety, below_ninety))
 
         normalized = R.Normalize(
             mean=(0.1, 0.2, 0.3),
@@ -463,7 +485,7 @@ class PipelineTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "native backend limit"):
             R.Pipeline([R.Resize(2**32, 1)], seed=137)
         with self.assertRaisesRegex(ValueError, "kernel_size"):
-            R.Pipeline([R.GaussianBlur(2**63 - 1, 1.0)], seed=137)
+            R.Pipeline([R.GaussianBlur(kernel_size=2**63 - 1, sigma_range=(1.0, 1.0))], seed=137)
 
         source = image(1, 1)
         huge_output = R.Pipeline([R.Resize(2_000_000_000, 2_000_000_000)], seed=137)
@@ -476,7 +498,9 @@ class PipelineTests(unittest.TestCase):
                 R.CoarseDropout(
                     num_holes_range=(2**63 - 1, 2**63 - 1),
                     hole_height_range=(1, 1),
+                    hole_height_unit="pixels",
                     hole_width_range=(1, 1),
+                    hole_width_unit="pixels",
                     p=1.0,
                 )
             ],
@@ -489,10 +513,10 @@ class PipelineTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             R.Resize(0, 3)
         with self.assertRaises(ValueError):
-            R.GaussianBlur(4, 1.1)
-        for sigma in (0.0, (0.0, 1.0), (1.2, 0.8), (1.0, float("inf"))):
+            R.GaussianBlur(kernel_size=4, sigma_range=(1.1, 1.1))
+        for sigma in ((0.0, 0.0), (0.0, 1.0), (1.2, 0.8), (1.0, float("inf"))):
             with self.subTest(sigma=sigma), self.assertRaises(ValueError):
-                R.GaussianBlur(5, sigma)
+                R.GaussianBlur(kernel_size=5, sigma_range=sigma)
         with self.assertRaises(ValueError):
             R.Solarize(256)
         with self.assertRaises(ValueError):

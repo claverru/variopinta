@@ -104,7 +104,7 @@ def run_planned(items: list[dict[str, Any]], quick: bool, repetition: int) -> li
             input_path.write_bytes(encoded)
             array_pipeline = R.Pipeline([R.Resize(448, 448), R.Invert()], seed=137).compile()
             encoded_input_port = R.Image(
-                R.Encoded(), outputs=(R.ReturnArray(name="array"),), name="image"
+                R.Encoded(), output_specs=(R.ReturnArray(name="array"),), name="image"
             )
             encoded_input_pipeline = R.Pipeline(
                 [R.Resize(448, 448), R.Invert()],
@@ -112,7 +112,7 @@ def run_planned(items: list[dict[str, Any]], quick: bool, repetition: int) -> li
                 targets=(encoded_input_port,),
             ).compile()
             encoded_output_port = R.Image(
-                outputs=(R.Encode(format_name, name="encoded"),), name="image"
+                output_specs=(R.Encode(format_name, name="encoded"),), name="image"
             )
             encoded_output_pipeline = R.Pipeline(
                 [R.Resize(448, 448), R.Invert()],
@@ -120,7 +120,7 @@ def run_planned(items: list[dict[str, Any]], quick: bool, repetition: int) -> li
                 targets=(encoded_output_port,),
             ).compile()
             encoded_port = R.Image(
-                R.Encoded(), outputs=(R.Encode(format_name, name="encoded"),), name="image"
+                R.Encoded(), output_specs=(R.Encode(format_name, name="encoded"),), name="image"
             )
             encoded_pipeline = R.Pipeline(
                 [R.Resize(448, 448), R.Invert()],
@@ -128,7 +128,7 @@ def run_planned(items: list[dict[str, Any]], quick: bool, repetition: int) -> li
                 targets=(encoded_port,),
             ).compile()
             path_output = R.Write(format_name, name="written")
-            path_port = R.Image(R.Path(), outputs=(path_output,), name="image")
+            path_port = R.Image(R.Path(), output_specs=(path_output,), name="image")
             path_pipeline = R.Pipeline(
                 [R.Resize(448, 448), R.Invert()],
                 seed=137,

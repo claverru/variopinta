@@ -99,20 +99,27 @@ def _fill(value: object) -> tuple[int, ...]:
 
 
 def _dropout_size_range(
-    name: str, values: tuple[int, int] | tuple[float, float]
-) -> tuple[tuple[int, int] | tuple[float, float], str]:
+    name: str,
+    values: tuple[int | float, int | float],
+    unit: str,
+) -> tuple[int, int] | tuple[float, float]:
     if not isinstance(values, tuple) or len(values) != 2:
         raise ValueError(f"{name} must contain two values")
-    if all(isinstance(value, int) and not isinstance(value, bool) for value in values):
-        if values[0] <= 0 or values[0] > values[1]:
+    if unit not in ("pixels", "fraction"):
+        raise ValueError(f"{name.removesuffix('_range')}_unit must be 'pixels' or 'fraction'")
+    if any(isinstance(value, bool) or not isinstance(value, int | float) for value in values):
+        raise TypeError(f"{name} must contain two integers or floats")
+    if unit == "pixels":
+        if any(not math.isfinite(value) or not float(value).is_integer() for value in values):
+            raise ValueError(f"{name} pixel values must be finite whole numbers")
+        result = (int(values[0]), int(values[1]))
+        if result[0] <= 0 or result[0] > result[1]:
             raise ValueError(f"{name} pixel values must be ordered and positive")
-        return values, "pixels"
-    if all(isinstance(value, float) for value in values):
-        result = (_f32(name, values[0]), _f32(name, values[1]))
-        if any(not 0.0 < value <= 1.0 for value in result) or result[0] > result[1]:
-            raise ValueError(f"{name} fraction values must be ordered and in (0, 1]")
-        return result, "fraction"
-    raise TypeError(f"{name} must contain either two integers or two floats")
+        return result
+    result = (_f32(name, values[0]), _f32(name, values[1]))
+    if any(not 0.0 < value <= 1.0 for value in result) or result[0] > result[1]:
+        raise ValueError(f"{name} fraction values must be ordered and in (0, 1]")
+    return result
 
 
 def _finite_pair(name: str, value: object) -> tuple[float, float]:
@@ -132,44 +139,25 @@ def _finite_pair(name: str, value: object) -> tuple[float, float]:
 
 
 def _value_range(
-    name: str, value: float | tuple[float, float], *, non_negative: bool = False
+    name: str, value: tuple[float, float], *, non_negative: bool = False
 ) -> tuple[float, float]:
-    if isinstance(value, bool) or not isinstance(value, int | float):
-        result = _finite_pair(name, value)
-    else:
-        if not math.isfinite(value):
-            raise ValueError(f"{name} must be finite")
-        canonical = _f32(name, value)
-        result = (canonical, canonical)
+    result = _finite_pair(name, value)
     if non_negative and result[0] < 0.0:
         raise ValueError(f"{name} values must be non-negative")
     return result
 
 
 def _symmetric_limit_range(
-    name: str, value: float | tuple[float, float], *, maximum: float
+    name: str, value: tuple[float, float], *, maximum: float
 ) -> tuple[float, float]:
-    if isinstance(value, bool) or not isinstance(value, int | float):
-        result = _finite_pair(name, value)
-    else:
-        if not math.isfinite(value):
-            raise ValueError(f"{name} must be finite and non-negative")
-        canonical = _f32(name, value)
-        if canonical < 0.0:
-            raise ValueError(f"{name} must be finite and non-negative")
-        result = (-canonical, canonical)
+    result = _finite_pair(name, value)
     if result[0] <= -maximum or result[1] >= maximum:
         raise ValueError(f"{name} values must be strictly within (-{maximum}, {maximum})")
     return result
 
 
-def _affine_degrees(value: float | tuple[float, float]) -> tuple[float, float]:
-    if isinstance(value, bool) or not isinstance(value, int | float):
-        return _finite_pair("degrees", value)
-    if not math.isfinite(value) or value < 0.0:
-        raise ValueError("degrees must be finite and non-negative")
-    canonical = _f32("degrees", value)
-    return (-canonical, canonical)
+def _affine_degrees(value: tuple[float, float]) -> tuple[float, float]:
+    return _finite_pair("degrees_range", value)
 
 
 def _affine_translate(value: tuple[float, float]) -> tuple[float, float]:
@@ -181,87 +169,48 @@ def _affine_translate(value: tuple[float, float]) -> tuple[float, float]:
             for item in value
         )
     ):
-        raise ValueError("translate must contain two finite values")
-    result = (_f32("translate", value[0]), _f32("translate", value[1]))
+        raise ValueError("translate_max_fraction must contain two finite values")
+    result = (
+        _f32("translate_max_fraction", value[0]),
+        _f32("translate_max_fraction", value[1]),
+    )
     if any(not 0.0 <= item <= 1.0 for item in result):
-        raise ValueError("translate values must be in [0, 1]")
+        raise ValueError("translate_max_fraction values must be in [0, 1]")
     return result
 
 
-def _affine_scale(value: float | tuple[float, float]) -> tuple[float, float]:
-    if isinstance(value, bool) or not isinstance(value, int | float):
-        result = _finite_pair("scale", value)
-    else:
-        if not math.isfinite(value):
-            raise ValueError("scale must be finite and positive")
-        canonical = _f32("scale", value)
-        result = (canonical, canonical)
+def _affine_scale(value: tuple[float, float]) -> tuple[float, float]:
+    result = _finite_pair("scale_range", value)
     if result[0] <= 0.0:
-        raise ValueError("scale values must be positive")
+        raise ValueError("scale_range values must be positive")
     return result
 
 
-def _affine_shear(
-    value: float | tuple[float, float] | tuple[float, float, float, float],
-) -> tuple[float, float, float, float]:
-    if isinstance(value, int | float) and not isinstance(value, bool):
-        if not math.isfinite(value):
-            raise ValueError("shear must be finite and non-negative")
-        canonical = _f32("shear", value)
-        if canonical < 0.0:
-            raise ValueError("shear must be finite and non-negative")
-        result = (-canonical, canonical, 0.0, 0.0)
-    elif isinstance(value, tuple) and len(value) in (2, 4):
-        x_range = _finite_pair("shear", value[:2])
-        y_range = _finite_pair("shear", value[2:]) if len(value) == 4 else (0.0, 0.0)
-        result = (*x_range, *y_range)
-    else:
-        raise ValueError("shear must be a number or a tuple of two or four finite values")
+def _affine_shear(name: str, value: tuple[float, float]) -> tuple[float, float]:
+    result = _finite_pair(name, value)
     if any(abs(item) >= 90.0 for item in result):
-        raise ValueError("shear values must be strictly between -90 and 90 degrees")
+        raise ValueError(f"{name} values must be strictly between -90 and 90 degrees")
     return result
 
 
-def _color_factor_range(name: str, value: float | tuple[float, float]) -> tuple[float, float]:
-    if isinstance(value, bool) or not isinstance(value, int | float):
-        result = _finite_pair(name, value)
-    else:
-        if not math.isfinite(value):
-            raise ValueError(f"{name} must be finite and non-negative")
-        canonical = _f32(name, value)
-        if canonical < 0.0:
-            raise ValueError(f"{name} must be finite and non-negative")
-        result = (_f32(name, max(0.0, 1.0 - canonical)), _f32(name, 1.0 + canonical))
+def _color_factor_range(name: str, value: tuple[float, float]) -> tuple[float, float]:
+    result = _finite_pair(name, value)
     if result[0] < 0.0:
         raise ValueError(f"{name} range values must be non-negative")
     return result
 
 
-def _hue_range(value: float | tuple[float, float]) -> tuple[float, float]:
-    if isinstance(value, bool) or not isinstance(value, int | float):
-        result = _finite_pair("hue", value)
-    else:
-        if not math.isfinite(value):
-            raise ValueError("hue must be finite and in [0, 0.5]")
-        canonical = _f32("hue", value)
-        if not 0.0 <= canonical <= 0.5:
-            raise ValueError("hue must be finite and in [0, 0.5]")
-        result = (-canonical, canonical)
+def _hue_range(value: tuple[float, float]) -> tuple[float, float]:
+    result = _finite_pair("hue_range", value)
     if result[0] < -0.5 or result[1] > 0.5:
         raise ValueError("hue range values must be in [-0.5, 0.5]")
     return result
 
 
-def _sigma_range(value: float | tuple[float, float]) -> tuple[float, float]:
-    if isinstance(value, bool) or not isinstance(value, int | float):
-        result = _finite_pair("sigma", value)
-    else:
-        if not math.isfinite(value):
-            raise ValueError("sigma must be finite and positive")
-        canonical = _f32("sigma", value)
-        result = (canonical, canonical)
+def _sigma_range(value: tuple[float, float]) -> tuple[float, float]:
+    result = _finite_pair("sigma_range", value)
     if result[0] <= 0.0:
-        raise ValueError("sigma values must be positive")
+        raise ValueError("sigma_range values must be positive")
     return result
 
 

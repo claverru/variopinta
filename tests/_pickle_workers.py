@@ -19,7 +19,7 @@ class Images:
     def __init__(self, path):
         self.path = path
         self.output = R.ReturnTensor(name="tensor")
-        self.target = R.Image(carrier=R.Path(), outputs=self.output, name="image")
+        self.target = R.Image(input_spec=R.Path(), output_specs=self.output, name="image")
         self.pipeline = R.Pipeline(
             [R.RandomCrop(7, 9), R.GaussianNoise(), R.Normalize()],
             seed=42,
@@ -114,7 +114,9 @@ def threads():
         path = Path(directory) / "image.png"
         path.write_bytes(encoded)
         for carrier, data in ((R.Encoded(), encoded), (R.Path(), path)):
-            target = R.Image(carrier=carrier, outputs=R.Encode("png", name="png"), name="image")
+            target = R.Image(
+                input_spec=carrier, output_specs=R.Encode("png", name="png"), name="image"
+            )
             reference = R.Pipeline([R.GaussianNoise()], seed=42, targets=target)
             for pipeline in (reference, reference.compile()):
                 barrier = Barrier(3)

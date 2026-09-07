@@ -36,12 +36,12 @@ def run_planned(
             out = size * 3 // 4
             transforms = {
                 "geometry": [vp.CenterCrop(size - 2, size - 2), vp.Resize(out, out)],
-                "filtering": [vp.GaussianBlur(5, 1.1), vp.Sharpen(alpha=0.5, lightness=1.0)],
+                "filtering": [vp.GaussianBlur(), vp.Sharpen()],
                 "normalized-tensor": [vp.Resize(out, out), vp.Normalize(mean=0.5, std=0.5)],
             }[case]
             tensor = case == "normalized-tensor"
             port = vp.ReturnTensor(name="value") if tensor else vp.ReturnArray(name="value")
-            target = vp.Image(name="image", outputs=port)
+            target = vp.Image(name="image", output_specs=port)
             reference = vp.Pipeline(transforms, targets=target, seed=SEED)
             compiled = reference.compile()
             images = [

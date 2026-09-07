@@ -77,7 +77,7 @@ Compiled pipelines are safe to share across threads. Each run owns its random
 state and working buffers; explicit keys make results independent of worker
 assignment.
 
-A call containing any `Array` carrier retains the Python GIL during aggregate
+A call containing any `Array` input specification retains the Python GIL during aggregate
 augmentation. Calls whose inputs are entirely `Encoded` or `Path` release it
 through acquisition, augmentation, encoding, and delivery. Calls without a key
 serialize their sequence commit so a failed call does not consume a key.
@@ -149,7 +149,7 @@ initial copy in this example.
 |---|---|
 | `steps` | Each transform's execution status, kernel form, pixel passes, and selection reason |
 | `optimizations`, `fusions`, `unit_specializations` | Selected pipeline optimizations, cross-transform fusions, and individual kernel specializations |
-| `targets` | Input carriers, outputs, buffers, copies, dtypes, layouts, and delivery |
+| `targets` | Input specifications, outputs, buffers, copies, dtypes, layouts, and delivery |
 | `python_boundary` | Native crossings and whether augmentation retains the GIL |
 | `fallbacks` | Portable and architecture-dependent kernel routes |
 

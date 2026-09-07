@@ -38,7 +38,7 @@ import variopinta as vp
 
 pipeline = vp.Pipeline(
     [
-        vp.RandomResizedCrop(224, 224, scale=(0.6, 1.0)),
+        vp.RandomResizedCrop(224, 224, area_range=(0.6, 1.0)),
         vp.HorizontalFlip(p=0.5),
         vp.Normalize(),
     ],
@@ -73,7 +73,7 @@ The pipeline crops and resizes the image, may flip it, then normalizes it to
   positive-size HW `uint8`.
 - An explicit pipeline accepts only named keyword bindings created from the
   exact target objects used to construct it.
-- Every explicit target and output needs a unique public Python-identifier name
+- Every publicly constructed target and output needs a unique public Python-identifier name
   in its scope.
 - `Normalize` must be the last transform. Any route that may normalize cannot
   also encode or write its final image.

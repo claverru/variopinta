@@ -20,6 +20,7 @@ from .targets import (
     ReturnTensor,
     Target,
     Write,
+    _implicit_image,
     _route,
 )
 from .transforms import _TRANSFORM_TYPES, Transform
@@ -31,9 +32,16 @@ _STATE_VERSION = 1
 class TargetResult:
     __slots__ = ("_by_identity", "_names", "_outputs", "_values", "_locked")
 
-    def __init__(self, outputs: tuple[OutputPort[object], ...], values: tuple[object, ...]) -> None:
+    def __init__(self) -> None:
+        raise TypeError("TargetResult values are created by pipeline execution")
+
+    @classmethod
+    def _create(
+        cls, outputs: tuple[OutputPort[object], ...], values: tuple[object, ...]
+    ) -> TargetResult:
         if len(outputs) != len(values):
             raise RuntimeError("native output does not match the target signature")
+        self = object.__new__(cls)
         object.__setattr__(self, "_outputs", outputs)
         object.__setattr__(self, "_values", values)
         object.__setattr__(
@@ -51,6 +59,7 @@ class TargetResult:
             ),
         )
         object.__setattr__(self, "_locked", True)
+        return self
 
     def __setattr__(self, name: str, value: object) -> None:
         if getattr(self, "_locked", False):
@@ -91,9 +100,16 @@ class TargetResult:
 class PipelineResult:
     __slots__ = ("_by_identity", "_names", "_results", "_targets", "_locked")
 
-    def __init__(self, targets: tuple[Target, ...], results: tuple[TargetResult, ...]) -> None:
+    def __init__(self) -> None:
+        raise TypeError("PipelineResult values are created by pipeline execution")
+
+    @classmethod
+    def _create(
+        cls, targets: tuple[Target, ...], results: tuple[TargetResult, ...]
+    ) -> PipelineResult:
         if len(targets) != len(results):
             raise RuntimeError("native output does not match the pipeline signature")
+        self = object.__new__(cls)
         object.__setattr__(self, "_targets", targets)
         object.__setattr__(self, "_results", results)
         object.__setattr__(
@@ -111,6 +127,7 @@ class PipelineResult:
             ),
         )
         object.__setattr__(self, "_locked", True)
+        return self
 
     def __setattr__(self, name: str, value: object) -> None:
         if getattr(self, "_locked", False):
@@ -148,8 +165,8 @@ class Pipeline:
     def __init__(
         self,
         transforms: Sequence[Transform],
-        seed: int | None = None,
         *,
+        seed: int | None = None,
         targets: Target | Sequence[Target] | None = None,
     ) -> None:
         normalized_transforms = tuple(transforms)
@@ -157,7 +174,7 @@ class Pipeline:
             raise TypeError("Pipeline only accepts built-in transforms")
         explicit_targets = targets is not None
         if targets is None:
-            normalized_targets = (Image(),)
+            normalized_targets = (_implicit_image(),)
         elif isinstance(targets, Image | Mask):
             normalized_targets = (targets,)
         else:
@@ -210,7 +227,7 @@ class Pipeline:
         return _present(self, normalized, output, torch)
 
     def compile(self) -> CompiledPipeline:
-        return CompiledPipeline(
+        return CompiledPipeline._create(
             self._transforms,
             self._specs,
             self._seed,
@@ -231,19 +248,25 @@ class Pipeline:
 class CompiledPipeline:
     __slots__ = ("_explicit_targets", "_pipeline", "_seed", "_targets", "_transforms")
 
-    def __init__(
-        self,
+    def __init__(self) -> None:
+        raise TypeError("CompiledPipeline values are created by Pipeline.compile()")
+
+    @classmethod
+    def _create(
+        cls,
         transforms: tuple[Transform, ...],
         specs: list[dict[str, object]],
         seed: int,
         targets: tuple[Target, ...],
         explicit_targets: bool,
-    ) -> None:
+    ) -> CompiledPipeline:
+        self = object.__new__(cls)
         self._transforms = transforms
         self._seed = seed
         self._targets = targets
         self._explicit_targets = explicit_targets
         self._pipeline = _native_pipeline(specs, seed, "compiled", targets)
+        return self
 
     @property
     def transforms(self) -> tuple[Transform, ...]:
@@ -332,21 +355,21 @@ def _restore_pipeline(pipeline: Pipeline | CompiledPipeline, state: object, mode
     # Dataclass unpickling skips constructors. Validate without replacing the shared graph.
     for transform in transforms:
         replace(transform)
-    for target in targets:
-        replace(target)
-        replace(target.carrier)
-        for output in target.outputs:
-            replace(output)
     if explicit:
+        for target in targets:
+            replace(target)
+            replace(target.input_spec)
+            for output in target.output_specs:
+                replace(output)
         _validate_explicit_signature(targets)
     elif not (
         len(targets) == 1
         and type(targets[0]) is Image
-        and type(targets[0].carrier) is Array
+        and type(targets[0].input_spec) is Array
         and targets[0].name is None
-        and len(targets[0].outputs) == 1
-        and type(targets[0].outputs[0]) is ReturnArray
-        and targets[0].outputs[0].name is None
+        and len(targets[0].output_specs) == 1
+        and type(targets[0].output_specs[0]) is ReturnArray
+        and targets[0].output_specs[0].name is None
     ):
         raise ValueError("invalid implicit image signature in pipeline pickle state")
     specs = [transform._spec() for transform in transforms]
@@ -370,7 +393,7 @@ def _validate_explicit_signature(targets: tuple[Target, ...]) -> None:
     if len(set(names)) != len(names):
         raise ValueError("target names must be unique within a pipeline")
     for target in targets:
-        if any(output.name is None for output in target.outputs):
+        if any(output.name is None for output in target.output_specs):
             raise ValueError(f"every output of target {target.name!r} must have a name")
 
 
@@ -428,18 +451,18 @@ def _present(
     for target, binding, values in zip(pipeline.targets, bindings, output, strict=True):
         if not isinstance(binding, BoundTarget) or not isinstance(values, tuple):
             raise RuntimeError("native target output does not match the pipeline signature")
-        if len(values) != len(target.outputs):
+        if len(values) != len(target.output_specs):
             raise RuntimeError("native output does not match the target signature")
         destinations = {id(item.output): item.destination for item in binding._write_bindings}
         presented: list[object] = []
-        for port, value in zip(target.outputs, values, strict=True):
+        for port, value in zip(target.output_specs, values, strict=True):
             if isinstance(port, ReturnTensor):
                 value = torch.from_numpy(value)
             elif isinstance(port, Write):
                 value = destinations[id(port)]
             presented.append(value)
-        target_results.append(TargetResult(target.outputs, tuple(presented)))
-    return PipelineResult(pipeline.targets, tuple(target_results))
+        target_results.append(TargetResult._create(target.output_specs, tuple(presented)))
+    return PipelineResult._create(pipeline.targets, tuple(target_results))
 
 
 def _torch_for_presentation(pipeline: Pipeline | CompiledPipeline) -> Any | None:
@@ -448,7 +471,7 @@ def _torch_for_presentation(pipeline: Pipeline | CompiledPipeline) -> Any | None
         if any(
             isinstance(output, ReturnTensor)
             for target in pipeline.targets
-            for output in target.outputs
+            for output in target.output_specs
         )
         else None
     )

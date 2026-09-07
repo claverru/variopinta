@@ -178,8 +178,8 @@ def _operations(backend: str) -> dict[str, Callable[..., Any]]:
 
     return {
         "native": lambda image: image,
-        "flip": lambda image: R.Pipeline([R.HorizontalFlip(1.0)], seed=SEED).compile()(image),
-        "vertical_flip": lambda image: R.Pipeline([R.VerticalFlip(1.0)], seed=SEED).compile()(
+        "flip": lambda image: R.Pipeline([R.HorizontalFlip(p=1.0)], seed=SEED).compile()(image),
+        "vertical_flip": lambda image: R.Pipeline([R.VerticalFlip(p=1.0)], seed=SEED).compile()(
             image
         ),
         "crop": lambda image, h, w: R.Pipeline([R.RandomCrop(h, w)], seed=SEED).compile()(image),
@@ -187,25 +187,29 @@ def _operations(backend: str) -> dict[str, Callable[..., Any]]:
             image
         ),
         "resize": lambda image, h, w: R.Pipeline([R.Resize(h, w)], seed=SEED).compile()(image),
-        "affine_identity": lambda image: R.Pipeline([R.Affine(0.0)], seed=SEED).compile()(image),
-        "blur": lambda image: R.Pipeline([R.GaussianBlur(5, 1.1)], seed=SEED).compile()(image),
+        "affine_identity": lambda image: R.Pipeline(
+            [R.Affine(degrees_range=(0.0, 0.0))], seed=SEED
+        ).compile()(image),
+        "blur": lambda image: R.Pipeline(
+            [R.GaussianBlur(kernel_size=5, sigma_range=(1.1, 1.1))], seed=SEED
+        ).compile()(image),
         "grayscale": lambda image: R.Pipeline([R.Grayscale()], seed=SEED).compile()(image),
         "invert": lambda image: R.Pipeline([R.Invert()], seed=SEED).compile()(image),
         "solarize": lambda image: R.Pipeline([R.Solarize(128)], seed=SEED).compile()(image),
         "posterize": lambda image: R.Pipeline([R.Posterize(4)], seed=SEED).compile()(image),
-        "jitter": lambda image: R.Pipeline([R.ColorJitter(0.2, 0.2, 0.2)], seed=SEED).compile()(
-            image
-        ),
-        "normalize": lambda image: R.Pipeline([R.Normalize(MEAN, STD)], seed=SEED).compile()(image),
+        "jitter": lambda image: R.Pipeline([R.ColorJitter()], seed=SEED).compile()(image),
+        "normalize": lambda image: R.Pipeline(
+            [R.Normalize(mean=MEAN, std=STD)], seed=SEED
+        ).compile()(image),
         "pipeline": lambda image: R.Pipeline(
             [
                 R.RandomCrop(15, 19),
                 R.Resize(13, 17),
-                R.HorizontalFlip(0.5),
-                R.ColorJitter(0.2, 0.2, 0.2),
-                R.Affine(10.0),
-                R.GaussianBlur(5, 1.1),
-                R.Normalize(MEAN, STD),
+                R.HorizontalFlip(p=0.5),
+                R.ColorJitter(),
+                R.Affine(degrees_range=(-10.0, 10.0)),
+                R.GaussianBlur(kernel_size=5, sigma_range=(1.1, 1.1)),
+                R.Normalize(mean=MEAN, std=STD),
             ],
             seed=SEED,
         ).compile()(image),
@@ -376,16 +380,16 @@ def run_correctness_checks(backend: str) -> list[dict[str, Any]]:
                 [
                     R.RandomCrop(max(1, height - 1), max(1, width - 1)),
                     R.Resize(output_height, output_width),
-                    R.HorizontalFlip(0.5),
-                    R.VerticalFlip(0.2),
-                    R.ColorJitter(0.2, 0.2, 0.2),
-                    R.Affine(10.0),
-                    R.GaussianBlur(5, 1.1),
-                    R.Grayscale(0.1),
-                    R.Invert(0.1),
-                    R.Solarize(128, 0.2),
-                    R.Posterize(4, 0.2),
-                    R.Normalize(MEAN, STD),
+                    R.HorizontalFlip(p=0.5),
+                    R.VerticalFlip(p=0.2),
+                    R.ColorJitter(),
+                    R.Affine(degrees_range=(-10.0, 10.0)),
+                    R.GaussianBlur(kernel_size=5, sigma_range=(1.1, 1.1)),
+                    R.Grayscale(p=0.1),
+                    R.Invert(p=0.1),
+                    R.Solarize(128, p=0.2),
+                    R.Posterize(4, p=0.2),
+                    R.Normalize(mean=MEAN, std=STD),
                 ],
                 seed=SEED,
             ).compile()
@@ -399,7 +403,7 @@ def run_correctness_checks(backend: str) -> list[dict[str, Any]]:
             )
 
         non_contiguous_source = _image(13, 18)[:, ::2, :]
-        non_contiguous_result = R.Pipeline([R.HorizontalFlip(1.0)], seed=SEED)(
+        non_contiguous_result = R.Pipeline([R.HorizontalFlip(p=1.0)], seed=SEED)(
             non_contiguous_source
         )
         check(
@@ -408,7 +412,7 @@ def run_correctness_checks(backend: str) -> list[dict[str, Any]]:
             "non-contiguous-input-copy",
         )
         try:
-            R.Pipeline([R.HorizontalFlip(1.0)], seed=SEED)(np.zeros((3, 5, 3), dtype=np.float32))
+            R.Pipeline([R.HorizontalFlip(p=1.0)], seed=SEED)(np.zeros((3, 5, 3), dtype=np.float32))
         except TypeError:
             rejected_dtype = True
         else:
@@ -419,14 +423,14 @@ def run_correctness_checks(backend: str) -> list[dict[str, Any]]:
             lambda: [R.Resize(0, 3)],
             lambda: [R.RandomCrop(3, 0)],
             lambda: [R.CenterCrop(0, 3)],
-            lambda: [R.HorizontalFlip(1.5)],
-            lambda: [R.VerticalFlip(-0.1)],
-            lambda: [R.ColorJitter(-0.1, 0.2, 0.2)],
-            lambda: [R.Affine(-1.0)],
-            lambda: [R.GaussianBlur(4, 1.1)],
+            lambda: [R.HorizontalFlip(p=1.5)],
+            lambda: [R.VerticalFlip(p=-0.1)],
+            lambda: [R.ColorJitter(brightness_range=(-0.1, 1.0))],
+            lambda: [R.Affine(degrees_range=(1.0, -1.0))],
+            lambda: [R.GaussianBlur(kernel_size=4, sigma_range=(1.1, 1.1))],
             lambda: [R.Solarize(256)],
             lambda: [R.Posterize(0)],
-            lambda: [R.Normalize(MEAN, (0.229, 0.0, 0.225))],
+            lambda: [R.Normalize(mean=MEAN, std=(0.229, 0.0, 0.225))],
         ]
         for index, build_transforms in enumerate(invalid_configs):
             try:
@@ -437,7 +441,7 @@ def run_correctness_checks(backend: str) -> list[dict[str, Any]]:
                 rejected = False
             check(rejected, f"invalid-config-{index}")
         try:
-            R.Pipeline([R.HorizontalFlip(1.0)], seed=SEED)(np.empty((0, 3, 3), dtype=np.uint8))
+            R.Pipeline([R.HorizontalFlip(p=1.0)], seed=SEED)(np.empty((0, 3, 3), dtype=np.uint8))
         except ValueError:
             rejected = True
         else:

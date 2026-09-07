@@ -52,23 +52,23 @@ def decode_image(
 def encode_image(
     image: np.ndarray,
     *,
-    format: ImageFormat,
+    format: str,
     quality: int | None = None,
-    compression: int | None = None,
+    compression_level: int | None = None,
 ) -> bytes:
     """Encode a NumPy array as JPEG or PNG bytes."""
     image_format = _normalize_format(format)
-    quality, compression = _validate_encode_options(image_format, quality, compression)
-    return _encode_image(_prepare_image(image), image_format, quality, compression)
+    quality, compression_level = _validate_encode_options(image_format, quality, compression_level)
+    return _encode_image(_prepare_image(image), image_format, quality, compression_level)
 
 
 def write_image(
     path: str | PathLike[str],
     image: np.ndarray,
     *,
-    format: ImageFormat | None = None,
+    format: str | None = None,
     quality: int | None = None,
-    compression: int | None = None,
+    compression_level: int | None = None,
 ) -> None:
     """Encode a NumPy array and write it to a JPEG or PNG file."""
     path = _path(path, "path")
@@ -78,8 +78,8 @@ def write_image(
         raise ValueError("format is required when the path has no JPEG or PNG extension")
     if inferred is not None and inferred != image_format:
         raise ValueError("format conflicts with the path extension")
-    quality, compression = _validate_encode_options(image_format, quality, compression)
-    _write_image(path, _prepare_image(image), image_format, quality, compression)
+    quality, compression_level = _validate_encode_options(image_format, quality, compression_level)
+    _write_image(path, _prepare_image(image), image_format, quality, compression_level)
 
 
 def _prepare_image(image: np.ndarray) -> np.ndarray:
@@ -113,15 +113,17 @@ def _format_from_path(path: str | PathLike[str]) -> ImageFormat | None:
 def _validate_encode_options(
     image_format: ImageFormat,
     quality: int | None,
-    compression: int | None,
+    compression_level: int | None,
 ) -> tuple[int | None, int | None]:
     if image_format == "jpeg":
-        if compression is not None:
-            raise TypeError("compression is only valid for PNG")
+        if compression_level is not None:
+            raise TypeError("compression_level is only valid for PNG")
         return _integer_option("quality", 95 if quality is None else quality, 1, 100), None
     if quality is not None:
         raise TypeError("quality is only valid for JPEG")
-    return None, _integer_option("compression", 6 if compression is None else compression, 0, 9)
+    return None, _integer_option(
+        "compression_level", 6 if compression_level is None else compression_level, 0, 9
+    )
 
 
 def _integer_option(name: str, value: int, minimum: int, maximum: int) -> int:

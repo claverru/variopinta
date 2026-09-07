@@ -62,22 +62,22 @@ class PickleTests(unittest.TestCase):
         labels = source[:, :, 0].copy()
         for carrier in (R.Array(), R.Encoded(), R.Path()):
             rgb = R.ReturnArray(name="rgb")
-            encoded = R.Encode("png", compression=1, name="encoded")
-            written = R.Write("png", compression=1, name="written")
-            photo = R.Image(carrier=carrier, outputs=(rgb, encoded, written), name="photo")
-            mask = R.Mask(outputs=R.ReturnArray(name="classes"), fill=17, name="mask")
-            reference = R.Pipeline([R.HorizontalFlip(0.5)], seed=42, targets=(photo, mask))
+            encoded = R.Encode("png", compression_level=1, name="encoded")
+            written = R.Write("png", compression_level=1, name="written")
+            photo = R.Image(input_spec=carrier, output_specs=(rgb, encoded, written), name="photo")
+            mask = R.Mask(output_specs=R.ReturnArray(name="classes"), fill=17, name="mask")
+            reference = R.Pipeline([R.HorizontalFlip(p=0.5)], seed=42, targets=(photo, mask))
             for pipeline in (reference, reference.compile()):
                 for protocol in (4, 5):
-                    with self.subTest(carrier=carrier, mode=type(pipeline), protocol=protocol):
+                    with self.subTest(input_spec=carrier, mode=type(pipeline), protocol=protocol):
                         graph = pickle.loads(
                             pickle.dumps((pipeline, photo, mask, rgb, written), protocol)
                         )
                         restored, new_photo, new_mask, new_rgb, new_written = graph
                         self.assertIs(restored.targets[0], new_photo)
                         self.assertIs(restored.targets[1], new_mask)
-                        self.assertIs(new_photo.outputs[0], new_rgb)
-                        self.assertIs(new_photo.outputs[2], new_written)
+                        self.assertIs(new_photo.output_specs[0], new_rgb)
+                        self.assertIs(new_photo.output_specs[2], new_written)
                         with TemporaryDirectory() as directory:
                             root = Path(directory)
                             data = source
@@ -128,7 +128,7 @@ class PickleTests(unittest.TestCase):
                                 )
 
     def test_copy_semantics_and_independent_sequence(self):
-        target = R.Image(name="image", outputs=R.ReturnArray(name="rgb"))
+        target = R.Image(name="image", output_specs=R.ReturnArray(name="rgb"))
         reference = R.Pipeline([R.GaussianNoise()], targets=target, seed=42)
         source = image(7, 11)
         for pipeline in (reference, reference.compile()):
@@ -161,7 +161,7 @@ class PickleTests(unittest.TestCase):
                 "version": (0, 2, True, 1.0, "1"),
                 "explicit_targets": (0, 1, None, "false"),
                 "transforms": ([], (object(),)),
-                "targets": ([], (), (object(),), (R.Mask(),)),
+                "targets": ([], (), (object(),), (R.Mask(name="mask"),)),
             }.items():
                 invalid.extend({**valid, field: value} for value in values)
             for state in invalid:
@@ -173,7 +173,7 @@ class PickleTests(unittest.TestCase):
             object.__setattr__(bad, "p", 2.0)
             with self.assertRaises(ValueError):
                 pipeline.__setstate__({**valid, "transforms": (bad,)})
-            target = R.Image(name="image", outputs=R.ReturnArray(name="rgb"))
+            target = R.Image(name="image", output_specs=R.ReturnArray(name="rgb"))
             with self.assertRaisesRegex(ValueError, "same target"):
                 pipeline.__setstate__(
                     {**valid, "explicit_targets": True, "targets": (target, target)}
@@ -182,7 +182,7 @@ class PickleTests(unittest.TestCase):
                 pipeline.__setstate__({**valid, "explicit_targets": True})
 
     def test_native_restore_validates_counter_and_semantics(self):
-        routes = [_route(R.Image())]
+        routes = [_route(R.Image(name="image"))]
         for counter in (True, -1, 2**64, 1.5, None):
             with self.assertRaises(ValueError):
                 _variopinta.Pipeline._restore([], 42, "compiled", routes, counter)
@@ -202,7 +202,7 @@ class PickleTests(unittest.TestCase):
         import torch
 
         tensor = R.ReturnTensor(name="tensor")
-        target = R.Image(outputs=tensor, name="image")
+        target = R.Image(output_specs=tensor, name="image")
         reference = R.Pipeline([R.Normalize()], seed=42, targets=target)
         source = image(7, 11)
         for pipeline in (reference, reference.compile()):

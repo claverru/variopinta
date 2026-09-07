@@ -410,7 +410,7 @@ def encode_checks(rows: list[dict[str, Any]]) -> None:
             image = pattern(dtype, channels)
             for compression in range(10):
                 case = f"png-{dtype.name}-c{channels}-compression-{compression}"
-                encoded = R.encode_image(image, format="png", compression=compression)
+                encoded = R.encode_image(image, format="png", compression_level=compression)
                 validate_png_output("encode", case, encoded, image, rows)
     for channels in (1, 3):
         image = pattern(np.dtype(np.uint8), channels)
@@ -438,7 +438,7 @@ def write_checks(rows: list[dict[str, Any]]) -> None:
                 for compression in range(10):
                     case = f"png-{dtype.name}-c{channels}-compression-{compression}"
                     path = root / f"{case}.png"
-                    R.write_image(path, image, compression=compression)
+                    R.write_image(path, image, compression_level=compression)
                     validate_png_output("write", case, path.read_bytes(), image, rows)
         for channels in (1, 3):
             image = pattern(np.dtype(np.uint8), channels)

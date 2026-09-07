@@ -60,7 +60,7 @@ def smoke_base(expected_version: str) -> np.ndarray:
 
         expected = V.Pipeline([V.Invert()], seed=137)(source, key=11)
         encoded_port = V.Image(
-            V.Encoded(), outputs=(V.Encode("png", name="encoded"),), name="image"
+            V.Encoded(), output_specs=(V.Encode("png", name="encoded"),), name="image"
         )
         encoded_pipeline = V.Pipeline(
             [V.Invert()],
@@ -73,7 +73,7 @@ def smoke_base(expected_version: str) -> np.ndarray:
         np.testing.assert_array_equal(V.decode_image(encoded_result), expected)
 
         written = V.Write("png", name="written")
-        path_port = V.Image(V.Path(), outputs=(written,), name="image")
+        path_port = V.Image(V.Path(), output_specs=(written,), name="image")
         path_pipeline = V.Pipeline(
             [V.Invert()],
             seed=137,
@@ -89,9 +89,9 @@ def smoke_base(expected_version: str) -> np.ndarray:
         np.testing.assert_array_equal(V.read_image(destination), expected)
 
     identity = {
-        "brightness": (1.0, 1.0),
-        "contrast": (1.0, 1.0),
-        "saturation": (1.0, 1.0),
+        "brightness_range": (1.0, 1.0),
+        "contrast_range": (1.0, 1.0),
+        "saturation_range": (1.0, 1.0),
     }
     jitter_values = np.arange(3 * 34 * 3, dtype=np.uint64)
     jitter_source = (
@@ -100,9 +100,9 @@ def smoke_base(expected_version: str) -> np.ndarray:
         .reshape(3, 34, 3)[:, ::2]
     )
     for configuration in (
-        {**identity, "brightness": (1_000.0, 1_000.0)},
-        {**identity, "contrast": (1_000.0, 1_000.0)},
-        {**identity, "saturation": (1_000.0, 1_000.0)},
+        {**identity, "brightness_range": (1_000.0, 1_000.0)},
+        {**identity, "contrast_range": (1_000.0, 1_000.0)},
+        {**identity, "saturation_range": (1_000.0, 1_000.0)},
     ):
         jitter = V.Pipeline([V.ColorJitter(**configuration)], seed=137)
         np.testing.assert_array_equal(
@@ -110,14 +110,17 @@ def smoke_base(expected_version: str) -> np.ndarray:
         )
     positive = np.array([[[255, 2, 3], [0, 0, 0]]], dtype=np.uint8)
     brightness = V.Pipeline(
-        [V.ColorJitter(**{**identity, "brightness": (1_000.0, 1_000.0)})], seed=137
+        [V.ColorJitter(**{**identity, "brightness_range": (1_000.0, 1_000.0)})], seed=137
     )
     saturated = np.where(positive == 0, 0, 255).astype(np.uint8)
     np.testing.assert_array_equal(brightness(positive, key=29), saturated)
     np.testing.assert_array_equal(brightness.compile()(positive, key=29), saturated)
 
     blur_source = np.full((3, 4, 3), 73, dtype=np.uint8)
-    wide_blur = V.Pipeline([V.GaussianBlur(101, 1_000_000.0)], seed=137)
+    wide_blur = V.Pipeline(
+        [V.GaussianBlur(kernel_size=101, sigma_range=(1_000_000.0, 1_000_000.0))],
+        seed=137,
+    )
     blurred = wide_blur.compile()(blur_source, key=29)
     np.testing.assert_array_equal(blurred, wide_blur(blur_source, key=29))
     np.testing.assert_array_equal(blurred, blur_source)
@@ -139,10 +142,18 @@ def smoke_grayscale() -> None:
             np.testing.assert_allclose(output.reshape(source.shape), expected, atol=1e-7)
 
     target = V.Image(
-        V.Encoded(), outputs=V.Encode("png", name="encoded"), name="image", decode_mode="gray"
+        V.Encoded(), output_specs=V.Encode("png", name="encoded"), name="image", decode_mode="gray"
     )
     pipeline = V.Pipeline(
-        [V.ColorJitter(brightness=0, contrast=0, saturation=0.8, hue=0.4)], targets=target
+        [
+            V.ColorJitter(
+                brightness_range=(1.0, 1.0),
+                contrast_range=(1.0, 1.0),
+                saturation_range=(0.19999998807907104, 1.8),
+                hue_range=(-0.4, 0.4),
+            )
+        ],
+        targets=target,
     ).compile()
     explanation = pipeline.explain()
     assert explanation["schema_version"] == 5
@@ -155,7 +166,7 @@ def smoke_grayscale() -> None:
 
 def smoke_torch(source: np.ndarray, required: bool) -> None:
     tensor = V.ReturnTensor(name="tensor")
-    target = V.Image(name="image", outputs=(tensor,))
+    target = V.Image(name="image", output_specs=(tensor,))
     pipeline = V.Pipeline([V.Normalize()], seed=137, targets=(target,)).compile()
     if not required:
         try:

@@ -259,16 +259,16 @@ class Adapter:
             "Resize": R.Resize(out, out),
             "RandomCrop": R.RandomCrop(out, out),
             "CenterCrop": R.CenterCrop(out, out),
-            "HorizontalFlip": R.HorizontalFlip(1.0 if micro else 0.5),
-            "VerticalFlip": R.VerticalFlip(1.0 if micro else 0.5),
-            "ColorJitter": R.ColorJitter(0.2, 0.2, 0.2),
-            "Affine": R.Affine(10.0),
-            "GaussianBlur": R.GaussianBlur(5, 1.1),
+            "HorizontalFlip": R.HorizontalFlip(p=1.0 if micro else 0.5),
+            "VerticalFlip": R.VerticalFlip(p=1.0 if micro else 0.5),
+            "ColorJitter": R.ColorJitter(),
+            "Affine": R.Affine(degrees_range=(-10.0, 10.0)),
+            "GaussianBlur": R.GaussianBlur(kernel_size=5, sigma_range=(1.1, 1.1)),
             "Grayscale": R.Grayscale(),
             "Invert": R.Invert(),
             "Solarize": R.Solarize(128),
             "Posterize": R.Posterize(4),
-            "Normalize": R.Normalize(MEAN, STD),
+            "Normalize": R.Normalize(mean=MEAN, std=STD),
         }
         transform = R.Pipeline([transforms[name]], seed=SEED).compile()
         return lambda image: self._materialize(transform(image))
@@ -281,38 +281,38 @@ class Adapter:
         classic = [
             R.RandomCrop(crop, crop),
             R.Resize(224, 224),
-            R.HorizontalFlip(0.5),
-            R.ColorJitter(0.2, 0.2, 0.2),
-            R.Affine(10.0),
-            R.GaussianBlur(5, 1.1),
+            R.HorizontalFlip(p=0.5),
+            R.ColorJitter(),
+            R.Affine(degrees_range=(-10.0, 10.0)),
+            R.GaussianBlur(kernel_size=5, sigma_range=(1.1, 1.1)),
         ]
         pipelines = {
             "classic": classic,
             "extended": [
                 R.RandomCrop(crop, crop),
                 R.Resize(224, 224),
-                R.HorizontalFlip(0.5),
-                R.VerticalFlip(0.2),
-                R.ColorJitter(0.2, 0.2, 0.2),
-                R.Affine(10.0),
-                R.GaussianBlur(5, 1.1),
-                R.Grayscale(0.1),
-                R.Solarize(128, 0.2),
-                R.Posterize(4, 0.2),
+                R.HorizontalFlip(p=0.5),
+                R.VerticalFlip(p=0.2),
+                R.ColorJitter(),
+                R.Affine(degrees_range=(-10.0, 10.0)),
+                R.GaussianBlur(kernel_size=5, sigma_range=(1.1, 1.1)),
+                R.Grayscale(p=0.1),
+                R.Solarize(128, p=0.2),
+                R.Posterize(4, p=0.2),
             ],
             "pixel_policy": [
                 R.CenterCrop(crop, crop),
                 R.Resize(224, 224),
-                R.Grayscale(0.2),
-                R.Invert(0.1),
-                R.Solarize(128, 0.2),
-                R.Posterize(4, 0.2),
+                R.Grayscale(p=0.2),
+                R.Invert(p=0.1),
+                R.Solarize(128, p=0.2),
+                R.Posterize(4, p=0.2),
             ],
         }
-        terminal: list[Any] = [R.Normalize(MEAN, STD)]
+        terminal: list[Any] = [R.Normalize(mean=MEAN, std=STD)]
         if to_torch:
             output = R.ReturnTensor(name="tensor")
-            target = R.Image(name="image", outputs=(output,))
+            target = R.Image(name="image", output_specs=(output,))
             transform = R.Pipeline(
                 [*pipelines[name], *terminal], seed=SEED, targets=(target,)
             ).compile()

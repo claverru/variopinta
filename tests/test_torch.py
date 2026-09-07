@@ -17,7 +17,7 @@ class TorchTests(unittest.TestCase):
 
         source = image(7, 11)[:, ::2]
         tensor = R.ReturnTensor(name="tensor")
-        target = R.Image(name="image", outputs=(tensor,))
+        target = R.Image(name="image", output_specs=(tensor,))
         reference = R.Pipeline([], seed=137, targets=(target,))
         for pipeline in (reference, reference.compile()):
             output = pipeline(image=target.bind(source), key=3).image.tensor
@@ -40,7 +40,7 @@ class TorchTests(unittest.TestCase):
         source = image(7, 11)
         expected = np.moveaxis(R.Pipeline([R.Normalize()])(source, key=3), 2, 0)
         tensor = R.ReturnTensor(name="tensor")
-        target = R.Image(name="image", outputs=(tensor,))
+        target = R.Image(name="image", output_specs=(tensor,))
         reference = R.Pipeline([R.Normalize()], seed=137, targets=(target,))
         for pipeline in (reference, reference.compile()):
             output = pipeline(image=target.bind(source), key=3).image.tensor
@@ -63,7 +63,7 @@ class TorchTests(unittest.TestCase):
 
     def test_compiled_pipeline_ending_in_normalize_reports_direct_chw(self) -> None:
         tensor = R.ReturnTensor(name="tensor")
-        target = R.Image(name="image", outputs=(tensor,))
+        target = R.Image(name="image", output_specs=(tensor,))
         explanation = R.Pipeline([R.Invert(), R.Normalize()], targets=(target,)).compile().explain()
 
         self.assertEqual(explanation["fusions"], ["Normalize+terminal-layout:direct-CHW"])
@@ -78,7 +78,7 @@ class TorchTests(unittest.TestCase):
 
     def test_tensor_terminal_layout_copy_is_reported(self) -> None:
         tensor = R.ReturnTensor(name="tensor")
-        target = R.Image(name="image", outputs=(tensor,))
+        target = R.Image(name="image", output_specs=(tensor,))
         explanation = R.Pipeline([R.Invert()], targets=(target,)).compile().explain()
         layout_copy = next(
             copy
@@ -94,7 +94,7 @@ class TorchTests(unittest.TestCase):
         array = R.ReturnArray(name="array")
         first = R.ReturnTensor(name="first")
         second = R.ReturnTensor(name="second")
-        target = R.Image(name="image", outputs=(array, first, second))
+        target = R.Image(name="image", output_specs=(array, first, second))
         result = R.Pipeline([], targets=(target,))(image=target.bind(source), key=3).image
         np.testing.assert_array_equal(result.array, source)
         np.testing.assert_array_equal(result.first.numpy(), np.moveaxis(source, 2, 0))
@@ -112,8 +112,8 @@ class TorchTests(unittest.TestCase):
     def test_mask_return_tensor_is_contiguous_hw_uint8(self) -> None:
         source = np.arange(35, dtype=np.uint8).reshape(5, 7)
         tensor = R.ReturnTensor(name="tensor")
-        target = R.Mask(name="labels", outputs=(tensor,))
-        output = R.Pipeline([R.HorizontalFlip(1.0)], targets=(target,))(
+        target = R.Mask(name="labels", output_specs=(tensor,))
+        output = R.Pipeline([R.HorizontalFlip(p=1.0)], targets=(target,))(
             labels=target.bind(source), key=3
         ).labels.tensor
         self.assertEqual(tuple(output.shape), (5, 7))
@@ -123,7 +123,7 @@ class TorchTests(unittest.TestCase):
 
     def test_return_tensor_has_a_clear_optional_dependency_error(self) -> None:
         tensor = R.ReturnTensor(name="tensor")
-        target = R.Image(name="image", outputs=(tensor,))
+        target = R.Image(name="image", output_specs=(tensor,))
         pipeline = R.Pipeline([], targets=(target,))
         real_import = __import__
 
@@ -139,8 +139,8 @@ class TorchTests(unittest.TestCase):
     def test_missing_torch_fails_before_writing(self) -> None:
         tensor = R.ReturnTensor(name="tensor")
         written = R.Write("png", name="written")
-        image_target = R.Image(name="image", outputs=(tensor,))
-        mask_target = R.Mask(name="labels", outputs=(written,))
+        image_target = R.Image(name="image", output_specs=(tensor,))
+        mask_target = R.Mask(name="labels", output_specs=(written,))
         pipeline = R.Pipeline([], targets=(image_target, mask_target))
         labels = np.arange(15, dtype=np.uint8).reshape(3, 5)
         real_import = __import__

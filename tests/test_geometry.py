@@ -16,8 +16,8 @@ class GeometryTests(unittest.TestCase):
                 R.RandomResizedCrop(
                     11,
                     17,
-                    scale=(0.2, 0.9),
-                    ratio=(0.5, 2.0),
+                    area_range=(0.2, 0.9),
+                    aspect_ratio_range=(0.5, 2.0),
                     p=0.75,
                     antialias=True,
                 )
@@ -58,14 +58,14 @@ class GeometryTests(unittest.TestCase):
             lambda degrees,
             interpolation=R.Interpolation.BILINEAR,
             border=R.BorderMode.CONSTANT: R.Affine(
-                degrees=degrees,
+                degrees_range=degrees,
                 interpolation=interpolation,
                 border_mode=border,
             ),
             lambda degrees,
             interpolation=R.Interpolation.BILINEAR,
             border=R.BorderMode.CONSTANT: R.RandomRotation(
-                degrees=degrees,
+                degrees_range=degrees,
                 interpolation=interpolation,
                 border_mode=border,
             ),
@@ -125,7 +125,7 @@ class GeometryTests(unittest.TestCase):
             transform = R.Pipeline(
                 [
                     R.Affine(
-                        0.0,
+                        degrees_range=(0.0, 0.0),
                         interpolation=R.Interpolation.BILINEAR,
                         border_mode=border_mode,
                         fill=(11, 13, 17),
@@ -165,7 +165,7 @@ class GeometryTests(unittest.TestCase):
             np.testing.assert_array_equal(transform(source, key=3), expected)
             np.testing.assert_array_equal(transform.compile()(source, key=3), expected)
 
-        divisible = R.Pipeline([R.PadIfNeeded(pad_height_divisor=4, pad_width_divisor=5)], seed=137)
+        divisible = R.Pipeline([R.PadIfNeeded(height_divisor=4, width_divisor=5)], seed=137)
         output = divisible.compile()(image(5, 7), key=3)
         self.assertEqual(output.shape, (8, 10, 3))
 
@@ -229,12 +229,37 @@ class GeometryTests(unittest.TestCase):
         self.assertEqual(native_entry["count"], "0-or-1")
 
     def test_coarse_dropout_pixel_and_fraction_ranges(self) -> None:
+        pixel_sizes = R.CoarseDropout(
+            hole_height_range=(8.0, 16),
+            hole_height_unit="pixels",
+            hole_width_range=(3, 7.0),
+            hole_width_unit="pixels",
+        )
+        fraction_sizes = R.CoarseDropout(
+            hole_height_range=(1, 1),
+            hole_height_unit="fraction",
+            hole_width_range=(0.25, 1),
+            hole_width_unit="fraction",
+        )
+        self.assertEqual(pixel_sizes.hole_height_range, (8, 16))
+        self.assertEqual(pixel_sizes.hole_width_range, (3, 7))
+        self.assertEqual(fraction_sizes.hole_height_range, (1.0, 1.0))
+        self.assertEqual(
+            fraction_sizes.hole_width_range,
+            tuple(float(np.float32(value)) for value in (0.25, 1.0)),
+        )
+        self.assertNotEqual(
+            R.CoarseDropout(hole_height_range=(1, 1), hole_height_unit="pixels"),
+            R.CoarseDropout(hole_height_range=(1, 1), hole_height_unit="fraction"),
+        )
+
         source = image(7, 11)
         full = R.Pipeline(
             [
                 R.CoarseDropout(
                     num_holes_range=(1, 1),
                     hole_height_range=(100, 200),
+                    hole_height_unit="pixels",
                     hole_width_range=(1.0, 1.0),
                     fill=(3, 5, 7),
                     p=1.0,
@@ -253,6 +278,7 @@ class GeometryTests(unittest.TestCase):
                     num_holes_range=(2, 5),
                     hole_height_range=(0.1, 0.6),
                     hole_width_range=(2, 7),
+                    hole_width_unit="pixels",
                     fill=29,
                     p=0.75,
                 )
@@ -291,49 +317,49 @@ class GeometryTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             R.Affine(fill=(0, 1, 256))
         invalid_affines = (
-            {"degrees": -1.0},
-            {"degrees": (10.0, -10.0)},
-            {"degrees": (0.0, float("inf"))},
-            {"translate": (-0.1, 0.2)},
-            {"translate": (0.2, 1.1)},
-            {"translate": (0.2,)},
-            {"scale": 0.0},
-            {"scale": (1.2, 0.8)},
-            {"shear": -1.0},
-            {"shear": (10.0, -10.0)},
-            {"shear": (-10.0, 10.0, 5.0, -5.0)},
-            {"shear": 90.0},
+            {"degrees_range": -1.0},
+            {"degrees_range": (10.0, -10.0)},
+            {"degrees_range": (0.0, float("inf"))},
+            {"translate_max_fraction": (-0.1, 0.2)},
+            {"translate_max_fraction": (0.2, 1.1)},
+            {"translate_max_fraction": (0.2,)},
+            {"scale_range": 0.0},
+            {"scale_range": (1.2, 0.8)},
+            {"shear_x_range": -1.0},
+            {"shear_x_range": (10.0, -10.0)},
+            {"shear_y_range": (5.0, -5.0)},
+            {"shear_x_range": (90.0, 90.0)},
         )
         for arguments in invalid_affines:
             with self.subTest(arguments=arguments), self.assertRaises(ValueError):
                 R.Affine(**arguments)
         invalid_jitters = (
-            {"brightness": -0.1},
-            {"brightness": (-0.1, 1.0)},
-            {"contrast": (1.2, 0.8)},
-            {"saturation": (1.0, float("inf"))},
-            {"hue": -0.1},
-            {"hue": 0.6},
-            {"hue": (-0.6, 0.2)},
-            {"hue": (0.2, -0.2)},
+            {"brightness_range": -0.1},
+            {"brightness_range": (-0.1, 1.0)},
+            {"contrast_range": (1.2, 0.8)},
+            {"saturation_range": (1.0, float("inf"))},
+            {"hue_range": -0.1},
+            {"hue_range": 0.6},
+            {"hue_range": (-0.6, 0.2)},
+            {"hue_range": (0.2, -0.2)},
         )
         for arguments in invalid_jitters:
             with self.subTest(arguments=arguments), self.assertRaises(ValueError):
                 R.ColorJitter(**arguments)
         for scale in ((0.0, 1.0), (0.8, 0.2), (0.2, 1.1)):
             with self.assertRaises(ValueError):
-                R.RandomResizedCrop(3, 5, scale=scale)
+                R.RandomResizedCrop(3, 5, area_range=scale)
         with self.assertRaises(ValueError):
-            R.RandomResizedCrop(3, 5, ratio=(2.0, 1.0))
+            R.RandomResizedCrop(3, 5, aspect_ratio_range=(2.0, 1.0))
         with self.assertRaises(TypeError):
             R.RandomResizedCrop(3, 5, interpolation="bilinear")
         with self.assertRaises(TypeError):
             R.RandomResizedCrop(3, 5, antialias=1)
         invalid_pads = (
             {},
-            {"min_height": 3, "min_width": 5, "pad_height_divisor": 2},
+            {"min_height": 3, "min_width": 5, "height_divisor": 2},
             {"min_height": 0, "min_width": 5},
-            {"pad_height_divisor": 2, "pad_width_divisor": 0},
+            {"height_divisor": 2, "width_divisor": 0},
         )
         for arguments in invalid_pads:
             with self.subTest(arguments=arguments), self.assertRaises(ValueError):
@@ -355,22 +381,36 @@ class GeometryTests(unittest.TestCase):
         for arguments in invalid_dropouts:
             with self.subTest(arguments=arguments), self.assertRaises(ValueError):
                 R.CoarseDropout(**arguments)
-        with self.assertRaises(TypeError):
-            R.CoarseDropout(hole_height_range=(1, 0.2))
+        with self.assertRaises(ValueError):
+            R.CoarseDropout(hole_height_range=(1, 0.2), hole_height_unit="pixels")
+        for arguments in (
+            {"hole_height_unit": "percent"},
+            {"hole_height_range": (True, 2), "hole_height_unit": "pixels"},
+            {"hole_height_range": (8.5, 16), "hole_height_unit": "pixels"},
+            {"hole_width_range": (float("inf"), 2), "hole_width_unit": "pixels"},
+        ):
+            with self.subTest(arguments=arguments), self.assertRaises((TypeError, ValueError)):
+                R.CoarseDropout(**arguments)
         with self.assertRaises(ValueError):
             R.CoarseDropout(fill=(0, 1, 256))
 
     def test_affine_parameter_surface_is_normalized_and_explained(self) -> None:
-        scalar = R.Affine(12.0, scale=1.25, shear=7.0)
-        self.assertEqual(scalar.degrees, (-12.0, 12.0))
-        self.assertEqual(scalar.scale, (1.25, 1.25))
-        self.assertEqual(scalar.shear, (-7.0, 7.0, 0.0, 0.0))
+        configured = R.Affine(
+            degrees_range=(-12.0, 12.0),
+            scale_range=(1.25, 1.25),
+            shear_x_range=(-7.0, 7.0),
+        )
+        self.assertEqual(configured.degrees_range, (-12.0, 12.0))
+        self.assertEqual(configured.scale_range, (1.25, 1.25))
+        self.assertEqual(configured.shear_x_range, (-7.0, 7.0))
+        self.assertEqual(configured.shear_y_range, (0.0, 0.0))
 
         transform = R.Affine(
-            degrees=(-15.0, 25.0),
-            translate=(0.4, 0.2),
-            scale=(0.8, 1.3),
-            shear=(-10.0, 20.0, -5.0, 7.0),
+            degrees_range=(-15.0, 25.0),
+            translate_max_fraction=(0.4, 0.2),
+            scale_range=(0.8, 1.3),
+            shear_x_range=(-10.0, 20.0),
+            shear_y_range=(-5.0, 7.0),
         )
         explanation = R.Pipeline([transform], seed=137).compile().explain()
         policies = {
@@ -387,10 +427,11 @@ class GeometryTests(unittest.TestCase):
                 transform = R.Pipeline(
                     [
                         R.Affine(
-                            degrees=(-17.0, 23.0),
-                            translate=(0.35, 0.2),
-                            scale=(0.75, 1.4),
-                            shear=(-13.0, 19.0, -9.0, 11.0),
+                            degrees_range=(-17.0, 23.0),
+                            translate_max_fraction=(0.35, 0.2),
+                            scale_range=(0.75, 1.4),
+                            shear_x_range=(-13.0, 19.0),
+                            shear_y_range=(-9.0, 11.0),
                             interpolation=interpolation,
                             border_mode=border_mode,
                             fill=(11, 13, 17),
@@ -410,8 +451,8 @@ class GeometryTests(unittest.TestCase):
                     self.assertFalse(np.shares_memory(source, actual))
 
     def test_random_rotation_reuses_affine_rasterization(self) -> None:
-        scalar = R.RandomRotation(12.0)
-        self.assertEqual(scalar.degrees, (-12.0, 12.0))
+        configured = R.RandomRotation((-12.0, 12.0))
+        self.assertEqual(configured.degrees_range, (-12.0, 12.0))
         source = image(17, 23)
         for interpolation in (R.Interpolation.NEAREST, R.Interpolation.BILINEAR):
             for border_mode in (R.BorderMode.CONSTANT, R.BorderMode.REFLECT101):
@@ -429,7 +470,7 @@ class GeometryTests(unittest.TestCase):
                 affine = R.Pipeline(
                     [
                         R.Affine(
-                            (17.0, 17.0),
+                            degrees_range=(17.0, 17.0),
                             interpolation=interpolation,
                             border_mode=border_mode,
                             fill=(3, 5, 7),
@@ -446,28 +487,35 @@ class GeometryTests(unittest.TestCase):
 
     def test_perspective_identity_and_bounded_sampling(self) -> None:
         for interpolation in (R.Interpolation.NEAREST, R.Interpolation.BILINEAR):
-            identity = R.Pipeline([R.Perspective(scale=0.0, interpolation=interpolation)], seed=137)
+            identity = R.Pipeline(
+                [R.Perspective(distortion_scale_range=(0.0, 0.0), interpolation=interpolation)],
+                seed=137,
+            )
             for height, width in ((1, 1), (1, 7), (7, 1), (17, 23)):
                 source = image(height, width)
                 np.testing.assert_array_equal(identity(source, key=3), source)
                 np.testing.assert_array_equal(identity.compile()(source, key=3), source)
 
-        perspective = R.Pipeline([R.Perspective(scale=(0.49, 0.49))], seed=137)
+        perspective = R.Pipeline([R.Perspective(distortion_scale_range=(0.49, 0.49))], seed=137)
         source = image(17, 23)
         np.testing.assert_array_equal(
             perspective.compile()(source, key=29), perspective(source, key=29)
         )
         with self.assertRaises(ValueError):
-            R.Perspective(scale=0.5)
+            R.Perspective(distortion_scale_range=(0.5, 0.5))
 
     def test_grid_distortion_identity_and_small_axes(self) -> None:
-        identity = R.Pipeline([R.GridDistortion(num_steps=9, distort_limit=0.0)], seed=137)
+        identity = R.Pipeline(
+            [R.GridDistortion(num_steps=9, distortion_range=(0.0, 0.0))], seed=137
+        )
         for height, width in ((1, 1), (1, 7), (7, 1), (7, 11)):
             source = image(height, width)
             np.testing.assert_array_equal(identity(source, key=3), source)
             np.testing.assert_array_equal(identity.compile()(source, key=3), source)
 
-        distorted = R.Pipeline([R.GridDistortion(num_steps=4, distort_limit=(-0.8, 0.8))], seed=137)
+        distorted = R.Pipeline(
+            [R.GridDistortion(num_steps=4, distortion_range=(-0.8, 0.8))], seed=137
+        )
         source = image(13, 19)
         np.testing.assert_array_equal(
             distorted.compile()(source, key=29), distorted(source, key=29)
@@ -481,7 +529,7 @@ class GeometryTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             R.GridDistortion(num_steps=0)
         with self.assertRaises(ValueError):
-            R.GridDistortion(distort_limit=1.0)
+            R.GridDistortion(distortion_range=(-1.0, 1.0))
 
 
 if __name__ == "__main__":

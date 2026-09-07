@@ -85,7 +85,7 @@ class CatalogTests(unittest.TestCase):
     def test_extended_catalog_is_correct_at_arbitrary_sizes(self) -> None:
         for height, width in ((1, 1), (3, 5), (17, 33), (63, 65)):
             source = image(height, width)
-            vertical = R.Pipeline([R.VerticalFlip(1.0)], seed=137).compile()(source, key=1)
+            vertical = R.Pipeline([R.VerticalFlip(p=1.0)], seed=137).compile()(source, key=1)
             np.testing.assert_array_equal(vertical, source[::-1])
 
             inverted = R.Pipeline([R.Invert()], seed=137).compile()(source, key=1)
@@ -124,7 +124,7 @@ class CatalogTests(unittest.TestCase):
             )
 
             resized_crop = R.Pipeline(
-                [R.RandomResizedCrop(5, 7, scale=(0.2, 1.0), ratio=(0.5, 2.0))],
+                [R.RandomResizedCrop(5, 7, area_range=(0.2, 1.0), aspect_ratio_range=(0.5, 2.0))],
                 seed=137,
             )
             resized = resized_crop(source, key=1)
@@ -137,11 +137,11 @@ class CatalogTests(unittest.TestCase):
         reference = R.Pipeline(
             [
                 R.CenterCrop(31, 47),
-                R.VerticalFlip(0.5),
-                R.Grayscale(0.5),
-                R.Invert(0.5),
-                R.Solarize(113, 0.5),
-                R.Posterize(5, 0.5),
+                R.VerticalFlip(p=0.5),
+                R.Grayscale(p=0.5),
+                R.Invert(p=0.5),
+                R.Solarize(113, p=0.5),
+                R.Posterize(5, p=0.5),
             ],
             seed=137,
         )

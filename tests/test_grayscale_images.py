@@ -101,13 +101,24 @@ class GrayscaleImageTests(unittest.TestCase):
         source = gray()
         for transform in (
             vp.Grayscale(),
-            vp.ColorJitter(brightness=0, contrast=0, saturation=0.8, hue=0.4),
+            vp.ColorJitter(
+                brightness_range=(1.0, 1.0),
+                contrast_range=(1.0, 1.0),
+                saturation_range=(0.19999998807907104, 1.8),
+                hue_range=(-0.4, 0.4),
+            ),
         ):
             result = vp.Pipeline([transform]).compile()(source, key=3)
             np.testing.assert_array_equal(result, source)
             self.assertFalse(np.shares_memory(result, source))
-        a = vp.Pipeline([vp.GaussianNoise(mean=2, std=11, per_channel=True)], seed=137).compile()
-        b = vp.Pipeline([vp.GaussianNoise(mean=2, std=11, per_channel=False)], seed=137).compile()
+        a = vp.Pipeline(
+            [vp.GaussianNoise(mean_range=(2, 2), std_range=(11, 11), per_channel=True)],
+            seed=137,
+        ).compile()
+        b = vp.Pipeline(
+            [vp.GaussianNoise(mean_range=(2, 2), std_range=(11, 11), per_channel=False)],
+            seed=137,
+        ).compile()
         np.testing.assert_array_equal(a(source, key=7), b(source, key=7))
         rgb = np.repeat(source[..., None], 3, axis=2)
         np.testing.assert_array_equal(b(source, key=7), b(rgb, key=7)[..., 0])
@@ -117,7 +128,7 @@ class GrayscaleImageTests(unittest.TestCase):
             target = vp.Image(
                 carrier,
                 name="image",
-                outputs=vp.ReturnArray(name="value"),
+                output_specs=vp.ReturnArray(name="value"),
                 decode_mode=None if isinstance(carrier, vp.Array) else "gray",
             )
             for brightness, contrast in ((0, 0), (0.2, 0), (0, 0.4)):
@@ -125,10 +136,10 @@ class GrayscaleImageTests(unittest.TestCase):
                     reference = vp.Pipeline(
                         [
                             vp.ColorJitter(
-                                brightness=brightness,
-                                contrast=contrast,
-                                saturation=0.8,
-                                hue=0.4,
+                                brightness_range=(1.0 - brightness, 1.0 + brightness),
+                                contrast_range=(1.0 - contrast, 1.0 + contrast),
+                                saturation_range=(0.19999998807907104, 1.8),
+                                hue_range=(-0.4, 0.4),
                                 p=probability,
                             )
                         ],
@@ -136,9 +147,9 @@ class GrayscaleImageTests(unittest.TestCase):
                     )
                     for pipeline in (reference, reference.compile()):
                         with self.subTest(
-                            carrier=carrier,
-                            brightness=brightness,
-                            contrast=contrast,
+                            input_spec=carrier,
+                            brightness_range=brightness,
+                            contrast_range=contrast,
                             p=probability,
                             pipeline=type(pipeline).__name__,
                         ):
@@ -167,11 +178,11 @@ class GrayscaleImageTests(unittest.TestCase):
                                 self.assertGreater(alternatives[1]["pixel_passes"], 0)
 
     def test_mixed_targets_share_geometry_and_alternate_calls(self):
-        image = vp.Image(name="image", outputs=vp.ReturnArray(name="value"))
-        second = vp.Image(name="second", outputs=vp.ReturnArray(name="value"))
-        mask = vp.Mask(name="mask", outputs=vp.ReturnArray(name="value"))
+        image = vp.Image(name="image", output_specs=vp.ReturnArray(name="value"))
+        second = vp.Image(name="second", output_specs=vp.ReturnArray(name="value"))
+        mask = vp.Mask(name="mask", output_specs=vp.ReturnArray(name="value"))
         pipeline = vp.Pipeline(
-            [vp.RandomCrop(3, 5), vp.HorizontalFlip(0.5), vp.VerticalFlip(0.5)],
+            [vp.RandomCrop(3, 5), vp.HorizontalFlip(p=0.5), vp.VerticalFlip(p=0.5)],
             targets=[image, second, mask],
             seed=137,
         ).compile()
@@ -185,7 +196,13 @@ class GrayscaleImageTests(unittest.TestCase):
             np.testing.assert_array_equal(a if a.ndim == 2 else a[..., 0], labels)
             np.testing.assert_array_equal(b if b.ndim == 2 else b[..., 0], labels)
         jitter = vp.Pipeline(
-            [vp.ColorJitter(brightness=0.2, contrast=0.4, hue=0.3), vp.RandomCrop(3, 5)], seed=137
+            [
+                vp.ColorJitter(
+                    brightness_range=(0.8, 1.2), contrast_range=(0.6, 1.4), hue_range=(-0.3, 0.3)
+                ),
+                vp.RandomCrop(3, 5),
+            ],
+            seed=137,
         ).compile()
         for key in (3, 7, 19):
             np.testing.assert_array_equal(
@@ -218,7 +235,10 @@ class GrayscaleImageTests(unittest.TestCase):
                 encoded_output = vp.Encode("png", name="encoded")
                 write = vp.Write("png", name="write")
                 target = vp.Image(
-                    carrier, [array, encoded_output, write], name="image", decode_mode=mode
+                    carrier,
+                    name="image",
+                    output_specs=[array, encoded_output, write],
+                    decode_mode=mode,
                 )
                 pipeline = vp.Pipeline([vp.Invert()], targets=[target]).compile()
                 with tempfile.TemporaryDirectory() as directory:
@@ -242,7 +262,7 @@ class GrayscaleImageTests(unittest.TestCase):
                     )
                     np.testing.assert_array_equal(vp.read_image(output, mode="unchanged"), expected)
         for rank in (2, 3):
-            target = vp.Image(name="image", outputs=vp.Encode("jpeg", name="value"))
+            target = vp.Image(name="image", output_specs=vp.Encode("jpeg", name="value"))
             data = source if rank == 2 else source[..., None]
             result = (
                 vp.Pipeline([], targets=[target]).compile()(image=target.bind(data)).image.value
@@ -252,7 +272,10 @@ class GrayscaleImageTests(unittest.TestCase):
         for format in ("jpeg", "png"):
             encoded = vp.encode_image(color, format=format)
             target = vp.Image(
-                vp.Encoded(), name="image", outputs=vp.ReturnArray(name="value"), decode_mode="gray"
+                vp.Encoded(),
+                name="image",
+                output_specs=vp.ReturnArray(name="value"),
+                decode_mode="gray",
             )
             result = (
                 vp.Pipeline([], targets=[target]).compile()(image=target.bind(encoded)).image.value
@@ -260,11 +283,14 @@ class GrayscaleImageTests(unittest.TestCase):
             np.testing.assert_array_equal(result, vp.decode_image(encoded, mode="gray"))
         for mode in ("gray", "rgb"):
             with self.assertRaises(ValueError):
-                vp.Image(decode_mode=mode)
+                vp.Image(name="image", decode_mode=mode)
         with self.assertRaises(ValueError):
-            vp.Image(vp.Encoded(), decode_mode="unchanged")
+            vp.Image(vp.Encoded(), name="image", decode_mode="unchanged")
         target = vp.Image(
-            vp.Encoded(), name="image", outputs=vp.ReturnArray(name="value"), decode_mode="gray"
+            vp.Encoded(),
+            name="image",
+            output_specs=vp.ReturnArray(name="value"),
+            decode_mode="gray",
         )
         with self.assertRaisesRegex(ValueError, "Normalize"):
             vp.Pipeline([vp.Normalize()], targets=[target]).compile()
@@ -283,7 +309,7 @@ class GrayscaleImageTests(unittest.TestCase):
             tensor = vp.ReturnTensor(name="tensor")
             array = vp.ReturnArray(name="array")
             for outputs in (tensor, [tensor, array]):
-                target = vp.Image(name="image", outputs=outputs)
+                target = vp.Image(name="image", output_specs=outputs)
                 reference = vp.Pipeline(transforms, targets=[target])
                 for pipeline in (reference, reference.compile()):
                     result = pipeline(image=target.bind(source))[target]
@@ -316,7 +342,10 @@ class GrayscaleImageTests(unittest.TestCase):
         for source in (gray(), gray()[..., None], np.repeat(gray()[..., None], 3, axis=2)):
             np.testing.assert_array_equal(restored(source, key=19), pipeline(source, key=19))
         target = vp.Image(
-            vp.Encoded(), name="image", outputs=vp.ReturnArray(name="value"), decode_mode="gray"
+            vp.Encoded(),
+            name="image",
+            output_specs=vp.ReturnArray(name="value"),
+            decode_mode="gray",
         )
         restored = pickle.loads(pickle.dumps(vp.Pipeline([], targets=[target]).compile()))
         self.assertEqual(restored.explain()["targets"][0]["carrier"]["mode"], "gray")

@@ -4,6 +4,7 @@ import unittest
 from io import BytesIO
 from pathlib import Path
 from tempfile import TemporaryDirectory
+from typing import get_args, get_type_hints
 
 import numpy as np
 import variopinta as R
@@ -16,6 +17,21 @@ def rgb_image(height: int = 13, width: int = 17) -> np.ndarray:
 
 
 class ImageIoTests(unittest.TestCase):
+    def test_format_aliases_and_public_input_annotations(self) -> None:
+        source = rgb_image(3, 5)
+        for format_alias in ("jpeg", "jpg", ".jpg", "JPG", ".JPEG", "png", ".PNG"):
+            with self.subTest(format=format_alias):
+                payload = R.encode_image(source, format=format_alias)
+                self.assertEqual(R.decode_image(payload).shape, source.shape)
+                output = R.Encode(format_alias, name="encoded")
+                self.assertIn(output.format, ("jpeg", "png"))
+
+        self.assertIs(get_type_hints(R.encode_image)["format"], str)
+        self.assertEqual(get_type_hints(R.write_image)["format"], str | None)
+        self.assertIs(get_type_hints(R.Encode.__init__)["format"], str)
+        self.assertEqual(get_type_hints(R.Write.__init__)["format"], str | None)
+        self.assertEqual(set(get_args(get_type_hints(R.Encode)["format"])), {"jpeg", "png"})
+
     def test_png_round_trip_u8_color_models(self) -> None:
         sources = [
             np.arange(35, dtype=np.uint8).reshape(5, 7),
@@ -36,7 +52,7 @@ class ImageIoTests(unittest.TestCase):
             shape = (5, 7) if channels == 1 else (5, 7, channels)
             source = (np.arange(np.prod(shape), dtype=np.uint16) * 4099).reshape(shape)
             with self.subTest(shape=shape):
-                encoded = R.encode_image(source, format="png", compression=3)
+                encoded = R.encode_image(source, format="png", compression_level=3)
                 output = R.decode_image(encoded, mode="unchanged")
                 np.testing.assert_array_equal(output, source)
                 self.assertEqual(output.dtype, np.uint16)
@@ -138,11 +154,11 @@ class ImageIoTests(unittest.TestCase):
         with self.assertRaises(TypeError):
             R.encode_image(source, format="png", quality=90)
         with self.assertRaises(TypeError):
-            R.encode_image(source, format="jpeg", compression=3)
+            R.encode_image(source, format="jpeg", compression_level=3)
         with self.assertRaises(ValueError):
             R.encode_image(source, format="jpeg", quality=0)
         with self.assertRaises(ValueError):
-            R.encode_image(source, format="png", compression=10)
+            R.encode_image(source, format="png", compression_level=10)
 
     def test_invalid_inputs_are_rejected(self) -> None:
         source = rgb_image(3, 5)

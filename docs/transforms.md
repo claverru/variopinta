@@ -24,9 +24,8 @@ three-element sequences require RGB for active transforms, including with
 reflect-101 borders. Reflect-101 ignores the compatible fill during rasterization. A mask target has its own scalar
 `fill` in `[0, 255]`.
 
-A scalar sampling argument usually fixes a value or creates the symmetric
-range described below. A two-item tuple gives an explicit inclusive sampling
-range and must be ordered.
+Every sampled configuration uses an ordered two-item tuple. Equal endpoints
+select a fixed value.
 
 ## Geometry
 
@@ -36,9 +35,9 @@ range and must be ordered.
 vp.Resize(
     height,
     width,
-    p=1.0,
     interpolation=vp.Interpolation.BILINEAR,
     antialias=False,
+    p=1.0,
 )
 ```
 
@@ -60,17 +59,17 @@ applied crop fails if it does not fit the current raster.
 vp.RandomResizedCrop(
     height,
     width,
-    scale=(0.08, 1.0),
-    ratio=(0.75, 4.0 / 3.0),
-    p=1.0,
+    area_range=(0.08, 1.0),
+    aspect_ratio_range=(0.75, 4.0 / 3.0),
     interpolation=vp.Interpolation.BILINEAR,
     antialias=False,
+    p=1.0,
 )
 ```
 
 Samples a crop area and aspect ratio, then resizes to the positive output
-dimensions. `scale` contains positive fractions no greater than `1.0`; `ratio`
-contains positive values. The crop boundary is materialized before resizing so
+dimensions. `area_range` contains positive fractions no greater than `1.0`;
+`aspect_ratio_range` contains positive values. The crop boundary is materialized before resizing so
 the filter cannot read discarded pixels.
 
 ### `CenterCrop`
@@ -88,12 +87,12 @@ current raster.
 vp.PadIfNeeded(
     min_height=None,
     min_width=None,
-    pad_height_divisor=None,
-    pad_width_divisor=None,
+    height_divisor=None,
+    width_divisor=None,
     position=vp.PadPosition.CENTER,
-    p=1.0,
     border_mode=vp.BorderMode.CONSTANT,
     fill=0,
+    p=1.0,
 )
 ```
 
@@ -105,28 +104,27 @@ Padding never shrinks a raster. Positions are `CENTER`, `TOP_LEFT`,
 
 ```python
 vp.Affine(
-    degrees=10.0,
-    translate=(0.0, 0.0),
-    scale=1.0,
-    shear=0.0,
-    p=1.0,
+    degrees_range=(-10.0, 10.0),
+    translate_max_fraction=(0.0, 0.0),
+    scale_range=(1.0, 1.0),
+    shear_x_range=(0.0, 0.0),
+    shear_y_range=(0.0, 0.0),
     interpolation=vp.Interpolation.BILINEAR,
     border_mode=vp.BorderMode.CONSTANT,
     fill=0,
+    p=1.0,
 )
 ```
 
 Applies centered inverse-mapped rotation, relative X/Y translation, isotropic
 scale, and X/Y shear without changing the output size.
 
-- A non-negative scalar `degrees=d` samples from `(-d, d)`; a tuple supplies
-  the explicit degree range.
-- `translate=(x, y)` gives maximum relative displacement for each axis, with
+- `degrees_range` is the inclusive degree range.
+- `translate_max_fraction=(x, y)` gives maximum relative displacement for each axis, with
   both values in `[0, 1]`.
-- A scalar `scale` fixes a positive value; a tuple gives a positive range.
-- A non-negative scalar `shear=s` samples X shear from `(-s, s)`. A two-item
-  tuple supplies the X range; a four-item tuple supplies X then Y ranges. Every
-  shear angle must be strictly between -90 and 90 degrees.
+- `scale_range` contains positive scale values.
+- `shear_x_range` and `shear_y_range` are degree ranges. Every shear angle must
+  be strictly between -90 and 90 degrees.
 
 An input axis above 16,777,216 is rejected before rasterization.
 
@@ -134,52 +132,49 @@ An input axis above 16,777,216 is rejected before rasterization.
 
 ```python
 vp.RandomRotation(
-    degrees=10.0,
-    p=1.0,
+    degrees_range=(-10.0, 10.0),
     interpolation=vp.Interpolation.BILINEAR,
     border_mode=vp.BorderMode.CONSTANT,
     fill=0,
+    p=1.0,
 )
 ```
 
 Samples an angle and uses the affine rasterizer with unchanged size, unit
-scale, and no translation or shear. A non-negative scalar creates a symmetric
-range; a tuple supplies the explicit range. It has the same input-axis limit as
-`Affine`.
+scale, and no translation or shear. It has the same input-axis limit as `Affine`.
 
 ### `Perspective`
 
 ```python
 vp.Perspective(
-    scale=0.05,
-    p=1.0,
+    distortion_scale_range=(0.05, 0.05),
     interpolation=vp.Interpolation.BILINEAR,
     border_mode=vp.BorderMode.CONSTANT,
     fill=0,
+    p=1.0,
 )
 ```
 
-Samples inward corner displacements while preserving image size. A scalar
-fixes `scale`; a tuple gives a range. Values must be in `[0, 0.5)`. A one-pixel
-axis is treated as identity.
+Samples inward corner displacements while preserving image size.
+`distortion_scale_range` values must be in `[0, 0.5)`. A one-pixel axis is
+treated as identity.
 
 ### `GridDistortion`
 
 ```python
 vp.GridDistortion(
     num_steps=5,
-    distort_limit=0.3,
-    p=1.0,
+    distortion_range=(-0.3, 0.3),
     interpolation=vp.Interpolation.BILINEAR,
     border_mode=vp.BorderMode.CONSTANT,
     fill=0,
+    p=1.0,
 )
 ```
 
 Builds positive monotonic coordinate maps anchored at both image endpoints.
-`num_steps` is positive and is reduced when an axis has fewer intervals. A
-non-negative scalar `distort_limit=d` creates `(-d, d)`; a tuple supplies the
-range. Every value must be strictly inside `(-1, 1)`.
+`num_steps` is positive and is reduced when an axis has fewer intervals. Every
+`distortion_range` value must be strictly inside `(-1, 1)`.
 
 ## Flips and dropout
 
@@ -205,16 +200,20 @@ Reverses the height axis.
 vp.CoarseDropout(
     num_holes_range=(1, 2),
     hole_height_range=(0.1, 0.2),
+    hole_height_unit="fraction",
     hole_width_range=(0.1, 0.2),
+    hole_width_unit="fraction",
     fill=0,
     p=0.5,
 )
 ```
 
 Fills sampled image rectangles, which may overlap. `num_holes_range` contains
-ordered positive integers. Each size range must contain either two positive
-integers for pixels or two floats in `(0, 1]` for fractions of the current
-axis. Dropout does not alter masks.
+ordered positive integers. Each size unit is `"pixels"` or `"fraction"`.
+Pixel endpoints are positive integers or integer-valued floats and are stored
+as integers. Fraction endpoints are numeric values in `(0, 1]` and are stored
+at their effective float32 values. The height and width units are independent.
+Dropout does not alter masks.
 
 ## Color, noise, and filtering
 
@@ -222,19 +221,17 @@ axis. Dropout does not alter masks.
 
 ```python
 vp.ColorJitter(
-    brightness=0.2,
-    contrast=0.2,
-    saturation=0.2,
-    hue=0.0,
+    brightness_range=(0.8, 1.2),
+    contrast_range=(0.8, 1.2),
+    saturation_range=(0.8, 1.2),
+    hue_range=(0.0, 0.0),
     p=1.0,
 )
 ```
 
-Applies enabled adjustments in a sampled order. A non-negative scalar
-brightness, contrast, or saturation value `v` creates the factor range
-`(max(0, 1-v), 1+v)`; a tuple supplies a non-negative range. A hue scalar in
-`[0, 0.5]` creates a symmetric range in turns; an explicit range must stay in
-`[-0.5, 0.5]`.
+Applies enabled adjustments in a sampled order. Brightness, contrast, and
+saturation ranges contain non-negative multiplicative factors. Hue is a range
+of displacements in turns and must stay in `[-0.5, 0.5]`.
 
 On grayscale, saturation and hue preserve pixels. Their parameters and order
 are still sampled, so channel count does not affect later geometric sampling.
@@ -244,32 +241,39 @@ the staged rounding/clipping barriers when hue is enabled.
 ### `GaussianNoise`
 
 ```python
-vp.GaussianNoise(mean=0.0, std=10.0, per_channel=True, p=1.0)
+vp.GaussianNoise(
+    mean_range=(0.0, 0.0),
+    std_range=(10.0, 10.0),
+    per_channel=True,
+    p=1.0,
+)
 ```
 
-Adds Gaussian noise expressed in `uint8` levels. `mean` is a fixed scalar or
-finite range; `std` is a fixed non-negative scalar or non-negative range. With
+Adds Gaussian noise expressed in `uint8` levels. `mean_range` is finite and
+`std_range` is non-negative. With
 `per_channel=False`, the RGB channels share one draw at each pixel. Both modes
 use the same single draw per pixel on grayscale.
 
 ### `Sharpen`
 
 ```python
-vp.Sharpen(alpha=0.5, lightness=1.0, p=1.0)
+vp.Sharpen(
+    blend_weight_range=(0.5, 0.5),
+    strength_range=(1.0, 1.0),
+    p=1.0,
+)
 ```
 
-Blends the source with a reflect-101 cross-kernel result. `alpha` is a fixed
-value or range in `[0, 1]`; `lightness` is a fixed non-negative value or
-non-negative range.
+Blends the source with a reflect-101 cross-kernel result.
+`blend_weight_range` stays in `[0, 1]`; `strength_range` is non-negative.
 
 ### `GaussianBlur`
 
 ```python
-vp.GaussianBlur(kernel_size=5, sigma=1.1, p=1.0)
+vp.GaussianBlur(kernel_size=5, sigma_range=(1.1, 1.1), p=1.0)
 ```
 
-Uses a positive odd kernel. `sigma` is a fixed positive value or an explicit
-positive range.
+Uses a positive odd kernel. `sigma_range` contains positive values.
 
 ### `Grayscale`
 
