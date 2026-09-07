@@ -20,6 +20,10 @@ def execute(request: dict[str, Any]) -> dict[str, Any]:
         from layer_worker import run_planned
 
         rows = run_planned(items, quick, repetition)
+    elif executor == "grayscale":
+        from grayscale_suite import run_planned
+
+        rows = run_planned(items, quick, repetition, validate_only=validate_only)
     elif executor == "catalog":
         from catalog_suite import run_planned
 

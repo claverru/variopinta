@@ -40,7 +40,7 @@ class PipelineTests(unittest.TestCase):
     def test_explain_reports_safe_optimization(self) -> None:
         reference = self.pipeline()
         compiled = reference.compile()
-        self.assertEqual(compiled.explain()["schema_version"], 4)
+        self.assertEqual(compiled.explain()["schema_version"], 5)
         self.assertEqual(reference.explain()["fusions"], [])
         self.assertEqual(compiled.explain()["fusions"], [])
         self.assertEqual(
@@ -205,7 +205,7 @@ class PipelineTests(unittest.TestCase):
         explanation = (
             R.Pipeline([R.Normalize(p=0.0)], seed=137, targets=(target,)).compile().explain()
         )
-        self.assertEqual(explanation["schema_version"], 4)
+        self.assertEqual(explanation["schema_version"], 5)
         self.assertEqual(explanation["passes"], 0)
         self.assertEqual(explanation["pixel_passes"], 0)
         self.assertEqual(explanation["fusions"], [])
@@ -405,7 +405,7 @@ class PipelineTests(unittest.TestCase):
                         factory(probability)
 
         for arguments in (
-            {"mean": [0.0, 0.0, 0.0]},
+            {"mean": [0.0, 0.0]},
             {"mean": (0.0, True, 0.0)},
             {"std": (1.0, 0.0, 1.0)},
             {"std": (1.0, float("nan"), 1.0)},

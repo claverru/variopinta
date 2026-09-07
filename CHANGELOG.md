@@ -1,5 +1,21 @@
 # Changelog
 
+## 0.5.0
+
+- Support native grayscale `uint8` images in HW and HWC1 layouts across the
+  transform catalog, preserving array rank and returning owned, contiguous output.
+- Accept scalar and one-element normalization statistics and image fills that
+  broadcast to grayscale or RGB. Active three-element values require RGB;
+  grayscale normalization requires compatible values such as `mean=0.5, std=0.5`.
+- Add `Image(decode_mode="gray")` for encoded-buffer and path inputs, grayscale
+  JPEG/PNG outputs, and contiguous single-channel CHW tensor output.
+- Upgrade `explain()` to schema 5 with per-target channel alternatives and
+  channel-aware execution reporting. Consumers of schema 4 must update.
+- Add a Fashion-MNIST notebook with grayscale augmentation previews and PyTorch
+  classifier training on CPU or CUDA.
+- Add an Oxford-IIIT Pet notebook with shared image/mask augmentation, keyed
+  replay, and segmentation training with PyTorch Lightning.
+
 ## 0.4.4
 
 - Support standard-library pickle for `Pipeline` and `CompiledPipeline`,

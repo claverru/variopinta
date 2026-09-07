@@ -1,6 +1,6 @@
 use crate::{CoreError, CoreResult};
 
-pub(crate) fn horizontal_5x5(
+pub(crate) fn horizontal_5x5<const C: usize>(
     data: &[u8],
     temp: &mut [u16],
     start: usize,
@@ -10,8 +10,8 @@ pub(crate) fn horizontal_5x5(
     if start > end
         || end > data.len()
         || temp.len() < data.len()
-        || start < 6
-        || end.saturating_add(6) > data.len()
+        || start < (2 * C)
+        || end.saturating_add(2 * C) > data.len()
     {
         return Err(CoreError::Runtime(
             "invalid horizontal blur kernel span".into(),
@@ -20,10 +20,10 @@ pub(crate) fn horizontal_5x5(
     #[cfg(target_arch = "x86_64")]
     if std::arch::is_x86_feature_detected!("avx2") {
         // SAFETY: AVX2 is detected and the checked interior span bounds every access.
-        unsafe { horizontal_5x5_avx2(data, temp, start, end, kernel) };
+        unsafe { horizontal_5x5_avx2::<C>(data, temp, start, end, kernel) };
         return Ok(());
     }
-    horizontal_5x5_scalar(data, temp, start, end, kernel);
+    horizontal_5x5_scalar::<C>(data, temp, start, end, kernel);
     Ok(())
 }
 
@@ -58,7 +58,7 @@ pub(crate) fn vertical_5x5(
 }
 
 #[inline]
-fn horizontal_5x5_scalar(
+fn horizontal_5x5_scalar<const C: usize>(
     data: &[u8],
     temp: &mut [u16],
     mut index: usize,
@@ -66,11 +66,11 @@ fn horizontal_5x5_scalar(
     kernel: [u32; 5],
 ) {
     while index < end {
-        temp[index] = (data[index - 6] as u32 * kernel[0]
-            + data[index - 3] as u32 * kernel[1]
+        temp[index] = (data[index - (2 * C)] as u32 * kernel[0]
+            + data[index - C] as u32 * kernel[1]
             + data[index] as u32 * kernel[2]
-            + data[index + 3] as u32 * kernel[3]
-            + data[index + 6] as u32 * kernel[4]) as u16;
+            + data[index + C] as u32 * kernel[3]
+            + data[index + (2 * C)] as u32 * kernel[4]) as u16;
         index += 1;
     }
 }
@@ -95,7 +95,7 @@ fn vertical_5x5_scalar(
 
 #[cfg(target_arch = "x86_64")]
 #[target_feature(enable = "avx2")]
-unsafe fn horizontal_5x5_avx2(
+unsafe fn horizontal_5x5_avx2<const C: usize>(
     data: &[u8],
     temp: &mut [u16],
     mut index: usize,
@@ -118,20 +118,20 @@ unsafe fn horizontal_5x5_avx2(
             let value = _mm256_add_epi16(
                 _mm256_add_epi16(
                     _mm256_add_epi16(
-                        _mm256_mullo_epi16(load(-6), weight[0]),
-                        _mm256_mullo_epi16(load(-3), weight[1]),
+                        _mm256_mullo_epi16(load(-((2 * C) as isize)), weight[0]),
+                        _mm256_mullo_epi16(load(-(C as isize)), weight[1]),
                     ),
                     _mm256_mullo_epi16(load(0), weight[2]),
                 ),
                 _mm256_add_epi16(
-                    _mm256_mullo_epi16(load(3), weight[3]),
-                    _mm256_mullo_epi16(load(6), weight[4]),
+                    _mm256_mullo_epi16(load(C as isize), weight[3]),
+                    _mm256_mullo_epi16(load((2 * C) as isize), weight[4]),
                 ),
             );
             _mm256_storeu_si256(temp.as_mut_ptr().add(index).cast(), value);
             index += 16;
         }
-        horizontal_5x5_scalar(data, temp, index, end, kernel);
+        horizontal_5x5_scalar::<C>(data, temp, index, end, kernel);
     }
 }
 
@@ -199,13 +199,22 @@ mod tests {
 
     #[test]
     fn optimized_passes_match_scalar_at_vector_boundaries() {
+        for interior in 0..=65 {
+            let kernel = [16, 64, 96, 64, 16];
+            let source: Vec<_> = (0..interior + 4).map(|i| (i * 73) as u8).collect();
+            let mut expected = vec![0; source.len()];
+            let mut actual = expected.clone();
+            horizontal_5x5_scalar::<1>(&source, &mut expected, 2, 2 + interior, kernel);
+            horizontal_5x5::<1>(&source, &mut actual, 2, 2 + interior, kernel).unwrap();
+            assert_eq!(actual, expected, "gray horizontal interior={interior}");
+        }
         let kernel = [16, 64, 96, 64, 16];
         for interior in 0..=65 {
             let source: Vec<_> = (0..interior + 12).map(|i| (i * 73) as u8).collect();
             let mut expected = vec![0; source.len()];
             let mut actual = expected.clone();
-            horizontal_5x5_scalar(&source, &mut expected, 6, 6 + interior, kernel);
-            horizontal_5x5(&source, &mut actual, 6, 6 + interior, kernel).unwrap();
+            horizontal_5x5_scalar::<3>(&source, &mut expected, 6, 6 + interior, kernel);
+            horizontal_5x5::<3>(&source, &mut actual, 6, 6 + interior, kernel).unwrap();
             assert_eq!(actual, expected, "horizontal interior={interior}");
         }
 

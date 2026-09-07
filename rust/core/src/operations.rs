@@ -12,7 +12,7 @@ use rand_distr::{Distribution, StandardNormal};
 
 pub(crate) const MAX_AFFINE_DIMENSION: usize = 1 << 24;
 
-pub(crate) struct ImageU8 {
+pub(crate) struct ImageU8<const C: usize = 3> {
     pub(crate) data: Vec<u8>,
     pub(crate) height: usize,
     pub(crate) width: usize,
@@ -25,27 +25,27 @@ pub(crate) struct RgbRasterPolicy {
     pub(crate) fill: [u8; 3],
 }
 
-pub(crate) fn rgb_len(height: usize, width: usize) -> CoreResult<usize> {
+pub(crate) fn raster_len<const C: usize>(height: usize, width: usize) -> CoreResult<usize> {
     height
         .checked_mul(width)
-        .and_then(|pixels| pixels.checked_mul(3))
+        .and_then(|pixels| pixels.checked_mul(C))
         .ok_or_else(|| CoreError::Invalid("image dimensions overflow".into()))
 }
 
-pub(crate) fn random_crop_raw_into(
+pub(crate) fn random_crop_raw_into<const C: usize>(
     data_in: &[u8],
     input_h: usize,
     input_w: usize,
     crop: CropSample,
     mut data: Vec<u8>,
-) -> CoreResult<ImageU8> {
+) -> CoreResult<ImageU8<C>> {
     if crop.top + crop.height > input_h || crop.left + crop.width > input_w {
         return Err(CoreError::Runtime("sampled crop exceeds input".into()));
     }
-    let row_bytes = crop.width * 3;
+    let row_bytes = crop.width * C;
     data.resize(crop.height * row_bytes, 0);
     for y in 0..crop.height {
-        let src = ((crop.top + y) * input_w + crop.left) * 3;
+        let src = ((crop.top + y) * input_w + crop.left) * C;
         let dst = y * row_bytes;
         data[dst..dst + row_bytes].copy_from_slice(&data_in[src..src + row_bytes]);
     }
@@ -56,7 +56,7 @@ pub(crate) fn random_crop_raw_into(
     })
 }
 
-pub(crate) fn pad_raw(
+pub(crate) fn pad_raw<const C: usize>(
     input: &[u8],
     input_height: usize,
     input_width: usize,
@@ -64,39 +64,58 @@ pub(crate) fn pad_raw(
     border_mode: BorderMode,
     fill: [u8; 3],
     mut output: Vec<u8>,
-) -> CoreResult<ImageU8> {
-    let output_len = rgb_len(sample.height, sample.width)?;
+) -> CoreResult<ImageU8<C>> {
+    let output_len = raster_len::<C>(sample.height, sample.width)?;
     if sample.top.saturating_add(input_height) > sample.height
         || sample.left.saturating_add(input_width) > sample.width
-        || input.len() != rgb_len(input_height, input_width)?
+        || input.len() != raster_len::<C>(input_height, input_width)?
     {
         return Err(CoreError::Runtime(
             "invalid sampled padding geometry".into(),
         ));
     }
     output.resize(output_len, 0);
-    match border_mode {
-        BorderMode::Constant => pad::constant(
-            input,
-            input_height,
-            input_width,
-            sample.top,
-            sample.left,
-            sample.height,
-            sample.width,
-            fill,
-            &mut output,
-        ),
-        BorderMode::Reflect101 => pad::reflect101(
-            input,
-            input_height,
-            input_width,
-            sample.top,
-            sample.left,
-            sample.height,
-            sample.width,
-            &mut output,
-        )?,
+    if C != 3 {
+        for y in 0..sample.height {
+            for x in 0..sample.width {
+                for c in 0..C {
+                    output[(y * sample.width + x) * C + c] = border_sample::<C>(
+                        input,
+                        input_height,
+                        input_width,
+                        x as isize - sample.left as isize,
+                        y as isize - sample.top as isize,
+                        c,
+                        border_mode,
+                        fill,
+                    );
+                }
+            }
+        }
+    } else {
+        match border_mode {
+            BorderMode::Constant => pad::constant(
+                input,
+                input_height,
+                input_width,
+                sample.top,
+                sample.left,
+                sample.height,
+                sample.width,
+                fill,
+                &mut output,
+            ),
+            BorderMode::Reflect101 => pad::reflect101(
+                input,
+                input_height,
+                input_width,
+                sample.top,
+                sample.left,
+                sample.height,
+                sample.width,
+                &mut output,
+            )?,
+        }
     }
     Ok(ImageU8 {
         data: output,
@@ -105,8 +124,8 @@ pub(crate) fn pad_raw(
     })
 }
 
-pub(crate) fn coarse_dropout(
-    image: &mut ImageU8,
+pub(crate) fn coarse_dropout<const C: usize>(
+    image: &mut ImageU8<C>,
     holes: &[crate::plan::DropoutHole],
     fill: [u8; 3],
 ) -> CoreResult<()> {
@@ -119,10 +138,10 @@ pub(crate) fn coarse_dropout(
             ));
         }
         for y in hole.top..hole.top + hole.height {
-            let start = (y * image.width + hole.left) * 3;
-            let end = start + hole.width * 3;
-            for pixel in image.data[start..end].chunks_exact_mut(3) {
-                pixel.copy_from_slice(&fill);
+            let start = (y * image.width + hole.left) * C;
+            let end = start + hole.width * C;
+            for pixel in image.data[start..end].chunks_exact_mut(C) {
+                pixel.copy_from_slice(&fill[..C]);
             }
         }
     }
@@ -138,7 +157,7 @@ pub(crate) fn copy_u8(data: &[u8]) -> CoreResult<Vec<u8>> {
 }
 
 #[allow(clippy::too_many_arguments)]
-pub(crate) fn resize_raw(
+pub(crate) fn resize_raw<const C: usize>(
     data: &[u8],
     input_h: usize,
     input_w: usize,
@@ -148,19 +167,32 @@ pub(crate) fn resize_raw(
     antialias: bool,
     resizer: &mut fir::Resizer,
     destination: Vec<u8>,
-) -> CoreResult<ImageU8> {
+) -> CoreResult<ImageU8<C>> {
     if out_h == 0 || out_w == 0 {
         return Err(CoreError::Invalid(
             "resize dimensions must be positive".into(),
         ));
     }
-    let src = FirImageRef::new(input_w as u32, input_h as u32, data, fir::PixelType::U8x3)
-        .map_err(|error| CoreError::Invalid(format!("invalid RGB buffer: {error}")))?;
+    let src = FirImageRef::new(
+        input_w as u32,
+        input_h as u32,
+        data,
+        if C == 1 {
+            fir::PixelType::U8
+        } else {
+            fir::PixelType::U8x3
+        },
+    )
+    .map_err(|error| CoreError::Invalid(format!("invalid RGB buffer: {error}")))?;
     let mut dst = FirImage::from_vec_u8(
         out_w as u32,
         out_h as u32,
         destination,
-        fir::PixelType::U8x3,
+        if C == 1 {
+            fir::PixelType::U8
+        } else {
+            fir::PixelType::U8x3
+        },
     )
     .map_err(|error| CoreError::Runtime(format!("invalid resize destination: {error}")))?;
     let algorithm = match interpolation {
@@ -181,7 +213,11 @@ pub(crate) fn resize_raw(
     })
 }
 
-pub(crate) fn color_jitter(image: &mut ImageU8, sample: &ColorJitterSample) {
+pub(crate) fn color_jitter<const C: usize>(image: &mut ImageU8<C>, sample: &ColorJitterSample) {
+    if C == 1 {
+        color_jitter_gray(&mut image.data, sample);
+        return;
+    }
     let bf = sample.brightness;
     let cf = sample.contrast;
     let sf = sample.saturation;
@@ -317,7 +353,14 @@ fn compose_color_matrix_f64(
     (matrix, offset)
 }
 
-pub(crate) fn color_jitter_staged(image: &mut ImageU8, sample: &ColorJitterSample) {
+pub(crate) fn color_jitter_staged<const C: usize>(
+    image: &mut ImageU8<C>,
+    sample: &ColorJitterSample,
+) {
+    if C == 1 {
+        color_jitter_gray(&mut image.data, sample);
+        return;
+    }
     let active: Vec<_> = sample
         .order
         .into_iter()
@@ -443,8 +486,8 @@ fn apply_color_stages(data: &mut [u8], stages: &[ColorStage], mut sums: Option<&
     }
 }
 
-pub(crate) fn gaussian_noise(
-    image: &mut ImageU8,
+pub(crate) fn gaussian_noise<const C: usize>(
+    image: &mut ImageU8<C>,
     sample: GaussianNoiseSample,
     block: &mut Vec<f32>,
 ) -> CoreResult<()> {
@@ -456,7 +499,7 @@ pub(crate) fn gaussian_noise(
             .map_err(|_| CoreError::Runtime("noise workspace allocation failed".into()))?;
     }
     block.resize(BLOCK, 0.0);
-    if sample.per_channel {
+    if sample.per_channel || C == 1 {
         for channels in image.data.chunks_mut(BLOCK) {
             let normals = &mut block[..channels.len()];
             for value in normals.iter_mut() {
@@ -465,13 +508,13 @@ pub(crate) fn gaussian_noise(
             noise::apply_independent(channels, normals, sample.mean, sample.std);
         }
     } else {
-        for pixels in image.data.chunks_mut(BLOCK * 3) {
-            let pixel_count = pixels.len() / 3;
+        for pixels in image.data.chunks_mut(BLOCK * C) {
+            let pixel_count = pixels.len() / C;
             let normals = &mut block[..pixel_count];
             for value in normals.iter_mut() {
                 *value = StandardNormal.sample(&mut rng);
             }
-            for (pixel, &normal) in pixels.chunks_exact_mut(3).zip(normals.iter()) {
+            for (pixel, &normal) in pixels.chunks_exact_mut(C).zip(normals.iter()) {
                 let noise = normal * sample.std + sample.mean;
                 for channel in pixel {
                     *channel = (f32::from(*channel) + noise).round().clamp(0.0, 255.0) as u8;
@@ -482,20 +525,20 @@ pub(crate) fn gaussian_noise(
     Ok(())
 }
 
-pub(crate) fn sharpen_raw(
+pub(crate) fn sharpen_raw<const C: usize>(
     data: &[u8],
     height: usize,
     width: usize,
     sample: SharpenSample,
     mut output: Vec<u8>,
-) -> CoreResult<ImageU8> {
-    let expected = rgb_len(height, width)?;
+) -> CoreResult<ImageU8<C>> {
+    let expected = raster_len::<C>(height, width)?;
     if data.len() != expected || output.len() != expected {
         return Err(CoreError::Runtime(
             "sharpen requires matching RGB buffers".into(),
         ));
     }
-    sharpen::apply(data, height, width, sample, &mut output);
+    sharpen::apply_channels::<C>(data, height, width, sample, &mut output);
     Ok(ImageU8 {
         data: output,
         height,
@@ -503,22 +546,22 @@ pub(crate) fn sharpen_raw(
     })
 }
 
-pub(crate) fn perspective_raw(
+pub(crate) fn perspective_raw<const C: usize>(
     data: &[u8],
     height: usize,
     width: usize,
     sample: PerspectiveSample,
     policy: RgbRasterPolicy,
     output: Vec<u8>,
-) -> CoreResult<ImageU8> {
-    let expected = rgb_len(height, width)?;
+) -> CoreResult<ImageU8<C>> {
+    let expected = raster_len::<C>(height, width)?;
     if data.len() != expected || output.len() != expected {
         return Err(CoreError::Runtime(
             "remapping requires matching RGB buffers".into(),
         ));
     }
     let mut output = output;
-    remap::perspective(
+    remap::perspective::<C>(
         data,
         height,
         width,
@@ -535,7 +578,7 @@ pub(crate) fn perspective_raw(
     })
 }
 
-pub(crate) fn grid_distortion_raw(
+pub(crate) fn grid_distortion_raw<const C: usize>(
     data: &[u8],
     height: usize,
     width: usize,
@@ -543,20 +586,20 @@ pub(crate) fn grid_distortion_raw(
     policy: RgbRasterPolicy,
     output: Vec<u8>,
     scratch: &mut remap::AxisRemapScratch,
-) -> CoreResult<ImageU8> {
+) -> CoreResult<ImageU8<C>> {
     if sample.x_map.len() != width || sample.y_map.len() != height {
         return Err(CoreError::Runtime(
             "grid maps must match the image dimensions".into(),
         ));
     }
-    let expected = rgb_len(height, width)?;
+    let expected = raster_len::<C>(height, width)?;
     if data.len() != expected || output.len() != expected {
         return Err(CoreError::Runtime(
             "remapping requires matching RGB buffers".into(),
         ));
     }
     let mut output = output;
-    remap::grid(
+    remap::grid::<C>(
         data,
         height,
         width,
@@ -605,7 +648,7 @@ fn remap_raw(
                     let source_y = source_y.round() as isize;
                     let source_x = source_x.round() as isize;
                     for channel in 0..3 {
-                        output[destination + channel] = border_sample(
+                        output[destination + channel] = border_sample::<3>(
                             data,
                             height,
                             width,
@@ -625,7 +668,7 @@ fn remap_raw(
                     let inv_wx = 256 - wx;
                     let inv_wy = 256 - wy;
                     for channel in 0..3 {
-                        let p00 = u32::from(border_sample(
+                        let p00 = u32::from(border_sample::<3>(
                             data,
                             height,
                             width,
@@ -635,7 +678,7 @@ fn remap_raw(
                             border_mode,
                             fill,
                         ));
-                        let p01 = u32::from(border_sample(
+                        let p01 = u32::from(border_sample::<3>(
                             data,
                             height,
                             width,
@@ -645,7 +688,7 @@ fn remap_raw(
                             border_mode,
                             fill,
                         ));
-                        let p10 = u32::from(border_sample(
+                        let p10 = u32::from(border_sample::<3>(
                             data,
                             height,
                             width,
@@ -655,7 +698,7 @@ fn remap_raw(
                             border_mode,
                             fill,
                         ));
-                        let p11 = u32::from(border_sample(
+                        let p11 = u32::from(border_sample::<3>(
                             data,
                             height,
                             width,
@@ -753,7 +796,11 @@ fn apply_color_matrix_with_safe(
     }
 }
 
-fn try_apply_color_matrix_q14(image: &mut ImageU8, matrix: [[f32; 3]; 3], bias: f32) -> bool {
+fn try_apply_color_matrix_q14<const C: usize>(
+    image: &mut ImageU8<C>,
+    matrix: [[f32; 3]; 3],
+    bias: f32,
+) -> bool {
     let Some((matrix, bias)) = quantize_safe_q14(matrix, bias) else {
         return false;
     };
@@ -801,14 +848,14 @@ fn apply_color_matrix_pixel_f64(pixel: &mut [u8], matrix: [[f64; 3]; 3], bias: f
     }
 }
 
-pub(crate) fn rotate_raw(
+pub(crate) fn rotate_raw<const C: usize>(
     data: &[u8],
     height: usize,
     width: usize,
     sample: AffineSample,
     policy: RgbRasterPolicy,
     destination: Vec<u8>,
-) -> CoreResult<ImageU8> {
+) -> CoreResult<ImageU8<C>> {
     if height > MAX_AFFINE_DIMENSION || width > MAX_AFFINE_DIMENSION {
         return Err(CoreError::Invalid(format!(
             "Affine image dimensions must not exceed {MAX_AFFINE_DIMENSION} per axis"
@@ -822,7 +869,7 @@ pub(crate) fn rotate_raw(
     }
     if policy.interpolation == Interpolation::Nearest {
         let mut destination = destination;
-        rotate_nearest(
+        rotate_nearest::<C>(
             data,
             height,
             width,
@@ -839,7 +886,7 @@ pub(crate) fn rotate_raw(
     }
     if policy.border_mode == BorderMode::Reflect101 {
         let mut destination = destination;
-        rotate_bilinear_border(data, height, width, matrix, policy, &mut destination, false);
+        rotate_bilinear_border::<C>(data, height, width, matrix, policy, &mut destination, false);
         return Ok(ImageU8 {
             data: destination,
             height,
@@ -847,11 +894,11 @@ pub(crate) fn rotate_raw(
         });
     }
     let mut image = ImageU8 {
-        data: affine::bilinear_constant(data, height, width, matrix, destination)?,
+        data: affine::bilinear_constant::<C>(data, height, width, matrix, destination)?,
         height,
         width,
     };
-    rotate_bilinear_border(data, height, width, matrix, policy, &mut image.data, true);
+    rotate_bilinear_border::<C>(data, height, width, matrix, policy, &mut image.data, true);
     Ok(image)
 }
 
@@ -891,7 +938,7 @@ pub(crate) fn source_coordinates(y: usize, matrix: [f32; 6]) -> (f64, f64, f64, 
     )
 }
 
-pub(crate) fn rotate_nearest(
+pub(crate) fn rotate_nearest<const C: usize>(
     data: &[u8],
     height: usize,
     width: usize,
@@ -907,13 +954,13 @@ pub(crate) fn rotate_nearest(
                 for x in 0..width {
                     let sx = (sx0 + dsx * x as f64).round() as isize;
                     let sy = (sy0 + dsy * x as f64).round() as isize;
-                    let destination = (y * width + x) * 3;
+                    let destination = (y * width + x) * C;
                     if sx < 0 || sy < 0 || sx >= width as isize || sy >= height as isize {
-                        output[destination..destination + 3].copy_from_slice(&fill);
+                        output[destination..destination + C].copy_from_slice(&fill[..C]);
                     } else {
-                        let source = (sy as usize * width + sx as usize) * 3;
-                        output[destination..destination + 3]
-                            .copy_from_slice(&data[source..source + 3]);
+                        let source = (sy as usize * width + sx as usize) * C;
+                        output[destination..destination + C]
+                            .copy_from_slice(&data[source..source + C]);
                     }
                 }
             }
@@ -924,16 +971,16 @@ pub(crate) fn rotate_nearest(
                 for x in 0..width {
                     let sx = reflect101_index((sx0 + dsx * x as f64).round() as isize, width);
                     let sy = reflect101_index((sy0 + dsy * x as f64).round() as isize, height);
-                    let source = (sy * width + sx) * 3;
-                    let destination = (y * width + x) * 3;
-                    output[destination..destination + 3].copy_from_slice(&data[source..source + 3]);
+                    let source = (sy * width + sx) * C;
+                    let destination = (y * width + x) * C;
+                    output[destination..destination + C].copy_from_slice(&data[source..source + C]);
                 }
             }
         }
     }
 }
 
-pub(crate) fn rotate_bilinear_border(
+pub(crate) fn rotate_bilinear_border<const C: usize>(
     data: &[u8],
     height: usize,
     width: usize,
@@ -951,22 +998,22 @@ pub(crate) fn rotate_bilinear_border(
             let y0 = sy.floor() as isize;
             let wx = ((sx - sx.floor()) * 256.0) as u32;
             let wy = ((sy - sy.floor()) * 256.0) as u32;
-            let destination = (y * width + x) * 3;
+            let destination = (y * width + x) * C;
             if inlier {
                 let x0 = x0 as usize;
                 let y0 = y0 as usize;
                 let offsets = [
-                    (y0 * width + x0) * 3,
-                    (y0 * width + x0 + 1) * 3,
-                    ((y0 + 1) * width + x0) * 3,
-                    ((y0 + 1) * width + x0 + 1) * 3,
+                    (y0 * width + x0) * C,
+                    (y0 * width + x0 + 1) * C,
+                    ((y0 + 1) * width + x0) * C,
+                    ((y0 + 1) * width + x0 + 1) * C,
                 ];
-                affine::bilinear_rgb(
+                bilinear_channels::<C>(
                     data,
                     offsets,
                     wx,
                     wy,
-                    &mut output[destination..destination + 3],
+                    &mut output[destination..destination + C],
                 );
                 return;
             }
@@ -976,12 +1023,12 @@ pub(crate) fn rotate_bilinear_border(
                 let y0 = reflect101_index(y0, height);
                 let y1 = reflect101_index((sy.floor() as isize).saturating_add(1), height);
                 let offsets = [
-                    (y0 * width + x0) * 3,
-                    (y0 * width + x1) * 3,
-                    (y1 * width + x0) * 3,
-                    (y1 * width + x1) * 3,
+                    (y0 * width + x0) * C,
+                    (y0 * width + x1) * C,
+                    (y1 * width + x0) * C,
+                    (y1 * width + x1) * C,
                 ];
-                for channel in 0..3 {
+                for channel in 0..C {
                     let top = u32::from(data[offsets[0] + channel]) * (256 - wx)
                         + u32::from(data[offsets[1] + channel]) * wx;
                     let bottom = u32::from(data[offsets[2] + channel]) * (256 - wx)
@@ -991,8 +1038,8 @@ pub(crate) fn rotate_bilinear_border(
                 }
                 return;
             }
-            for channel in 0..3 {
-                let top = u32::from(border_sample(
+            for channel in 0..C {
+                let top = u32::from(border_sample::<C>(
                     data,
                     height,
                     width,
@@ -1002,7 +1049,7 @@ pub(crate) fn rotate_bilinear_border(
                     policy.border_mode,
                     policy.fill,
                 )) * (256 - wx)
-                    + u32::from(border_sample(
+                    + u32::from(border_sample::<C>(
                         data,
                         height,
                         width,
@@ -1012,7 +1059,7 @@ pub(crate) fn rotate_bilinear_border(
                         policy.border_mode,
                         policy.fill,
                     )) * wx;
-                let bottom = u32::from(border_sample(
+                let bottom = u32::from(border_sample::<C>(
                     data,
                     height,
                     width,
@@ -1022,7 +1069,7 @@ pub(crate) fn rotate_bilinear_border(
                     policy.border_mode,
                     policy.fill,
                 )) * (256 - wx)
-                    + u32::from(border_sample(
+                    + u32::from(border_sample::<C>(
                         data,
                         height,
                         width,
@@ -1075,7 +1122,7 @@ pub(crate) fn rotate_bilinear_border(
 }
 
 #[allow(clippy::too_many_arguments)]
-pub(crate) fn border_sample(
+pub(crate) fn border_sample<const C: usize>(
     data: &[u8],
     height: usize,
     width: usize,
@@ -1092,11 +1139,11 @@ pub(crate) fn border_sample(
         BorderMode::Constant => (y as usize, x as usize),
         BorderMode::Reflect101 => (reflect101_index(y, height), reflect101_index(x, width)),
     };
-    data[(position.0 * width + position.1) * 3 + channel]
+    data[(position.0 * width + position.1) * C + channel]
 }
 
-pub(crate) fn gaussian_blur_in_place(
-    image: &mut ImageU8,
+pub(crate) fn gaussian_blur_in_place<const C: usize>(
+    image: &mut ImageU8<C>,
     kernel: &[u16],
     temp: &mut Vec<u16>,
 ) -> CoreResult<()> {
@@ -1106,34 +1153,34 @@ pub(crate) fn gaussian_blur_in_place(
     }
     temp.resize(image.data.len(), 0);
     if kernel.len() == 5 && image.width >= 5 && image.height >= 5 {
-        gaussian_blur_5x5_q8(&mut image.data, image.height, image.width, kernel, temp)?;
+        gaussian_blur_5x5_q8::<C>(&mut image.data, image.height, image.width, kernel, temp)?;
         return Ok(());
     }
 
     let radius = kernel.len() / 2;
     for y in 0..image.height {
         for x in 0..image.width {
-            for c in 0..3 {
+            for c in 0..C {
                 let mut acc = 0u32;
                 for (k, &weight) in kernel.iter().enumerate() {
                     let xx =
                         reflect101_index(x as isize + k as isize - radius as isize, image.width);
-                    acc += image.data[(y * image.width + xx) * 3 + c] as u32 * weight as u32;
+                    acc += image.data[(y * image.width + xx) * C + c] as u32 * weight as u32;
                 }
-                temp[(y * image.width + x) * 3 + c] = acc as u16;
+                temp[(y * image.width + x) * C + c] = acc as u16;
             }
         }
     }
     for y in 0..image.height {
         for x in 0..image.width {
-            for c in 0..3 {
+            for c in 0..C {
                 let mut acc = 0u32;
                 for (k, &weight) in kernel.iter().enumerate() {
                     let yy =
                         reflect101_index(y as isize + k as isize - radius as isize, image.height);
-                    acc += temp[(yy * image.width + x) * 3 + c] as u32 * weight as u32;
+                    acc += temp[(yy * image.width + x) * C + c] as u32 * weight as u32;
                 }
-                image.data[(y * image.width + x) * 3 + c] = ((acc + 32768) >> 16).min(255) as u8;
+                image.data[(y * image.width + x) * C + c] = ((acc + 32768) >> 16).min(255) as u8;
             }
         }
     }
@@ -1154,14 +1201,14 @@ pub(crate) fn reflect101_index(index: isize, len: usize) -> usize {
     }
 }
 
-pub(crate) fn gaussian_blur_5x5_q8(
+pub(crate) fn gaussian_blur_5x5_q8<const C: usize>(
     data: &mut [u8],
     height: usize,
     width: usize,
     kernel: &[u16],
     temp: &mut [u16],
 ) -> CoreResult<()> {
-    let expected = rgb_len(height, width)?;
+    let expected = raster_len::<C>(height, width)?;
     if height < 5
         || width < 5
         || kernel.len() != 5
@@ -1169,10 +1216,10 @@ pub(crate) fn gaussian_blur_5x5_q8(
         || temp.len() < expected
     {
         return Err(CoreError::Runtime(
-            "5x5 blur requires matching RGB buffers and five weights".into(),
+            "5x5 blur requires matching raster buffers and five weights".into(),
         ));
     }
-    let bytes_per_row = width * 3;
+    let bytes_per_row = width * C;
     let (k0, k1, k2, k3, k4) = (
         kernel[0] as u32,
         kernel[1] as u32,
@@ -1182,33 +1229,33 @@ pub(crate) fn gaussian_blur_5x5_q8(
     );
     for y in 0..height {
         let row = y * bytes_per_row;
-        for c in 0..3 {
-            temp[row + c] = (data[row + 6 + c] as u32 * k0
-                + data[row + 3 + c] as u32 * k1
+        for c in 0..C {
+            temp[row + c] = (data[row + 2 * C + c] as u32 * k0
+                + data[row + C + c] as u32 * k1
                 + data[row + c] as u32 * k2
-                + data[row + 3 + c] as u32 * k3
-                + data[row + 6 + c] as u32 * k4) as u16;
-            temp[row + 3 + c] = (data[row + 3 + c] as u32 * k0
+                + data[row + C + c] as u32 * k3
+                + data[row + 2 * C + c] as u32 * k4) as u16;
+            temp[row + C + c] = (data[row + C + c] as u32 * k0
                 + data[row + c] as u32 * k1
-                + data[row + 3 + c] as u32 * k2
-                + data[row + 6 + c] as u32 * k3
-                + data[row + 9 + c] as u32 * k4) as u16;
+                + data[row + C + c] as u32 * k2
+                + data[row + 2 * C + c] as u32 * k3
+                + data[row + 3 * C + c] as u32 * k4) as u16;
         }
-        let start = row + 6;
-        let end = row + bytes_per_row - 6;
-        blur::horizontal_5x5(data, temp, start, end, [k0, k1, k2, k3, k4])?;
-        for c in 0..3 {
-            let last = row + bytes_per_row - 3 + c;
-            temp[last - 3] = (data[last - 9] as u32 * k0
-                + data[last - 6] as u32 * k1
-                + data[last - 3] as u32 * k2
+        let start = row + 2 * C;
+        let end = row + bytes_per_row - 2 * C;
+        blur::horizontal_5x5::<C>(data, temp, start, end, [k0, k1, k2, k3, k4])?;
+        for c in 0..C {
+            let last = row + bytes_per_row - C + c;
+            temp[last - C] = (data[last - 3 * C] as u32 * k0
+                + data[last - 2 * C] as u32 * k1
+                + data[last - C] as u32 * k2
                 + data[last] as u32 * k3
-                + data[last - 3] as u32 * k4) as u16;
-            temp[last] = (data[last - 6] as u32 * k0
-                + data[last - 3] as u32 * k1
+                + data[last - C] as u32 * k4) as u16;
+            temp[last] = (data[last - 2 * C] as u32 * k0
+                + data[last - C] as u32 * k1
                 + data[last] as u32 * k2
-                + data[last - 3] as u32 * k3
-                + data[last - 6] as u32 * k4) as u16;
+                + data[last - C] as u32 * k3
+                + data[last - 2 * C] as u32 * k4) as u16;
         }
     }
 
@@ -1248,6 +1295,112 @@ pub(crate) fn gaussian_blur_5x5_q8(
     }
     Ok(())
 }
+
+pub(crate) fn rgb_len(height: usize, width: usize) -> CoreResult<usize> {
+    raster_len::<3>(height, width)
+}
+
+pub(crate) fn bilinear_channels<const C: usize>(
+    data: &[u8],
+    offsets: [usize; 4],
+    wx: u32,
+    wy: u32,
+    output: &mut [u8],
+) {
+    if C == 3 {
+        affine::bilinear_rgb(data, offsets, wx, wy, output);
+        return;
+    }
+    for c in 0..C {
+        let top =
+            u32::from(data[offsets[0] + c]) * (256 - wx) + u32::from(data[offsets[1] + c]) * wx;
+        let bottom =
+            u32::from(data[offsets[2] + c]) * (256 - wx) + u32::from(data[offsets[3] + c]) * wx;
+        output[c] = ((top * (256 - wy) + bottom * wy + 32768) >> 16) as u8;
+    }
+}
+
+pub(crate) fn color_jitter_gray(data: &mut [u8], sample: &ColorJitterSample) {
+    if sample.brightness == 1.0 && sample.contrast == 1.0 {
+        return;
+    }
+    let mean = |data: &[u8]| {
+        let sum = data.iter().map(|&x| u64::from(x)).sum::<u64>();
+        (
+            sum as f32 / data.len() as f32,
+            sum as f64 / data.len() as f64,
+        )
+    };
+    if sample.hue_enabled {
+        for operation in sample.order {
+            match operation {
+                0 if sample.brightness != 1.0 => gray_matrix(
+                    data,
+                    sample.brightness,
+                    0.0,
+                    f64::from(sample.brightness),
+                    0.0,
+                ),
+                1 if sample.contrast != 1.0 => {
+                    let (luminance, wide_luminance) = mean(data);
+                    gray_matrix(
+                        data,
+                        sample.contrast,
+                        luminance * (1.0 - sample.contrast),
+                        f64::from(sample.contrast),
+                        wide_luminance * (1.0 - f64::from(sample.contrast)),
+                    );
+                }
+                _ => {}
+            }
+        }
+    } else {
+        let (source_mean, wide_source_mean) = if sample.contrast == 1.0 {
+            (0.0, 0.0)
+        } else {
+            mean(data)
+        };
+        let (mut scale, mut bias) = (1.0f32, 0.0f32);
+        let (mut wide_scale, mut wide_bias) = (1.0f64, 0.0f64);
+        for operation in sample.order {
+            match operation {
+                0 => {
+                    scale *= sample.brightness;
+                    bias *= sample.brightness;
+                    wide_scale *= f64::from(sample.brightness);
+                    wide_bias *= f64::from(sample.brightness);
+                }
+                1 if sample.contrast != 1.0 => {
+                    let current_mean = scale * source_mean + bias;
+                    let wide_mean = wide_scale * wide_source_mean + wide_bias;
+                    scale *= sample.contrast;
+                    bias = bias * sample.contrast + current_mean * (1.0 - sample.contrast);
+                    wide_scale *= f64::from(sample.contrast);
+                    wide_bias = wide_bias * f64::from(sample.contrast)
+                        + wide_mean * (1.0 - f64::from(sample.contrast));
+                }
+                _ => {}
+            }
+        }
+        gray_matrix(data, scale, bias, wide_scale, wide_bias);
+    }
+}
+
+fn gray_matrix(data: &mut [u8], scale: f32, bias: f32, wide_scale: f64, wide_bias: f64) {
+    let matrix = [[scale, 0.0, 0.0], [0.0, scale, 0.0], [0.0, 0.0, scale]];
+    if let Some((matrix, bias)) = quantize_safe_q14(matrix, bias) {
+        for value in data {
+            *value = ((i32::from(*value) * matrix[0][0] + bias + 8192) >> 14).clamp(0, 255) as u8;
+        }
+    } else {
+        for value in data {
+            *value = (f64::from(*value) * wide_scale + wide_bias)
+                .round()
+                .clamp(0.0, 255.0) as u8;
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -1381,9 +1534,9 @@ mod tests {
             height: 5,
             width: 6,
         };
-        let cropped = random_crop_raw_into(&source, height, width, crop, Vec::new()).unwrap();
+        let cropped = random_crop_raw_into::<3>(&source, height, width, crop, Vec::new()).unwrap();
         let mut oracle_resizer = fir::Resizer::new();
-        let oracle = resize_raw(
+        let oracle = resize_raw::<3>(
             &cropped.data,
             cropped.height,
             cropped.width,
@@ -1421,7 +1574,7 @@ mod tests {
         let width = 17;
         let source = pixels(height * width * 3);
         let mut oracle_resizer = fir::Resizer::new();
-        let adaptive = resize_raw(
+        let adaptive = resize_raw::<3>(
             &source,
             height,
             width,
@@ -1433,7 +1586,7 @@ mod tests {
             vec![0; 7 * 11 * 3],
         )
         .unwrap();
-        let fixed = resize_raw(
+        let fixed = resize_raw::<3>(
             &source,
             height,
             width,
@@ -1485,7 +1638,7 @@ mod tests {
             (63, 65),
         ] {
             let source = pixels(height * width * 3);
-            let mut flipped = ImageU8 {
+            let mut flipped = ImageU8::<3> {
                 data: source.clone(),
                 height,
                 width,
@@ -1494,7 +1647,7 @@ mod tests {
             point::horizontal_flip(&mut flipped.data, flipped.height, flipped.width);
             assert_eq!(flipped.data, source);
 
-            let mut identity_jitter = ImageU8 {
+            let mut identity_jitter = ImageU8::<3> {
                 data: source.clone(),
                 height,
                 width,
@@ -1513,13 +1666,13 @@ mod tests {
             assert_eq!(identity_jitter.data, source);
 
             let kernel = crate::plan::make_gaussian_kernel(5, 1.1).unwrap();
-            let mut constant = ImageU8 {
+            let mut constant = ImageU8::<3> {
                 data: vec![73; source.len()],
                 height,
                 width,
             };
             let mut temp = Vec::new();
-            gaussian_blur_in_place(&mut constant, &kernel, &mut temp).unwrap();
+            gaussian_blur_in_place::<3>(&mut constant, &kernel, &mut temp).unwrap();
             assert!(constant.data.iter().all(|&value| value == 73));
 
             let normalized =
@@ -1543,18 +1696,18 @@ mod tests {
     #[test]
     fn wide_gaussian_blur_preserves_a_constant_image() {
         let kernel = crate::plan::make_gaussian_kernel(101, 1_000_000.0).unwrap();
-        let mut image = ImageU8 {
+        let mut image = ImageU8::<3> {
             data: vec![73; 3 * 4 * 3],
             height: 3,
             width: 4,
         };
-        gaussian_blur_in_place(&mut image, &kernel, &mut Vec::new()).unwrap();
+        gaussian_blur_in_place::<3>(&mut image, &kernel, &mut Vec::new()).unwrap();
         assert!(image.data.iter().all(|&value| value == 73));
     }
 
     #[test]
     fn extreme_color_jitter_brightness_saturates_without_wrapping() {
-        let mut image = ImageU8 {
+        let mut image = ImageU8::<3> {
             data: vec![255, 2, 3, 0, 0, 0],
             height: 1,
             width: 2,
@@ -1583,7 +1736,7 @@ mod tests {
                 .collect();
             let mut expected = source.clone();
             apply_color_matrix_f64(&mut expected, safe_matrix, 1.5);
-            let mut actual = ImageU8 {
+            let mut actual = ImageU8::<3> {
                 data: source,
                 height: 1,
                 width: pixel_count,
@@ -1634,7 +1787,7 @@ mod tests {
             let mut expected = source.clone();
             apply_color_matrix_f64(&mut expected, matrix, offset[0]);
 
-            let mut actual = ImageU8 {
+            let mut actual = ImageU8::<3> {
                 data: source.clone(),
                 height: 1,
                 width: 3,
@@ -1678,12 +1831,12 @@ mod tests {
                     order,
                 };
                 let source = pixels(7 * 11 * 3);
-                let mut expected = ImageU8 {
+                let mut expected = ImageU8::<3> {
                     data: source.clone(),
                     height: 7,
                     width: 11,
                 };
-                let mut actual = ImageU8 {
+                let mut actual = ImageU8::<3> {
                     data: source,
                     height: 7,
                     width: 11,
@@ -1707,18 +1860,18 @@ mod tests {
             seed: 137,
             per_channel: true,
         };
-        let mut first = ImageU8 {
+        let mut first = ImageU8::<3> {
             data: source.clone(),
             height: 2,
             width: 4,
         };
-        let mut second = ImageU8 {
+        let mut second = ImageU8::<3> {
             data: source,
             height: 2,
             width: 4,
         };
-        gaussian_noise(&mut first, sample, &mut Vec::new()).unwrap();
-        gaussian_noise(&mut second, sample, &mut Vec::new()).unwrap();
+        gaussian_noise::<3>(&mut first, sample, &mut Vec::new()).unwrap();
+        gaussian_noise::<3>(&mut second, sample, &mut Vec::new()).unwrap();
         assert_eq!(first.data, second.data);
         assert_eq!(
             first.data,
@@ -1758,7 +1911,7 @@ mod tests {
             height: 5,
             width: 8,
         };
-        let clean = pad_raw(
+        let clean = pad_raw::<3>(
             &source,
             2,
             3,
@@ -1768,7 +1921,7 @@ mod tests {
             vec![0; 5 * 8 * 3],
         )
         .unwrap();
-        let dirty = pad_raw(
+        let dirty = pad_raw::<3>(
             &source,
             2,
             3,
@@ -1804,7 +1957,7 @@ mod tests {
             height: 4,
             width: 5,
         };
-        let output = pad_raw(
+        let output = pad_raw::<3>(
             &source,
             2,
             3,
@@ -1862,7 +2015,7 @@ mod tests {
                             border_mode,
                             [3, 5, 7],
                         );
-                        let actual = pad_raw(
+                        let actual = pad_raw::<3>(
                             &source,
                             input_height,
                             input_width,
@@ -1884,7 +2037,7 @@ mod tests {
 
     #[test]
     fn coarse_dropout_fills_rectangles_and_allows_overlap() {
-        let mut image = ImageU8 {
+        let mut image = ImageU8::<3> {
             data: pixels(4 * 6 * 3),
             height: 4,
             width: 6,
@@ -1904,7 +2057,7 @@ mod tests {
                 width: 2,
             },
         ];
-        coarse_dropout(&mut image, &holes, [3, 5, 7]).unwrap();
+        coarse_dropout::<3>(&mut image, &holes, [3, 5, 7]).unwrap();
         for y in 0..4 {
             for x in 0..6 {
                 let offset = (y * 6 + x) * 3;
@@ -1924,7 +2077,7 @@ mod tests {
     fn affine_border_modes_cover_arbitrary_dimensions() {
         for (height, width) in [(1, 1), (1, 7), (7, 1), (7, 11)] {
             let source = vec![73; height * width * 3];
-            let reflect = rotate_raw(
+            let reflect = rotate_raw::<3>(
                 &source,
                 height,
                 width,
@@ -1935,7 +2088,7 @@ mod tests {
             .unwrap();
             assert!(reflect.data.iter().all(|&value| value == 73));
 
-            let nearest = rotate_raw(
+            let nearest = rotate_raw::<3>(
                 &source,
                 height,
                 width,
@@ -1948,7 +2101,7 @@ mod tests {
         }
 
         let source = vec![73; 7 * 11 * 3];
-        let constant = rotate_raw(
+        let constant = rotate_raw::<3>(
             &source,
             7,
             11,
@@ -1965,7 +2118,7 @@ mod tests {
         for (height, width) in [(1, 32_769), (1, 32_770), (32_769, 1), (32_770, 1)] {
             let source = pixels(height * width * 3);
             let identity = affine_sample(0.0);
-            let output = rotate_raw(
+            let output = rotate_raw::<3>(
                 &source,
                 height,
                 width,
@@ -1979,7 +2132,7 @@ mod tests {
             let sample = affine_sample(0.25);
             let matrix = inverse_affine_matrix(width, height, sample);
             let mut expected = vec![0; source.len()];
-            rotate_bilinear_border(
+            rotate_bilinear_border::<3>(
                 &source,
                 height,
                 width,
@@ -1988,7 +2141,7 @@ mod tests {
                 &mut expected,
                 false,
             );
-            let actual = rotate_raw(
+            let actual = rotate_raw::<3>(
                 &source,
                 height,
                 width,
@@ -2003,7 +2156,7 @@ mod tests {
 
     #[test]
     fn affine_rejects_dimensions_beyond_exact_f32_coordinates() {
-        let error = match rotate_raw(
+        let error = match rotate_raw::<3>(
             &[],
             1,
             MAX_AFFINE_DIMENSION + 1,
@@ -2025,7 +2178,7 @@ mod tests {
             for interpolation in [Interpolation::Nearest, Interpolation::Bilinear] {
                 for border_mode in [BorderMode::Constant, BorderMode::Reflect101] {
                     let sample = affine_sample(37.0);
-                    let clean = rotate_raw(
+                    let clean = rotate_raw::<3>(
                         &source,
                         height,
                         width,
@@ -2034,7 +2187,7 @@ mod tests {
                         vec![0; source.len()],
                     )
                     .unwrap();
-                    let dirty = rotate_raw(
+                    let dirty = rotate_raw::<3>(
                         &source,
                         height,
                         width,
@@ -2054,7 +2207,7 @@ mod tests {
         let source = pixels(3 * 3);
         let mut sample = affine_sample(0.0);
         sample.translate = [1.0, 0.0];
-        let output = rotate_raw(
+        let output = rotate_raw::<3>(
             &source,
             1,
             3,
@@ -2101,7 +2254,7 @@ mod tests {
                         },
                     )
                     .unwrap();
-                    let actual = perspective_raw(
+                    let actual = perspective_raw::<3>(
                         &source,
                         height,
                         width,
@@ -2134,7 +2287,7 @@ mod tests {
                         |y, x| Some((grid.y_map[y], grid.x_map[x])),
                     )
                     .unwrap();
-                    let actual = grid_distortion_raw(
+                    let actual = grid_distortion_raw::<3>(
                         &source,
                         height,
                         width,
@@ -2157,7 +2310,7 @@ mod tests {
     fn perspective_invalid_denominators_fill_without_panicking() {
         let source = pixels(5 * 7 * 3);
         for border_mode in [BorderMode::Constant, BorderMode::Reflect101] {
-            let output = perspective_raw(
+            let output = perspective_raw::<3>(
                 &source,
                 5,
                 7,
@@ -2174,7 +2327,7 @@ mod tests {
 
     #[test]
     fn hue_rotation_preserves_value_and_saturation() {
-        let mut image = ImageU8 {
+        let mut image = ImageU8::<3> {
             data: vec![255, 0, 0, 0, 255, 0, 0, 0, 255, 73, 73, 73],
             height: 1,
             width: 4,
@@ -2241,6 +2394,110 @@ mod tests {
                 ) => assert_eq!(concurrent, sequential, "key={key}"),
                 _ => panic!("unexpected output type"),
             }
+        }
+    }
+}
+
+#[cfg(test)]
+mod grayscale_tests {
+    use super::*;
+
+    #[test]
+    fn grayscale_jitter_has_independent_numeric_fixtures() {
+        let mut sample = ColorJitterSample {
+            brightness: 2.0,
+            contrast: 0.5,
+            saturation: 0.2,
+            hue: 0.1,
+            hue_enabled: false,
+            order: [0, 2, 3, 1],
+        };
+        let mut composed = vec![40, 100, 200];
+        color_jitter_gray(&mut composed, &sample);
+        assert_eq!(composed, [153, 213, 255]);
+        sample.hue_enabled = true;
+        let mut staged = vec![40, 100, 200];
+        color_jitter_gray(&mut staged, &sample);
+        // Brightness clips to [80, 200, 255], so contrast uses mean 535/3.
+        assert_eq!(staged, [129, 189, 217]);
+        sample.order = [1, 2, 3, 0];
+        let mut contrast_first = vec![40, 100, 200];
+        color_jitter_gray(&mut contrast_first, &sample);
+        assert_eq!(contrast_first, [154, 214, 255]);
+    }
+
+    #[test]
+    fn grayscale_brightness_only_preserves_rounding_and_saturation() {
+        for hue_enabled in [false, true] {
+            for order in [[0, 2, 3, 1], [1, 2, 3, 0]] {
+                for (brightness, expected) in [
+                    (0.5, [0, 1, 20, 50, 100, 128]),
+                    (2.0, [0, 2, 80, 200, 255, 255]),
+                    (f32::MAX, [0, 255, 255, 255, 255, 255]),
+                ] {
+                    let sample = ColorJitterSample {
+                        brightness,
+                        contrast: 1.0,
+                        saturation: 0.2,
+                        hue: 0.1,
+                        hue_enabled,
+                        order,
+                    };
+                    let mut data = [0, 1, 40, 100, 200, 255];
+                    color_jitter_gray(&mut data, &sample);
+                    assert_eq!(data, expected);
+                }
+            }
+        }
+    }
+
+    #[test]
+    fn grayscale_geometry_and_filters_match_equal_rgb_planes() {
+        for (height, width) in [(1, 1), (1, 7), (7, 1), (7, 11), (17, 35)] {
+            let data: Vec<u8> = (0..height * width).map(|i| (i * 73) as u8).collect();
+            let rgb: Vec<_> = data.iter().flat_map(|&v| [v; 3]).collect();
+            for border in [BorderMode::Constant, BorderMode::Reflect101] {
+                for interpolation in [Interpolation::Nearest, Interpolation::Bilinear] {
+                    let sample = AffineSample {
+                        degrees: 17.0,
+                        translate: [0.3, -0.7],
+                        scale: 0.9,
+                        shear: [1.0, 2.0],
+                    };
+                    let policy = RgbRasterPolicy {
+                        interpolation,
+                        border_mode: border,
+                        fill: [7; 3],
+                    };
+                    let gray =
+                        rotate_raw::<1>(&data, height, width, sample, policy, vec![0; data.len()])
+                            .unwrap();
+                    let color =
+                        rotate_raw::<3>(&rgb, height, width, sample, policy, vec![0; rgb.len()])
+                            .unwrap();
+                    assert_eq!(
+                        gray.data,
+                        color.data.chunks_exact(3).map(|p| p[0]).collect::<Vec<_>>()
+                    );
+                }
+            }
+            let kernel = crate::plan::make_gaussian_kernel(5, 1.2).unwrap();
+            let mut gray = ImageU8::<1> {
+                data,
+                height,
+                width,
+            };
+            let mut color = ImageU8::<3> {
+                data: rgb,
+                height,
+                width,
+            };
+            gaussian_blur_in_place(&mut gray, &kernel, &mut Vec::new()).unwrap();
+            gaussian_blur_in_place(&mut color, &kernel, &mut Vec::new()).unwrap();
+            assert_eq!(
+                gray.data,
+                color.data.chunks_exact(3).map(|p| p[0]).collect::<Vec<_>>()
+            );
         }
     }
 }

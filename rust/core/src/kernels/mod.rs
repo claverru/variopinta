@@ -81,3 +81,34 @@ pub(crate) fn implementations(transform: &TransformPlan) -> &'static [KernelImpl
         TransformPlan::Affine { .. } | TransformPlan::RandomRotation { .. } => AFFINE_OUT_OF_PLACE,
     }
 }
+
+const GRAY_COLOR_IN_PLACE: &[KernelImplementation] = &[KernelImplementation {
+    form: ExecutionForm::OwnedInPlace,
+    unit_specialization: Some("ColorJitter:gray-q14-composition"),
+}];
+const GRAY_NORMALIZE: &[KernelImplementation] = &[
+    KernelImplementation {
+        form: ExecutionForm::BorrowedToOwned,
+        unit_specialization: Some("single-channel-normalize"),
+    },
+    KernelImplementation {
+        form: ExecutionForm::OwnedToOwned,
+        unit_specialization: Some("single-channel-normalize"),
+    },
+];
+
+pub(crate) fn channel_implementations(
+    transform: &TransformPlan,
+    channels: usize,
+) -> &'static [KernelImplementation] {
+    if channels == 1 {
+        match transform {
+            TransformPlan::ColorJitter { hue, .. } if *hue == [0.0, 0.0] => {
+                return GRAY_COLOR_IN_PLACE
+            }
+            TransformPlan::Normalize { .. } => return GRAY_NORMALIZE,
+            _ => {}
+        }
+    }
+    implementations(transform)
+}

@@ -24,7 +24,7 @@ use std::sync::Mutex;
 
 const MAX_CACHED_WORKSPACES: usize = 8;
 const MAX_RETAINED_WORKSPACE_BYTES: usize = 32 * 1024 * 1024;
-const EXPLANATION_SCHEMA_VERSION: u8 = 4;
+const EXPLANATION_SCHEMA_VERSION: u8 = 5;
 
 #[pyfunction]
 fn registered_transform_names() -> Vec<&'static str> {
@@ -70,6 +70,7 @@ enum SinkConfig {
 
 #[derive(Clone, Debug)]
 struct TargetRoute {
+    decode_mode: DecodeMode,
     role: TargetSpec,
     source: SourceConfig,
     outputs: Vec<OutputRoute>,
@@ -91,6 +92,8 @@ enum NativeOutput {
 
 enum PreparedSource {
     Array {
+        channels: usize,
+        rank: usize,
         storage: TargetStorage,
         height: usize,
         width: usize,
@@ -121,6 +124,8 @@ enum TargetStorage {
 }
 
 struct AcquiredTarget {
+    channels: usize,
+    rank: usize,
     label: String,
     storage: TargetStorage,
     height: usize,
@@ -178,10 +183,27 @@ impl PyPipeline {
             .map(|target| (target.role, target_requirements(target)))
             .collect();
         let core = Compiler::new(parse_mode(mode)?)
-            .compile(PipelineSpec::with_target_requirements(
-                parse_specs(specs)?,
-                target_specs,
-            ))
+            .compile(
+                PipelineSpec::with_target_requirements(parse_specs(specs)?, target_specs)
+                    .with_image_channels(
+                        targets
+                            .iter()
+                            .map(|target| {
+                                if target.role == TargetSpec::Image
+                                    && !matches!(target.source, SourceConfig::Array)
+                                {
+                                    Some(if target.decode_mode == DecodeMode::Gray {
+                                        1
+                                    } else {
+                                        3
+                                    })
+                                } else {
+                                    None
+                                }
+                            })
+                            .collect(),
+                    ),
+            )
             .map_err(map_core_error)?;
         let explanation = core.explain();
         if targets.iter().any(|target| {
@@ -225,7 +247,7 @@ impl PyPipeline {
     }
 
     fn explain<'py>(&self, py: Python<'py>) -> PyResult<Py<PyAny>> {
-        explanation_to_python(py, self.core.explain(), &self.targets)
+        explanation_to_python(py, self.core.explain(), &self.targets, &self.core)
     }
 
     #[staticmethod]
@@ -381,6 +403,15 @@ impl PyPipeline {
                 )));
             }
         }
+        for (index, (target, route)) in acquired.iter().zip(&self.targets).enumerate() {
+            if route.role == TargetSpec::Image {
+                self.core
+                    .validate_image_channels(index, target.channels)
+                    .map_err(|error| {
+                        PipelineRunError::InvalidTarget(format!("{}: {error}", target.label))
+                    })?;
+            }
+        }
         if acquired
             .iter()
             .any(|target| matches!(target.storage, TargetStorage::Borrowed(_)))
@@ -400,6 +431,8 @@ impl PyPipeline {
             .into_iter()
             .zip(&self.targets)
             .map(|(target, route)| TargetInput {
+                channels: target.channels,
+                rank: target.rank,
                 role: route.role,
                 data: match target.storage {
                     TargetStorage::Owned(data) => TargetBuffer::Owned(data),
@@ -456,6 +489,8 @@ impl PyPipeline {
                 TargetStorage::Owned(data) => TargetBuffer::Owned(data),
             };
             inputs.push(TargetInput {
+                channels: target.channels,
+                rank: target.rank,
                 role: route.role,
                 data,
                 height: target.height,
@@ -770,9 +805,25 @@ fn parse_target_routes(value: Option<&Bound<'_, PyAny>>) -> PyResult<Vec<TargetR
                 .iter()
                 .map(|output| parse_output_route(output.downcast::<PyDict>()?, role))
                 .collect::<PyResult<Vec<_>>>()?;
+            let source = parse_source_config(item)?;
+            let mode: Option<String> =
+                optional(item, "decode_mode")?.map_or(Ok(None), |v| v.extract())?;
+            if mode.is_some()
+                && (matches!(source, SourceConfig::Array) || role != TargetSpec::Image)
+            {
+                return Err(PyValueError::new_err(
+                    "decode_mode is only valid for encoded/path images",
+                ));
+            }
+            let decode_mode = match mode.as_deref() {
+                None | Some("rgb") => DecodeMode::Rgb,
+                Some("gray") => DecodeMode::Gray,
+                _ => return Err(PyValueError::new_err("decode_mode must be rgb or gray")),
+            };
             Ok(TargetRoute {
+                decode_mode,
                 role,
-                source: parse_source_config(item)?,
+                source,
                 outputs,
                 name: optional(item, "name")?.map_or(Ok(None), |value| value.extract())?,
             })
@@ -812,14 +863,17 @@ fn array_source(
     let array = value.extract::<PyReadonlyArrayDyn<'_, u8>>().map_err(|_| {
         pyo3::exceptions::PyTypeError::new_err(format!("{label} must be a NumPy uint8 array"))
     })?;
-    let (height, width) = match (role, array.shape()) {
-        (TargetSpec::Image, [height, width, 3]) if *height > 0 && *width > 0 => (*height, *width),
+    let (height, width, channels) = match (role, array.shape()) {
+        (TargetSpec::Image, [height, width]) if *height > 0 && *width > 0 => (*height, *width, 1),
+        (TargetSpec::Image, [height, width, channels @ (1 | 3)]) if *height > 0 && *width > 0 => {
+            (*height, *width, *channels)
+        }
         (TargetSpec::Mask { .. }, [height, width]) if *height > 0 && *width > 0 => {
-            (*height, *width)
+            (*height, *width, 1)
         }
         (TargetSpec::Image, _) => {
             return Err(PyValueError::new_err(format!(
-                "{label} must be a non-empty HWC RGB array"
+                "{label} must be a non-empty HW, HWC1, or HWC RGB array"
             )));
         }
         (TargetSpec::Mask { .. }, _) => {
@@ -834,6 +888,8 @@ fn array_source(
         TargetStorage::Owned(array.as_array().iter().copied().collect())
     };
     Ok(PreparedSource::Array {
+        channels,
+        rank: array.ndim(),
         storage,
         height,
         width,
@@ -925,10 +981,14 @@ fn acquire_target(
 ) -> Result<AcquiredTarget, PipelineRunError> {
     let acquired = match source {
         PreparedSource::Array {
+            channels,
+            rank,
             storage,
             height,
             width,
         } => Ok(AcquiredTarget {
+            channels,
+            rank,
             label: String::new(),
             storage,
             height,
@@ -968,13 +1028,25 @@ fn decode_target(
             let decoded = augment_io::decode_image(
                 &encoded,
                 DecodeOptions {
-                    mode: DecodeMode::Rgb,
+                    mode: route.decode_mode,
                     max_pixels,
                 },
             )
             .map_err(PipelineRunError::Codec)?;
-            let (data, height, width) = decoded_rgb_u8(decoded)?;
+            let (data, height, width) = decoded_image_u8(decoded)?;
             Ok(AcquiredTarget {
+                channels: if route.role == TargetSpec::Image
+                    && route.decode_mode != DecodeMode::Gray
+                {
+                    3
+                } else {
+                    1
+                },
+                rank: if route.role == TargetSpec::Image && route.decode_mode != DecodeMode::Gray {
+                    3
+                } else {
+                    2
+                },
                 label: String::new(),
                 storage: TargetStorage::Owned(data),
                 height,
@@ -997,6 +1069,18 @@ fn decode_target(
             .map_err(PipelineRunError::Codec)?;
             let (data, height, width) = decoded_mask_u8(decoded)?;
             Ok(AcquiredTarget {
+                channels: if route.role == TargetSpec::Image
+                    && route.decode_mode != DecodeMode::Gray
+                {
+                    3
+                } else {
+                    1
+                },
+                rank: if route.role == TargetSpec::Image && route.decode_mode != DecodeMode::Gray {
+                    3
+                } else {
+                    2
+                },
                 label: String::new(),
                 storage: TargetStorage::Owned(data),
                 height,
@@ -1032,11 +1116,17 @@ fn encode_target_output(
                     data,
                     height,
                     width,
+                    channels,
+                    ..
                 } => ImageView {
                     pixels: PixelDataRef::U8(data),
                     height: *height,
                     width: *width,
-                    color: ColorModel::Rgb,
+                    color: if *channels == 1 {
+                        ColorModel::Gray
+                    } else {
+                        ColorModel::Rgb
+                    },
                 },
                 _ => return Err(PipelineRunError::SinkContract),
             }
@@ -1353,36 +1443,50 @@ fn output_to_python(py: Python<'_>, output: PipelineOutput) -> PyResult<Py<PyAny
             data,
             height,
             width,
-        } => Ok(data
-            .into_pyarray(py)
-            .reshape([height, width, 3])?
-            .into_any()
-            .unbind()),
+            channels,
+            rank,
+        } => {
+            let shape = if rank == 2 {
+                vec![height, width]
+            } else {
+                vec![height, width, channels]
+            };
+            Ok(data.into_pyarray(py).reshape(shape)?.into_any().unbind())
+        }
         PipelineOutput::F32Hwc {
             data,
             height,
             width,
-        } => Ok(data
-            .into_pyarray(py)
-            .reshape([height, width, 3])?
-            .into_any()
-            .unbind()),
+            channels,
+            rank,
+        } => {
+            let shape = if rank == 2 {
+                vec![height, width]
+            } else {
+                vec![height, width, channels]
+            };
+            Ok(data.into_pyarray(py).reshape(shape)?.into_any().unbind())
+        }
         PipelineOutput::U8Chw {
             data,
             height,
             width,
+            channels,
+            ..
         } => Ok(data
             .into_pyarray(py)
-            .reshape([3, height, width])?
+            .reshape([channels, height, width])?
             .into_any()
             .unbind()),
         PipelineOutput::F32Chw {
             data,
             height,
             width,
+            channels,
+            ..
         } => Ok(data
             .into_pyarray(py)
-            .reshape([3, height, width])?
+            .reshape([channels, height, width])?
             .into_any()
             .unbind()),
     }
@@ -1424,10 +1528,13 @@ fn native_outputs_to_python(
     Ok(PyTuple::new(py, outputs)?.into_any().unbind())
 }
 
-fn decoded_rgb_u8(image: DecodedImage) -> Result<(Vec<u8>, usize, usize), PipelineRunError> {
-    if image.height == 0 || image.width == 0 || image.color != ColorModel::Rgb {
+fn decoded_image_u8(image: DecodedImage) -> Result<(Vec<u8>, usize, usize), PipelineRunError> {
+    if image.height == 0
+        || image.width == 0
+        || !matches!(image.color, ColorModel::Rgb | ColorModel::Gray)
+    {
         return Err(PipelineRunError::DecodedContract(
-            "decoded pipeline input must be non-empty RGB",
+            "decoded pipeline input must be non-empty RGB or grayscale",
         ));
     }
     match image.pixels {
@@ -1440,10 +1547,20 @@ fn decoded_rgb_u8(image: DecodedImage) -> Result<(Vec<u8>, usize, usize), Pipeli
 
 fn explanation_to_python(
     py: Python<'_>,
-    value: PipelineExplanation,
+    mut value: PipelineExplanation,
     targets: &[TargetRoute],
+    core: &CompiledPipeline,
 ) -> PyResult<Py<PyAny>> {
+    let all_gray = targets
+        .iter()
+        .enumerate()
+        .filter(|(_, t)| t.role == TargetSpec::Image)
+        .all(|(index, _)| core.image_channel_alternatives(index) == [1]);
+    if all_gray {
+        value = core.explain_channels(1);
+    }
     let output = PyDict::new(py);
+    output.set_item("channel_scope", "per-target-immutable-alternatives")?;
     output.set_item("schema_version", EXPLANATION_SCHEMA_VERSION)?;
     output.set_item("mode", value.mode)?;
     output.set_item("sampling", value.sampling)?;
@@ -1474,20 +1591,97 @@ fn explanation_to_python(
         .filter(|target| target.role == TargetSpec::Image)
         .count();
     let mask_count = targets.len() - image_count;
-    let aggregate_pixel_passes = image_count * value.pixel_passes
+    let aggregate_pixel_passes = targets
+        .iter()
+        .enumerate()
+        .filter(|(_, t)| t.role == TargetSpec::Image)
+        .map(|(index, _)| {
+            core.image_channel_alternatives(index)
+                .iter()
+                .map(|&c| core.explain_channels(c).pixel_passes)
+                .max()
+                .unwrap_or(0)
+        })
+        .sum::<usize>()
         + mask_count * value.mask_plan.pixel_passes.saturating_sub(1);
     output.set_item("pixel_passes", aggregate_pixel_passes)?;
-    output.set_item(
-        "input",
-        image_contract_to_python(py, value.input.clone(), None)?,
-    )?;
+    let mut input_contract = value.input.clone();
+    input_contract.channels = "per-target-channel-alternatives";
+    input_contract.layout = "per-target";
+    output.set_item("input", image_contract_to_python(py, input_contract, None)?)?;
     let holds_gil = targets
         .iter()
         .any(|target| matches!(target.source, SourceConfig::Array));
     let target_values = targets
         .iter()
         .enumerate()
-        .map(|(index, target)| target_explanation_to_python(py, index, target, &value, holds_gil))
+        .map(|(index, target)| {
+            let choices = core.image_channel_alternatives(index);
+            let mut plan = if choices == [1] && target.role == TargetSpec::Image {
+                core.explain_channels(1)
+            } else {
+                value.clone()
+            };
+            if target.role == TargetSpec::Image {
+                plan.input.layout = if choices == [3] {
+                    "HWC"
+                } else if matches!(target.source, SourceConfig::Array) {
+                    "HW-or-HWC"
+                } else {
+                    "HW"
+                };
+            }
+            let result = target_explanation_to_python(py, index, target, &plan, holds_gil)?;
+            if target.role == TargetSpec::Image {
+                let bound = result.bind(py).downcast::<PyDict>()?;
+                bound.set_item("channels", choices)?;
+                bound.set_item(
+                    "channel_selection",
+                    if matches!(target.source, SourceConfig::Array) {
+                        "validated-array-shape-before-sampling"
+                    } else {
+                        "decoder-mode-at-compilation"
+                    },
+                )?;
+                let alternatives = choices
+                    .iter()
+                    .map(|&channels| {
+                        let mut alternative_plan = core.explain_channels(channels);
+                        if channels == 1 && !matches!(target.source, SourceConfig::Array) {
+                            alternative_plan.input.layout = "HW";
+                        }
+                        let alternative = target_explanation_to_python(
+                            py,
+                            index,
+                            target,
+                            &alternative_plan,
+                            holds_gil,
+                        )?;
+                        let dictionary = alternative.bind(py).downcast::<PyDict>()?;
+                        dictionary.set_item("channels", channels)?;
+                        dictionary.set_item(
+                            "steps",
+                            PyList::new(
+                                py,
+                                alternative_plan
+                                    .steps
+                                    .into_iter()
+                                    .map(|step| transform_explanation_to_python(py, step))
+                                    .collect::<PyResult<Vec<_>>>()?,
+                            )?,
+                        )?;
+                        dictionary.set_item(
+                            "unit_specializations",
+                            alternative_plan.unit_specializations,
+                        )?;
+                        dictionary.set_item("raster_elements", format!("H*W*{channels}"))?;
+                        Ok(alternative)
+                    })
+                    .collect::<PyResult<Vec<_>>>()?;
+                bound.set_item("channel_alternatives", PyList::new(py, alternatives)?)?;
+            }
+            Ok(result)
+        })
         .collect::<PyResult<Vec<_>>>()?;
     output.set_item("targets", PyList::new(py, target_values)?)?;
     output.set_item("fallbacks", value.fallbacks)?;
@@ -1528,7 +1722,7 @@ fn target_explanation_to_python(
     )?;
     output.set_item(
         "carrier",
-        source_explanation_to_python(py, target.source, target.role)?,
+        source_explanation_to_python(py, target.source, target.role, target.decode_mode)?,
     )?;
     let outputs = target
         .outputs
@@ -1658,7 +1852,7 @@ fn target_explanation_to_python(
     output.set_item("copies", PyList::new(py, copies)?)?;
 
     let input_dtype = "uint8";
-    let input_layout = if is_image { "HWC" } else { "HW" };
+    let input_layout = if is_image { plan.input.layout } else { "HW" };
     let output_dtype = if is_image { plan.output_dtype } else { "uint8" };
     let output_layout = if is_image { "per-output" } else { "HW" };
     let mut buffers = Vec::new();
@@ -1762,6 +1956,7 @@ fn source_explanation_to_python(
     py: Python<'_>,
     source: SourceConfig,
     role: TargetSpec,
+    decode_mode: DecodeMode,
 ) -> PyResult<Py<PyAny>> {
     let output = PyDict::new(py);
     match source {
@@ -1784,7 +1979,14 @@ fn source_explanation_to_python(
             )?;
             match role {
                 TargetSpec::Image => {
-                    output.set_item("mode", "rgb")?;
+                    output.set_item(
+                        "mode",
+                        if decode_mode == DecodeMode::Gray {
+                            "gray"
+                        } else {
+                            "rgb"
+                        },
+                    )?;
                     output.set_item("formats", ["jpeg", "png"])?;
                 }
                 TargetSpec::Mask { .. } => {
@@ -1819,6 +2021,14 @@ fn output_explanation_to_python(
         "HW"
     } else if tensor {
         "CHW"
+    } else if plan.input.channels == "gray" {
+        if matches!(target.source, SourceConfig::Array) {
+            "HW-or-HWC1"
+        } else {
+            "HW"
+        }
+    } else if plan.input.layout == "HW-or-HWC" {
+        "HW-or-HWC"
     } else {
         "HWC"
     };
@@ -1840,6 +2050,11 @@ fn output_explanation_to_python(
         "semantic-HWC-raster"
     } else if target_requirements(target).hwc {
         "from-shared-HWC-raster"
+    } else if plan.input.channels == "gray"
+        && !target_requirements(target).hwc
+        && (plan.mode == "compiled" || effective_terminal_normalize_status(plan).is_none())
+    {
+        "single-channel-owned-layout"
     } else if plan.mode == "compiled" && effective_terminal_normalize_status(plan) == Some("always")
     {
         "direct-CHW"
@@ -1948,6 +2163,12 @@ fn terminal_chw_copy_explanation(
 ) -> Option<CopyExplanation> {
     let requirements = target_requirements(target);
     if target.role != TargetSpec::Image || !requirements.chw {
+        return None;
+    }
+    if plan.input.channels == "gray"
+        && !requirements.hwc
+        && (plan.mode == "compiled" || effective_terminal_normalize_status(plan).is_none())
+    {
         return None;
     }
     if uses_direct_normalize_chw(target, plan) {

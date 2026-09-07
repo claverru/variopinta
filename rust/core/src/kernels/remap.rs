@@ -1,4 +1,3 @@
-use super::affine;
 use crate::{BorderMode, CoreError, CoreResult, Interpolation};
 
 const BLOCK: usize = 32;
@@ -48,7 +47,7 @@ impl AxisRemapScratch {
 }
 
 #[allow(clippy::too_many_arguments)]
-pub(crate) fn perspective(
+pub(crate) fn perspective<const C: usize>(
     data: &[u8],
     height: usize,
     width: usize,
@@ -69,7 +68,7 @@ pub(crate) fn perspective(
                 interpolation,
                 &mut descriptors[..count],
             );
-            sample_descriptors(
+            sample_descriptors::<C>(
                 data,
                 height,
                 width,
@@ -194,7 +193,7 @@ unsafe fn perspective_descriptors_avx2(
 }
 
 #[allow(clippy::too_many_arguments)]
-pub(crate) fn grid(
+pub(crate) fn grid<const C: usize>(
     data: &[u8],
     height: usize,
     width: usize,
@@ -225,16 +224,16 @@ pub(crate) fn grid(
                     if inlier {
                         for (destination_x, &source_x) in x[x_start..x_end].iter().enumerate() {
                             let destination_x = x_start + destination_x;
-                            copy_triplet(
+                            copy_triplet::<C>(
                                 data,
-                                (source_y as usize * width + source_x as usize) * 3,
+                                (source_y as usize * width + source_x as usize) * C,
                                 output,
-                                (destination_y * width + destination_x) * 3,
+                                (destination_y * width + destination_x) * C,
                             );
                         }
                     } else {
                         for destination_x in x_start..x_end {
-                            let pixel = nearest_border(
+                            let pixel = nearest_border::<C>(
                                 data,
                                 height,
                                 width,
@@ -243,8 +242,8 @@ pub(crate) fn grid(
                                 border_mode,
                                 fill,
                             );
-                            output[(destination_y * width + destination_x) * 3
-                                ..(destination_y * width + destination_x + 1) * 3]
+                            output[(destination_y * width + destination_x) * C
+                                ..(destination_y * width + destination_x + 1) * C]
                                 .copy_from_slice(&pixel);
                         }
                     }
@@ -272,17 +271,17 @@ pub(crate) fn grid(
                     }
                     if inlier {
                         for destination_x in x_start..x_end {
-                            bilinear_inlier(
+                            bilinear_inlier::<C>(
                                 data,
                                 width,
                                 x[destination_x],
                                 source_y,
-                                &mut output[(destination_y * width + destination_x) * 3..][..3],
+                                &mut output[(destination_y * width + destination_x) * C..][..C],
                             );
                         }
                     } else {
                         for destination_x in x_start..x_end {
-                            let pixel = bilinear_border(
+                            let pixel = bilinear_border::<C>(
                                 data,
                                 height,
                                 width,
@@ -291,8 +290,8 @@ pub(crate) fn grid(
                                 border_mode,
                                 fill,
                             );
-                            output[(destination_y * width + destination_x) * 3
-                                ..(destination_y * width + destination_x + 1) * 3]
+                            output[(destination_y * width + destination_x) * C
+                                ..(destination_y * width + destination_x + 1) * C]
                                 .copy_from_slice(&pixel);
                         }
                     }
@@ -324,7 +323,7 @@ fn make_descriptor(source_x: f32, source_y: f32, interpolation: Interpolation) -
 }
 
 #[allow(clippy::too_many_arguments)]
-fn sample_descriptors(
+fn sample_descriptors<const C: usize>(
     data: &[u8],
     height: usize,
     width: usize,
@@ -344,20 +343,22 @@ fn sample_descriptors(
             end += 1;
         }
         for (offset, &descriptor) in descriptors[start..end].iter().enumerate() {
-            let destination = (output_pixel + start + offset) * 3;
+            let destination = (output_pixel + start + offset) * C;
             match descriptor {
-                Descriptor::Invalid => output[destination..destination + 3].copy_from_slice(&fill),
-                Descriptor::Nearest { x, y } if inlier => copy_triplet(
+                Descriptor::Invalid => {
+                    output[destination..destination + C].copy_from_slice(&fill[..C])
+                }
+                Descriptor::Nearest { x, y } if inlier => copy_triplet::<C>(
                     data,
-                    (y as usize * width + x as usize) * 3,
+                    (y as usize * width + x as usize) * C,
                     output,
                     destination,
                 ),
                 Descriptor::Nearest { x, y } => {
-                    let pixel = nearest_border(data, height, width, x, y, border_mode, fill);
-                    output[destination..destination + 3].copy_from_slice(&pixel);
+                    let pixel = nearest_border::<C>(data, height, width, x, y, border_mode, fill);
+                    output[destination..destination + C].copy_from_slice(&pixel);
                 }
-                Descriptor::Bilinear { x0, y0, wx, wy } if inlier => bilinear_inlier(
+                Descriptor::Bilinear { x0, y0, wx, wy } if inlier => bilinear_inlier::<C>(
                     data,
                     width,
                     BilinearAxis {
@@ -368,10 +369,10 @@ fn sample_descriptors(
                         low: y0,
                         weight: wy,
                     },
-                    &mut output[destination..destination + 3],
+                    &mut output[destination..destination + C],
                 ),
                 Descriptor::Bilinear { x0, y0, wx, wy } => {
-                    let pixel = bilinear_border(
+                    let pixel = bilinear_border::<C>(
                         data,
                         height,
                         width,
@@ -386,7 +387,7 @@ fn sample_descriptors(
                         border_mode,
                         fill,
                     );
-                    output[destination..destination + 3].copy_from_slice(&pixel);
+                    output[destination..destination + C].copy_from_slice(&pixel);
                 }
             }
         }
@@ -437,11 +438,11 @@ fn bilinear_axis_in_bounds(axis: BilinearAxis, length: usize) -> bool {
     axis.low >= 0 && (axis.low as usize).saturating_add(1) < length
 }
 
-fn copy_triplet(data: &[u8], source: usize, output: &mut [u8], destination: usize) {
-    output[destination..destination + 3].copy_from_slice(&data[source..source + 3]);
+fn copy_triplet<const C: usize>(data: &[u8], source: usize, output: &mut [u8], destination: usize) {
+    output[destination..destination + C].copy_from_slice(&data[source..source + C]);
 }
 
-fn nearest_border(
+fn nearest_border<const C: usize>(
     data: &[u8],
     height: usize,
     width: usize,
@@ -449,28 +450,34 @@ fn nearest_border(
     y: isize,
     border_mode: BorderMode,
     fill: [u8; 3],
-) -> [u8; 3] {
+) -> [u8; C] {
     let Some((x, y)) = resolve(x, y, width, height, border_mode) else {
-        return fill;
+        return std::array::from_fn(|c| fill[c]);
     };
-    let source = (y * width + x) * 3;
-    [data[source], data[source + 1], data[source + 2]]
+    let source = (y * width + x) * C;
+    std::array::from_fn(|c| data[source + c])
 }
 
-fn bilinear_inlier(data: &[u8], width: usize, x: BilinearAxis, y: BilinearAxis, output: &mut [u8]) {
+fn bilinear_inlier<const C: usize>(
+    data: &[u8],
+    width: usize,
+    x: BilinearAxis,
+    y: BilinearAxis,
+    output: &mut [u8],
+) {
     let x0 = x.low as usize;
     let y0 = y.low as usize;
     let offsets = [
-        (y0 * width + x0) * 3,
-        (y0 * width + x0 + 1) * 3,
-        ((y0 + 1) * width + x0) * 3,
-        ((y0 + 1) * width + x0 + 1) * 3,
+        (y0 * width + x0) * C,
+        (y0 * width + x0 + 1) * C,
+        ((y0 + 1) * width + x0) * C,
+        ((y0 + 1) * width + x0 + 1) * C,
     ];
-    affine::bilinear_rgb(data, offsets, x.weight, y.weight, output);
+    super::super::operations::bilinear_channels::<C>(data, offsets, x.weight, y.weight, output);
 }
 
 #[allow(clippy::too_many_arguments)]
-fn bilinear_border(
+fn bilinear_border<const C: usize>(
     data: &[u8],
     height: usize,
     width: usize,
@@ -478,7 +485,7 @@ fn bilinear_border(
     y: BilinearAxis,
     border_mode: BorderMode,
     fill: [u8; 3],
-) -> [u8; 3] {
+) -> [u8; C] {
     let x1 = x.low.saturating_add(1);
     let y1 = y.low.saturating_add(1);
     let taps = [
@@ -489,10 +496,10 @@ fn bilinear_border(
     ];
     let inv_wx = 256 - x.weight;
     let inv_wy = 256 - y.weight;
-    let mut output = [0; 3];
-    for channel in 0..3 {
+    let mut output = [0; C];
+    for channel in 0..C {
         let value = |tap: Option<(usize, usize)>| {
-            tap.map_or(fill[channel], |(x, y)| data[(y * width + x) * 3 + channel])
+            tap.map_or(fill[channel], |(x, y)| data[(y * width + x) * C + channel])
         };
         let top = u32::from(value(taps[0])) * inv_wx + u32::from(value(taps[1])) * x.weight;
         let bottom = u32::from(value(taps[2])) * inv_wx + u32::from(value(taps[3])) * x.weight;

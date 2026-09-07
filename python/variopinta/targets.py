@@ -1,10 +1,10 @@
 from __future__ import annotations
 
 from collections.abc import Sequence
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from os import PathLike
 from pathlib import Path as _Path
-from typing import TYPE_CHECKING, Generic, TypeVar, overload
+from typing import TYPE_CHECKING, Generic, Literal, TypeVar, overload
 
 import numpy as np
 
@@ -218,7 +218,13 @@ class Image:
     outputs: Output | Sequence[OutputPort[object]] = (ReturnArray(),)
     name: str | None = None
 
+    decode_mode: Literal["rgb", "gray"] | None = field(default=None, kw_only=True)
+
     def __post_init__(self) -> None:
+        if self.decode_mode not in (None, "rgb", "gray"):
+            raise ValueError("decode_mode must be 'rgb', 'gray', or None")
+        if isinstance(self.carrier, Array) and self.decode_mode is not None:
+            raise ValueError("Array images infer channels; decode_mode must be None")
         object.__setattr__(self, "outputs", _validate_target(self.carrier, self.outputs, self.name))
 
     @overload
@@ -371,6 +377,7 @@ def _route(target: Target) -> dict[str, object]:
     carrier = target.carrier
     return {
         "role": "image" if isinstance(target, Image) else "mask",
+        "decode_mode": target.decode_mode if isinstance(target, Image) else None,
         "fill": target.fill if isinstance(target, Mask) else None,
         "name": target.name,
         "carrier": (

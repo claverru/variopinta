@@ -62,7 +62,7 @@ unsafe fn bilinear_rgb_avx2(data: &[u8], offsets: [usize; 4], wx: u32, wy: u32, 
     }
 }
 
-pub(crate) fn bilinear_constant(
+pub(crate) fn bilinear_constant<const C: usize>(
     data: &[u8],
     height: usize,
     width: usize,
@@ -71,7 +71,7 @@ pub(crate) fn bilinear_constant(
 ) -> CoreResult<Vec<u8>> {
     let expected = height
         .checked_mul(width)
-        .and_then(|pixels| pixels.checked_mul(3))
+        .and_then(|pixels| pixels.checked_mul(C))
         .ok_or_else(|| CoreError::Runtime("affine dimensions overflow".into()))?;
     if height == 0 || width == 0 || data.len() != expected || output.len() != expected {
         return Err(CoreError::Runtime(
@@ -79,16 +79,16 @@ pub(crate) fn bilinear_constant(
         ));
     }
     #[cfg(target_arch = "x86_64")]
-    if std::arch::is_x86_feature_detected!("avx2") {
+    if C == 3 && std::arch::is_x86_feature_detected!("avx2") {
         // SAFETY: AVX2 is detected and the safe wrapper validates both RGB buffers.
         unsafe { bilinear_avx2(data, height, width, matrix, &mut output) }?;
         return Ok(output);
     }
-    bilinear_scalar(data, height, width, matrix, &mut output)?;
+    bilinear_scalar::<C>(data, height, width, matrix, &mut output)?;
     Ok(output)
 }
 
-fn bilinear_scalar(
+fn bilinear_scalar<const C: usize>(
     data: &[u8],
     height: usize,
     width: usize,
@@ -125,7 +125,7 @@ fn bilinear_scalar(
         let x_hi = x_hi as usize;
         let mut sx_q = quantize_q16(sx0 + dsx * x_lo as f64, Q_SCALE)?;
         let mut sy_q = quantize_q16(sy0 + dsy * x_lo as f64, Q_SCALE)?;
-        let mut destination = (y * width + x_lo) * 3;
+        let mut destination = (y * width + x_lo) * C;
         for x in x_lo..x_hi {
             let x0 = (sx_q >> Q) as usize;
             let y0 = (sy_q >> Q) as usize;
@@ -135,10 +135,10 @@ fn bilinear_scalar(
             let wy = ((sy_q & 0xffff) as u32) >> 8;
             let inv_wx = 256 - wx;
             let inv_wy = 256 - wy;
-            let row0 = y0 * width * 3;
-            let row1 = y1 * width * 3;
-            let [p00, p01, p10, p11] = [row0 + x0 * 3, row0 + x1 * 3, row1 + x0 * 3, row1 + x1 * 3];
-            for channel in 0..3 {
+            let row0 = y0 * width * C;
+            let row1 = y1 * width * C;
+            let [p00, p01, p10, p11] = [row0 + x0 * C, row0 + x1 * C, row1 + x0 * C, row1 + x1 * C];
+            for channel in 0..C {
                 let top = data[p00 + channel] as u32 * inv_wx + data[p01 + channel] as u32 * wx;
                 let bottom = data[p10 + channel] as u32 * inv_wx + data[p11 + channel] as u32 * wx;
                 output[destination + channel] = ((top * inv_wy + bottom * wy + 32768) >> 16) as u8;
@@ -151,7 +151,7 @@ fn bilinear_scalar(
                     .checked_add(dsy_q)
                     .ok_or_else(|| CoreError::Invalid("Affine Q16 coordinate overflow".into()))?;
             }
-            destination += 3;
+            destination += C;
         }
     }
     Ok(())
@@ -333,10 +333,15 @@ mod tests {
                 [-0.7, 0.4, width as f32, 0.2, -0.8, height as f32],
             ] {
                 let mut expected = vec![0xa5; source.len()];
-                bilinear_scalar(&source, height, width, matrix, &mut expected).unwrap();
-                let actual =
-                    bilinear_constant(&source, height, width, matrix, vec![0xa5; source.len()])
-                        .unwrap();
+                bilinear_scalar::<3>(&source, height, width, matrix, &mut expected).unwrap();
+                let actual = bilinear_constant::<3>(
+                    &source,
+                    height,
+                    width,
+                    matrix,
+                    vec![0xa5; source.len()],
+                )
+                .unwrap();
                 assert_eq!(actual, expected, "{height}x{width} {matrix:?}");
             }
         }

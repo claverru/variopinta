@@ -77,14 +77,14 @@ transform_catalog! {
         pad_width_divisor: None,
         position: crate::PadPosition::Center,
         border_mode: crate::BorderMode::Constant,
-        fill: [0; 3],
+        fill: [0; 3].to_vec(),
         p: 1.0,
     },
     CoarseDropout: TransformPlan::CoarseDropout { .. } => crate::TransformSpec::CoarseDropout {
         num_holes_range: [1, 1],
         hole_height_range: crate::DropoutSizeRange::Pixels([1, 1]),
         hole_width_range: crate::DropoutSizeRange::Pixels([1, 1]),
-        fill: [0; 3],
+        fill: [0; 3].to_vec(),
         p: 1.0,
     },
     ColorJitter: TransformPlan::ColorJitter { .. } => crate::TransformSpec::ColorJitter {
@@ -101,14 +101,14 @@ transform_catalog! {
         shear: [0.0; 4],
         interpolation: crate::Interpolation::Bilinear,
         border_mode: crate::BorderMode::Constant,
-        fill: [0; 3],
+        fill: [0; 3].to_vec(),
         p: 1.0,
     },
     RandomRotation: TransformPlan::RandomRotation { .. } => crate::TransformSpec::RandomRotation {
         degrees: [-10.0, 10.0],
         interpolation: crate::Interpolation::Bilinear,
         border_mode: crate::BorderMode::Constant,
-        fill: [0; 3],
+        fill: [0; 3].to_vec(),
         p: 1.0,
     },
     GaussianNoise: TransformPlan::GaussianNoise { .. } => crate::TransformSpec::GaussianNoise {
@@ -126,7 +126,7 @@ transform_catalog! {
         scale: [0.05, 0.05],
         interpolation: crate::Interpolation::Bilinear,
         border_mode: crate::BorderMode::Constant,
-        fill: [0; 3],
+        fill: [0; 3].to_vec(),
         p: 1.0,
     },
     GridDistortion: TransformPlan::GridDistortion { .. } => crate::TransformSpec::GridDistortion {
@@ -134,7 +134,7 @@ transform_catalog! {
         distort_limit: [-0.3, 0.3],
         interpolation: crate::Interpolation::Bilinear,
         border_mode: crate::BorderMode::Constant,
-        fill: [0; 3],
+        fill: [0; 3].to_vec(),
         p: 1.0,
     },
     GaussianBlur: TransformPlan::GaussianBlur { .. } => crate::TransformSpec::GaussianBlur {
@@ -150,8 +150,8 @@ transform_catalog! {
     },
     Posterize: TransformPlan::Posterize { .. } => crate::TransformSpec::Posterize { bits: 4, p: 1.0 },
     Normalize: TransformPlan::Normalize { .. } => crate::TransformSpec::Normalize {
-        mean: [0.0; 3],
-        std: [1.0; 3],
+        mean: [0.0; 3].to_vec(),
+        std: [1.0; 3].to_vec(),
         max_pixel_value: 255.0,
         p: 1.0,
     },

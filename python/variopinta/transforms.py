@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from collections.abc import Sequence
 from dataclasses import dataclass, field
 from enum import Enum
 from typing import TypeAlias
@@ -9,6 +10,7 @@ from ._validation import (
     _affine_scale,
     _affine_shear,
     _affine_translate,
+    _channel_stats,
     _color_factor_range,
     _dropout_size_range,
     _f32,
@@ -19,7 +21,6 @@ from ._validation import (
     _probability,
     _sigma_range,
     _symmetric_limit_range,
-    _triplet,
     _value_range,
 )
 
@@ -144,7 +145,7 @@ class PadIfNeeded:
     position: PadPosition = PadPosition.CENTER
     p: float = 1.0
     border_mode: BorderMode = BorderMode.CONSTANT
-    fill: int | tuple[int, int, int] = 0
+    fill: int | Sequence[int] = 0
 
     def __post_init__(self) -> None:
         for axis, minimum, divisor in (
@@ -183,7 +184,7 @@ class CoarseDropout:
     num_holes_range: tuple[int, int] = (1, 2)
     hole_height_range: tuple[int, int] | tuple[float, float] = (0.1, 0.2)
     hole_width_range: tuple[int, int] | tuple[float, float] = (0.1, 0.2)
-    fill: int | tuple[int, int, int] = 0
+    fill: int | Sequence[int] = 0
     p: float = 0.5
     _hole_height_unit: str = field(init=False, repr=False, compare=False, default="fraction")
     _hole_width_unit: str = field(init=False, repr=False, compare=False, default="fraction")
@@ -278,7 +279,7 @@ class Affine:
     p: float = 1.0
     interpolation: Interpolation = Interpolation.BILINEAR
     border_mode: BorderMode = BorderMode.CONSTANT
-    fill: int | tuple[int, int, int] = 0
+    fill: int | Sequence[int] = 0
 
     def __post_init__(self) -> None:
         object.__setattr__(self, "degrees", _affine_degrees(self.degrees))
@@ -312,7 +313,7 @@ class RandomRotation:
     p: float = 1.0
     interpolation: Interpolation = Interpolation.BILINEAR
     border_mode: BorderMode = BorderMode.CONSTANT
-    fill: int | tuple[int, int, int] = 0
+    fill: int | Sequence[int] = 0
 
     def __post_init__(self) -> None:
         object.__setattr__(self, "degrees", _affine_degrees(self.degrees))
@@ -389,7 +390,7 @@ class Perspective:
     p: float = 1.0
     interpolation: Interpolation = Interpolation.BILINEAR
     border_mode: BorderMode = BorderMode.CONSTANT
-    fill: int | tuple[int, int, int] = 0
+    fill: int | Sequence[int] = 0
 
     def __post_init__(self) -> None:
         scale = _value_range("scale", self.scale, non_negative=True)
@@ -421,7 +422,7 @@ class GridDistortion:
     p: float = 1.0
     interpolation: Interpolation = Interpolation.BILINEAR
     border_mode: BorderMode = BorderMode.CONSTANT
-    fill: int | tuple[int, int, int] = 0
+    fill: int | Sequence[int] = 0
 
     def __post_init__(self) -> None:
         _positive_integer("num_steps", self.num_steps)
@@ -527,14 +528,14 @@ class Posterize:
 
 @dataclass(frozen=True, slots=True)
 class Normalize:
-    mean: tuple[float, float, float] = (0.485, 0.456, 0.406)
-    std: tuple[float, float, float] = (0.229, 0.224, 0.225)
+    mean: float | Sequence[float] = (0.485, 0.456, 0.406)
+    std: float | Sequence[float] = (0.229, 0.224, 0.225)
     max_pixel_value: float = 255.0
     p: float = 1.0
 
     def __post_init__(self) -> None:
-        object.__setattr__(self, "mean", _triplet("mean", self.mean, positive=False))
-        object.__setattr__(self, "std", _triplet("std", self.std, positive=True))
+        object.__setattr__(self, "mean", _channel_stats("mean", self.mean, positive=False))
+        object.__setattr__(self, "std", _channel_stats("std", self.std, positive=True))
         max_pixel_value = _f32("max_pixel_value", self.max_pixel_value)
         if max_pixel_value <= 0.0:
             raise ValueError("max_pixel_value must be finite and positive")

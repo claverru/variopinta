@@ -282,11 +282,36 @@ def _contract_cases() -> list[CaseSpec]:
     ]
 
 
+def _grayscale_cases() -> list[CaseSpec]:
+    return [
+        CaseSpec(
+            id=f"pipelines.grayscale.{kind}",
+            suite="pipelines",
+            label=f"Grayscale {kind}",
+            tags=("grayscale", "channel-comparison"),
+            routes=(
+                RouteSpec("variopinta.gray", "variopinta", "gray", "rust"),
+                RouteSpec(
+                    "variopinta.rgb-expansion", "variopinta", "rgb-expansion", "rust", "control"
+                ),
+            ),
+            sizes=(224, 512, 1024),
+            executor="grayscale",
+            factory=kind,
+            comparability="exact",
+            scopes=("grayscale", "variopinta"),
+            timing=DEFAULT_TIMING,
+        )
+        for kind in ("geometry", "filtering", "normalized-tensor")
+    ]
+
+
 CASES = tuple(
     sorted(
         [
             *_transform_cases(),
             *_pipeline_cases(),
+            *_grayscale_cases(),
             *_catalog_cases(),
             *_io_cases(),
             *_contract_cases(),

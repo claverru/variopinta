@@ -18,6 +18,7 @@ FRAMEWORK_PATHS = (
 )
 
 SCOPE_PATTERNS = {
+    "grayscale": ("benchmarks/grayscale_suite.py", "rust/core/examples/grayscale_memory.rs"),
     "transforms": (
         "benchmarks/adapters.py",
         "benchmarks/layer_worker.py",

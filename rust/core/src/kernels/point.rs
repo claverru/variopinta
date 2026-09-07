@@ -364,6 +364,52 @@ unsafe fn apply_byte_map_avx2(
     }
 }
 
+pub(crate) fn horizontal_flip_channels<const C: usize>(
+    data: &mut [u8],
+    height: usize,
+    width: usize,
+) {
+    if C == 3 {
+        horizontal_flip(data, height, width);
+        return;
+    }
+    for row in data.chunks_exact_mut(width * C) {
+        for x in 0..width / 2 {
+            for c in 0..C {
+                row.swap(x * C + c, (width - x - 1) * C + c);
+            }
+        }
+    }
+}
+
+pub(crate) fn vertical_flip_channels<const C: usize>(data: &mut [u8], height: usize, width: usize) {
+    if C == 3 {
+        vertical_flip(data, height, width);
+        return;
+    }
+    for y in 0..height / 2 {
+        for x in 0..width * C {
+            data.swap(y * width * C + x, (height - y - 1) * width * C + x);
+        }
+    }
+}
+
+pub(crate) fn vertical_flip_into_channels<const C: usize>(
+    data: &[u8],
+    output: &mut [u8],
+    height: usize,
+    width: usize,
+) {
+    if C == 3 {
+        vertical_flip_into(data, output, height, width);
+        return;
+    }
+    for (y, row) in output.chunks_exact_mut(width * C).enumerate() {
+        let source = (height - y - 1) * width * C;
+        row.copy_from_slice(&data[source..source + width * C]);
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

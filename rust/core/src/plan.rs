@@ -828,7 +828,7 @@ mod tests {
                 pad_width_divisor: None,
                 position,
                 border_mode: BorderMode::Constant,
-                fill: [3, 5, 7],
+                fill: [3, 5, 7].to_vec(),
                 p: 1.0,
             }])
             .unwrap();
@@ -853,7 +853,7 @@ mod tests {
                 pad_width_divisor: Some(5),
                 position: PadPosition::Random,
                 border_mode: BorderMode::Reflect101,
-                fill: [0; 3],
+                fill: [0; 3].to_vec(),
                 p: 1.0,
             },
             TransformSpec::RandomCrop {
@@ -897,7 +897,7 @@ mod tests {
                 pad_width_divisor: None,
                 position: PadPosition::Center,
                 border_mode: BorderMode::Constant,
-                fill: [0; 3],
+                fill: [0; 3].to_vec(),
                 p: 1.0,
             }])
             .is_err());
@@ -910,7 +910,7 @@ mod tests {
             num_holes_range: [3, 3],
             hole_height_range: DropoutSizeRange::Fraction([0.25, 0.25]),
             hole_width_range: DropoutSizeRange::Pixels([7, 7]),
-            fill: [3, 5, 7],
+            fill: [3, 5, 7].to_vec(),
             p: 1.0,
         }])
         .unwrap();
@@ -932,7 +932,7 @@ mod tests {
             num_holes_range: [1, 1],
             hole_height_range: DropoutSizeRange::Pixels([100, 200]),
             hole_width_range: DropoutSizeRange::Fraction([0.01, 0.01]),
-            fill: [0; 3],
+            fill: [0; 3].to_vec(),
             p: 1.0,
         }])
         .unwrap();
@@ -972,7 +972,7 @@ mod tests {
                 num_holes_range: count,
                 hole_height_range: height,
                 hole_width_range: width,
-                fill: [0; 3],
+                fill: [0; 3].to_vec(),
                 p: 1.0,
             }])
             .is_err());
@@ -988,7 +988,7 @@ mod tests {
             shear: [-13.0, 19.0, -9.0, 11.0],
             interpolation: Interpolation::Bilinear,
             border_mode: BorderMode::Reflect101,
-            fill: [11, 13, 17],
+            fill: [11, 13, 17].to_vec(),
             p: 1.0,
         }])
         .unwrap();
@@ -1153,7 +1153,7 @@ mod tests {
             num_holes_range: [usize::MAX, usize::MAX],
             hole_height_range: DropoutSizeRange::Pixels([1, 1]),
             hole_width_range: DropoutSizeRange::Pixels([1, 1]),
-            fill: [0; 3],
+            fill: [0; 3].to_vec(),
             p: 1.0,
         }])
         .unwrap();
@@ -1194,7 +1194,7 @@ mod tests {
                 shear: [0.0; 4],
                 interpolation: Interpolation::Bilinear,
                 border_mode: BorderMode::Constant,
-                fill: [0; 3],
+                fill: [0; 3].to_vec(),
                 p: 1.0,
             },
             TransformSpec::Affine {
@@ -1204,7 +1204,7 @@ mod tests {
                 shear: [0.0; 4],
                 interpolation: Interpolation::Bilinear,
                 border_mode: BorderMode::Constant,
-                fill: [0; 3],
+                fill: [0; 3].to_vec(),
                 p: 1.0,
             },
             TransformSpec::Affine {
@@ -1214,7 +1214,7 @@ mod tests {
                 shear: [0.0; 4],
                 interpolation: Interpolation::Bilinear,
                 border_mode: BorderMode::Constant,
-                fill: [0; 3],
+                fill: [0; 3].to_vec(),
                 p: 1.0,
             },
             TransformSpec::Affine {
@@ -1224,7 +1224,7 @@ mod tests {
                 shear: [0.0, 0.0, 90.0, 90.0],
                 interpolation: Interpolation::Bilinear,
                 border_mode: BorderMode::Constant,
-                fill: [0; 3],
+                fill: [0; 3].to_vec(),
                 p: 1.0,
             },
         ];
@@ -1320,8 +1320,8 @@ mod tests {
     fn normalize_must_be_terminal() {
         let error = TransformPlan::compile(vec![
             TransformSpec::Normalize {
-                mean: [0.0; 3],
-                std: [1.0; 3],
+                mean: [0.0; 3].to_vec(),
+                std: [1.0; 3].to_vec(),
                 max_pixel_value: 255.0,
                 p: 1.0,
             },

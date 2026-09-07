@@ -18,8 +18,10 @@ import variopinta as vp
 for bilinear downscaling where offered.
 
 `border_mode` accepts `vp.BorderMode.CONSTANT` or
-`vp.BorderMode.REFLECT101`. An image `fill` is one integer or an RGB tuple with
-values in `[0, 255]`; reflect-101 ignores it. A mask target has its own scalar
+`vp.BorderMode.REFLECT101`. An image `fill` is an integer or a one-/three-element integer sequence in
+`[0, 255]`, excluding booleans. Scalars and one-element sequences broadcast;
+three-element sequences require RGB for active transforms, including with
+reflect-101 borders. Reflect-101 ignores the compatible fill during rasterization. A mask target has its own scalar
 `fill` in `[0, 255]`.
 
 A scalar sampling argument usually fixes a value or creates the symmetric
@@ -234,6 +236,11 @@ brightness, contrast, or saturation value `v` creates the factor range
 `[0, 0.5]` creates a symmetric range in turns; an explicit range must stay in
 `[-0.5, 0.5]`.
 
+On grayscale, saturation and hue preserve pixels. Their parameters and order
+are still sampled, so channel count does not affect later geometric sampling.
+Brightness and contrast retain the composed Q14 path when hue is disabled and
+the staged rounding/clipping barriers when hue is enabled.
+
 ### `GaussianNoise`
 
 ```python
@@ -242,7 +249,8 @@ vp.GaussianNoise(mean=0.0, std=10.0, per_channel=True, p=1.0)
 
 Adds Gaussian noise expressed in `uint8` levels. `mean` is a fixed scalar or
 finite range; `std` is a fixed non-negative scalar or non-negative range. With
-`per_channel=False`, the RGB channels share one draw at each pixel.
+`per_channel=False`, the RGB channels share one draw at each pixel. Both modes
+use the same single draw per pixel on grayscale.
 
 ### `Sharpen`
 
@@ -270,6 +278,7 @@ vp.Grayscale(p=1.0)
 ```
 
 Writes luminance into all three RGB channels; the output remains RGB.
+One-channel input is an identity with preserved rank and owned output.
 
 ### `Invert`
 
@@ -312,12 +321,16 @@ vp.Normalize(
 )
 ```
 
-Computes `(pixel / max_pixel_value - mean) / std` per RGB channel and produces
-`float32`. `mean` contains three finite values, `std` contains three positive
-values, and `max_pixel_value` is positive.
+Computes `(pixel / max_pixel_value - mean) / std` per channel and produces
+`float32`. Each of `mean` and `std` accepts a finite scalar or a one-/three-element
+numeric sequence, excluding booleans. Scalars and one-element sequences broadcast;
+three-element sequences require RGB. `std` remains positive after float32
+canonicalization, and `max_pixel_value` is positive. The unchanged RGB defaults
+require grayscale callers to supply compatible parameters, such as
+`Normalize(mean=0.5, std=0.5)`.
 
 `Normalize` must be the final transform. `ReturnArray` presents the result as
-HWC and `ReturnTensor` as CHW. A route on which normalization can execute
+HW/HWC with preserved array rank and `ReturnTensor` as CHW. A route on which normalization can execute
 cannot encode or write its final image. Masks are unchanged.
 
 ## Cross-target semantics

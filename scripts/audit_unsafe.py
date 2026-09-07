@@ -7,6 +7,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 EXPECTED = {
+    "rust/core/examples/grayscale_memory.rs": (3, ["allocator_preserves_bytes_across_growth"]),
     "rust/core/src/kernels/affine.rs": (
         4,
         [

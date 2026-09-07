@@ -112,6 +112,14 @@ pub(crate) struct LoweringPlan {
 
 impl LoweringPlan {
     pub(crate) fn compile(transforms: &[TransformPlan], mode: ExecutionMode) -> CoreResult<Self> {
+        Self::compile_channels(transforms, mode, 3)
+    }
+
+    fn compile_channels(
+        transforms: &[TransformPlan],
+        mode: ExecutionMode,
+        channels: usize,
+    ) -> CoreResult<Self> {
         let mut nodes = Vec::new();
         nodes
             .try_reserve_exact(transforms.len())
@@ -119,7 +127,7 @@ impl LoweringPlan {
 
         for (index, transform) in transforms.iter().enumerate() {
             let capabilities = transform.capabilities();
-            let implementations = kernels::implementations(transform);
+            let implementations = kernels::channel_implementations(transform, channels);
             validate_implementations(capabilities, implementations)?;
 
             let borrowed_entry = mode == ExecutionMode::Compiled
@@ -175,6 +183,13 @@ impl LoweringPlan {
             entry_prerequisites,
             copy_policy,
         })
+    }
+
+    pub(crate) fn compile_gray(
+        transforms: &[TransformPlan],
+        mode: ExecutionMode,
+    ) -> CoreResult<Self> {
+        Self::compile_channels(transforms, mode, 1)
     }
 
     pub(crate) fn nodes(&self) -> &[LoweringNode] {
@@ -446,7 +461,7 @@ mod tests {
             shear: [0.0; 4],
             interpolation: Interpolation::Bilinear,
             border_mode: BorderMode::Constant,
-            fill: [0; 3],
+            fill: [0; 3].to_vec(),
             p: 1.0,
         }]);
         let lowering = LoweringPlan::compile(&transforms, ExecutionMode::Compiled).unwrap();

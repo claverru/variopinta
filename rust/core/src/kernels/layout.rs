@@ -366,6 +366,76 @@ unsafe fn assume_init_u8(mut values: Vec<MaybeUninit<u8>>) -> Vec<u8> {
     }
 }
 
+pub(crate) fn channels_to_chw<const C: usize, T: Copy + Default>(
+    data: &[T],
+    height: usize,
+    width: usize,
+) -> CoreResult<Vec<T>> {
+    if C == 3 {
+        return hwc_to_chw(data, height, width);
+    }
+    if data.len() != crate::operations::raster_len::<C>(height, width)? {
+        return Err(CoreError::Invalid("invalid raster buffer".into()));
+    }
+    let mut output = Vec::new();
+    output
+        .try_reserve_exact(data.len())
+        .map_err(|_| CoreError::Runtime("output allocation failed".into()))?;
+    output.resize(data.len(), T::default());
+    for (pixel, channels) in data.chunks_exact(C).enumerate() {
+        for c in 0..C {
+            output[c * height * width + pixel] = channels[c];
+        }
+    }
+    Ok(output)
+}
+
+pub(crate) fn channels_u8_to_chw<const C: usize>(
+    data: &[u8],
+    height: usize,
+    width: usize,
+) -> CoreResult<Vec<u8>> {
+    if C == 3 {
+        hwc_u8_to_chw(data, height, width)
+    } else {
+        channels_to_chw::<C, _>(data, height, width)
+    }
+}
+
+pub(crate) fn normalize_channels<const C: usize>(
+    data: &[u8],
+    mean: [f32; 3],
+    std: [f32; 3],
+    maximum: f32,
+) -> CoreResult<Vec<f32>> {
+    if C == 3 {
+        return normalize_hwc(data, mean, std, maximum);
+    }
+    let scale = 1.0 / (maximum * std[0]);
+    let bias = -mean[0] / std[0];
+    let mut output = Vec::new();
+    output
+        .try_reserve_exact(data.len())
+        .map_err(|_| CoreError::Runtime("output allocation failed".into()))?;
+    output.extend(data.iter().map(|&value| f32::from(value) * scale + bias));
+    Ok(output)
+}
+
+pub(crate) fn normalize_channels_to_chw<const C: usize>(
+    data: &[u8],
+    height: usize,
+    width: usize,
+    mean: [f32; 3],
+    std: [f32; 3],
+    maximum: f32,
+) -> CoreResult<Vec<f32>> {
+    if C == 3 {
+        normalize_hwc_to_chw(data, height, width, mean, std, maximum)
+    } else {
+        normalize_channels::<C>(data, mean, std, maximum)
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

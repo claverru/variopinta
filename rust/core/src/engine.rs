@@ -1,5 +1,8 @@
 use crate::capability::ExecutionForm;
-use crate::kernels::layout::{hwc_to_chw, hwc_u8_to_chw, normalize_hwc, normalize_hwc_to_chw};
+use crate::kernels::layout::{
+    channels_to_chw as hwc_to_chw, channels_u8_to_chw as hwc_u8_to_chw,
+    normalize_channels as normalize_hwc, normalize_channels_to_chw as normalize_hwc_to_chw,
+};
 use crate::kernels::point;
 use crate::mask::{mask_len, MaskPlan};
 use crate::operations::*;
@@ -21,6 +24,10 @@ struct ExecutionPlan {
     transforms: Vec<TransformPlan>,
     mode: ExecutionMode,
     lowering: LoweringPlan,
+    gray_lowering: LoweringPlan,
+    channels: Vec<Vec<usize>>,
+    gray_error: Option<String>,
+    channel_parameters: Vec<Vec<crate::PolicyExplanation>>,
     mask: MaskPlan,
     targets: Vec<TargetSpec>,
     requirements: Vec<TargetRequirements>,
@@ -29,7 +36,9 @@ struct ExecutionPlan {
 
 impl ExecutionPlan {
     fn compile(spec: PipelineSpec, mode: ExecutionMode) -> CoreResult<Self> {
-        let (transform_specs, targets, requirements) = spec.into_parts();
+        let (transform_specs, targets, requirements, image_channels) = spec.into_parts();
+        let gray_error = gray_constraint(&transform_specs);
+        let channel_parameters = transform_specs.iter().map(channel_parameters).collect();
         if targets.is_empty() {
             return Err(CoreError::Invalid(
                 "a pipeline requires at least one target".into(),
@@ -39,7 +48,41 @@ impl ExecutionPlan {
         let mask = MaskPlan::compile(&transforms)?;
         let lowering = LoweringPlan::compile(&transforms, mode)?;
         let explanation = crate::explanation::build(&transforms, mode, &lowering, &mask);
+        let gray_lowering = LoweringPlan::compile_gray(&transforms, mode)?;
+        if !image_channels.is_empty() && image_channels.len() != targets.len() {
+            return Err(CoreError::Invalid(
+                "channel choices must match targets".into(),
+            ));
+        }
+        let mut channels = Vec::new();
+        for (index, target) in targets.iter().enumerate() {
+            let choices = if *target == TargetSpec::Image {
+                let requested = image_channels.get(index).copied().flatten();
+                [1, 3]
+                    .into_iter()
+                    .filter(|&c| {
+                        requested.is_none_or(|known| known == c) && (c == 3 || gray_error.is_none())
+                    })
+                    .collect::<Vec<_>>()
+            } else {
+                vec![1]
+            };
+            if choices.is_empty() {
+                return Err(CoreError::Invalid(format!(
+                    "target {index}: {}",
+                    gray_error
+                        .as_deref()
+                        .unwrap_or("unsupported image channels")
+                )));
+            }
+            channels.push(choices);
+        }
+
         Ok(Self {
+            gray_lowering,
+            channels,
+            gray_error,
+            channel_parameters,
             lowering,
             mask,
             targets,
@@ -73,7 +116,7 @@ impl CompiledPipeline {
                 "expected a non-empty HWC RGB buffer".into(),
             ));
         }
-        let mut output = self.sample_and_run_image(
+        let mut output = self.sample_and_run_image::<3>(
             data,
             height,
             width,
@@ -109,25 +152,27 @@ impl CompiledPipeline {
             .try_reserve_exact(inputs.len())
             .map_err(|_| CoreError::Runtime("target output allocation failed".into()))?;
         for (input, requirements) in inputs.into_iter().zip(&self.plan.requirements) {
-            let output = match (input.role, input.data) {
+            let mut output = match (input.role, input.data) {
                 (TargetSpec::Image, TargetBuffer::Borrowed(data)) => {
-                    TargetOutput::Image(self.run_image_outputs(
+                    TargetOutput::Image(self.run_selected_image(
                         data,
                         height,
                         width,
                         &sampled,
                         workspace,
                         *requirements,
+                        input.channels,
                     )?)
                 }
                 (TargetSpec::Image, TargetBuffer::Owned(data)) => {
-                    TargetOutput::Image(self.run_image_outputs(
+                    TargetOutput::Image(self.run_selected_image(
                         &data,
                         height,
                         width,
                         &sampled,
                         workspace,
                         *requirements,
+                        input.channels,
                     )?)
                 }
                 (TargetSpec::Mask { fill }, TargetBuffer::Borrowed(data)) => {
@@ -151,17 +196,144 @@ impl CompiledPipeline {
                     )?)
                 }
             };
+            if let TargetOutput::Image(image) = &mut output {
+                if let Some(
+                    PipelineOutput::U8Hwc { rank, .. } | PipelineOutput::F32Hwc { rank, .. },
+                ) = &mut image.hwc
+                {
+                    *rank = input.rank;
+                }
+            }
             outputs.push(output);
         }
         Ok(outputs)
     }
 
+    pub fn image_channel_alternatives(&self, target: usize) -> &[usize] {
+        &self.plan.channels[target]
+    }
+
+    pub fn validate_image_channels(&self, target: usize, channels: usize) -> CoreResult<()> {
+        if self
+            .plan
+            .channels
+            .get(target)
+            .is_some_and(|choices| choices.contains(&channels))
+        {
+            return Ok(());
+        }
+        Err(CoreError::Invalid(format!(
+            "target {target}: {}",
+            if channels == 1 {
+                self.plan
+                    .gray_error
+                    .as_deref()
+                    .unwrap_or("grayscale is not configured for this target")
+            } else {
+                "image requires one or three supported channels"
+            }
+        )))
+    }
+
+    fn lowering<const C: usize>(&self) -> &LoweringPlan {
+        if C == 1 {
+            &self.plan.gray_lowering
+        } else {
+            &self.plan.lowering
+        }
+    }
+
+    pub fn explain_channels(&self, channels: usize) -> PipelineExplanation {
+        if channels == 3 {
+            return self.explain();
+        }
+        let mut explanation = crate::explanation::build(
+            &self.plan.transforms,
+            self.plan.mode,
+            &self.plan.gray_lowering,
+            &self.plan.mask,
+        );
+        explanation.input.channels = "gray";
+        explanation.output.channels = "gray";
+        explanation.input.layout = "HW-or-HWC1";
+        for (step, transform) in explanation.steps.iter_mut().zip(&self.plan.transforms) {
+            if step.status == "never" {
+                continue;
+            }
+            step.fallback = match step.name {
+                "Invert" | "Solarize" | "Posterize" | "GaussianNoise" | "GaussianBlur"
+                | "Sharpen" => crate::plan::owned_simd_fallback(),
+                "Perspective" => "runtime-vector-coordinates-or-scalar",
+                _ => "portable-scalar",
+            };
+            if step.name == "GaussianNoise" {
+                if let Some(policy) = step.policies.iter_mut().find(|p| p.name == "channels") {
+                    policy.value = "one-draw-per-gray-pixel".into();
+                }
+            }
+            if step.name == "Grayscale" {
+                step.pixel_passes = 0;
+                step.execution = "identity";
+                step.policies = vec![crate::PolicyExplanation {
+                    name: "channels",
+                    value: "identity-one-channel".into(),
+                }];
+                step.fallback = "none";
+            }
+            if let TransformPlan::ColorJitter {
+                brightness,
+                contrast,
+                ..
+            } = transform
+            {
+                if *brightness == [1.0, 1.0] && *contrast == [1.0, 1.0] {
+                    step.execution = "identity";
+                    step.pixel_passes = 0;
+                    step.fallback = "none";
+                } else {
+                    step.execution = "gray-brightness-contrast-preserve-numeric-barriers";
+                }
+                step.policies.push(crate::PolicyExplanation {
+                    name: "gray-components",
+                    value: "brightness-and-contrast; hue-and-saturation-are-identities".into(),
+                });
+            }
+        }
+        explanation.pixel_passes = explanation.steps.iter().map(|step| step.pixel_passes).sum();
+        explanation.fallbacks = explanation
+            .steps
+            .iter()
+            .map(|step| step.fallback)
+            .filter(|&s| s != "none")
+            .collect();
+        explanation.fallbacks.sort_unstable();
+        explanation.fallbacks.dedup();
+        self.configured_explanation(explanation)
+    }
+
+    fn configured_explanation(&self, mut explanation: PipelineExplanation) -> PipelineExplanation {
+        for (step, parameters) in explanation
+            .steps
+            .iter_mut()
+            .zip(&self.plan.channel_parameters)
+        {
+            for parameter in parameters {
+                if let Some(policy) = step.policies.iter_mut().find(|p| p.name == parameter.name) {
+                    *policy = parameter.clone();
+                } else {
+                    step.policies.push(parameter.clone());
+                }
+            }
+        }
+        explanation
+    }
+
     pub fn explain(&self) -> PipelineExplanation {
-        self.plan.explanation.clone()
+        self.configured_explanation(self.plan.explanation.clone())
     }
 }
 
-fn materialize_image_outputs(
+fn materialize_image_outputs<const C: usize>(
     output: PipelineOutput,
     requirements: TargetRequirements,
 ) -> CoreResult<ImageOutput> {
@@ -170,18 +342,23 @@ fn materialize_image_outputs(
             data,
             height,
             width,
+            ..
         } => {
             let chw = requirements
                 .chw
-                .then(|| hwc_u8_to_chw(&data, height, width))
+                .then(|| hwc_u8_to_chw::<C>(&data, height, width))
                 .transpose()?
                 .map(|data| PipelineOutput::U8Chw {
+                    channels: C,
+                    rank: 3,
                     data,
                     height,
                     width,
                 });
             Ok(ImageOutput {
                 hwc: requirements.hwc.then_some(PipelineOutput::U8Hwc {
+                    channels: C,
+                    rank: 3,
                     data,
                     height,
                     width,
@@ -193,18 +370,23 @@ fn materialize_image_outputs(
             data,
             height,
             width,
+            ..
         } => {
             let chw = requirements
                 .chw
-                .then(|| hwc_to_chw(&data, height, width))
+                .then(|| hwc_to_chw::<C, _>(&data, height, width))
                 .transpose()?
                 .map(|data| PipelineOutput::F32Chw {
+                    channels: C,
+                    rank: 3,
                     data,
                     height,
                     width,
                 });
             Ok(ImageOutput {
                 hwc: requirements.hwc.then_some(PipelineOutput::F32Hwc {
+                    channels: C,
+                    rank: 3,
                     data,
                     height,
                     width,
@@ -259,8 +441,23 @@ impl CompiledPipeline {
                     "target {index} dimensions do not match the initial coordinate frame"
                 )));
             }
+            if (matches!(expected, TargetSpec::Mask { .. })
+                && (input.channels, input.rank) != (1, 2))
+                || !matches!((input.channels, input.rank), (1, 2 | 3) | (3, 3))
+            {
+                return Err(CoreError::Invalid(format!(
+                    "target {index} has incompatible channels and rank"
+                )));
+            }
             let expected_len = match expected {
-                TargetSpec::Image => rgb_len(input.height, input.width)?,
+                TargetSpec::Image => {
+                    self.validate_image_channels(index, input.channels)?;
+                    input
+                        .height
+                        .checked_mul(input.width)
+                        .and_then(|n| n.checked_mul(input.channels))
+                        .ok_or_else(|| CoreError::Invalid("image dimensions overflow".into()))?
+                }
                 TargetSpec::Mask { .. } => mask_len(input.height, input.width)?,
             };
             let actual_len = match &input.data {
@@ -282,7 +479,7 @@ impl CompiledPipeline {
         Ok(())
     }
 
-    fn sample_and_run_image(
+    fn sample_and_run_image<const C: usize>(
         &self,
         data: &[u8],
         height: usize,
@@ -292,10 +489,30 @@ impl CompiledPipeline {
         requirements: TargetRequirements,
     ) -> CoreResult<ImageOutput> {
         let sampled = TransformPlan::sample(&self.plan.transforms, height, width, run_seed)?;
-        self.run_image_outputs(data, height, width, &sampled, workspace, requirements)
+        self.run_image_outputs::<C>(data, height, width, &sampled, workspace, requirements)
     }
 
-    fn run_image_outputs(
+    #[allow(clippy::too_many_arguments)]
+    fn run_selected_image(
+        &self,
+        data: &[u8],
+        height: usize,
+        width: usize,
+        sampled: &[SampledTransform],
+        workspace: &mut Workspace,
+        requirements: TargetRequirements,
+        channels: usize,
+    ) -> CoreResult<ImageOutput> {
+        match channels {
+            1 => self.run_image_outputs::<1>(data, height, width, sampled, workspace, requirements),
+            3 => self.run_image_outputs::<3>(data, height, width, sampled, workspace, requirements),
+            _ => Err(CoreError::Invalid(
+                "image requires one or three channels".into(),
+            )),
+        }
+    }
+
+    fn run_image_outputs<const C: usize>(
         &self,
         data: &[u8],
         height: usize,
@@ -304,11 +521,11 @@ impl CompiledPipeline {
         workspace: &mut Workspace,
         requirements: TargetRequirements,
     ) -> CoreResult<ImageOutput> {
-        let output = self.run_image(data, height, width, sampled, workspace, requirements)?;
-        materialize_image_outputs(output, requirements)
+        let output = self.run_image::<C>(data, height, width, sampled, workspace, requirements)?;
+        materialize_image_outputs::<C>(output, requirements)
     }
 
-    fn run_image(
+    fn run_image<const C: usize>(
         &self,
         data: &[u8],
         height: usize,
@@ -320,13 +537,13 @@ impl CompiledPipeline {
         let reuse = self.plan.mode != ExecutionMode::StagedFresh;
         if self.plan.mode == ExecutionMode::Compiled {
             if let Some(output) =
-                self.compiled_terminal_entry(data, height, width, sampled, requirements)?
+                self.compiled_terminal_entry::<C>(data, height, width, sampled, requirements)?
             {
                 return Ok(output);
             }
         }
         let (mut image, start) = if self.plan.mode == ExecutionMode::Compiled {
-            self.compiled_entry(data, height, width, sampled, workspace)?
+            self.compiled_entry::<C>(data, height, width, sampled, workspace)?
         } else {
             (
                 ImageU8 {
@@ -354,9 +571,12 @@ impl CompiledPipeline {
                     },
                     SampledTransform::Resize { height, width },
                 ) => {
-                    let destination =
-                        workspace.take_staged_u8(rgb_len(*height, *width)?, false, reuse)?;
-                    let next = resize_raw(
+                    let destination = workspace.take_staged_u8(
+                        raster_len::<C>(*height, *width)?,
+                        false,
+                        reuse,
+                    )?;
+                    let next = resize_raw::<C>(
                         &image.data,
                         image.height,
                         image.width,
@@ -372,11 +592,11 @@ impl CompiledPipeline {
                 }
                 (TransformPlan::RandomCrop { .. }, SampledTransform::RandomCrop(crop)) => {
                     let destination = workspace.take_staged_u8(
-                        rgb_len(crop.height, crop.width)?,
+                        raster_len::<C>(crop.height, crop.width)?,
                         false,
                         reuse,
                     )?;
-                    let next = random_crop_raw_into(
+                    let next = random_crop_raw_into::<C>(
                         &image.data,
                         image.height,
                         image.width,
@@ -399,20 +619,23 @@ impl CompiledPipeline {
                     },
                 ) => {
                     let crop_destination = workspace.take_staged_u8(
-                        rgb_len(crop.height, crop.width)?,
+                        raster_len::<C>(crop.height, crop.width)?,
                         false,
                         reuse,
                     )?;
-                    let cropped = random_crop_raw_into(
+                    let cropped = random_crop_raw_into::<C>(
                         &image.data,
                         image.height,
                         image.width,
                         *crop,
                         crop_destination,
                     )?;
-                    let resize_destination =
-                        workspace.take_staged_u8(rgb_len(*height, *width)?, false, reuse)?;
-                    let next = resize_raw(
+                    let resize_destination = workspace.take_staged_u8(
+                        raster_len::<C>(*height, *width)?,
+                        false,
+                        reuse,
+                    )?;
+                    let next = resize_raw::<C>(
                         &cropped.data,
                         cropped.height,
                         cropped.width,
@@ -428,18 +651,22 @@ impl CompiledPipeline {
                     image = next;
                 }
                 (TransformPlan::HorizontalFlip { .. }, SampledTransform::HorizontalFlip) => {
-                    point::horizontal_flip(&mut image.data, image.height, image.width);
+                    point::horizontal_flip_channels::<C>(
+                        &mut image.data,
+                        image.height,
+                        image.width,
+                    );
                 }
                 (TransformPlan::VerticalFlip { .. }, SampledTransform::VerticalFlip) => {
-                    point::vertical_flip(&mut image.data, image.height, image.width);
+                    point::vertical_flip_channels::<C>(&mut image.data, image.height, image.width);
                 }
                 (TransformPlan::CenterCrop { .. }, SampledTransform::CenterCrop(crop)) => {
                     let destination = workspace.take_staged_u8(
-                        rgb_len(crop.height, crop.width)?,
+                        raster_len::<C>(crop.height, crop.width)?,
                         false,
                         reuse,
                     )?;
-                    let next = random_crop_raw_into(
+                    let next = random_crop_raw_into::<C>(
                         &image.data,
                         image.height,
                         image.width,
@@ -459,11 +686,11 @@ impl CompiledPipeline {
                         continue;
                     }
                     let destination = workspace.take_staged_u8(
-                        rgb_len(sample.height, sample.width)?,
+                        raster_len::<C>(sample.height, sample.width)?,
                         false,
                         reuse,
                     )?;
-                    let next = pad_raw(
+                    let next = pad_raw::<C>(
                         &image.data,
                         image.height,
                         image.width,
@@ -478,9 +705,16 @@ impl CompiledPipeline {
                 (
                     TransformPlan::CoarseDropout { .. },
                     SampledTransform::CoarseDropout { holes, fill },
-                ) => coarse_dropout(&mut image, holes, *fill)?,
+                ) => coarse_dropout::<C>(&mut image, holes, *fill)?,
                 (TransformPlan::ColorJitter { .. }, SampledTransform::ColorJitter(sample)) => {
-                    if self.plan.lowering.node(index).unit_specialization.is_some() {
+                    if C == 1 {
+                        color_jitter_gray(&mut image.data, sample);
+                    } else if self
+                        .lowering::<C>()
+                        .node(index)
+                        .unit_specialization
+                        .is_some()
+                    {
                         color_jitter(&mut image, sample);
                     } else {
                         color_jitter_staged(&mut image, sample);
@@ -496,7 +730,7 @@ impl CompiledPipeline {
                     SampledTransform::Affine(sample),
                 ) => {
                     let destination = workspace.take_staged_u8(image.data.len(), false, reuse)?;
-                    let next = rotate_raw(
+                    let next = rotate_raw::<C>(
                         &image.data,
                         image.height,
                         image.width,
@@ -527,7 +761,7 @@ impl CompiledPipeline {
                         scale: 1.0,
                         shear: [0.0, 0.0],
                     };
-                    let next = rotate_raw(
+                    let next = rotate_raw::<C>(
                         &image.data,
                         image.height,
                         image.width,
@@ -543,12 +777,17 @@ impl CompiledPipeline {
                     image = next;
                 }
                 (TransformPlan::GaussianNoise { .. }, SampledTransform::GaussianNoise(sample)) => {
-                    gaussian_noise(&mut image, *sample, workspace.noise_block())?
+                    gaussian_noise::<C>(&mut image, *sample, workspace.noise_block())?
                 }
                 (TransformPlan::Sharpen { .. }, SampledTransform::Sharpen(sample)) => {
                     let destination = workspace.take_staged_u8(image.data.len(), false, reuse)?;
-                    let next =
-                        sharpen_raw(&image.data, image.height, image.width, *sample, destination)?;
+                    let next = sharpen_raw::<C>(
+                        &image.data,
+                        image.height,
+                        image.width,
+                        *sample,
+                        destination,
+                    )?;
                     workspace.recycle_staged_u8(image.data, reuse);
                     image = next;
                 }
@@ -562,7 +801,7 @@ impl CompiledPipeline {
                     SampledTransform::Perspective(sample),
                 ) => {
                     let destination = workspace.take_staged_u8(image.data.len(), false, reuse)?;
-                    let next = perspective_raw(
+                    let next = perspective_raw::<C>(
                         &image.data,
                         image.height,
                         image.width,
@@ -587,7 +826,7 @@ impl CompiledPipeline {
                     SampledTransform::GridDistortion(sample),
                 ) => {
                     let destination = workspace.take_staged_u8(image.data.len(), false, reuse)?;
-                    let next = grid_distortion_raw(
+                    let next = grid_distortion_raw::<C>(
                         &image.data,
                         image.height,
                         image.width,
@@ -619,13 +858,15 @@ impl CompiledPipeline {
                         &sampled_kernel
                     };
                     if reuse {
-                        gaussian_blur_in_place(&mut image, kernel, workspace.blur_temp())?;
+                        gaussian_blur_in_place::<C>(&mut image, kernel, workspace.blur_temp())?;
                     } else {
-                        gaussian_blur_in_place(&mut image, kernel, &mut Vec::new())?;
+                        gaussian_blur_in_place::<C>(&mut image, kernel, &mut Vec::new())?;
                     }
                 }
                 (TransformPlan::Grayscale { .. }, SampledTransform::Grayscale) => {
-                    point::grayscale(&mut image.data);
+                    if C == 3 {
+                        point::grayscale(&mut image.data);
+                    }
                 }
                 (TransformPlan::Invert { .. }, SampledTransform::Invert) => {
                     point::invert(&mut image.data);
@@ -647,9 +888,14 @@ impl CompiledPipeline {
                 ) => {
                     let height = image.height;
                     let width = image.width;
-                    if requirements.chw && !requirements.hwc {
+                    if requirements.chw
+                        && !requirements.hwc
+                        && self.plan.mode == ExecutionMode::Compiled
+                    {
                         return Ok(PipelineOutput::F32Chw {
-                            data: normalize_hwc_to_chw(
+                            channels: C,
+                            rank: 3,
+                            data: normalize_hwc_to_chw::<C>(
                                 &image.data,
                                 height,
                                 width,
@@ -661,9 +907,11 @@ impl CompiledPipeline {
                             width,
                         });
                     }
-                    let output = normalize_hwc(&image.data, *mean, *std, *max_pixel_value)?;
+                    let output = normalize_hwc::<C>(&image.data, *mean, *std, *max_pixel_value)?;
                     workspace.recycle_staged_u8(image.data, reuse);
                     return Ok(PipelineOutput::F32Hwc {
+                        channels: C,
+                        rank: 3,
                         data: output,
                         height,
                         width,
@@ -679,12 +927,20 @@ impl CompiledPipeline {
 
         if requirements.chw && !requirements.hwc {
             Ok(PipelineOutput::U8Chw {
-                data: hwc_u8_to_chw(&image.data, image.height, image.width)?,
+                channels: C,
+                rank: 3,
+                data: if C == 1 {
+                    image.data
+                } else {
+                    hwc_u8_to_chw::<C>(&image.data, image.height, image.width)?
+                },
                 height: image.height,
                 width: image.width,
             })
         } else {
             Ok(PipelineOutput::U8Hwc {
+                channels: C,
+                rank: 3,
                 data: image.data,
                 height: image.height,
                 width: image.width,
@@ -692,7 +948,7 @@ impl CompiledPipeline {
         }
     }
 
-    fn compiled_terminal_entry(
+    fn compiled_terminal_entry<const C: usize>(
         &self,
         data: &[u8],
         height: usize,
@@ -707,13 +963,15 @@ impl CompiledPipeline {
                 .all(|sampled| matches!(sampled, SampledTransform::Skip))
         {
             return Ok(Some(PipelineOutput::U8Chw {
-                data: hwc_u8_to_chw(data, height, width)?,
+                channels: C,
+                rank: 3,
+                data: hwc_u8_to_chw::<C>(data, height, width)?,
                 height,
                 width,
             }));
         }
         if !matches!(
-            self.plan.lowering.nodes(),
+            self.lowering::<C>().nodes(),
             [node] if node.kernel
                 == KernelSelection::Form(ExecutionForm::BorrowedToOwned)
         ) {
@@ -730,13 +988,24 @@ impl CompiledPipeline {
                 [SampledTransform::Normalize],
             ) => Ok(Some(if requirements.chw && !requirements.hwc {
                 PipelineOutput::F32Chw {
-                    data: normalize_hwc_to_chw(data, height, width, *mean, *std, *max_pixel_value)?,
+                    channels: C,
+                    rank: 3,
+                    data: normalize_hwc_to_chw::<C>(
+                        data,
+                        height,
+                        width,
+                        *mean,
+                        *std,
+                        *max_pixel_value,
+                    )?,
                     height,
                     width,
                 }
             } else {
                 PipelineOutput::F32Hwc {
-                    data: normalize_hwc(data, *mean, *std, *max_pixel_value)?,
+                    channels: C,
+                    rank: 3,
+                    data: normalize_hwc::<C>(data, *mean, *std, *max_pixel_value)?,
                     height,
                     width,
                 }
@@ -745,14 +1014,14 @@ impl CompiledPipeline {
         }
     }
 
-    fn compiled_entry(
+    fn compiled_entry<const C: usize>(
         &self,
         data: &[u8],
         height: usize,
         width: usize,
         sampled: &[SampledTransform],
         workspace: &mut Workspace,
-    ) -> CoreResult<(ImageU8, usize)> {
+    ) -> CoreResult<(ImageU8<C>, usize)> {
         let owned_copy = || {
             Ok((
                 ImageU8 {
@@ -763,11 +1032,11 @@ impl CompiledPipeline {
                 0,
             ))
         };
-        if !self.plan.lowering.entry_ready(sampled) {
+        if !self.lowering::<C>().entry_ready(sampled) {
             return owned_copy();
         }
         if !matches!(
-            self.plan.lowering.nodes().first().map(|node| node.kernel),
+            self.lowering::<C>().nodes().first().map(|node| node.kernel),
             Some(KernelSelection::Form(ExecutionForm::BorrowedToOwned))
         ) {
             return owned_copy();
@@ -786,10 +1055,12 @@ impl CompiledPipeline {
                 }),
             ) => {
                 let crop_destination =
-                    workspace.take_u8(rgb_len(crop.height, crop.width)?, false)?;
-                let cropped = random_crop_raw_into(data, height, width, *crop, crop_destination)?;
-                let resize_destination = workspace.take_u8(rgb_len(*out_h, *out_w)?, false)?;
-                let resized = resize_raw(
+                    workspace.take_u8(raster_len::<C>(crop.height, crop.width)?, false)?;
+                let cropped =
+                    random_crop_raw_into::<C>(data, height, width, *crop, crop_destination)?;
+                let resize_destination =
+                    workspace.take_u8(raster_len::<C>(*out_h, *out_w)?, false)?;
+                let resized = resize_raw::<C>(
                     &cropped.data,
                     cropped.height,
                     cropped.width,
@@ -814,9 +1085,9 @@ impl CompiledPipeline {
                     width: out_w,
                 }),
             ) => {
-                let destination = workspace.take_u8(rgb_len(*out_h, *out_w)?, false)?;
+                let destination = workspace.take_u8(raster_len::<C>(*out_h, *out_w)?, false)?;
                 Ok((
-                    resize_raw(
+                    resize_raw::<C>(
                         data,
                         height,
                         width,
@@ -834,9 +1105,10 @@ impl CompiledPipeline {
                 Some(TransformPlan::RandomCrop { .. } | TransformPlan::CenterCrop { .. }),
                 Some(SampledTransform::RandomCrop(crop) | SampledTransform::CenterCrop(crop)),
             ) => {
-                let destination = workspace.take_u8(rgb_len(crop.height, crop.width)?, false)?;
+                let destination =
+                    workspace.take_u8(raster_len::<C>(crop.height, crop.width)?, false)?;
                 Ok((
-                    random_crop_raw_into(data, height, width, *crop, destination)?,
+                    random_crop_raw_into::<C>(data, height, width, *crop, destination)?,
                     1,
                 ))
             }
@@ -847,9 +1119,9 @@ impl CompiledPipeline {
                 Some(SampledTransform::PadIfNeeded(sample)),
             ) => {
                 let destination =
-                    workspace.take_u8(rgb_len(sample.height, sample.width)?, false)?;
+                    workspace.take_u8(raster_len::<C>(sample.height, sample.width)?, false)?;
                 Ok((
-                    pad_raw(
+                    pad_raw::<C>(
                         data,
                         height,
                         width,
@@ -863,7 +1135,7 @@ impl CompiledPipeline {
             }
             (Some(TransformPlan::VerticalFlip { .. }), Some(SampledTransform::VerticalFlip)) => {
                 let mut destination = workspace.take_u8(data.len(), false)?;
-                point::vertical_flip_into(data, &mut destination, height, width);
+                point::vertical_flip_into_channels::<C>(data, &mut destination, height, width);
                 Ok((
                     ImageU8 {
                         data: destination,
@@ -914,7 +1186,10 @@ impl CompiledPipeline {
             }
             (Some(TransformPlan::Sharpen { .. }), Some(SampledTransform::Sharpen(sample))) => {
                 let destination = workspace.take_u8(data.len(), false)?;
-                Ok((sharpen_raw(data, height, width, *sample, destination)?, 1))
+                Ok((
+                    sharpen_raw::<C>(data, height, width, *sample, destination)?,
+                    1,
+                ))
             }
             (
                 Some(TransformPlan::Perspective {
@@ -927,7 +1202,7 @@ impl CompiledPipeline {
             ) => {
                 let destination = workspace.take_u8(data.len(), false)?;
                 Ok((
-                    perspective_raw(
+                    perspective_raw::<C>(
                         data,
                         height,
                         width,
@@ -953,7 +1228,7 @@ impl CompiledPipeline {
             ) => {
                 let destination = workspace.take_u8(data.len(), false)?;
                 Ok((
-                    grid_distortion_raw(
+                    grid_distortion_raw::<C>(
                         data,
                         height,
                         width,
@@ -976,6 +1251,72 @@ impl CompiledPipeline {
     }
 }
 
+fn gray_constraint(specs: &[crate::TransformSpec]) -> Option<String> {
+    use crate::TransformSpec;
+    for spec in specs {
+        let invalid = match spec {
+            TransformSpec::PadIfNeeded { fill, p, .. } => {
+                (*p > 0.0 && fill.len() == 3).then_some("PadIfNeeded fill")
+            }
+            TransformSpec::CoarseDropout { fill, p, .. } => {
+                (*p > 0.0 && fill.len() == 3).then_some("CoarseDropout fill")
+            }
+            TransformSpec::Affine { fill, p, .. } => {
+                (*p > 0.0 && fill.len() == 3).then_some("Affine fill")
+            }
+            TransformSpec::RandomRotation { fill, p, .. } => {
+                (*p > 0.0 && fill.len() == 3).then_some("RandomRotation fill")
+            }
+            TransformSpec::Perspective { fill, p, .. } => {
+                (*p > 0.0 && fill.len() == 3).then_some("Perspective fill")
+            }
+            TransformSpec::GridDistortion { fill, p, .. } => {
+                (*p > 0.0 && fill.len() == 3).then_some("GridDistortion fill")
+            }
+            TransformSpec::Normalize { mean, std, p, .. } => {
+                if *p > 0.0 && mean.len() == 3 {
+                    Some("Normalize mean")
+                } else if *p > 0.0 && std.len() == 3 {
+                    Some("Normalize std")
+                } else {
+                    None
+                }
+            }
+            _ => None,
+        };
+        if let Some(name) = invalid {
+            return Some(format!("{name} has three values and requires RGB"));
+        }
+    }
+    None
+}
+
+fn channel_parameters(spec: &crate::TransformSpec) -> Vec<crate::PolicyExplanation> {
+    use crate::{PolicyExplanation, TransformSpec};
+    match spec {
+        TransformSpec::PadIfNeeded { fill, .. }
+        | TransformSpec::CoarseDropout { fill, .. }
+        | TransformSpec::Affine { fill, .. }
+        | TransformSpec::RandomRotation { fill, .. }
+        | TransformSpec::Perspective { fill, .. }
+        | TransformSpec::GridDistortion { fill, .. } => vec![PolicyExplanation {
+            name: "fill",
+            value: format!("{fill:?}").replace(' ', ""),
+        }],
+        TransformSpec::Normalize { mean, std, .. } => vec![
+            PolicyExplanation {
+                name: "mean",
+                value: format!("{mean:?}"),
+            },
+            PolicyExplanation {
+                name: "std",
+                value: format!("{std:?}"),
+            },
+        ],
+        _ => Vec::new(),
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -995,12 +1336,16 @@ mod tests {
             pipeline.apply_targets(
                 vec![
                     TargetInput {
+                rank: 3,
+                channels: 3,
                         role: TargetSpec::Image,
                         data: TargetBuffer::Borrowed(&image),
                         height: 2,
                         width: 3,
                     },
                     TargetInput {
+                rank: 2,
+                channels: 1,
                         role: TargetSpec::Mask { fill: 0 },
                         data: TargetBuffer::Borrowed(&[1; 5]),
                         height: 2,
@@ -1019,12 +1364,16 @@ mod tests {
             .apply_targets(
                 vec![
                     TargetInput {
+                        rank: 3,
+                        channels: 3,
                         role: TargetSpec::Image,
                         data: TargetBuffer::Borrowed(&image),
                         height: 2,
                         width: 3,
                     },
                     TargetInput {
+                        rank: 2,
+                        channels: 1,
                         role: TargetSpec::Mask { fill: 0 },
                         data: TargetBuffer::Borrowed(&[0, 1, 2, 3, 254, 255]),
                         height: 2,
@@ -1037,16 +1386,17 @@ mod tests {
             )
             .unwrap();
         assert!(matches!(
-            outputs.remove(0),
-            TargetOutput::Image(ImageOutput {
-                hwc: Some(PipelineOutput::U8Hwc {
-                    data,
-                    height: 2,
-                    width: 3,
-                }),
-                chw: None,
-            }) if data == image
-        ));
+                   outputs.remove(0),
+                   TargetOutput::Image(ImageOutput {
+                       hwc: Some(PipelineOutput::U8Hwc {
+        channels: _, rank: 3,
+                           data,
+                           height: 2,
+                           width: 3,
+                       }),
+                       chw: None,
+                   }) if data == image
+               ));
         assert!(matches!(
             outputs.remove(0),
             TargetOutput::Mask(output)
@@ -1071,12 +1421,16 @@ mod tests {
             .apply_targets(
                 vec![
                     TargetInput {
+                        rank: 3,
+                        channels: 3,
                         role: TargetSpec::Image,
                         data: TargetBuffer::Borrowed(&image),
                         height: 2,
                         width: 3,
                     },
                     TargetInput {
+                        rank: 2,
+                        channels: 1,
                         role: TargetSpec::Mask { fill: 0 },
                         data: TargetBuffer::Owned(mask),
                         height: 2,
@@ -1093,5 +1447,132 @@ mod tests {
         };
         assert_eq!(output.data.as_ptr(), input_pointer);
         assert_eq!(output.data, [0, 1, 2, 3, 254, 255]);
+    }
+}
+
+#[cfg(test)]
+mod channel_tests {
+    use super::*;
+    use crate::{Compiler, TransformSpec};
+    use std::sync::{Arc, Barrier};
+
+    #[test]
+    fn dynamic_channel_choices_run_on_overlapping_native_threads() {
+        let plan = Arc::new(
+            Compiler::new(ExecutionMode::Compiled)
+                .compile(PipelineSpec::with_target_requirements(
+                    vec![
+                        TransformSpec::RandomCrop {
+                            height: 17,
+                            width: 23,
+                            p: 1.0,
+                        },
+                        TransformSpec::HorizontalFlip { p: 0.5 },
+                        TransformSpec::GaussianBlur {
+                            kernel_size: 5,
+                            sigma: [1.0, 2.0],
+                            p: 1.0,
+                        },
+                        TransformSpec::Normalize {
+                            mean: vec![0.5],
+                            std: vec![0.5],
+                            max_pixel_value: 255.0,
+                            p: 1.0,
+                        },
+                    ],
+                    vec![(TargetSpec::Image, TargetRequirements::CHW)],
+                ))
+                .unwrap(),
+        );
+        let barrier = Arc::new(Barrier::new(8));
+        let handles: Vec<_> = (0..8)
+            .map(|key| {
+                let plan = Arc::clone(&plan);
+                let barrier = Arc::clone(&barrier);
+                std::thread::spawn(move || {
+                    let channels = if key % 2 == 0 { 1 } else { 3 };
+                    let data = vec![key as u8 * 23; 31 * 37 * channels];
+                    let input = || {
+                        vec![TargetInput {
+                            role: TargetSpec::Image,
+                            channels,
+                            rank: if channels == 1 { 2 } else { 3 },
+                            data: TargetBuffer::Borrowed(&data),
+                            height: 31,
+                            width: 37,
+                        }]
+                    };
+                    barrier.wait();
+                    let mut workspace = Workspace::default();
+                    let concurrent = plan
+                        .apply_targets(input(), 137, key, &mut workspace)
+                        .unwrap();
+                    (key, channels, data, concurrent)
+                })
+            })
+            .collect();
+        for handle in handles {
+            let (key, channels, data, concurrent) = handle.join().unwrap();
+            let input = TargetInput {
+                role: TargetSpec::Image,
+                channels,
+                rank: if channels == 1 { 2 } else { 3 },
+                data: TargetBuffer::Borrowed(&data),
+                height: 31,
+                width: 37,
+            };
+            let sequential = plan
+                .apply_targets(vec![input], 137, key, &mut Workspace::default())
+                .unwrap();
+            let output = |outputs: Vec<TargetOutput>| {
+                let TargetOutput::Image(mut image) = outputs.into_iter().next().unwrap() else {
+                    panic!()
+                };
+                let PipelineOutput::F32Chw {
+                    data,
+                    channels: actual,
+                    height,
+                    width,
+                    ..
+                } = image.chw.take().unwrap()
+                else {
+                    panic!()
+                };
+                assert_eq!((actual, height, width), (channels, 17, 23));
+                data
+            };
+            assert_eq!(output(concurrent), output(sequential));
+        }
+        assert_eq!(plan.image_channel_alternatives(0), [1, 3]);
+    }
+
+    #[test]
+    fn unsupported_channels_fail_before_workspace_allocation() {
+        let plan = Compiler::new(ExecutionMode::Compiled)
+            .compile(PipelineSpec::new(vec![TransformSpec::Normalize {
+                mean: vec![0.5; 3],
+                std: vec![0.5],
+                max_pixel_value: 255.0,
+                p: 1.0,
+            }]))
+            .unwrap();
+        let mut workspace = Workspace::default();
+        let result = plan.apply_targets(
+            vec![TargetInput {
+                role: TargetSpec::Image,
+                channels: 1,
+                rank: 2,
+                data: TargetBuffer::Borrowed(&[5; 6]),
+                height: 2,
+                width: 3,
+            }],
+            137,
+            7,
+            &mut workspace,
+        );
+        assert!(
+            matches!(result, Err(CoreError::Invalid(error)) if error.contains("Normalize mean"))
+        );
+        assert_eq!(workspace.retained_bytes(), 0);
     }
 }

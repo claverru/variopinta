@@ -324,7 +324,7 @@ class MaskTests(unittest.TestCase):
             .compile()
             .explain()
         )
-        self.assertEqual(explanation["schema_version"], 4)
+        self.assertEqual(explanation["schema_version"], 5)
         self.assertEqual([target["role"] for target in explanation["targets"]], ["image", "mask"])
         self.assertEqual(explanation["targets"][1]["fill"], 255)
         self.assertEqual(explanation["targets"][0]["carrier"]["type"], "encoded")

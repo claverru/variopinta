@@ -62,41 +62,40 @@ def _positive_range(
     return result
 
 
-def _triplet(
-    name: str, values: tuple[float, float, float], *, positive: bool
-) -> tuple[float, float, float]:
+def _channel_stats(name: str, values: object, *, positive: bool) -> tuple[float, ...]:
+    from collections.abc import Sequence
+
+    if isinstance(values, int | float) and not isinstance(values, bool):
+        values = (values,)
     if (
-        not isinstance(values, tuple)
-        or len(values) != 3
-        or any(
-            isinstance(value, bool)
-            or not isinstance(value, int | float)
-            or not math.isfinite(value)
-            for value in values
-        )
+        isinstance(values, str | bytes)
+        or not isinstance(values, Sequence)
+        or len(values) not in (1, 3)
     ):
-        qualifier = "finite and positive" if positive else "finite"
-        raise ValueError(f"{name} values must be {qualifier}")
+        raise ValueError(f"{name} must be a scalar or a one-/three-element numeric sequence")
     result = tuple(_f32(name, value) for value in values)
     if positive and any(value <= 0.0 for value in result):
         raise ValueError(f"{name} values must be finite and positive")
     return result
 
 
-def _fill(value: int | tuple[int, int, int]) -> tuple[int, int, int]:
-    values = (
-        (value, value, value) if isinstance(value, int) and not isinstance(value, bool) else value
-    )
+def _fill(value: object) -> tuple[int, ...]:
+    from collections.abc import Sequence
+
+    values = (value,) if isinstance(value, int) and not isinstance(value, bool) else value
     if (
-        not isinstance(values, tuple)
-        or len(values) != 3
+        isinstance(values, str | bytes)
+        or not isinstance(values, Sequence)
+        or len(values) not in (1, 3)
         or any(
             isinstance(item, bool) or not isinstance(item, int) or not 0 <= item <= 255
             for item in values
         )
     ):
-        raise ValueError("fill must be an integer or an RGB tuple with values in [0, 255]")
-    return values
+        raise ValueError(
+            "fill must be an integer or a one-/three-element integer sequence in [0, 255]"
+        )
+    return tuple(values)
 
 
 def _dropout_size_range(

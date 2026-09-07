@@ -1,7 +1,7 @@
 use crate::operations::reflect101_index;
 use crate::plan::SharpenSample;
 
-pub(crate) fn apply(
+pub(crate) fn apply<const C: usize>(
     data: &[u8],
     height: usize,
     width: usize,
@@ -13,14 +13,14 @@ pub(crate) fn apply(
         && std::arch::is_x86_feature_detected!("avx2")
         && width >= 3
     {
-        // SAFETY: runtime detection guards AVX2; the caller validated equal RGB buffers.
-        unsafe { apply_avx2(data, height, width, sample, output) };
+        // SAFETY: runtime detection guards AVX2; the caller validated equal raster buffers.
+        unsafe { apply_avx2::<C>(data, height, width, sample, output) };
         return;
     }
-    apply_scalar(data, height, width, sample, output);
+    apply_scalar::<C>(data, height, width, sample, output);
 }
 
-fn apply_scalar(
+fn apply_scalar<const C: usize>(
     data: &[u8],
     height: usize,
     width: usize,
@@ -34,14 +34,14 @@ fn apply_scalar(
         for x in 0..width {
             let left = reflect101_index(x as isize - 1, width);
             let right = reflect101_index(x as isize + 1, width);
-            for channel in 0..3 {
-                let destination = (y * width + x) * 3 + channel;
+            for channel in 0..C {
+                let destination = (y * width + x) * C + channel;
                 output[destination] = pixel(
                     data[destination],
-                    data[(top * width + x) * 3 + channel],
-                    data[(bottom * width + x) * 3 + channel],
-                    data[(y * width + left) * 3 + channel],
-                    data[(y * width + right) * 3 + channel],
+                    data[(top * width + x) * C + channel],
+                    data[(bottom * width + x) * C + channel],
+                    data[(y * width + left) * C + channel],
+                    data[(y * width + right) * C + channel],
                     center_scale,
                     sample,
                 );
@@ -88,7 +88,7 @@ fn simd_coefficients_are_finite(sample: SharpenSample) -> bool {
 
 #[cfg(target_arch = "x86_64")]
 #[target_feature(enable = "avx2")]
-unsafe fn apply_avx2(
+unsafe fn apply_avx2<const C: usize>(
     data: &[u8],
     height: usize,
     width: usize,
@@ -99,7 +99,7 @@ unsafe fn apply_avx2(
     unsafe {
         use std::arch::x86_64::*;
 
-        let row_bytes = width * 3;
+        let row_bytes = width * C;
         let center_scale_value = 1.0 + 4.0 * sample.lightness;
         let center_scale = _mm256_set1_ps(center_scale_value);
         let lightness = _mm256_set1_ps(sample.lightness);
@@ -111,33 +111,33 @@ unsafe fn apply_avx2(
         for y in 0..height {
             let top_y = reflect101_index(y as isize - 1, height);
             let bottom_y = reflect101_index(y as isize + 1, height);
-            for channel in 0..3 {
+            for channel in 0..C {
                 let center = y * row_bytes + channel;
                 output[center] = pixel(
                     data[center],
                     data[top_y * row_bytes + channel],
                     data[bottom_y * row_bytes + channel],
-                    data[y * row_bytes + 3 + channel],
-                    data[y * row_bytes + 3 + channel],
+                    data[y * row_bytes + C + channel],
+                    data[y * row_bytes + C + channel],
                     center_scale_value,
                     sample,
                 );
-                let last = y * row_bytes + (width - 1) * 3 + channel;
+                let last = y * row_bytes + (width - 1) * C + channel;
                 output[last] = pixel(
                     data[last],
-                    data[top_y * row_bytes + (width - 1) * 3 + channel],
-                    data[bottom_y * row_bytes + (width - 1) * 3 + channel],
-                    data[y * row_bytes + (width - 2) * 3 + channel],
-                    data[y * row_bytes + (width - 2) * 3 + channel],
+                    data[top_y * row_bytes + (width - 1) * C + channel],
+                    data[bottom_y * row_bytes + (width - 1) * C + channel],
+                    data[y * row_bytes + (width - 2) * C + channel],
+                    data[y * row_bytes + (width - 2) * C + channel],
                     center_scale_value,
                     sample,
                 );
             }
 
-            let start = y * row_bytes + 3;
-            let end = y * row_bytes + (width - 1) * 3;
-            let top = top_y * row_bytes + 3;
-            let bottom = bottom_y * row_bytes + 3;
+            let start = y * row_bytes + C;
+            let end = y * row_bytes + (width - 1) * C;
+            let top = top_y * row_bytes + C;
+            let bottom = bottom_y * row_bytes + C;
             let mut offset = 0usize;
             while start + offset + 8 <= end {
                 let load = |pointer: *const u8| {
@@ -146,8 +146,8 @@ unsafe fn apply_avx2(
                 let center = load(data.as_ptr().add(start + offset));
                 let top = load(data.as_ptr().add(top + offset));
                 let bottom = load(data.as_ptr().add(bottom + offset));
-                let left = load(data.as_ptr().add(start + offset - 3));
-                let right = load(data.as_ptr().add(start + offset + 3));
+                let left = load(data.as_ptr().add(start + offset - C));
+                let right = load(data.as_ptr().add(start + offset + C));
                 let mut neighbors = _mm256_add_ps(top, bottom);
                 neighbors = _mm256_add_ps(neighbors, left);
                 neighbors = _mm256_add_ps(neighbors, right);
@@ -175,14 +175,24 @@ unsafe fn apply_avx2(
                     data[index],
                     data[top_y * row_bytes + index - y * row_bytes],
                     data[bottom_y * row_bytes + index - y * row_bytes],
-                    data[index - 3],
-                    data[index + 3],
+                    data[index - C],
+                    data[index + C],
                     center_scale_value,
                     sample,
                 );
             }
         }
     }
+}
+
+pub(crate) fn apply_channels<const C: usize>(
+    data: &[u8],
+    height: usize,
+    width: usize,
+    sample: SharpenSample,
+    output: &mut [u8],
+) {
+    apply::<C>(data, height, width, sample, output);
 }
 
 #[cfg(test)]
@@ -197,6 +207,11 @@ mod tests {
 
     #[test]
     fn dispatch_matches_scalar_for_arbitrary_rectangles_and_coefficients() {
+        check_rectangles::<1>();
+        check_rectangles::<3>();
+    }
+
+    fn check_rectangles<const C: usize>() {
         for (height, width) in [
             (1, 1),
             (1, 9),
@@ -207,13 +222,13 @@ mod tests {
             (9, 17),
             (17, 33),
         ] {
-            let source = pixels(height * width * 3);
+            let source = pixels(height * width * C);
             for (alpha, lightness) in [(0.0, 0.0), (0.25, 0.7), (0.5, 1.0), (1.0, 3.5)] {
                 let sample = SharpenSample { alpha, lightness };
                 let mut expected = vec![0xa5; source.len()];
                 let mut actual = vec![0x5a; source.len()];
-                apply_scalar(&source, height, width, sample, &mut expected);
-                apply(&source, height, width, sample, &mut actual);
+                apply_scalar::<C>(&source, height, width, sample, &mut expected);
+                apply::<C>(&source, height, width, sample, &mut actual);
                 assert_eq!(actual, expected, "{height}x{width} {sample:?}");
             }
         }
@@ -228,8 +243,8 @@ mod tests {
         };
         let mut expected = vec![0; source.len()];
         let mut actual = vec![0; source.len()];
-        apply_scalar(&source, 7, 11, sample, &mut expected);
-        apply(&source, 7, 11, sample, &mut actual);
+        apply_scalar::<3>(&source, 7, 11, sample, &mut expected);
+        apply::<3>(&source, 7, 11, sample, &mut actual);
         assert_eq!(actual, expected);
     }
 }

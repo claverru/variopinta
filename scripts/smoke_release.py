@@ -125,6 +125,34 @@ def smoke_base(expected_version: str) -> np.ndarray:
     return source
 
 
+def smoke_grayscale() -> None:
+    source = np.arange(7 * 22, dtype=np.uint8).reshape(7, 22)[:, ::2]
+    reference = V.Pipeline([V.Invert(), V.Normalize(mean=0.5, std=0.5)], seed=137)
+    expected = (255 - source).astype(np.float32) / 127.5 - 1
+    for pipeline in (reference, reference.compile()):
+        for image in (source, source[..., None]):
+            output = pipeline(image, key=11)
+            assert output.shape == image.shape
+            assert output.dtype == np.float32
+            assert output.flags.c_contiguous
+            assert not np.shares_memory(output, source)
+            np.testing.assert_allclose(output.reshape(source.shape), expected, atol=1e-7)
+
+    target = V.Image(
+        V.Encoded(), outputs=V.Encode("png", name="encoded"), name="image", decode_mode="gray"
+    )
+    pipeline = V.Pipeline(
+        [V.ColorJitter(brightness=0, contrast=0, saturation=0.8, hue=0.4)], targets=target
+    ).compile()
+    explanation = pipeline.explain()
+    assert explanation["schema_version"] == 5
+    assert explanation["pixel_passes"] == 0
+    assert explanation["fallbacks"] == []
+    encoded = V.encode_image(source, format="png")
+    output = pipeline(image=target.bind(encoded), key=11).image.encoded
+    np.testing.assert_array_equal(V.decode_image(output, mode="unchanged"), source)
+
+
 def smoke_torch(source: np.ndarray, required: bool) -> None:
     tensor = V.ReturnTensor(name="tensor")
     target = V.Image(name="image", outputs=(tensor,))
@@ -147,10 +175,20 @@ def smoke_torch(source: np.ndarray, required: bool) -> None:
     assert output.is_contiguous()
     np.testing.assert_array_equal(output.numpy(), np.moveaxis(expected, 2, 0))
 
+    gray = source[..., 0]
+    pipeline = V.Pipeline([V.Normalize(mean=0.5, std=0.5)], seed=137, targets=target).compile()
+    output = pipeline(image=target.bind(gray), key=11).image.tensor
+    assert output.shape == (1, *gray.shape)
+    assert output.dtype == torch.float32
+    assert output.device.type == "cpu"
+    assert output.is_contiguous()
+    np.testing.assert_allclose(output.numpy()[0], gray.astype(np.float32) / 127.5 - 1, atol=1e-7)
+
 
 def main() -> None:
     args = parse_args()
     source = smoke_base(args.expected_version)
+    smoke_grayscale()
     smoke_torch(source, args.torch)
     print(
         json.dumps(

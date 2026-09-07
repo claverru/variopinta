@@ -70,6 +70,9 @@ is not guaranteed across releases, builds, or platforms.
 
 ## Documentation
 
+- [Grayscale Fashion-MNIST training notebook](https://github.com/claverru/variopinta/blob/main/examples/fashion_mnist.ipynb):
+  download grayscale images, preview augmentations, and train a small PyTorch
+  classifier on CPU or CUDA.
 - [Visual Imagenette training notebook](https://github.com/claverru/variopinta/blob/main/examples/imagenette.ipynb):
   download and run a standalone tutorial with augmentation visualizations,
   keyed replay, and PyTorch Lightning training on a CUDA GPU with multiple workers.

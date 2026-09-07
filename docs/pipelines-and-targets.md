@@ -16,7 +16,8 @@ vp.Pipeline(transforms, seed=None, *, targets=None)
 See [compilation](execution.md#compile-a-pipeline) for execution semantics.
 
 With `targets=None` (the default), the pipeline has an implicit image target.
-It accepts exactly one positional HWC RGB `uint8` NumPy array and directly
+It accepts exactly one positional HW grayscale, HWC1 grayscale, or HWC3 RGB
+`uint8` NumPy array and directly
 returns one owned, C-contiguous NumPy array:
 
 ```python
@@ -110,7 +111,7 @@ and type facts without raster, source, or destination payloads.
 
 | Carrier | Accepted source | Options |
 |---|---|---|
-| `Array()` | image: NumPy HWC RGB `uint8`; mask: NumPy HW `uint8` | none |
+| `Array()` | image: NumPy HW/HWC1 grayscale or HWC3 RGB `uint8`; mask: NumPy HW `uint8` | none |
 | `Encoded(...)` | `bytes`, `bytearray`, or `memoryview` | `max_pixels=100_000_000`, `max_encoded_bytes=None` |
 | `Path(...)` | local `str` or `os.PathLike[str]` | `max_pixels=100_000_000`, `max_encoded_bytes=None` |
 
@@ -124,6 +125,46 @@ animated, transparent, and malformed files.
 URLs, glob syntax, and `bytes` paths are rejected. Mutable encoded inputs are
 snapshotted before native work.
 
+`Image(carrier, outputs, name, *, decode_mode=None)` infers channels from arrays;
+explicit decoder modes are rejected for `Array`. For `Encoded` and `Path`,
+`None` and `"rgb"` decode RGB, while `"gray"` requests grayscale, including
+conversion from color files. Decoded 16-bit pixels are rejected by augmentation.
+Mask decoding retains its separate label-preserving rules.
+
+## Grayscale images
+
+Grayscale images run directly through every image transform without RGB
+expansion. Supply scalar or one-element normalization parameters:
+
+```python
+import numpy as np
+import variopinta as vp
+
+image = np.arange(64 * 64, dtype=np.uint8).reshape(64, 64)
+pipeline = vp.Pipeline([
+    vp.Resize(32, 32),
+    vp.Normalize(mean=0.5, std=0.5),
+]).compile()
+assert pipeline(image).shape == (32, 32)
+assert pipeline(image[..., None]).shape == (32, 32, 1)
+```
+
+`Normalize()` keeps its RGB defaults and therefore rejects grayscale. Scalar
+or one-element image fills and normalization statistics broadcast; three-element
+sequences require RGB even if all components are equal. An inactive `p=0`
+transform does not restrict the supported channels. Other parameter validation
+still applies at construction.
+
+One array pipeline may alternate grayscale and RGB calls. All image targets
+must support the active shared parameters, and mixed targets share one sampled
+geometry. Unsupported channels are rejected before sampling or writes and do
+not consume an implicit key. RGB arrays remain RGB even when their three
+channels have identical values.
+
+For native grayscale acquisition use
+`vp.Image(vp.Path(), name="image", outputs=vp.ReturnArray(name="array"), decode_mode="gray")`.
+Grayscale `uint8` results may also be encoded or written as grayscale JPEG/PNG.
+
 ## Output ports
 
 | Output | Value | Options |
@@ -133,7 +174,9 @@ snapshotted before native work.
 | `Encode(format, quality=None, compression=None, name=...)` | Python `bytes` | JPEG or PNG options |
 | `Write(format=None, quality=None, compression=None, name=...)` | normalized `pathlib.Path` | JPEG or PNG options |
 
-Image arrays are HWC; image tensors are CHW. Both preserve the semantic dtype:
+Image arrays preserve the input rank (HW, HWC1, or HWC3); decoded grayscale
+arrays are HW. Image tensors are CHW, including `(1, H, W)` for grayscale.
+Both preserve the semantic dtype:
 normally `uint8`, or `float32` after `Normalize`. Mask arrays and tensors are HW
 `uint8`; tensor output does not add a channel or convert labels to `int64`.
 PyTorch is imported only for a declared `ReturnTensor` route.

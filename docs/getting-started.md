@@ -29,7 +29,7 @@ python -m pip install torch
 
 ## Default image-to-image pipeline
 
-The default API accepts one HWC RGB `uint8` NumPy array and returns one owned,
+The default API accepts one HW/HWC1 grayscale or HWC3 RGB `uint8` NumPy array and returns one owned,
 C-contiguous NumPy array:
 
 ```python
@@ -69,7 +69,7 @@ The pipeline crops and resizes the image, may flip it, then normalizes it to
 
 ## Common errors
 
-- Image arrays must be positive-size HWC RGB `uint8`; mask arrays must be
+- Image arrays must be positive-size HW/HWC1 grayscale or HWC3 RGB `uint8`; mask arrays must be
   positive-size HW `uint8`.
 - An explicit pipeline accepts only named keyword bindings created from the
   exact target objects used to construct it.

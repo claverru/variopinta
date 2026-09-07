@@ -225,7 +225,7 @@ class GeometryTests(unittest.TestCase):
         )
         self.assertEqual(policies["height"], "minimum-11")
         self.assertEqual(policies["position"], "random")
-        self.assertEqual(policies["fill"], "[29,29,29]")
+        self.assertEqual(policies["fill"], "[29]")
         self.assertEqual(native_entry["count"], "0-or-1")
 
     def test_coarse_dropout_pixel_and_fraction_ranges(self) -> None:
@@ -279,7 +279,7 @@ class GeometryTests(unittest.TestCase):
         self.assertEqual(policies["holes"], "[2,5]")
         self.assertEqual(policies["hole-height"], "fraction-[0.1,0.6]")
         self.assertEqual(policies["hole-width"], "pixels-[2,7]")
-        self.assertEqual(policies["fill"], "[29,29,29]")
+        self.assertEqual(policies["fill"], "[29]")
 
     def test_geometry_policy_validation_is_eager(self) -> None:
         with self.assertRaises(TypeError):

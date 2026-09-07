@@ -158,6 +158,15 @@ report only work that can execute. The report distinguishes transform passes
 from output delivery, including direct normalized CHW production and a
 terminal HWC-to-CHW copy when direct production is unavailable.
 
+Schema 5 adds `targets[*].channels`, `channel_selection`, and
+`channel_alternatives`. Array targets list their legal one-/three-channel
+alternatives; codec targets have the channel count selected by `decode_mode`.
+Each alternative reports its channel-specific steps, layouts, buffers, copies,
+and element count. Selection uses the validated input shape before sampling;
+the report never records a mutable last-run choice. Shared transform parameters
+are serialized with their broadcast intent, and decoder options survive the
+same-release pickle round trip.
+
 This is a static plan, not a timing profile or a trace of one random draw.
 Read copy counts together with their conditions. Declaration order controls
 target and output introspection; it does not constrain keyword call order.

@@ -90,7 +90,7 @@ impl TransformPlan {
                     pad_width_divisor,
                     position,
                     border_mode,
-                    fill,
+                    fill: expand_channels(&fill, "fill")?,
                     p,
                 }
             }
@@ -109,7 +109,7 @@ impl TransformPlan {
                     num_holes_range,
                     hole_height_range,
                     hole_width_range,
-                    fill,
+                    fill: expand_channels(&fill, "fill")?,
                     p,
                 }
             }
@@ -191,7 +191,7 @@ impl TransformPlan {
                     shear,
                     interpolation,
                     border_mode,
-                    fill,
+                    fill: expand_channels(&fill, "fill")?,
                     p,
                 }
             }
@@ -212,7 +212,7 @@ impl TransformPlan {
                     degrees,
                     interpolation,
                     border_mode,
-                    fill,
+                    fill: expand_channels(&fill, "fill")?,
                     p,
                 }
             }
@@ -269,7 +269,7 @@ impl TransformPlan {
                     scale,
                     interpolation,
                     border_mode,
-                    fill,
+                    fill: expand_channels(&fill, "fill")?,
                     p,
                 }
             }
@@ -298,7 +298,7 @@ impl TransformPlan {
                     distort_limit,
                     interpolation,
                     border_mode,
-                    fill,
+                    fill: expand_channels(&fill, "fill")?,
                     p,
                 }
             }
@@ -360,12 +360,22 @@ impl TransformPlan {
                 }
                 validate_probability(p)?;
                 Self::Normalize {
-                    mean,
-                    std,
+                    mean: expand_channels(&mean, "mean")?,
+                    std: expand_channels(&std, "std")?,
                     max_pixel_value,
                     p,
                 }
             }
         })
+    }
+}
+
+fn expand_channels<T: Copy>(values: &[T], name: &str) -> CoreResult<[T; 3]> {
+    match values {
+        [value] => Ok([*value; 3]),
+        [a, b, c] => Ok([*a, *b, *c]),
+        _ => Err(CoreError::Invalid(format!(
+            "{name} requires one or three values"
+        ))),
     }
 }

@@ -67,14 +67,14 @@ pub enum TransformSpec {
         pad_width_divisor: Option<usize>,
         position: PadPosition,
         border_mode: BorderMode,
-        fill: [u8; 3],
+        fill: Vec<u8>,
         p: f32,
     },
     CoarseDropout {
         num_holes_range: [usize; 2],
         hole_height_range: DropoutSizeRange,
         hole_width_range: DropoutSizeRange,
-        fill: [u8; 3],
+        fill: Vec<u8>,
         p: f32,
     },
     ColorJitter {
@@ -91,14 +91,14 @@ pub enum TransformSpec {
         shear: [f32; 4],
         interpolation: Interpolation,
         border_mode: BorderMode,
-        fill: [u8; 3],
+        fill: Vec<u8>,
         p: f32,
     },
     RandomRotation {
         degrees: [f32; 2],
         interpolation: Interpolation,
         border_mode: BorderMode,
-        fill: [u8; 3],
+        fill: Vec<u8>,
         p: f32,
     },
     GaussianNoise {
@@ -116,7 +116,7 @@ pub enum TransformSpec {
         scale: [f32; 2],
         interpolation: Interpolation,
         border_mode: BorderMode,
-        fill: [u8; 3],
+        fill: Vec<u8>,
         p: f32,
     },
     GridDistortion {
@@ -124,7 +124,7 @@ pub enum TransformSpec {
         distort_limit: [f32; 2],
         interpolation: Interpolation,
         border_mode: BorderMode,
-        fill: [u8; 3],
+        fill: Vec<u8>,
         p: f32,
     },
     GaussianBlur {
@@ -147,14 +147,15 @@ pub enum TransformSpec {
         p: f32,
     },
     Normalize {
-        mean: [f32; 3],
-        std: [f32; 3],
+        mean: Vec<f32>,
+        std: Vec<f32>,
         max_pixel_value: f32,
         p: f32,
     },
 }
 
 pub struct PipelineSpec {
+    image_channels: Vec<Option<usize>>,
     transforms: Vec<TransformSpec>,
     targets: Vec<TargetSpec>,
     requirements: Vec<TargetRequirements>,
@@ -163,6 +164,7 @@ pub struct PipelineSpec {
 impl PipelineSpec {
     pub fn new(transforms: Vec<TransformSpec>) -> Self {
         Self {
+            image_channels: Vec::new(),
             transforms,
             targets: vec![TargetSpec::Image],
             requirements: vec![TargetRequirements::HWC],
@@ -178,6 +180,7 @@ impl PipelineSpec {
             })
             .collect();
         Self {
+            image_channels: Vec::new(),
             transforms,
             targets,
             requirements,
@@ -190,16 +193,32 @@ impl PipelineSpec {
     ) -> Self {
         let (targets, requirements) = targets.into_iter().unzip();
         Self {
+            image_channels: Vec::new(),
             transforms,
             targets,
             requirements,
         }
     }
 
+    pub fn with_image_channels(mut self, channels: Vec<Option<usize>>) -> Self {
+        self.image_channels = channels;
+        self
+    }
+
     pub(crate) fn into_parts(
         self,
-    ) -> (Vec<TransformSpec>, Vec<TargetSpec>, Vec<TargetRequirements>) {
-        (self.transforms, self.targets, self.requirements)
+    ) -> (
+        Vec<TransformSpec>,
+        Vec<TargetSpec>,
+        Vec<TargetRequirements>,
+        Vec<Option<usize>>,
+    ) {
+        (
+            self.transforms,
+            self.targets,
+            self.requirements,
+            self.image_channels,
+        )
     }
 }
 
@@ -251,21 +270,29 @@ impl ExecutionMode {
 #[derive(Clone)]
 pub enum PipelineOutput {
     U8Hwc {
+        channels: usize,
+        rank: usize,
         data: Vec<u8>,
         height: usize,
         width: usize,
     },
     F32Hwc {
+        channels: usize,
+        rank: usize,
         data: Vec<f32>,
         height: usize,
         width: usize,
     },
     U8Chw {
+        channels: usize,
+        rank: usize,
         data: Vec<u8>,
         height: usize,
         width: usize,
     },
     F32Chw {
+        channels: usize,
+        rank: usize,
         data: Vec<f32>,
         height: usize,
         width: usize,
@@ -285,6 +312,8 @@ pub enum TargetBuffer<'a> {
 }
 
 pub struct TargetInput<'a> {
+    pub rank: usize,
+    pub channels: usize,
     pub role: TargetSpec,
     pub data: TargetBuffer<'a>,
     pub height: usize,
