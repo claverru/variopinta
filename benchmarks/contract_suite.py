@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import Any
 
 from common import control_cpu
-from correctness import run_correctness_checks
+from correctness import run_aspect_resize_parity, run_correctness_checks
 
 
 def run_planned(items: list[dict[str, Any]], repetition: int) -> list[dict[str, Any]]:
@@ -12,7 +12,11 @@ def run_planned(items: list[dict[str, Any]], repetition: int) -> list[dict[str, 
     for order, item in enumerate(items, start=1):
         route = item["route"]
         backend = "rust" if route["participant"] == "variopinta" else route["participant"]
-        checks = run_correctness_checks(backend)
+        checks = (
+            run_aspect_resize_parity()
+            if item["factory"] == "aspect-resize-pad-parity"
+            else run_correctness_checks(backend)
+        )
         rows.append(
             {
                 "case_id": item["case_id"],

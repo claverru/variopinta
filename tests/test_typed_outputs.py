@@ -12,6 +12,50 @@ from tests._helpers import image
 
 
 class TypedOutputTests(unittest.TestCase):
+    def test_longest_max_size_supports_typed_outputs_and_encoded_path_inputs(self) -> None:
+        source = image(3, 6)
+        returned = R.ReturnArray(name="array")
+        tensor = R.ReturnTensor(name="tensor")
+        encoded = R.Encode("png", name="encoded")
+        written = R.Write("png", name="written")
+        target = R.Image(
+            name="image",
+            output_specs=(returned, tensor, encoded, written),
+        )
+        pipeline = R.Pipeline([R.LongestMaxSize(5)], targets=target).compile()
+        with TemporaryDirectory() as directory:
+            output_path = Path(directory) / "output.png"
+            result = pipeline(
+                image=target.bind(source, written.bind(output_path)),
+                key=3,
+            ).image
+            self.assertEqual(result.array.shape, (3, 5, 3))
+            self.assertEqual(tuple(result.tensor.shape), (3, 3, 5))
+            np.testing.assert_array_equal(R.decode_image(result.encoded), result.array)
+            np.testing.assert_array_equal(R.read_image(result.written), result.array)
+
+            input_path = Path(directory) / "input.png"
+            input_path.write_bytes(R.encode_image(source, format="png"))
+            encoded_target = R.Image(
+                R.Encoded(), name="encoded_image", output_specs=R.ReturnArray(name="array")
+            )
+            path_target = R.Image(
+                R.Path(), name="path_image", output_specs=R.ReturnArray(name="array")
+            )
+            carrier_pipeline = R.Pipeline(
+                [R.LongestMaxSize(5)], targets=(encoded_target, path_target)
+            ).compile()
+            carrier_result = carrier_pipeline(
+                encoded_image=encoded_target.bind(input_path.read_bytes()),
+                path_image=path_target.bind(input_path),
+                key=3,
+            )
+            np.testing.assert_array_equal(
+                carrier_result.encoded_image.array,
+                carrier_result.path_image.array,
+            )
+            self.assertEqual(carrier_result.encoded_image.array.shape, (3, 5, 3))
+
     def test_configuration_arguments_are_keyword_only(self) -> None:
         output = R.ReturnArray(name="array")
         self.assertIsInstance(R.Image(R.Array(), name="image", output_specs=output), R.Image)
@@ -23,6 +67,7 @@ class TypedOutputTests(unittest.TestCase):
             lambda: R.Mask(R.Array(), output, name="mask"),
             lambda: R.Pipeline([], 42),
             lambda: R.Resize(3, 5, 1.0),
+            lambda: R.LongestMaxSize(5, R.Interpolation.NEAREST),
             lambda: R.HorizontalFlip(0.5),
             lambda: R.Solarize(128, 0.5),
             lambda: R.Posterize(4, 0.5),

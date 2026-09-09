@@ -53,7 +53,12 @@ image_target = vp.Image(name="image", output_specs=image_array)
 labels_target = vp.Mask(name="labels", output_specs=labels_array, fill=255)
 
 pipeline = vp.Pipeline(
-    [vp.RandomCrop(256, 256), vp.HorizontalFlip(p=0.5), vp.ColorJitter(p=0.3)],
+    [
+        vp.LongestMaxSize(256),
+        vp.PadIfNeeded(min_height=256, min_width=256),
+        vp.HorizontalFlip(p=0.5),
+        vp.ColorJitter(p=0.3),
+    ],
     seed=42,
     targets=(image_target, labels_target),
 ).compile()
@@ -83,6 +88,11 @@ result = pipeline(
     key=7,
 )
 ```
+
+Here the image and labels keep their aspect ratio, receive identical resize
+dimensions and centered offsets, and finish at 256 × 256. The image uses the
+configured resize interpolation and padding fill. The labels use nearest
+resize interpolation and the mask target's `fill=255`.
 
 Keyword order is irrelevant. Missing, extra, positional, or foreign bindings
 are rejected before native execution.
@@ -337,7 +347,7 @@ cross-file transaction.
 All inputs in a call must share their initial height and width. The pipeline
 samples one plan for the call and applies it to every target.
 
-Crops, flips, resize, padding, affine, rotation, perspective, and grid
+Crops, flips, fixed or aspect-preserving resize, padding, affine, rotation, perspective, and grid
 distortion apply to masks with nearest interpolation and no antialiasing.
 Constant borders use each mask target's own scalar `fill`. Color, filtering,
 noise, dropout, and normalization are image-only.

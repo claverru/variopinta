@@ -55,7 +55,9 @@ impl MaskPlan {
             .map_err(|_| CoreError::Runtime("mask plan allocation failed".into()))?;
         for transform in transforms {
             let operation = match transform {
-                TransformPlan::Resize { .. } => MaskStep::Resize,
+                TransformPlan::Resize { .. } | TransformPlan::LongestMaxSize { .. } => {
+                    MaskStep::Resize
+                }
                 TransformPlan::RandomCrop { .. } => MaskStep::RandomCrop,
                 TransformPlan::RandomResizedCrop { .. } => MaskStep::RandomResizedCrop,
                 TransformPlan::HorizontalFlip { .. } => MaskStep::HorizontalFlip,

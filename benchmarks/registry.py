@@ -34,6 +34,7 @@ def _slug(value: str) -> str:
 
 
 FOCUSED_IDS = {
+    "aspect-resize-pad": "pipelines.aspect-resize-pad",
     "affine-reflect101": "transforms.affine.bilinear-reflect101",
     "rotation-reflect101": "transforms.random-rotation.bilinear-reflect101",
     "gaussian-noise-independent": "transforms.gaussian-noise.independent-rgb",
@@ -54,6 +55,7 @@ FOCUSED_IDS = {
 }
 
 FOCUSED_PARTICIPANTS = {
+    "aspect-resize-pad": (AX, OPENCV_CONTROL),
     "affine-reflect101": (AX,),
     "rotation-reflect101": (AX,),
     "gaussian-noise-independent": (TV, AX),
@@ -76,6 +78,10 @@ FOCUSED_PARTICIPANTS = {
 CATALOG_POLICIES = (
     ("Resize", "bilinear"),
     ("Resize", "bilinear-antialias"),
+    ("LongestMaxSize", "bilinear"),
+    ("LongestMaxSize", "bilinear-antialias"),
+    ("LongestMaxSize", "bilinear-upscale"),
+    ("LongestMaxSize+PadIfNeeded", "bilinear-centered-square"),
     ("RandomCrop", "default"),
     ("RandomResizedCrop", "bilinear"),
     ("RandomResizedCrop", "bilinear-antialias"),
@@ -157,7 +163,9 @@ def _transform_cases() -> list[CaseSpec]:
     for focused in FOCUSED_CASES:
         case_id = FOCUSED_IDS[focused]
         suite = case_id.partition(".")[0]
-        category = "output" if suite == "outputs" else "transform"
+        category = (
+            "output" if suite == "outputs" else "pipeline" if suite == "pipelines" else "transform"
+        )
         cases.append(
             CaseSpec(
                 id=case_id,
@@ -278,7 +286,20 @@ def _contract_cases() -> list[CaseSpec]:
             comparability="control",
             scopes=("contracts", "transforms", "variopinta"),
             timing=None,
-        )
+        ),
+        CaseSpec(
+            id="contracts.aspect-resize-pad-parity",
+            suite="contracts",
+            label="Aspect resize and centered pad parity",
+            tags=("contract", "geometry", "opencv", "pixel-error"),
+            routes=(IO_CONTRACT,),
+            sizes=(),
+            executor="contracts",
+            factory="aspect-resize-pad-parity",
+            comparability="control",
+            scopes=("contracts", "pipelines", "transforms", "variopinta"),
+            timing=None,
+        ),
     ]
 
 
@@ -302,7 +323,7 @@ def _grayscale_cases() -> list[CaseSpec]:
             scopes=("grayscale", "variopinta"),
             timing=DEFAULT_TIMING,
         )
-        for kind in ("geometry", "filtering", "normalized-tensor")
+        for kind in ("geometry", "aspect-resize-pad", "filtering", "normalized-tensor")
     ]
 
 

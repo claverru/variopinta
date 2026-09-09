@@ -40,6 +40,7 @@ impl TransformPlan {
     ) -> CoreResult<SampledTransform> {
         let probability = match self {
             Self::Resize { p, .. }
+            | Self::LongestMaxSize { p, .. }
             | Self::RandomCrop { p, .. }
             | Self::RandomResizedCrop { p, .. }
             | Self::HorizontalFlip { p }
@@ -69,6 +70,10 @@ impl TransformPlan {
                 height: *height,
                 width: *width,
             },
+            Self::LongestMaxSize { max_size, .. } => {
+                let (height, width) = longest_max_size_dimensions(height, width, *max_size)?;
+                SampledTransform::Resize { height, width }
+            }
             Self::RandomCrop {
                 height: crop_height,
                 width: crop_width,

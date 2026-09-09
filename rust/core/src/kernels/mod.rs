@@ -59,6 +59,7 @@ const COLOR_MATRIX_IN_PLACE: &[KernelImplementation] = &[KernelImplementation {
 pub(crate) fn implementations(transform: &TransformPlan) -> &'static [KernelImplementation] {
     match transform {
         TransformPlan::Resize { .. }
+        | TransformPlan::LongestMaxSize { .. }
         | TransformPlan::RandomCrop { .. }
         | TransformPlan::RandomResizedCrop { .. }
         | TransformPlan::CenterCrop { .. }

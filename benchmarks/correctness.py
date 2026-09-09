@@ -153,6 +153,27 @@ def _operations(backend: str) -> dict[str, Callable[..., Any]]:
             "resize": lambda image, h, w: apply(
                 A.Resize(h, w, interpolation=cv2.INTER_LINEAR, p=1), image
             ),
+            "aspect_resize_pad": lambda image, max_size: apply(
+                _sequence(
+                    A,
+                    [
+                        A.LongestMaxSize(
+                            max_size=max_size,
+                            interpolation=cv2.INTER_LINEAR,
+                            p=1,
+                        ),
+                        A.PadIfNeeded(
+                            min_height=max_size,
+                            min_width=max_size,
+                            position="center",
+                            border_mode=cv2.BORDER_CONSTANT,
+                            fill=0,
+                            p=1,
+                        ),
+                    ],
+                ),
+                image,
+            ),
             "affine_identity": lambda image: apply(affine_identity, image),
             "blur": lambda image: apply(blur, image),
             "grayscale": lambda image: apply(
@@ -187,6 +208,13 @@ def _operations(backend: str) -> dict[str, Callable[..., Any]]:
             image
         ),
         "resize": lambda image, h, w: R.Pipeline([R.Resize(h, w)], seed=SEED).compile()(image),
+        "aspect_resize_pad": lambda image, max_size: R.Pipeline(
+            [
+                R.LongestMaxSize(max_size),
+                R.PadIfNeeded(min_height=max_size, min_width=max_size),
+            ],
+            seed=SEED,
+        ).compile()(image),
         "affine_identity": lambda image: R.Pipeline(
             [R.Affine(degrees_range=(0.0, 0.0))], seed=SEED
         ).compile()(image),
@@ -227,6 +255,27 @@ def run_correctness_checks(backend: str) -> list[dict[str, Any]]:
         cases += 1
         if not condition:
             failures.append(label)
+
+    if "aspect_resize_pad" in operations:
+        for (height, width), max_size, (output_height, output_width) in (
+            ((3, 6), 5, (3, 5)),
+            ((2, 3), 8, (5, 8)),
+            ((1, 1000), 8, (1, 8)),
+        ):
+            constant = np.full((height, width, 3), (37, 113, 229), dtype=np.uint8)
+            output = _to_hwc(operations["aspect_resize_pad"](constant, max_size))
+            expected = np.zeros((max_size, max_size, 3), dtype=np.uint8)
+            top = (max_size - output_height) // 2
+            left = (max_size - output_width) // 2
+            expected[top : top + output_height, left : left + output_width] = (37, 113, 229)
+            check(
+                output.shape == expected.shape,
+                f"aspect-resize-pad-shape-{height}x{width}-to-{max_size}",
+            )
+            check(
+                np.max(np.abs(output.astype(np.int16) - expected.astype(np.int16))) <= 1,
+                f"aspect-resize-pad-pixels-{height}x{width}-to-{max_size}",
+            )
 
     for height, width in SHAPES:
         image = _image(height, width)
@@ -455,5 +504,94 @@ def run_correctness_checks(backend: str) -> list[dict[str, Any]]:
             "failures": failures,
             "limitations": limitations,
             "valid": not failures,
+            "aspect_resize_pad_contract": {
+                "dimension_rounding": "nearest-half-up",
+                "shape_tolerance": "exact",
+                "pixel_tolerance": "max-absolute-error<=1 on constant-color resize and padding",
+                "cross_participant_pixel_identity": "not asserted",
+            },
+        }
+    ]
+
+
+def run_aspect_resize_parity() -> list[dict[str, Any]]:
+    import cv2
+    import variopinta as R
+
+    observations = []
+    valid = True
+    for height, width, max_size in (
+        (480, 640, 256),
+        (640, 480, 256),
+        (3, 6, 5),
+        (2, 3, 8),
+        (1, 1000, 8),
+        (7, 7, 5),
+    ):
+        source = _image(height, width)
+        longest = max(height, width)
+
+        def resize_axis(
+            dimension: int,
+            target: int = max_size,
+            source_longest: int = longest,
+        ) -> int:
+            quotient, remainder = divmod(dimension * target, source_longest)
+            return max(1, quotient + int(remainder * 2 >= source_longest))
+
+        output_height = resize_axis(height)
+        output_width = resize_axis(width)
+        top = (max_size - output_height) // 2
+        left = (max_size - output_width) // 2
+        resized = cv2.resize(
+            source,
+            (output_width, output_height),
+            interpolation=cv2.INTER_LINEAR,
+        )
+        opencv = cv2.copyMakeBorder(
+            resized,
+            top,
+            max_size - output_height - top,
+            left,
+            max_size - output_width - left,
+            cv2.BORDER_CONSTANT,
+            value=0,
+        )
+        variopinta = R.Pipeline(
+            [
+                R.LongestMaxSize(max_size),
+                R.PadIfNeeded(min_height=max_size, min_width=max_size),
+            ],
+            seed=SEED,
+        ).compile()(source)
+        difference = np.abs(variopinta.astype(np.int16) - opencv.astype(np.int16))
+        shape_agreement = variopinta.shape == opencv.shape == (max_size, max_size, 3)
+        pixel_within_tolerance = int(difference.max()) <= 1
+        valid = valid and shape_agreement and pixel_within_tolerance
+        observations.append(
+            {
+                "input_shape": [height, width, 3],
+                "max_size": max_size,
+                "derived_resize_shape": [output_height, output_width, 3],
+                "variopinta_shape": list(variopinta.shape),
+                "opencv_shape": list(opencv.shape),
+                "shape_agreement": shape_agreement,
+                "rounding_mismatch": variopinta.shape != opencv.shape,
+                "max_abs_error": int(difference.max()),
+                "mean_abs_error": float(difference.mean()),
+                "pixel_within_tolerance": pixel_within_tolerance,
+            }
+        )
+    return [
+        {
+            "kind": "aspect-resize-pad-parity",
+            "dimension_rounding": "Variopinta exact nearest-half-up; OpenCV receives derived axes",
+            "interpolation": "bilinear without antialiasing",
+            "padding": "centered constant fill 0; odd remainder bottom/right",
+            "shape_tolerance": "exact",
+            "pixel_tolerance": "max-absolute-error<=1 for this workload",
+            "cross_participant_pixel_identity": "not asserted",
+            "observations": observations,
+            "valid": valid,
         }
     ]

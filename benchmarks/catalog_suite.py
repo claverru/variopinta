@@ -22,6 +22,22 @@ def catalog_cases(size: int) -> list[tuple[str, str, list[Any]]]:
     return [
         ("Resize", "bilinear", [R.Resize(out, out)]),
         ("Resize", "bilinear-antialias", [R.Resize(out, out, antialias=True)]),
+        ("LongestMaxSize", "bilinear", [R.LongestMaxSize(out)]),
+        (
+            "LongestMaxSize",
+            "bilinear-antialias",
+            [R.LongestMaxSize(out, antialias=True)],
+        ),
+        (
+            "LongestMaxSize",
+            "bilinear-upscale",
+            [R.LongestMaxSize(size + max(1, size // 4))],
+        ),
+        (
+            "LongestMaxSize+PadIfNeeded",
+            "bilinear-centered-square",
+            [R.LongestMaxSize(out), R.PadIfNeeded(min_height=out, min_width=out)],
+        ),
         ("RandomCrop", "default", [R.RandomCrop(out, out)]),
         (
             "RandomResizedCrop",
@@ -188,6 +204,14 @@ def _case_transforms(factory: str, size: int) -> tuple[str, str, list[Any]]:
     raise ValueError(f"unknown catalog factory: {factory}")
 
 
+def _case_images(transform: str, size: int, count: int = 8) -> list[np.ndarray]:
+    images = make_images(size, count=count)
+    if transform == "LongestMaxSize+PadIfNeeded":
+        height = max(1, size * 2 // 3)
+        return [np.ascontiguousarray(image[:height]) for image in images]
+    return images
+
+
 def run_planned(
     items: list[dict[str, Any]], quick: bool, repetition: int, *, validate_only: bool = False
 ) -> list[dict[str, Any]]:
@@ -201,8 +225,9 @@ def run_planned(
             transform, policy, transforms = _case_transforms(item["factory"], size)
             reference = R.Pipeline(transforms, seed=SEED)
             compiled = reference.compile()
-            reference_output = reference(make_images(size, count=1)[0], key=SEED)
-            compiled_output = compiled(make_images(size, count=1)[0], key=SEED)
+            source = _case_images(transform, size, count=1)[0]
+            reference_output = reference(source, key=SEED)
+            compiled_output = compiled(source, key=SEED)
             exact = bool(np.array_equal(as_array(reference_output), as_array(compiled_output)))
             pipeline = reference if route["variant"] == "reference" else compiled
             output = reference_output if route["variant"] == "reference" else compiled_output
@@ -233,7 +258,7 @@ def run_planned(
                             "max_calls": 64,
                         }
                     )
-                images = make_images(size)
+                images = _case_images(transform, size)
                 timing, measured_output = time_calls_adaptive(
                     lambda image, selected=pipeline: selected(image, key=SEED),
                     images,

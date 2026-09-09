@@ -568,6 +568,11 @@ impl CompiledPipeline {
                         interpolation,
                         antialias,
                         ..
+                    }
+                    | TransformPlan::LongestMaxSize {
+                        interpolation,
+                        antialias,
+                        ..
                     },
                     SampledTransform::Resize { height, width },
                 ) => {
@@ -1075,11 +1080,18 @@ impl CompiledPipeline {
                 Ok((resized, 1))
             }
             (
-                Some(TransformPlan::Resize {
-                    interpolation,
-                    antialias,
-                    ..
-                }),
+                Some(
+                    TransformPlan::Resize {
+                        interpolation,
+                        antialias,
+                        ..
+                    }
+                    | TransformPlan::LongestMaxSize {
+                        interpolation,
+                        antialias,
+                        ..
+                    },
+                ),
                 Some(SampledTransform::Resize {
                     height: out_h,
                     width: out_w,

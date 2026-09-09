@@ -32,6 +32,7 @@ TRANSFORMS = (
     "Normalize",
 )
 FOCUSED_CASES = (
+    "aspect-resize-pad",
     "affine-reflect101",
     "rotation-reflect101",
     "gaussian-noise-independent",
@@ -51,6 +52,7 @@ FOCUSED_CASES = (
     "return-tensor",
 )
 FOCUSED_LABELS = {
+    "aspect-resize-pad": "LongestMaxSize + centered PadIfNeeded",
     "affine-reflect101": "Affine (bilinear, reflect101)",
     "rotation-reflect101": "RandomRotation (bilinear, reflect101)",
     "gaussian-noise-independent": "GaussianNoise (independent RGB)",

@@ -9,6 +9,117 @@ from tests._helpers import image
 
 
 class GeometryTests(unittest.TestCase):
+    def test_longest_max_size_dimensions_pixels_composition_and_explanation(self) -> None:
+        cases = (
+            ((480, 640), 256, (192, 256)),
+            ((640, 480), 256, (256, 192)),
+            ((3, 6), 5, (3, 5)),
+            ((2, 3), 8, (5, 8)),
+            ((1, 1000), 8, (1, 8)),
+            ((7, 7), 5, (5, 5)),
+            ((7, 11), 11, (7, 11)),
+            ((1, 1), 1, (1, 1)),
+            ((7, 11), 1, (1, 1)),
+        )
+        for (height, width), max_size, (output_height, output_width) in cases:
+            source = image(height, width)
+            transform = R.LongestMaxSize(
+                max_size,
+                interpolation=R.Interpolation.NEAREST,
+            )
+            expected = R.Pipeline(
+                [R.Resize(output_height, output_width, interpolation=R.Interpolation.NEAREST)]
+            )(source)
+            reference = R.Pipeline([transform], seed=137)
+            compiled = reference.compile()
+            with self.subTest(shape=source.shape, max_size=max_size):
+                np.testing.assert_array_equal(reference(source, key=3), expected)
+                actual = compiled(source, key=3)
+                np.testing.assert_array_equal(actual, expected)
+                self.assertEqual(actual.shape, (output_height, output_width, 3))
+                self.assertTrue(actual.flags.c_contiguous)
+                self.assertFalse(np.shares_memory(actual, source))
+
+        source = image(19, 17)[:, ::2]
+        for interpolation, antialias in (
+            (R.Interpolation.NEAREST, False),
+            (R.Interpolation.BILINEAR, False),
+            (R.Interpolation.BILINEAR, True),
+        ):
+            transform = R.LongestMaxSize(
+                7,
+                interpolation=interpolation,
+                antialias=antialias,
+            )
+            expected = R.Pipeline(
+                [R.Resize(7, 3, interpolation=interpolation, antialias=antialias)]
+            )(source)
+            actual = R.Pipeline([transform]).compile()(source)
+            np.testing.assert_array_equal(actual, expected)
+            np.testing.assert_array_equal(source, image(19, 17)[:, ::2])
+
+        square = R.Pipeline(
+            [
+                R.Resize(3, 6, interpolation=R.Interpolation.NEAREST),
+                R.LongestMaxSize(5, interpolation=R.Interpolation.NEAREST),
+                R.PadIfNeeded(min_height=5, min_width=5, position=R.PadPosition.CENTER, fill=29),
+            ]
+        ).compile()(image(9, 13))
+        self.assertEqual(square.shape, (5, 5, 3))
+        self.assertTrue(np.all(square[0] == 29))
+        self.assertTrue(np.all(square[-1] == 29))
+
+        compiled = R.Pipeline([R.LongestMaxSize(8)], seed=137).compile()
+        for shape, expected_shape in (((2, 3), (5, 8)), ((3, 2), (8, 5)), ((1, 1000), (1, 8))):
+            self.assertEqual(compiled(image(*shape), key=3).shape[:2], expected_shape)
+
+        conditional = R.Pipeline([R.LongestMaxSize(8, p=0.5)], seed=137)
+        for key in range(20):
+            np.testing.assert_array_equal(
+                conditional(image(2, 3), key=key),
+                conditional.compile()(image(2, 3), key=key),
+            )
+        skipped_source = image(3, 5)[:, ::2]
+        skipped = R.Pipeline([R.LongestMaxSize(8, p=0.0)]).compile()(skipped_source)
+        np.testing.assert_array_equal(skipped, skipped_source)
+        self.assertTrue(skipped.flags.c_contiguous)
+        self.assertFalse(np.shares_memory(skipped, skipped_source))
+
+        with self.assertRaisesRegex(ValueError, "crop larger"):
+            R.Pipeline([R.LongestMaxSize(5), R.CenterCrop(4, 5)]).compile()(image(3, 6))
+
+        explanation = (
+            R.Pipeline([R.LongestMaxSize(8, interpolation=R.Interpolation.NEAREST)])
+            .compile()
+            .explain()
+        )
+        step = explanation["steps"][0]
+        policies = {policy["name"]: policy["value"] for policy in step["policies"]}
+        self.assertEqual(step["name"], "LongestMaxSize")
+        self.assertEqual(step["kernel_form"], "borrowed-to-owned")
+        self.assertEqual(policies["max-size"], "8")
+        self.assertEqual(policies["rounding"], "nearest-half-up")
+        self.assertEqual(policies["upscaling"], "enabled")
+        self.assertEqual(policies["antialias"], "ignored")
+
+    def test_longest_max_size_validation_and_native_limits(self) -> None:
+        for value in (0, -1, True, False, 1.5, "8", None):
+            with self.subTest(value=value), self.assertRaises(ValueError):
+                R.LongestMaxSize(value)  # type: ignore[arg-type]
+        for kwargs in (
+            {"interpolation": "nearest"},
+            {"antialias": 1},
+            {"p": -0.1},
+            {"p": 1.1},
+        ):
+            with self.subTest(kwargs=kwargs), self.assertRaises((TypeError, ValueError)):
+                R.LongestMaxSize(8, **kwargs)  # type: ignore[arg-type]
+        if np.dtype(np.intp).itemsize == 8:
+            with self.assertRaises(ValueError):
+                R.Pipeline([R.LongestMaxSize(2**32)]).compile()
+            with self.assertRaises(ValueError):
+                R.Pipeline([R.LongestMaxSize(2**32 - 1)]).compile()(image(1, 1))
+
     def test_random_resized_crop_contract_and_compilation(self) -> None:
         source = image(37, 53)[:, ::2]
         reference = R.Pipeline(

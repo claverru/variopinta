@@ -35,6 +35,12 @@ pub enum TransformSpec {
         antialias: bool,
         p: f32,
     },
+    LongestMaxSize {
+        max_size: usize,
+        interpolation: Interpolation,
+        antialias: bool,
+        p: f32,
+    },
     RandomCrop {
         height: usize,
         width: usize,

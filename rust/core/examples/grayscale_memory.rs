@@ -1,6 +1,7 @@
 use augment_core::{
-    Compiler, ExecutionMode, Interpolation, PipelineOutput, PipelineSpec, TargetBuffer,
-    TargetInput, TargetOutput, TargetRequirements, TargetSpec, TransformSpec, Workspace,
+    BorderMode, Compiler, ExecutionMode, Interpolation, PadPosition, PipelineOutput, PipelineSpec,
+    TargetBuffer, TargetInput, TargetOutput, TargetRequirements, TargetSpec, TransformSpec,
+    Workspace,
 };
 use std::alloc::{GlobalAlloc, Layout, System};
 use std::sync::atomic::{AtomicUsize, Ordering::Relaxed};
@@ -51,6 +52,11 @@ fn main() {
     let case = &args[2];
     let expanded = args[3] == "rgb-expansion";
     let out = size * 3 / 4;
+    let input_height = if case == "aspect-resize-pad" {
+        size * 2 / 3
+    } else {
+        size
+    };
     let resize = TransformSpec::Resize {
         height: out,
         width: out,
@@ -66,6 +72,24 @@ fn main() {
                 p: 1.0,
             },
             resize,
+        ],
+        "aspect-resize-pad" => vec![
+            TransformSpec::LongestMaxSize {
+                max_size: out,
+                interpolation: Interpolation::Bilinear,
+                antialias: false,
+                p: 1.0,
+            },
+            TransformSpec::PadIfNeeded {
+                min_height: Some(out),
+                min_width: Some(out),
+                pad_height_divisor: None,
+                pad_width_divisor: None,
+                position: PadPosition::Center,
+                border_mode: BorderMode::Constant,
+                fill: vec![0],
+                p: 1.0,
+            },
         ],
         "filtering" => vec![
             TransformSpec::GaussianBlur {
@@ -101,7 +125,7 @@ fn main() {
             vec![(TargetSpec::Image, requirements)],
         ))
         .unwrap();
-    let source = vec![73; size * size];
+    let source = vec![73; input_height * size];
     let mut workspace = Workspace::default();
     let run = |workspace: &mut Workspace| {
         let rgb;
@@ -117,7 +141,7 @@ fn main() {
         let input = TargetInput {
             role: TargetSpec::Image,
             data: TargetBuffer::Borrowed(data),
-            height: size,
+            height: input_height,
             width: size,
             channels: if expanded { 3 } else { 1 },
             rank: if expanded { 3 } else { 2 },

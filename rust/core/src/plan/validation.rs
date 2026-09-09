@@ -29,6 +29,21 @@ impl TransformPlan {
                     p,
                 }
             }
+            TransformSpec::LongestMaxSize {
+                max_size,
+                interpolation,
+                antialias,
+                p,
+            } => {
+                validate_dimensions(max_size, 1)?;
+                validate_probability(p)?;
+                Self::LongestMaxSize {
+                    max_size,
+                    interpolation,
+                    antialias,
+                    p,
+                }
+            }
             TransformSpec::RandomCrop { height, width, p } => {
                 validate_dimensions(height, width)?;
                 validate_probability(p)?;

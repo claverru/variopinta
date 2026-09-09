@@ -109,6 +109,14 @@ impl TransformPlan {
                 scratch: ScratchRequirement::None,
                 barriers: BORDER_INTERPOLATION,
             },
+            Self::LongestMaxSize { .. } => TransformCapabilities {
+                output: OutputContract::SampleSized,
+                read: ReadFootprint::Neighborhood,
+                write: WriteCoverage::FullOverwrite,
+                legal_forms: OUT_OF_PLACE,
+                scratch: ScratchRequirement::None,
+                barriers: BORDER_INTERPOLATION,
+            },
             Self::RandomCrop { .. } | Self::CenterCrop { .. } => TransformCapabilities {
                 output: OutputContract::StaticallySized,
                 read: ReadFootprint::Pointwise,

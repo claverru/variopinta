@@ -57,6 +57,12 @@ pub(crate) enum TransformPlan {
         antialias: bool,
         p: f32,
     },
+    LongestMaxSize {
+        max_size: usize,
+        interpolation: Interpolation,
+        antialias: bool,
+        p: f32,
+    },
     RandomCrop {
         height: usize,
         width: usize,
@@ -605,6 +611,27 @@ fn validate_dimensions(height: usize, width: usize) -> CoreResult<()> {
         .and_then(|pixels| pixels.checked_mul(3))
         .ok_or_else(|| CoreError::Invalid("image dimensions overflow".into()))?;
     Ok(())
+}
+
+fn longest_max_size_dimensions(
+    height: usize,
+    width: usize,
+    max_size: usize,
+) -> CoreResult<(usize, usize)> {
+    validate_dimensions(height, width)?;
+    validate_dimensions(max_size, 1)?;
+    let longest = height.max(width) as u128;
+    let resize_axis = |dimension: usize| -> CoreResult<usize> {
+        let numerator = (dimension as u128) * (max_size as u128);
+        let quotient = numerator / longest;
+        let remainder = numerator % longest;
+        usize::try_from(quotient + u128::from(remainder * 2 >= longest))
+            .map(|value| value.max(1))
+            .map_err(|_| CoreError::Invalid("resized dimensions overflow".into()))
+    };
+    let output = (resize_axis(height)?, resize_axis(width)?);
+    validate_dimensions(output.0, output.1)?;
+    Ok(output)
 }
 
 fn validate_positive_range(name: &str, values: [f32; 2], maximum: Option<f32>) -> CoreResult<()> {
@@ -1182,6 +1209,116 @@ mod tests {
             p: 1.0,
         }])
         .is_err());
+    }
+
+    #[test]
+    fn longest_max_size_uses_exact_half_up_dimensions() {
+        let cases = [
+            ((480, 640), 256, (192, 256)),
+            ((640, 480), 256, (256, 192)),
+            ((3, 6), 5, (3, 5)),
+            ((2, 3), 8, (5, 8)),
+            ((1, 1000), 8, (1, 8)),
+            ((7, 7), 5, (5, 5)),
+            ((7, 11), 11, (7, 11)),
+            ((1, 1), 1, (1, 1)),
+            ((7, 11), 1, (1, 1)),
+        ];
+        for ((height, width), max_size, expected) in cases {
+            assert_eq!(
+                longest_max_size_dimensions(height, width, max_size).unwrap(),
+                expected
+            );
+            let transposed = longest_max_size_dimensions(width, height, max_size).unwrap();
+            assert_eq!(transposed, (expected.1, expected.0));
+        }
+    }
+
+    #[test]
+    #[cfg(target_pointer_width = "64")]
+    fn longest_max_size_rejects_invalid_source_and_derived_storage() {
+        assert!(longest_max_size_dimensions(0, 1, 1).is_err());
+        assert!(longest_max_size_dimensions(1, 1, 0).is_err());
+        assert!(longest_max_size_dimensions(u32::MAX as usize + 1, 1, 1).is_err());
+        assert!(longest_max_size_dimensions(1, 1, u32::MAX as usize + 1).is_err());
+        assert!(longest_max_size_dimensions(1, 1, u32::MAX as usize).is_err());
+    }
+
+    #[test]
+    fn longest_max_size_tracks_preceding_and_following_geometry() {
+        let transforms = TransformPlan::compile(vec![
+            TransformSpec::Resize {
+                height: 3,
+                width: 6,
+                interpolation: Interpolation::Nearest,
+                antialias: false,
+                p: 1.0,
+            },
+            TransformSpec::LongestMaxSize {
+                max_size: 5,
+                interpolation: Interpolation::Nearest,
+                antialias: false,
+                p: 1.0,
+            },
+            TransformSpec::CenterCrop {
+                height: 3,
+                width: 5,
+                p: 1.0,
+            },
+        ])
+        .unwrap();
+        let sampled = TransformPlan::sample(&transforms, 17, 19, 137).unwrap();
+        assert!(matches!(
+            sampled.as_slice(),
+            [
+                SampledTransform::Resize {
+                    height: 3,
+                    width: 6
+                },
+                SampledTransform::Resize {
+                    height: 3,
+                    width: 5
+                },
+                SampledTransform::CenterCrop(CropSample {
+                    height: 3,
+                    width: 5,
+                    ..
+                })
+            ]
+        ));
+
+        let skipped = TransformPlan::compile(vec![
+            TransformSpec::LongestMaxSize {
+                max_size: 5,
+                interpolation: Interpolation::Nearest,
+                antialias: false,
+                p: 0.0,
+            },
+            TransformSpec::CenterCrop {
+                height: 7,
+                width: 11,
+                p: 1.0,
+            },
+        ])
+        .unwrap();
+        assert!(TransformPlan::sample(&skipped, 7, 11, 137).is_ok());
+        assert!(TransformPlan::sample(&transforms, 2, 2, 137).is_ok());
+
+        let invalid_following_crop = TransformPlan::compile(vec![
+            TransformSpec::LongestMaxSize {
+                max_size: 5,
+                interpolation: Interpolation::Nearest,
+                antialias: false,
+                p: 1.0,
+            },
+            TransformSpec::CenterCrop {
+                height: 4,
+                width: 5,
+                p: 1.0,
+            },
+        ])
+        .unwrap();
+        assert!(TransformPlan::sample(&invalid_following_crop, 3, 6, 137).is_err());
     }
 
     #[test]

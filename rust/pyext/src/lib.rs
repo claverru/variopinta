@@ -1241,6 +1241,14 @@ fn parse_spec(value: &Bound<'_, PyDict>) -> PyResult<TransformSpec> {
             antialias: required(value, "antialias")?.extract()?,
             p,
         }),
+        "LongestMaxSize" => Ok(TransformSpec::LongestMaxSize {
+            max_size: required(value, "max_size")?.extract()?,
+            interpolation: parse_interpolation(
+                &required(value, "interpolation")?.extract::<String>()?,
+            )?,
+            antialias: required(value, "antialias")?.extract()?,
+            p,
+        }),
         "RandomCrop" => Ok(TransformSpec::RandomCrop {
             height: required(value, "height")?.extract()?,
             width: required(value, "width")?.extract()?,

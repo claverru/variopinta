@@ -266,7 +266,22 @@ def _focused_albu(case: str, size: int) -> Callable[[Any], Any]:
     import albumentations as A
     import cv2
 
-    if case == "affine-reflect101":
+    if case == "aspect-resize-pad":
+        out = max(32, size * 3 // 4)
+        transform = getattr(A, "Com" + "pose")(
+            [
+                A.LongestMaxSize(max_size=out, interpolation=cv2.INTER_LINEAR, p=1),
+                A.PadIfNeeded(
+                    min_height=out,
+                    min_width=out,
+                    position="center",
+                    border_mode=cv2.BORDER_CONSTANT,
+                    fill=0,
+                    p=1,
+                ),
+            ],
+        )
+    elif case == "affine-reflect101":
         transform = A.Affine(
             scale=(1.0, 1.0),
             translate_percent=(0.0, 0.0),
@@ -345,7 +360,9 @@ def _focused_albu(case: str, size: int) -> Callable[[Any], Any]:
         transform = ToTensorV2()
     else:
         raise ValueError(case)
-    composed = _seed_albu(getattr(A, "Com" + "pose")([transform]))
+    composed = _seed_albu(
+        transform if case == "aspect-resize-pad" else getattr(A, "Com" + "pose")([transform])
+    )
     return lambda image: _materialize(composed(image=image)["image"])
 
 
@@ -359,6 +376,45 @@ def _opencv_cross_sharpen() -> Callable[[np.ndarray], Any]:
     return lambda image: np.ascontiguousarray(
         cv2.filter2D(image, -1, kernel, borderType=cv2.BORDER_REFLECT_101)
     )
+
+
+def _opencv_aspect_resize_pad(size: int) -> Callable[[np.ndarray], Any]:
+    import cv2
+
+    max_size = max(32, size * 3 // 4)
+
+    def apply(image: np.ndarray) -> np.ndarray:
+        height, width = image.shape[:2]
+        longest = max(height, width)
+
+        def resize_axis(dimension: int) -> int:
+            quotient, remainder = divmod(dimension * max_size, longest)
+            return max(1, quotient + int(remainder * 2 >= longest))
+
+        output_height = resize_axis(height)
+        output_width = resize_axis(width)
+        resized = cv2.resize(
+            image,
+            (output_width, output_height),
+            interpolation=cv2.INTER_LINEAR,
+        )
+        extra_height = max_size - output_height
+        extra_width = max_size - output_width
+        top = extra_height // 2
+        left = extra_width // 2
+        return np.ascontiguousarray(
+            cv2.copyMakeBorder(
+                resized,
+                top,
+                extra_height - top,
+                left,
+                extra_width - left,
+                cv2.BORDER_CONSTANT,
+                value=0,
+            )
+        )
+
+    return apply
 
 
 def _focused_transform(
@@ -377,7 +433,33 @@ def _focused_transform(
 
             return_tensor.explanation = pipeline.explain()  # type: ignore[attr-defined]
             return return_tensor
-        transform = _rust_apply([_focused_rust_config(case, size)], rust_mode)
+        if case == "aspect-resize-pad":
+            out = max(32, size * 3 // 4)
+            transform = _rust_apply(
+                [
+                    {
+                        "type": "LongestMaxSize",
+                        "max_size": out,
+                        "interpolation": "bilinear",
+                        "antialias": False,
+                        "p": 1.0,
+                    },
+                    {
+                        "type": "PadIfNeeded",
+                        "min_height": out,
+                        "min_width": out,
+                        "pad_height_divisor": None,
+                        "pad_width_divisor": None,
+                        "position": "center",
+                        "border_mode": "constant",
+                        "fill": (0, 0, 0),
+                        "p": 1.0,
+                    },
+                ],
+                rust_mode,
+            )
+        else:
+            transform = _rust_apply([_focused_rust_config(case, size)], rust_mode)
         return transform
     if backend == "torchvision":
         return _focused_torch(case, size)
@@ -472,7 +554,12 @@ def _planned_transform(
 ) -> tuple[Callable[[Any], Any], list[Any]]:
     backend = "rust" if participant == "variopinta" else participant
     images = make_images(size)
+    if factory == "focused:aspect-resize-pad":
+        height = max(1, size * 2 // 3)
+        images = [np.ascontiguousarray(image[:height]) for image in images]
     if participant == "opencv":
+        if factory == "focused:aspect-resize-pad":
+            return _opencv_aspect_resize_pad(size), images
         return _opencv_cross_sharpen(), images
     adapter = Adapter(backend)
     native = adapter.native_inputs(images)
@@ -514,7 +601,9 @@ def _planned_output_valid(factory: str, participant: str, size: int, facts: dict
             and facts["finite"]
             and facts["c_contiguous"]
         )
-    if kind == "focused" and name.startswith("pad-"):
+    if kind == "focused" and name == "aspect-resize-pad":
+        expected_size = max(32, size * 3 // 4)
+    elif kind == "focused" and name.startswith("pad-"):
         expected_size = size + 8
     elif kind in {"transform", "transform-antialias"} and name in {
         "Resize",
@@ -558,6 +647,35 @@ def run_planned(items: list[dict[str, Any]], quick: bool, repetition: int) -> li
                 "validation": facts,
                 "valid": _planned_output_valid(item["factory"], route["participant"], size, facts),
             }
+            if item["factory"] == "focused:aspect-resize-pad":
+                input_height = max(1, size * 2 // 3)
+                output_size = max(32, size * 3 // 4)
+                quotient, remainder = divmod(input_height * output_size, size)
+                expected_height = max(1, quotient + int(remainder * 2 >= size))
+                observed_resize_shape = [expected_height, output_size, 3]
+                if route["participant"] == "albumentationsx":
+                    import albumentations as A
+                    import cv2
+
+                    probe = A.LongestMaxSize(
+                        max_size=output_size,
+                        interpolation=cv2.INTER_LINEAR,
+                        p=1,
+                    )(image=inputs[0])["image"]
+                    observed_resize_shape = list(probe.shape)
+                row["comparison_contract"] = {
+                    "input_shape": [input_height, size, 3],
+                    "expected_resize_shape": [expected_height, output_size, 3],
+                    "observed_resize_shape": observed_resize_shape,
+                    "rounding_mismatch": observed_resize_shape != [expected_height, output_size, 3],
+                    "output_shape": [output_size, output_size, 3],
+                    "dimension_rounding": "nearest-half-up",
+                    "interpolation": "bilinear",
+                    "antialias": False,
+                    "padding": "centered constant fill 0; odd remainder bottom/right",
+                    "pixel_tolerance": "not asserted across participants",
+                }
+                row["valid"] = row["valid"] and not row["comparison_contract"]["rounding_mismatch"]
             explanation = getattr(function, "explanation", None)
             if explanation is not None:
                 row["explanation"] = explanation

@@ -169,6 +169,40 @@ class MaskTests(unittest.TestCase):
             np.testing.assert_array_equal(first_border, second_border)
             self.assertTrue(first_border.any())
 
+    def test_longest_max_size_shares_mask_geometry_and_centered_padding(self) -> None:
+        labels = semantic_mask(3, 6)
+        source = np.repeat(labels[..., None], 3, axis=2)
+        image_port = R.Image(name="image", output_specs=R.ReturnArray(name="array"))
+        mask_port = R.Mask(
+            name="mask",
+            fill=251,
+            output_specs=R.ReturnArray(name="array"),
+        )
+        transforms = [
+            R.LongestMaxSize(5, interpolation=R.Interpolation.BILINEAR, antialias=True),
+            R.PadIfNeeded(min_height=5, min_width=5, position=R.PadPosition.CENTER, fill=17),
+        ]
+        pipeline = R.Pipeline(transforms, seed=137, targets=(image_port, mask_port))
+        bindings = {
+            "image": image_port.bind(source),
+            "mask": mask_port.bind(labels),
+        }
+        explicit_mask = R.Pipeline(
+            [
+                R.Resize(3, 5, interpolation=R.Interpolation.NEAREST),
+                R.PadIfNeeded(min_height=5, min_width=5, position=R.PadPosition.CENTER),
+            ]
+        ).compile()(labels)
+        expected = pipeline(**bindings, key=3)
+        actual = pipeline.compile()(**bindings, key=3)
+        np.testing.assert_array_equal(actual.image.array, expected.image.array)
+        np.testing.assert_array_equal(actual.mask.array[1:4], explicit_mask[1:4])
+        self.assertEqual(actual.image.array.shape[:2], (5, 5))
+        self.assertEqual(actual.mask.array.shape, (5, 5))
+        self.assertTrue(np.all(actual.image.array[[0, 4]] == 17))
+        self.assertTrue(np.all(actual.mask.array[[0, 4]] == 251))
+        self.assertTrue(set(np.unique(actual.mask.array)).issubset(set(labels.ravel()) | {251}))
+
     def test_every_geometric_transform_uses_nearest_mask_rasterization(self) -> None:
         labels = semantic_mask(17, 19)
         source = np.repeat(labels[..., None], 3, axis=2)
@@ -177,6 +211,7 @@ class MaskTests(unittest.TestCase):
             R.CenterCrop(13, 15),
             R.RandomResizedCrop(11, 13, interpolation=R.Interpolation.NEAREST),
             R.Resize(11, 13, interpolation=R.Interpolation.NEAREST),
+            R.LongestMaxSize(13, interpolation=R.Interpolation.NEAREST),
             R.HorizontalFlip(p=1.0),
             R.VerticalFlip(p=1.0),
             R.PadIfNeeded(min_height=21, min_width=23, fill=251),

@@ -3,7 +3,9 @@ use super::*;
 impl TransformPlan {
     pub(crate) fn explain(&self) -> TransformExplanation {
         let (category, execution, pixel_passes, allocation, fallback) = match self {
-            Self::Resize { .. } => ("geometry", "out-of-place", 1, "workspace-u8", "portable"),
+            Self::Resize { .. } | Self::LongestMaxSize { .. } => {
+                ("geometry", "out-of-place", 1, "workspace-u8", "portable")
+            }
             Self::RandomCrop { .. } | Self::CenterCrop { .. } => (
                 "geometry",
                 "out-of-place",
@@ -131,6 +133,7 @@ impl TransformPlan {
     pub(crate) fn probability(&self) -> f32 {
         match self {
             Self::Resize { p, .. }
+            | Self::LongestMaxSize { p, .. }
             | Self::RandomCrop { p, .. }
             | Self::RandomResizedCrop { p, .. }
             | Self::HorizontalFlip { p }
@@ -165,6 +168,24 @@ impl TransformPlan {
                 ..
             } => vec![
                 policy("size", format!("{height}x{width}")),
+                policy("interpolation", interpolation_name(*interpolation).into()),
+                policy(
+                    "antialias",
+                    match interpolation {
+                        Interpolation::Nearest => "ignored".into(),
+                        Interpolation::Bilinear => antialias.to_string(),
+                    },
+                ),
+            ],
+            Self::LongestMaxSize {
+                max_size,
+                interpolation,
+                antialias,
+                ..
+            } => vec![
+                policy("max-size", max_size.to_string()),
+                policy("rounding", "nearest-half-up".into()),
+                policy("upscaling", "enabled".into()),
                 policy("interpolation", interpolation_name(*interpolation).into()),
                 policy(
                     "antialias",

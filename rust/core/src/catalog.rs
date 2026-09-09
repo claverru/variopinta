@@ -49,6 +49,12 @@ transform_catalog! {
         antialias: false,
         p: 1.0,
     },
+    LongestMaxSize: TransformPlan::LongestMaxSize { .. } => crate::TransformSpec::LongestMaxSize {
+        max_size: 11,
+        interpolation: crate::Interpolation::Bilinear,
+        antialias: false,
+        p: 1.0,
+    },
     RandomCrop: TransformPlan::RandomCrop { .. } => crate::TransformSpec::RandomCrop {
         height: 7,
         width: 11,

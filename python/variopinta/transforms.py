@@ -73,6 +73,31 @@ class Resize:
 
 
 @dataclass(frozen=True, slots=True)
+class LongestMaxSize:
+    max_size: int
+    interpolation: Interpolation = field(default=Interpolation.BILINEAR, kw_only=True)
+    antialias: bool = field(default=False, kw_only=True)
+    p: float = field(default=1.0, kw_only=True)
+
+    def __post_init__(self) -> None:
+        _positive_integer("max_size", self.max_size)
+        object.__setattr__(self, "p", _probability(self.p))
+        if not isinstance(self.interpolation, Interpolation):
+            raise TypeError("interpolation must be an Interpolation value")
+        if not isinstance(self.antialias, bool):
+            raise TypeError("antialias must be a bool")
+
+    def _spec(self) -> dict[str, object]:
+        return {
+            "type": "LongestMaxSize",
+            "max_size": self.max_size,
+            "p": self.p,
+            "interpolation": self.interpolation.value,
+            "antialias": self.antialias,
+        }
+
+
+@dataclass(frozen=True, slots=True)
 class RandomCrop:
     height: int
     width: int
@@ -600,6 +625,7 @@ class Normalize:
 
 Transform: TypeAlias = (
     Resize
+    | LongestMaxSize
     | RandomCrop
     | RandomResizedCrop
     | CenterCrop
@@ -623,6 +649,7 @@ Transform: TypeAlias = (
 )
 _TRANSFORM_CATALOG = {
     "Resize": (Resize, lambda p: Resize(1, 1, p=p)),
+    "LongestMaxSize": (LongestMaxSize, lambda p: LongestMaxSize(1, p=p)),
     "RandomCrop": (RandomCrop, lambda p: RandomCrop(1, 1, p=p)),
     "RandomResizedCrop": (
         RandomResizedCrop,

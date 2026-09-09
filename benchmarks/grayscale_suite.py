@@ -36,6 +36,10 @@ def run_planned(
             out = size * 3 // 4
             transforms = {
                 "geometry": [vp.CenterCrop(size - 2, size - 2), vp.Resize(out, out)],
+                "aspect-resize-pad": [
+                    vp.LongestMaxSize(out),
+                    vp.PadIfNeeded(min_height=out, min_width=out),
+                ],
                 "filtering": [vp.GaussianBlur(), vp.Sharpen()],
                 "normalized-tensor": [vp.Resize(out, out), vp.Normalize(mean=0.5, std=0.5)],
             }[case]
@@ -44,8 +48,11 @@ def run_planned(
             target = vp.Image(name="image", output_specs=port)
             reference = vp.Pipeline(transforms, targets=target, seed=SEED)
             compiled = reference.compile()
+            input_height = size * 2 // 3 if case == "aspect-resize-pad" else size
             images = [
-                np.random.default_rng(SEED + i).integers(0, 256, (size, size), dtype=np.uint8)
+                np.random.default_rng(SEED + i).integers(
+                    0, 256, (input_height, size), dtype=np.uint8
+                )
                 for i in range(8)
             ]
 

@@ -16,6 +16,21 @@ def gray(height=7, width=11):
 
 
 class GrayscaleImageTests(unittest.TestCase):
+    def test_longest_max_size_preserves_grayscale_rank_and_resize_pixels(self):
+        source = gray(3, 6)[:, ::-1]
+        for shaped in (source, source[..., None]):
+            for antialias in (False, True):
+                expected = vp.Pipeline([vp.Resize(3, 5, antialias=antialias)]).compile()(shaped)
+                pipeline = vp.Pipeline([vp.LongestMaxSize(5, antialias=antialias)], seed=137)
+                for runner in (pipeline, pipeline.compile()):
+                    actual = runner(shaped, key=3)
+                    with self.subTest(rank=shaped.ndim, antialias=antialias, runner=type(runner)):
+                        np.testing.assert_array_equal(actual, expected)
+                        self.assertEqual(actual.ndim, shaped.ndim)
+                        self.assertEqual(actual.shape, expected.shape)
+                        self.assertTrue(actual.flags.c_contiguous)
+                        self.assertFalse(np.shares_memory(actual, shaped))
+
     def test_catalog_rank_ownership_and_reference_equality(self):
         for h, w in ((1, 1), (1, 7), (5, 1), (7, 11), (17, 35)):
             source = gray(h, w * 2)[:, ::2]

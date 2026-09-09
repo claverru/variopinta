@@ -44,6 +44,51 @@ vp.Resize(
 Resizes to a positive `height` and `width`. Masks always use nearest
 interpolation without antialiasing.
 
+### `LongestMaxSize`
+
+```python
+vp.LongestMaxSize(
+    max_size,
+    interpolation=vp.Interpolation.BILINEAR,
+    antialias=False,
+    p=1.0,
+)
+```
+
+Resizes while preserving aspect ratio so the longest output side is the
+positive `max_size`. Upscaling is enabled. For current height `H`, width `W`,
+and `L = max(H, W)`, each output axis `d` is
+`max(1, round_half_up(d * max_size / L))`. Exact half-pixel values round up.
+Masks use the same sampled dimensions with nearest interpolation and no
+antialiasing.
+
+| Input | `max_size` | Output |
+|---|---:|---|
+| 480 × 640 | 256 | 192 × 256 |
+| 640 × 480 | 256 | 256 × 192 |
+| 3 × 6 | 5 | 3 × 5 |
+| 2 × 3 | 8 | 5 × 8 |
+| 1 × 1000 | 8 | 1 × 8 |
+
+Compose it with centered padding for a square result without stretching:
+
+```python
+pipeline = vp.Pipeline(
+    [
+        vp.LongestMaxSize(256),
+        vp.PadIfNeeded(
+            min_height=256,
+            min_width=256,
+            position=vp.PadPosition.CENTER,
+            fill=0,
+        ),
+    ]
+)
+```
+
+The result is 256 × 256. When the shorter resized side leaves an odd padding
+remainder, the extra pixel goes on the bottom or right.
+
 ### `RandomCrop`
 
 ```python
