@@ -2,7 +2,7 @@ use crate::operations::reflect101_index;
 use crate::{CoreError, CoreResult};
 
 #[allow(clippy::too_many_arguments)]
-pub(crate) fn constant(
+pub(crate) fn constant<const C: usize>(
     input: &[u8],
     input_height: usize,
     input_width: usize,
@@ -13,30 +13,37 @@ pub(crate) fn constant(
     fill: [u8; 3],
     output: &mut [u8],
 ) {
-    let input_row_bytes = input_width * 3;
-    let output_row_bytes = output_width * 3;
-    let left_bytes = left * 3;
+    let input_row_bytes = input_width * C;
+    let output_row_bytes = output_width * C;
+    let left_bytes = left * C;
     let right_start = left_bytes + input_row_bytes;
+    let uniform_fill = fill[..C].iter().all(|&value| value == fill[0]);
+    let fill_region = |region: &mut [u8]| {
+        if uniform_fill {
+            region.fill(fill[0]);
+        } else {
+            for pixel in region.chunks_exact_mut(C) {
+                pixel.copy_from_slice(&fill[..C]);
+            }
+        }
+    };
 
-    for row in output[..top * output_row_bytes].chunks_exact_mut(3) {
-        row.copy_from_slice(&fill);
-    }
-    for y in 0..input_height {
-        let source = y * input_row_bytes;
-        let destination = (top + y) * output_row_bytes;
-        let row = &mut output[destination..destination + output_row_bytes];
-        for pixel in row[..left_bytes].chunks_exact_mut(3) {
-            pixel.copy_from_slice(&fill);
-        }
-        row[left_bytes..right_start].copy_from_slice(&input[source..source + input_row_bytes]);
-        for pixel in row[right_start..].chunks_exact_mut(3) {
-            pixel.copy_from_slice(&fill);
-        }
-    }
+    let interior_start = top * output_row_bytes;
     let bottom_start = (top + input_height) * output_row_bytes;
-    for pixel in output[bottom_start..].chunks_exact_mut(3) {
-        pixel.copy_from_slice(&fill);
+    fill_region(&mut output[..interior_start]);
+    if input_width == output_width {
+        output[interior_start..bottom_start].copy_from_slice(input);
+    } else {
+        for y in 0..input_height {
+            let source = y * input_row_bytes;
+            let destination = (top + y) * output_row_bytes;
+            let row = &mut output[destination..destination + output_row_bytes];
+            fill_region(&mut row[..left_bytes]);
+            row[left_bytes..right_start].copy_from_slice(&input[source..source + input_row_bytes]);
+            fill_region(&mut row[right_start..]);
+        }
     }
+    fill_region(&mut output[bottom_start..]);
 }
 
 #[allow(clippy::too_many_arguments)]

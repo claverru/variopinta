@@ -511,29 +511,42 @@ fn pad_mask(
     }
     let mut output =
         workspace.take_staged_u8(mask_len(sample.height, sample.width)?, false, reuse)?;
-    for y in 0..sample.height {
-        for x in 0..sample.width {
-            let source_y = isize::try_from(y)
-                .ok()
-                .and_then(|value| value.checked_sub(isize::try_from(sample.top).ok()?));
-            let source_x = isize::try_from(x)
-                .ok()
-                .and_then(|value| value.checked_sub(isize::try_from(sample.left).ok()?));
-            output[y * sample.width + x] = match (source_y, source_x) {
-                (Some(source_y), Some(source_x)) => sample_mask(
-                    &mask.data,
-                    mask.height,
-                    mask.width,
-                    source_x,
-                    source_y,
-                    border,
-                    fill,
-                ),
-                _ if border == BorderMode::Constant => fill,
-                _ => {
-                    return Err(CoreError::Invalid("padding dimensions overflow".into()));
-                }
-            };
+    if border == BorderMode::Constant {
+        crate::kernels::pad::constant::<1>(
+            &mask.data,
+            mask.height,
+            mask.width,
+            sample.top,
+            sample.left,
+            sample.height,
+            sample.width,
+            [fill; 3],
+            &mut output,
+        );
+    } else {
+        for y in 0..sample.height {
+            for x in 0..sample.width {
+                let source_y = isize::try_from(y)
+                    .ok()
+                    .and_then(|value| value.checked_sub(isize::try_from(sample.top).ok()?));
+                let source_x = isize::try_from(x)
+                    .ok()
+                    .and_then(|value| value.checked_sub(isize::try_from(sample.left).ok()?));
+                output[y * sample.width + x] = match (source_y, source_x) {
+                    (Some(source_y), Some(source_x)) => sample_mask(
+                        &mask.data,
+                        mask.height,
+                        mask.width,
+                        source_x,
+                        source_y,
+                        border,
+                        fill,
+                    ),
+                    _ => {
+                        return Err(CoreError::Invalid("padding dimensions overflow".into()));
+                    }
+                };
+            }
         }
     }
     workspace.recycle_staged_u8(mask.data, reuse);

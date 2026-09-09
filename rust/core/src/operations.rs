@@ -75,7 +75,19 @@ pub(crate) fn pad_raw<const C: usize>(
         ));
     }
     output.resize(output_len, 0);
-    if C != 3 {
+    if border_mode == BorderMode::Constant {
+        pad::constant::<C>(
+            input,
+            input_height,
+            input_width,
+            sample.top,
+            sample.left,
+            sample.height,
+            sample.width,
+            fill,
+            &mut output,
+        );
+    } else if C != 3 {
         for y in 0..sample.height {
             for x in 0..sample.width {
                 for c in 0..C {
@@ -93,29 +105,16 @@ pub(crate) fn pad_raw<const C: usize>(
             }
         }
     } else {
-        match border_mode {
-            BorderMode::Constant => pad::constant(
-                input,
-                input_height,
-                input_width,
-                sample.top,
-                sample.left,
-                sample.height,
-                sample.width,
-                fill,
-                &mut output,
-            ),
-            BorderMode::Reflect101 => pad::reflect101(
-                input,
-                input_height,
-                input_width,
-                sample.top,
-                sample.left,
-                sample.height,
-                sample.width,
-                &mut output,
-            )?,
-        }
+        pad::reflect101(
+            input,
+            input_height,
+            input_width,
+            sample.top,
+            sample.left,
+            sample.height,
+            sample.width,
+            &mut output,
+        )?;
     }
     Ok(ImageU8 {
         data: output,
@@ -1431,7 +1430,7 @@ mod tests {
         }
     }
 
-    fn pad_oracle(
+    fn pad_oracle<const C: usize>(
         input: &[u8],
         input_height: usize,
         input_width: usize,
@@ -1439,10 +1438,10 @@ mod tests {
         border_mode: BorderMode,
         fill: [u8; 3],
     ) -> Vec<u8> {
-        let mut output = vec![0xa5; sample.height * sample.width * 3];
+        let mut output = vec![0xa5; sample.height * sample.width * C];
         for y in 0..sample.height {
             for x in 0..sample.width {
-                let destination = (y * sample.width + x) * 3;
+                let destination = (y * sample.width + x) * C;
                 let source_x = x as isize - sample.left as isize;
                 let source_y = y as isize - sample.top as isize;
                 if border_mode == BorderMode::Constant
@@ -1451,13 +1450,13 @@ mod tests {
                         || source_x >= input_width as isize
                         || source_y >= input_height as isize)
                 {
-                    output[destination..destination + 3].copy_from_slice(&fill);
+                    output[destination..destination + C].copy_from_slice(&fill[..C]);
                 } else {
                     let source_x = reflect101_index(source_x, input_width);
                     let source_y = reflect101_index(source_y, input_height);
-                    let source = (source_y * input_width + source_x) * 3;
-                    output[destination..destination + 3]
-                        .copy_from_slice(&input[source..source + 3]);
+                    let source = (source_y * input_width + source_x) * C;
+                    output[destination..destination + C]
+                        .copy_from_slice(&input[source..source + C]);
                 }
             }
         }
@@ -2007,7 +2006,7 @@ mod tests {
                             height: top + input_height + bottom,
                             width: left + input_width + right,
                         };
-                        let expected = pad_oracle(
+                        let expected = pad_oracle::<3>(
                             &source,
                             input_height,
                             input_width,
@@ -2033,6 +2032,55 @@ mod tests {
                 }
             }
         }
+    }
+
+    #[test]
+    fn constant_padding_matches_the_pixel_oracle_for_all_channels_and_fills() {
+        fn check<const C: usize>() {
+            for (height, width) in [(1, 1), (1, 33), (17, 1), (3, 5), (31, 65)] {
+                let source = pixels(height * width * C);
+                for fill in [[0; 3], [251; 3], [3, 5, 7]] {
+                    for (top, left, bottom, right) in [
+                        (0, 0, 0, 0),
+                        (3, 0, 5, 0),
+                        (0, 3, 0, 5),
+                        (1, 2, 3, 4),
+                        (height + 1, width + 1, 2, 0),
+                    ] {
+                        let sample = crate::plan::PadSample {
+                            top,
+                            left,
+                            height: top + height + bottom,
+                            width: left + width + right,
+                        };
+                        let expected = pad_oracle::<C>(
+                            &source,
+                            height,
+                            width,
+                            sample,
+                            BorderMode::Constant,
+                            fill,
+                        );
+                        let actual = pad_raw::<C>(
+                            &source,
+                            height,
+                            width,
+                            sample,
+                            BorderMode::Constant,
+                            fill,
+                            vec![0xa5; expected.len()],
+                        )
+                        .unwrap();
+                        assert_eq!(
+                            actual.data, expected,
+                            "C={C}, {height}x{width}, {fill:?}, {sample:?}"
+                        );
+                    }
+                }
+            }
+        }
+        check::<1>();
+        check::<3>();
     }
 
     #[test]
