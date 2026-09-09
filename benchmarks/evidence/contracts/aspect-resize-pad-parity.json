@@ -32,7 +32,7 @@
   },
   "case_id": "contracts.aspect-resize-pad-parity",
   "compatibility": {
-    "digest": "283dbc3bbfebd2e1f73b9f1319f569c2586447e971f20540b4a05eecdf467618",
+    "digest": "d382fe5c421dbcb2e05c40af7ddec71a3e6e6fc93ecd437c343ae6301e8baadc",
     "environments": {
       "io": {
         "architecture": "x86_64",
@@ -42,7 +42,7 @@
           "opencv-python-headless": "5.0.0.93",
           "torch": "2.13.0",
           "torchvision": "0.28.0",
-          "variopinta": "0.6.0"
+          "variopinta": "0.7.0"
         },
         "platform": "Linux-6.18.33.2-microsoft-standard-WSL2-x86_64-with-glibc2.39",
         "processor": "AMD Ryzen 9 9950X3D 16-Core Processor",
@@ -113,10 +113,10 @@
       "environments": {
         "io": "7bdbeb0dfb9d88f9669a78230bc95c62aa895c2daade197b3a9c72d2595d322e"
       },
-      "source": "371f88df85d47b7b7b6342e10c40fcd9cada3975e1051e5022c9e7bb08a669ed",
+      "source": "0694f8314d8c95532e57b83f42242a422da8432ad1194ec3fbba324247b53633",
       "unclassified": []
     },
-    "digest": "68216a983e72a5465beeea2adfedd4665bf7426d170fdda48037fdbc71cfc30c"
+    "digest": "692b063201e31c3631deca77b10e6fe34cc315d5eb5851d519dfea34d19edb2d"
   },
   "metadata": {
     "io": {
@@ -128,7 +128,7 @@
         "opencv-python-headless": "5.0.0.93",
         "torch": "2.13.0",
         "torchvision": "0.28.0",
-        "variopinta": "0.6.0"
+        "variopinta": "0.7.0"
       },
       "platform": "Linux-6.18.33.2-microsoft-standard-WSL2-x86_64-with-glibc2.39",
       "processor": "AMD Ryzen 9 9950X3D 16-Core Processor",
@@ -183,8 +183,8 @@
     }
   },
   "provenance": {
-    "source_dirty": false,
-    "source_revision": "fa6cf94b63732c251f5fda2181ee29633cac0bf7"
+    "source_dirty": true,
+    "source_revision": "d09eccb6fc16934300784dab59a7571dd5ffcc6b"
   },
   "rows": [
     {

@@ -46,7 +46,7 @@
   },
   "case_id": "contracts.augmentation-boundaries",
   "compatibility": {
-    "digest": "446dd57d465b348eb99d044f17bf7fc29301897afc4bdfa3b2ff25d5f27d44eb",
+    "digest": "ef1324da98775019e6cfabe69c20fbb46681d22db699f8e2d978445d1f557843",
     "environments": {
       "albumentationsx": {
         "architecture": "x86_64",
@@ -116,7 +116,7 @@
           "numpy": "2.2.6",
           "torch": "2.13.0+cu130",
           "torchvision": "0.28.0+cu130",
-          "variopinta": "0.3.0"
+          "variopinta": "0.7.0"
         },
         "platform": "Linux-6.18.33.2-microsoft-standard-WSL2-x86_64-with-glibc2.39",
         "processor": "AMD Ryzen 9 9950X3D 16-Core Processor",
@@ -172,8 +172,8 @@
         "cpu_count": 32,
         "packages": {
           "numpy": "2.2.6",
-          "torch": "2.13.0+cu130",
-          "torchvision": "0.28.0+cu130"
+          "torch": "2.13.0",
+          "torchvision": "0.28.0"
         },
         "platform": "Linux-6.18.33.2-microsoft-standard-WSL2-x86_64-with-glibc2.39",
         "processor": "AMD Ryzen 9 9950X3D 16-Core Processor",
@@ -266,10 +266,10 @@
         "rust": "c21434ab276976c811af1d8dc747f46be02b1f77bad36ecbae0c2a96fee16265",
         "torchvision": "4163a62b3debabcb68117e468e8fb096bb52da3ebee73d24a0867b8d6b13d5db"
       },
-      "source": "22f3d3d1a19fec6227559f7aea227bae89026b34ca982929dab230dc70ee7eb2",
+      "source": "0694f8314d8c95532e57b83f42242a422da8432ad1194ec3fbba324247b53633",
       "unclassified": []
     },
-    "digest": "fc598e7c93ccb4a72cfe5431505bbd7b714f6136e93eb6dac6ddab587cc827af"
+    "digest": "372e0d465b51826117998e7b1243efffad4a84f4b89cff2314ee4c4ee7c56a43"
   },
   "metadata": {
     "albumentationsx": {
@@ -344,7 +344,7 @@
         "numpy": "2.2.6",
         "torch": "2.13.0+cu130",
         "torchvision": "0.28.0+cu130",
-        "variopinta": "0.3.0"
+        "variopinta": "0.7.0"
       },
       "platform": "Linux-6.18.33.2-microsoft-standard-WSL2-x86_64-with-glibc2.39",
       "processor": "AMD Ryzen 9 9950X3D 16-Core Processor",
@@ -403,8 +403,8 @@
       "cpu_count": 32,
       "packages": {
         "numpy": "2.2.6",
-        "torch": "2.13.0+cu130",
-        "torchvision": "0.28.0+cu130"
+        "torch": "2.13.0",
+        "torchvision": "0.28.0"
       },
       "platform": "Linux-6.18.33.2-microsoft-standard-WSL2-x86_64-with-glibc2.39",
       "processor": "AMD Ryzen 9 9950X3D 16-Core Processor",
@@ -454,13 +454,13 @@
         "torch_num_interop_threads": 1,
         "torch_num_threads": 1
       },
-      "torch": "2.13.0+cu130",
-      "torchvision": "0.28.0+cu130"
+      "torch": "2.13.0",
+      "torchvision": "0.28.0"
     }
   },
   "provenance": {
-    "source_dirty": false,
-    "source_revision": "4a32c003085662b37e5d4fc6c47bdfa7628a7f94"
+    "source_dirty": true,
+    "source_revision": "d09eccb6fc16934300784dab59a7571dd5ffcc6b"
   },
   "rows": [
     {
@@ -477,11 +477,19 @@
       "validation": {
         "checks": [
           {
+            "aspect_resize_pad_contract": {
+              "cross_participant_pixel_identity": "not asserted",
+              "dimension_rounding": "nearest-ties-to-even",
+              "pixel_tolerance": "max-absolute-error<=1 on constant-color resize and padding",
+              "shape_tolerance": "exact"
+            },
             "backend": "albumentationsx",
-            "cases": 123,
+            "cases": 129,
             "failures": [],
             "kind": "correctness",
-            "limitations": [],
+            "limitations": [
+              "LongestMaxSize uses ties-to-even rounding: 3x6 to max_size=5 resizes to 2x5; Variopinta uses nearest-half-up and resizes to 3x5."
+            ],
             "valid": true
           }
         ]
@@ -503,8 +511,14 @@
       "validation": {
         "checks": [
           {
+            "aspect_resize_pad_contract": {
+              "cross_participant_pixel_identity": "not asserted",
+              "dimension_rounding": "nearest-half-up",
+              "pixel_tolerance": "max-absolute-error<=1 on constant-color resize and padding",
+              "shape_tolerance": "exact"
+            },
             "backend": "rust",
-            "cases": 155,
+            "cases": 161,
             "failures": [],
             "kind": "correctness",
             "limitations": [],
@@ -529,6 +543,12 @@
       "validation": {
         "checks": [
           {
+            "aspect_resize_pad_contract": {
+              "cross_participant_pixel_identity": "not asserted",
+              "dimension_rounding": "not checked",
+              "pixel_tolerance": "max-absolute-error<=1 on constant-color resize and padding",
+              "shape_tolerance": "exact"
+            },
             "backend": "torchvision",
             "cases": 123,
             "failures": [],

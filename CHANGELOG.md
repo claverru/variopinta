@@ -2,6 +2,16 @@
 
 ## Unreleased
 
+## 0.7.0
+
+- Add `LongestMaxSize` for aspect-preserving resize with exact half-up dimension
+  rounding, optional antialiasing, and shared image/mask geometry. Compose it
+  with `PadIfNeeded` for square output without stretching.
+- Accelerate constant padding for RGB and grayscale images and label masks,
+  preserving fill values and output pixels.
+- Renew benchmark evidence, record participant-specific resize rounding, and
+  fix fingerprint coverage for tensor-output benchmarks.
+
 ## 0.6.0
 
 - Rename target configuration to `input_spec` and `output_specs`, require names

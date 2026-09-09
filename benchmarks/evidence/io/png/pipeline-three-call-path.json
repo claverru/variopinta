@@ -39,7 +39,7 @@
   },
   "case_id": "io.png.pipeline-three-call-path",
   "compatibility": {
-    "digest": "536dd206adb12881b107ac3bb4eece3b2ebd105cf81fb45744dc054db0739be1",
+    "digest": "d382fe5c421dbcb2e05c40af7ddec71a3e6e6fc93ecd437c343ae6301e8baadc",
     "environments": {
       "io": {
         "architecture": "x86_64",
@@ -49,7 +49,7 @@
           "opencv-python-headless": "5.0.0.93",
           "torch": "2.13.0",
           "torchvision": "0.28.0",
-          "variopinta": "0.3.0"
+          "variopinta": "0.7.0"
         },
         "platform": "Linux-6.18.33.2-microsoft-standard-WSL2-x86_64-with-glibc2.39",
         "processor": "AMD Ryzen 9 9950X3D 16-Core Processor",
@@ -245,10 +245,10 @@
       "environments": {
         "io": "7bdbeb0dfb9d88f9669a78230bc95c62aa895c2daade197b3a9c72d2595d322e"
       },
-      "source": "c89351cb468424a60030b8192c5e766f605a2d03ea5083fc5d82b76074e0462e",
+      "source": "177ba892d2f225817e56c9ca468df1679cec6bac4306531ed33d9d142b8b1351",
       "unclassified": []
     },
-    "digest": "ae0c0875a81b2868f55df53a2f94a36e98e56ad8e846f991b9d21baf0553e674"
+    "digest": "bab29da48002b4b7780fb1b8415ed768d56f855460834126bdbe9ee5a4968a79"
   },
   "metadata": {
     "io": {
@@ -260,7 +260,7 @@
         "opencv-python-headless": "5.0.0.93",
         "torch": "2.13.0",
         "torchvision": "0.28.0",
-        "variopinta": "0.3.0"
+        "variopinta": "0.7.0"
       },
       "platform": "Linux-6.18.33.2-microsoft-standard-WSL2-x86_64-with-glibc2.39",
       "processor": "AMD Ryzen 9 9950X3D 16-Core Processor",
@@ -315,8 +315,8 @@
     }
   },
   "provenance": {
-    "source_dirty": false,
-    "source_revision": "4a32c003085662b37e5d4fc6c47bdfa7628a7f94"
+    "source_dirty": true,
+    "source_revision": "d09eccb6fc16934300784dab59a7571dd5ffcc6b"
   },
   "rows": [
     {
@@ -326,23 +326,23 @@
       "case_order": 30,
       "environment": "io",
       "environment_position": 2,
-      "images_per_sec": 86.50713597364647,
+      "images_per_sec": 87.14133714896202,
       "iterations": 9,
-      "median_ms": 11.55974,
+      "median_ms": 11.47561,
       "observations_ms": [
-        11.586391,
-        11.557961,
-        11.55974,
-        11.562892,
-        11.569761,
-        11.55501,
-        11.550861,
-        11.535121,
-        11.596291
+        11.443319,
+        11.418069,
+        11.410599,
+        11.47561,
+        11.536821,
+        11.48161,
+        11.51361,
+        11.46627,
+        11.49708
       ],
       "output_bytes": null,
       "output_sha256": null,
-      "p95_ms": 11.596291,
+      "p95_ms": 11.536821,
       "participant": "variopinta",
       "repetition": 1,
       "role": "public",
@@ -361,23 +361,23 @@
       "case_order": 29,
       "environment": "io",
       "environment_position": 1,
-      "images_per_sec": 86.43774494295972,
+      "images_per_sec": 87.42856758171446,
       "iterations": 9,
-      "median_ms": 11.56902,
+      "median_ms": 11.437909,
       "observations_ms": [
-        11.56494,
-        11.574121,
-        11.607502,
-        11.56902,
-        11.608022,
-        11.57571,
-        11.544031,
-        11.538931,
-        11.5373
+        11.437909,
+        11.457669,
+        11.43178,
+        11.443609,
+        11.42843,
+        11.442439,
+        11.414849,
+        11.379289,
+        11.46224
       ],
       "output_bytes": null,
       "output_sha256": null,
-      "p95_ms": 11.608022,
+      "p95_ms": 11.46224,
       "participant": "variopinta",
       "repetition": 2,
       "role": "public",
@@ -396,23 +396,23 @@
       "case_order": 28,
       "environment": "io",
       "environment_position": 4,
-      "images_per_sec": 86.134788368117,
+      "images_per_sec": 87.24263205437379,
       "iterations": 9,
-      "median_ms": 11.609711,
+      "median_ms": 11.462286,
       "observations_ms": [
-        11.59474,
-        11.609711,
-        11.6293,
-        11.626281,
-        11.580441,
-        11.61594,
-        11.611781,
-        11.563811,
-        11.56317
+        11.484986,
+        11.523417,
+        11.479016,
+        11.496786,
+        11.462286,
+        11.458136,
+        11.453525,
+        11.446076,
+        11.446576
       ],
       "output_bytes": null,
       "output_sha256": null,
-      "p95_ms": 11.6293,
+      "p95_ms": 11.523417,
       "participant": "variopinta",
       "repetition": 3,
       "role": "public",

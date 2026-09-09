@@ -39,7 +39,7 @@
   },
   "case_id": "io.png.pipeline-path-path",
   "compatibility": {
-    "digest": "536dd206adb12881b107ac3bb4eece3b2ebd105cf81fb45744dc054db0739be1",
+    "digest": "d382fe5c421dbcb2e05c40af7ddec71a3e6e6fc93ecd437c343ae6301e8baadc",
     "environments": {
       "io": {
         "architecture": "x86_64",
@@ -49,7 +49,7 @@
           "opencv-python-headless": "5.0.0.93",
           "torch": "2.13.0",
           "torchvision": "0.28.0",
-          "variopinta": "0.3.0"
+          "variopinta": "0.7.0"
         },
         "platform": "Linux-6.18.33.2-microsoft-standard-WSL2-x86_64-with-glibc2.39",
         "processor": "AMD Ryzen 9 9950X3D 16-Core Processor",
@@ -245,10 +245,10 @@
       "environments": {
         "io": "7bdbeb0dfb9d88f9669a78230bc95c62aa895c2daade197b3a9c72d2595d322e"
       },
-      "source": "c89351cb468424a60030b8192c5e766f605a2d03ea5083fc5d82b76074e0462e",
+      "source": "177ba892d2f225817e56c9ca468df1679cec6bac4306531ed33d9d142b8b1351",
       "unclassified": []
     },
-    "digest": "f924bc68f8ab0173f401ce496cf661e585d59b1cfc1b7422d08d1e4686f6f570"
+    "digest": "5bd3b7bc25853c3e8b38de0d7e5a01a49b00a722b70c10c7ccc9658f08485266"
   },
   "metadata": {
     "io": {
@@ -260,7 +260,7 @@
         "opencv-python-headless": "5.0.0.93",
         "torch": "2.13.0",
         "torchvision": "0.28.0",
-        "variopinta": "0.3.0"
+        "variopinta": "0.7.0"
       },
       "platform": "Linux-6.18.33.2-microsoft-standard-WSL2-x86_64-with-glibc2.39",
       "processor": "AMD Ryzen 9 9950X3D 16-Core Processor",
@@ -315,8 +315,8 @@
     }
   },
   "provenance": {
-    "source_dirty": false,
-    "source_revision": "4a32c003085662b37e5d4fc6c47bdfa7628a7f94"
+    "source_dirty": true,
+    "source_revision": "d09eccb6fc16934300784dab59a7571dd5ffcc6b"
   },
   "rows": [
     {
@@ -326,28 +326,26 @@
       "case_order": 28,
       "environment": "io",
       "environment_position": 2,
-      "images_per_sec": 86.51977742614217,
-      "iterations": 9,
-      "median_ms": 11.558051,
+      "images_per_sec": 70.34881262811838,
+      "iterations": 7,
+      "median_ms": 14.214881,
       "observations_ms": [
-        11.621111,
-        11.604011,
-        11.569932,
-        11.5259,
-        11.609821,
-        11.558051,
-        11.542481,
-        11.546541,
-        11.55087
+        14.912998,
+        14.666426,
+        14.214881,
+        14.909513,
+        14.205117,
+        14.110639,
+        14.193091
       ],
       "output_bytes": null,
       "output_sha256": null,
-      "p95_ms": 11.621111,
+      "p95_ms": 14.912998,
       "participant": "variopinta",
       "repetition": 1,
       "role": "public",
       "route_id": "variopinta.stock",
-      "samples": 9,
+      "samples": 7,
       "size": 512,
       "valid": true,
       "variant": "stock",
@@ -361,28 +359,26 @@
       "case_order": 27,
       "environment": "io",
       "environment_position": 1,
-      "images_per_sec": 86.47713012845054,
-      "iterations": 9,
-      "median_ms": 11.563751,
+      "images_per_sec": 70.58811903133336,
+      "iterations": 7,
+      "median_ms": 14.16669,
       "observations_ms": [
-        11.553861,
-        11.557831,
-        11.547491,
-        11.56681,
-        11.563751,
-        11.605901,
-        11.548161,
-        11.578961,
-        14.364615
+        14.16669,
+        14.048839,
+        14.866739,
+        14.742567,
+        14.427103,
+        14.143349,
+        14.135771
       ],
       "output_bytes": null,
       "output_sha256": null,
-      "p95_ms": 14.364615,
+      "p95_ms": 14.866739,
       "participant": "variopinta",
       "repetition": 2,
       "role": "public",
       "route_id": "variopinta.stock",
-      "samples": 9,
+      "samples": 7,
       "size": 512,
       "valid": true,
       "variant": "stock",
@@ -396,28 +392,26 @@
       "case_order": 26,
       "environment": "io",
       "environment_position": 4,
-      "images_per_sec": 86.16247830859608,
-      "iterations": 9,
-      "median_ms": 11.60598,
+      "images_per_sec": 68.58150809364668,
+      "iterations": 7,
+      "median_ms": 14.58119,
       "observations_ms": [
-        11.625031,
-        11.59139,
-        11.562831,
-        11.57236,
-        11.6366,
-        11.625171,
-        11.571541,
-        11.60598,
-        11.626021
+        14.969486,
+        14.373279,
+        14.58119,
+        13.897884,
+        15.064637,
+        14.412949,
+        15.320529
       ],
       "output_bytes": null,
       "output_sha256": null,
-      "p95_ms": 11.6366,
+      "p95_ms": 15.320529,
       "participant": "variopinta",
       "repetition": 3,
       "role": "public",
       "route_id": "variopinta.stock",
-      "samples": 9,
+      "samples": 7,
       "size": 512,
       "valid": true,
       "variant": "stock",

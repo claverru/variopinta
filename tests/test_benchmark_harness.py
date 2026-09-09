@@ -14,7 +14,7 @@ from benchmarks import environments
 from benchmarks.common import metadata, summarize_observations, time_calls_adaptive
 from benchmarks.controller import validate_complete
 from benchmarks.evidence import shard_path, status_for, write_json_atomic
-from benchmarks.fingerprints import case_fingerprint, unclassified_measured_paths
+from benchmarks.fingerprints import SCOPE_PATTERNS, case_fingerprint, unclassified_measured_paths
 from benchmarks.model import CaseSpec, PlannedCase, RouteSpec, TimingPolicy
 from benchmarks.registry import CASES
 from benchmarks.selection import Selectors, select_cases, validate_selector_values
@@ -111,6 +111,10 @@ class AdaptiveTimingTests(unittest.TestCase):
 
 
 class RegistryTests(unittest.TestCase):
+    def test_every_registered_scope_is_fingerprinted(self) -> None:
+        scopes = {scope for case in CASES for scope in case.scopes}
+        self.assertEqual(scopes - SCOPE_PATTERNS.keys(), set())
+
     def test_case_and_route_identifiers_are_unique(self) -> None:
         self.assertEqual(len(CASES), len({case.id for case in CASES}))
         for case in CASES:

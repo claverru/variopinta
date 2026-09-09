@@ -27,6 +27,10 @@ SCOPE_PATTERNS = {
         "benchmarks/adapters.py",
         "benchmarks/layer_worker.py",
     ),
+    "outputs": (
+        "benchmarks/adapters.py",
+        "benchmarks/layer_worker.py",
+    ),
     "catalog": ("benchmarks/catalog_suite.py",),
     "io": (
         "benchmarks/io_performance_worker.py",

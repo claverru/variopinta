@@ -39,7 +39,7 @@
   },
   "case_id": "io.png.pipeline-three-call-encoded",
   "compatibility": {
-    "digest": "536dd206adb12881b107ac3bb4eece3b2ebd105cf81fb45744dc054db0739be1",
+    "digest": "d382fe5c421dbcb2e05c40af7ddec71a3e6e6fc93ecd437c343ae6301e8baadc",
     "environments": {
       "io": {
         "architecture": "x86_64",
@@ -49,7 +49,7 @@
           "opencv-python-headless": "5.0.0.93",
           "torch": "2.13.0",
           "torchvision": "0.28.0",
-          "variopinta": "0.3.0"
+          "variopinta": "0.7.0"
         },
         "platform": "Linux-6.18.33.2-microsoft-standard-WSL2-x86_64-with-glibc2.39",
         "processor": "AMD Ryzen 9 9950X3D 16-Core Processor",
@@ -245,10 +245,10 @@
       "environments": {
         "io": "7bdbeb0dfb9d88f9669a78230bc95c62aa895c2daade197b3a9c72d2595d322e"
       },
-      "source": "c89351cb468424a60030b8192c5e766f605a2d03ea5083fc5d82b76074e0462e",
+      "source": "177ba892d2f225817e56c9ca468df1679cec6bac4306531ed33d9d142b8b1351",
       "unclassified": []
     },
-    "digest": "9bb1d75e9f542e4da1c243c76458cf4e8f0e59d96f26552c39b71cc3b6e0e2d9"
+    "digest": "2435fdb10cc8787aea24f30172bcffc104c4151246b9b71428245d9be49c3aff"
   },
   "metadata": {
     "io": {
@@ -260,7 +260,7 @@
         "opencv-python-headless": "5.0.0.93",
         "torch": "2.13.0",
         "torchvision": "0.28.0",
-        "variopinta": "0.3.0"
+        "variopinta": "0.7.0"
       },
       "platform": "Linux-6.18.33.2-microsoft-standard-WSL2-x86_64-with-glibc2.39",
       "processor": "AMD Ryzen 9 9950X3D 16-Core Processor",
@@ -315,8 +315,8 @@
     }
   },
   "provenance": {
-    "source_dirty": false,
-    "source_revision": "4a32c003085662b37e5d4fc6c47bdfa7628a7f94"
+    "source_dirty": true,
+    "source_revision": "d09eccb6fc16934300784dab59a7571dd5ffcc6b"
   },
   "rows": [
     {
@@ -326,24 +326,24 @@
       "case_order": 29,
       "environment": "io",
       "environment_position": 2,
-      "images_per_sec": 91.08408828379908,
+      "images_per_sec": 91.18006563049946,
       "iterations": 10,
-      "median_ms": 10.978866,
+      "median_ms": 10.967309499999999,
       "observations_ms": [
-        10.951075,
-        10.944676,
-        11.038516,
-        11.010596,
-        11.002056,
-        10.955266,
-        10.950795,
-        10.995256,
-        11.027686,
-        10.962476
+        10.929794,
+        11.091976,
+        11.076795,
+        11.040055,
+        10.985764,
+        10.945234,
+        10.969574,
+        10.965045,
+        10.954114,
+        10.928903
       ],
       "output_bytes": 585213,
       "output_sha256": "1aa4ab51afa55a7bcc5306bb38e60cc14dc5615f1e5528ed1cdf1645df9a0f1b",
-      "p95_ms": 11.038516,
+      "p95_ms": 11.091976,
       "participant": "variopinta",
       "repetition": 1,
       "role": "public",
@@ -362,24 +362,24 @@
       "case_order": 28,
       "environment": "io",
       "environment_position": 1,
-      "images_per_sec": 90.98588713355377,
+      "images_per_sec": 91.81768111967256,
       "iterations": 10,
-      "median_ms": 10.9907155,
+      "median_ms": 10.8911485,
       "observations_ms": [
-        11.023366,
-        10.970986,
-        10.981016,
-        10.988855,
-        11.004117,
-        10.999475,
-        10.992576,
-        10.977985,
-        11.020696,
-        10.964366
+        10.887664,
+        10.828272,
+        10.898732,
+        10.911794,
+        10.872173,
+        10.869963,
+        10.894633,
+        10.939184,
+        10.842403,
+        10.905593
       ],
       "output_bytes": 585213,
       "output_sha256": "1aa4ab51afa55a7bcc5306bb38e60cc14dc5615f1e5528ed1cdf1645df9a0f1b",
-      "p95_ms": 11.023366,
+      "p95_ms": 10.939184,
       "participant": "variopinta",
       "repetition": 2,
       "role": "public",
@@ -398,24 +398,24 @@
       "case_order": 27,
       "environment": "io",
       "environment_position": 4,
-      "images_per_sec": 90.936987896878,
+      "images_per_sec": 91.52456867216523,
       "iterations": 10,
-      "median_ms": 10.9966255,
+      "median_ms": 10.926027999999999,
       "observations_ms": [
-        11.043195,
-        11.010176,
-        11.030395,
-        10.984916,
-        11.008335,
-        10.975106,
-        10.980705,
-        10.973185,
-        11.054875,
-        10.975585
+        10.924828,
+        10.897668,
+        10.883618,
+        10.872638,
+        10.927228,
+        10.890398,
+        11.035491,
+        11.115512,
+        10.98239,
+        10.96445
       ],
       "output_bytes": 585213,
       "output_sha256": "1aa4ab51afa55a7bcc5306bb38e60cc14dc5615f1e5528ed1cdf1645df9a0f1b",
-      "p95_ms": 11.054875,
+      "p95_ms": 11.115512,
       "participant": "variopinta",
       "repetition": 3,
       "role": "public",
