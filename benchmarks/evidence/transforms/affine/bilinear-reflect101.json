@@ -658,10 +658,10 @@
         "albumentationsx": "c68652efdc98b4f953edee17a91dd5f107161e689001d022527f0b0de3821b4b",
         "rust": "c21434ab276976c811af1d8dc747f46be02b1f77bad36ecbae0c2a96fee16265"
       },
-      "source": "22285cc59cfd50aa96a6abeda3d4804631265466ece7fe479002d24114d3d118",
+      "source": "ccdf5e45b06d275662f173ef8b103ec0580f73f21a4dfbcee271c29165961105",
       "unclassified": []
     },
-    "digest": "cf2071dca56884dca90efeecaf3e82fcc8e7285b71f18ff0f5865abecd439dc8"
+    "digest": "b5a6497303206917961af42a42f0b86e49c0cf1e16ee3b4dbaa7fac71477bbf8"
   },
   "metadata": {
     "albumentationsx": {
@@ -789,10 +789,6 @@
       "torch": "2.13.0+cu130",
       "torchvision": "0.28.0+cu130"
     }
-  },
-  "provenance": {
-    "source_dirty": true,
-    "source_revision": "d09eccb6fc16934300784dab59a7571dd5ffcc6b"
   },
   "rows": [
     {

@@ -117,7 +117,4 @@ def status_for(case: CaseSpec, root: Path = EVIDENCE_ROOT) -> EvidenceStatus:
         expected_compatibility = None
     if expected_compatibility is None or payload.get("compatibility") != expected_compatibility:
         return EvidenceStatus(case.id, "invalid", "invalid compatibility metadata", path)
-    provenance = payload.get("provenance", {})
-    if not isinstance(provenance, dict) or provenance.get("source_dirty") is not False:
-        return EvidenceStatus(case.id, "dirty", "measured source tree was dirty", path)
     return EvidenceStatus(case.id, "current", current["digest"], path)

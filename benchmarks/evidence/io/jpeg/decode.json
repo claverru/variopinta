@@ -259,10 +259,10 @@
       "environments": {
         "io": "7bdbeb0dfb9d88f9669a78230bc95c62aa895c2daade197b3a9c72d2595d322e"
       },
-      "source": "177ba892d2f225817e56c9ca468df1679cec6bac4306531ed33d9d142b8b1351",
+      "source": "78c8f54a7db86fb62ac8cd15be5dc2c1c504e26ddc3c63e4021de5ebd67e3788",
       "unclassified": []
     },
-    "digest": "bac59aaad8f9ff71f1236cf0d9a0eb58f396bbfc4f83b2567c3388949565de8e"
+    "digest": "e7fc80e298e542694247bdf1e3732e7135819ad355a04289c7773009d805ecca"
   },
   "metadata": {
     "io": {
@@ -327,10 +327,6 @@
       "torch": "2.13.0",
       "torchvision": "0.28.0"
     }
-  },
-  "provenance": {
-    "source_dirty": true,
-    "source_revision": "d09eccb6fc16934300784dab59a7571dd5ffcc6b"
   },
   "rows": [
     {

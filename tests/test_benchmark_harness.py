@@ -5,6 +5,7 @@ import subprocess
 import sys
 import time
 import unittest
+from dataclasses import replace
 from importlib.metadata import PackageNotFoundError
 from pathlib import Path
 from tempfile import TemporaryDirectory
@@ -12,12 +13,18 @@ from unittest.mock import patch
 
 from benchmarks import environments
 from benchmarks.common import metadata, summarize_observations, time_calls_adaptive
-from benchmarks.controller import validate_complete
-from benchmarks.evidence import shard_path, status_for, write_json_atomic
-from benchmarks.fingerprints import SCOPE_PATTERNS, case_fingerprint, unclassified_measured_paths
+from benchmarks.controller import collect_evidence, validate_complete
+from benchmarks.evidence import CANONICAL_REPETITIONS, shard_path, status_for, write_json_atomic
+from benchmarks.fingerprints import (
+    SCOPE_PATTERNS,
+    TRANSFORM_KERNELS,
+    case_fingerprint,
+    unclassified_measured_paths,
+)
 from benchmarks.model import CaseSpec, PlannedCase, RouteSpec, TimingPolicy
-from benchmarks.registry import CASES
+from benchmarks.registry import CASE_BY_ID, CASES, case_transforms
 from benchmarks.selection import Selectors, select_cases, validate_selector_values
+from benchmarks.views import render
 
 
 class LayerWorkerTests(unittest.TestCase):
@@ -111,6 +118,29 @@ class AdaptiveTimingTests(unittest.TestCase):
 
 
 class RegistryTests(unittest.TestCase):
+    def test_every_registered_case_has_known_transform_dependencies(self) -> None:
+        for case in CASES:
+            with self.subTest(case=case.id):
+                transforms = case_transforms(case)
+                self.assertIsNotNone(transforms)
+                self.assertLessEqual(transforms, TRANSFORM_KERNELS.keys())
+
+    def test_transform_selection_includes_dependent_pipelines_and_contracts(self) -> None:
+        plan = select_cases(CASES, Selectors(tags=("transform:PadIfNeeded",)), complete=True)
+        self.assertEqual(
+            {planned.case.id for planned in plan},
+            {
+                "transforms.pad-if-needed.constant",
+                "transforms.pad-if-needed.reflect101",
+                "catalog.pad-if-needed.constant",
+                "catalog.pad-if-needed.reflect101",
+                "catalog.longest-max-size-pad-if-needed.bilinear-centered-square",
+                "pipelines.aspect-resize-pad",
+                "pipelines.grayscale.aspect-resize-pad",
+                "contracts.aspect-resize-pad-parity",
+            },
+        )
+
     def test_every_registered_scope_is_fingerprinted(self) -> None:
         scopes = {scope for case in CASES for scope in case.scopes}
         self.assertEqual(scopes - SCOPE_PATTERNS.keys(), set())
@@ -146,6 +176,78 @@ class RegistryTests(unittest.TestCase):
 
 
 class EvidenceTests(unittest.TestCase):
+    def test_collection_and_rendering_work_without_git_and_ignore_old_git_metadata(self) -> None:
+        case = CASE_BY_ID["catalog.invert.default"]
+        planned = PlannedCase(case, case.routes, case.sizes)
+        payload = {
+            "repetitions": CANONICAL_REPETITIONS,
+            "metadata": {"rust": {}},
+            "execution_order": [],
+            "rows": [
+                {
+                    "case_id": case.id,
+                    "route_id": route.id,
+                    "participant": route.participant,
+                    "variant": route.variant,
+                    "role": route.role,
+                    "size": size,
+                    "repetition": repetition,
+                    "valid": True,
+                    "samples": 1,
+                    "observations_ms": [1.0],
+                }
+                for route in case.routes
+                for size in case.sizes
+                for repetition in range(1, CANONICAL_REPETITIONS + 1)
+            ],
+        }
+        with (
+            TemporaryDirectory() as directory,
+            patch("benchmarks.controller.execute_plan", return_value=payload),
+            patch("subprocess.run", side_effect=AssertionError("Git is unavailable")),
+        ):
+            root = Path(directory)
+            path = shard_path(case, root)
+            with patch("benchmarks.controller.shard_path", return_value=path):
+                self.assertEqual(collect_evidence((planned,)), [path])
+            shard = json.loads(path.read_text())
+            self.assertNotIn("provenance", shard)
+            self.assertEqual(status_for(case, root).state, "current")
+
+            shard["provenance"] = {"source_revision": "old-commit", "source_dirty": True}
+            write_json_atomic(path, shard)
+            self.assertEqual(status_for(case, root).state, "current")
+            with (
+                patch(
+                    "benchmarks.views.status_for", side_effect=lambda case: status_for(case, root)
+                ),
+                patch("benchmarks.views.read_shard", return_value=shard),
+                patch("benchmarks.views._render_plots"),
+            ):
+                output = render((planned,), root / "rendered")
+            self.assertIn(
+                "complete, current canonical selection", (output / "benchmark.md").read_text()
+            )
+
+            shard["fingerprint"]["digest"] = "outdated"
+            write_json_atomic(path, shard)
+            self.assertEqual(status_for(case, root).state, "stale")
+
+    def test_collection_preserves_evidence_when_sources_change_during_execution(self) -> None:
+        case = CASE_BY_ID["catalog.invert.default"]
+        planned = PlannedCase(case, case.routes, case.sizes)
+        with (
+            patch(
+                "benchmarks.controller.case_fingerprint",
+                side_effect=[{"digest": "before"}, {"digest": "after"}],
+            ),
+            patch("benchmarks.controller.execute_plan", return_value={}),
+            patch("benchmarks.controller.write_evidence") as write,
+        ):
+            with self.assertRaisesRegex(RuntimeError, "measured sources changed during execution"):
+                collect_evidence((planned,))
+            write.assert_not_called()
+
     def test_shard_path_follows_case_identifier(self) -> None:
         case = next(case for case in CASES if case.id == "transforms.invert.default")
         root = Path("/tmp/evidence")
@@ -235,6 +337,82 @@ class EvidenceTests(unittest.TestCase):
 
 
 class FingerprintTests(unittest.TestCase):
+    def _library_root(self, directory: str) -> Path:
+        root, _ = self._root(directory)
+        for name in ("blur", "pad", "affine", "noise", "point", "mod"):
+            path = root / "rust" / "core" / "src" / "kernels" / f"{name}.rs"
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_text("original")
+        return root
+
+    def test_blur_change_invalidates_only_dependent_cases(self) -> None:
+        with TemporaryDirectory() as directory:
+            root = self._library_root(directory)
+            original = {case.id: case_fingerprint(case, root) for case in CASES}
+            (root / "rust/core/src/kernels/blur.rs").write_text("changed")
+            affected = {
+                case.id for case in CASES if case_fingerprint(case, root) != original[case.id]
+            }
+        self.assertEqual(
+            affected,
+            {
+                "transforms.gaussian-blur.default",
+                "catalog.gaussian-blur.fixed-sigma",
+                "catalog.gaussian-blur.sampled-sigma",
+                "pipelines.classic",
+                "pipelines.extended",
+                "pipelines.grayscale.filtering",
+                "contracts.augmentation-boundaries",
+            },
+        )
+
+    def test_affine_kernel_change_includes_remappers_that_share_its_interpolation(self) -> None:
+        with TemporaryDirectory() as directory:
+            root = self._library_root(directory)
+            cases = [
+                CASE_BY_ID[name]
+                for name in (
+                    "catalog.affine.constant",
+                    "catalog.random-rotation.constant",
+                    "catalog.perspective.bilinear",
+                    "catalog.grid-distortion.bilinear",
+                )
+            ]
+            original = [case_fingerprint(case, root) for case in cases]
+            (root / "rust/core/src/kernels/affine.rs").unlink()
+            for case, fingerprint in zip(cases, original, strict=True):
+                self.assertNotEqual(case_fingerprint(case, root), fingerprint, case.id)
+
+    def test_shared_or_unknown_source_changes_invalidate_all_cases(self) -> None:
+        with TemporaryDirectory() as directory:
+            root = self._library_root(directory)
+            for relative in (
+                "rust/core/src/kernels/mod.rs",
+                "rust/core/src/engine.rs",
+                "rust/core/src/operations.rs",
+                "rust/core/src/kernels/new_kernel.rs",
+                "benchmarks/controller.py",
+            ):
+                with self.subTest(path=relative):
+                    original = {case.id: case_fingerprint(case, root) for case in CASES}
+                    (root / relative).write_text("changed")
+                    for case in CASES:
+                        self.assertNotEqual(
+                            case_fingerprint(case, root), original[case.id], case.id
+                        )
+
+    def test_unknown_case_dependencies_keep_all_kernels(self) -> None:
+        with TemporaryDirectory() as directory:
+            root = self._library_root(directory)
+            for factory in ("transform:FutureTransform", "pipeline:future_pipeline"):
+                with self.subTest(factory=factory):
+                    case = replace(CASE_BY_ID["transforms.invert.default"], factory=factory)
+                    path = root / "rust/core/src/kernels/noise.rs"
+                    path.write_text("original")
+                    original = case_fingerprint(case, root)
+                    path.write_text("changed")
+                    self.assertNotEqual(case_fingerprint(case, root), original)
+
     def _root(self, directory: str) -> tuple[Path, CaseSpec]:
         root = Path(directory)
         for relative in (

@@ -33,7 +33,10 @@
     "suite": "pipelines",
     "tags": [
       "grayscale",
-      "channel-comparison"
+      "channel-comparison",
+      "transform:Normalize",
+      "transform:Resize",
+      "transform:ReturnTensor"
     ],
     "timing": {
       "block_size": null,
@@ -163,14 +166,14 @@
   ],
   "fingerprint": {
     "components": {
-      "definition": "912edc2db2cfb2a9e222ef55e00cd8e75bc9cb7902e20aa081bafc731471f178",
+      "definition": "874e2e871d6439808a239775f025b936ecb6189e3f9c02be620692141f884225",
       "environments": {
         "rust": "c21434ab276976c811af1d8dc747f46be02b1f77bad36ecbae0c2a96fee16265"
       },
-      "source": "3676f3d9ff01a546b557e3fb84c9e00f96a0a545ef3d475a0e5b89421bd5087d",
+      "source": "c9317554446391cb1f59e551078b34cf088d3890ccb31e0d78160101152ce291",
       "unclassified": []
     },
-    "digest": "ecc8da99c1223d4c38c64ff7c25def853ce98e73f4202eb1895ca96aa8ee024d"
+    "digest": "7eb02e463bd0d2b19eaf089444987f06e270f8bc9b98d264085025076d2c435c"
   },
   "metadata": {
     "rust": {
@@ -234,10 +237,6 @@
       "torch": "2.13.0+cu130",
       "torchvision": "0.28.0+cu130"
     }
-  },
-  "provenance": {
-    "source_dirty": true,
-    "source_revision": "d09eccb6fc16934300784dab59a7571dd5ffcc6b"
   },
   "rows": [
     {

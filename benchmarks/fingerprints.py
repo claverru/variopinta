@@ -2,12 +2,12 @@ from __future__ import annotations
 
 import hashlib
 import json
-import subprocess
 from pathlib import Path
 from typing import Any
 
 from benchmarks.common import ROOT, normalized_evidence_input
 from benchmarks.model import CaseSpec
+from benchmarks.registry import case_transforms
 
 FRAMEWORK_PATHS = (
     "benchmarks/common.py",
@@ -84,6 +84,43 @@ ENVIRONMENT_PATTERNS = {
 }
 
 
+TRANSFORM_KERNELS = {
+    "Resize": (),
+    "LongestMaxSize": (),
+    "RandomCrop": (),
+    "RandomResizedCrop": (),
+    "CenterCrop": (),
+    "CoarseDropout": (),
+    "HorizontalFlip": ("point",),
+    "VerticalFlip": ("point",),
+    "Grayscale": ("point",),
+    "Invert": ("point",),
+    "Solarize": ("point",),
+    "Posterize": ("point",),
+    "ColorJitter": ("color",),
+    "Affine": ("affine",),
+    "RandomRotation": ("affine",),
+    "GaussianBlur": ("blur",),
+    "GaussianNoise": ("noise",),
+    "PadIfNeeded": ("pad",),
+    "Sharpen": ("sharpen",),
+    "Perspective": ("remap", "affine"),
+    "GridDistortion": ("remap", "affine"),
+    "Normalize": ("layout",),
+    "ReturnTensor": ("layout",),
+}
+
+
+def _unused_kernel_paths(case: CaseSpec) -> set[Path]:
+    transforms = case_transforms(case)
+    # Unknown dependencies retain the full source scope.
+    if transforms is None or not transforms <= TRANSFORM_KERNELS.keys():
+        return set()
+    all_kernels = {kernel for kernels in TRANSFORM_KERNELS.values() for kernel in kernels}
+    used = {kernel for name in transforms for kernel in TRANSFORM_KERNELS[name]}
+    return {Path(f"rust/core/src/kernels/{kernel}.rs") for kernel in all_kernels - used}
+
+
 def _paths_for_patterns(root: Path, patterns: tuple[str, ...]) -> set[Path]:
     return {
         path.relative_to(root)
@@ -144,6 +181,7 @@ def case_fingerprint(case: CaseSpec, root: Path = ROOT) -> dict[str, Any]:
     source_paths = _paths_for_patterns(root, (*FRAMEWORK_PATHS, *scope_patterns)) | set(
         unclassified
     )
+    source_paths -= _unused_kernel_paths(case)
     environments = sorted({route.environment for route in case.routes})
     components = {
         "definition": hashlib.sha256(
@@ -159,34 +197,6 @@ def case_fingerprint(case: CaseSpec, root: Path = ROOT) -> dict[str, Any]:
         json.dumps(components, sort_keys=True, separators=(",", ":")).encode()
     ).hexdigest()
     return {"digest": digest, "components": components}
-
-
-def source_provenance(root: Path = ROOT) -> dict[str, Any]:
-    def git(*arguments: str) -> tuple[int, str]:
-        result = subprocess.run(
-            ["git", *arguments], cwd=root, text=True, capture_output=True, check=False
-        )
-        return result.returncode, result.stdout.strip()
-
-    revision_code, revision = git("rev-parse", "HEAD")
-    dirty_code, dirty = git(
-        "status",
-        "--short",
-        "--untracked-files=all",
-        "--",
-        "benchmarks",
-        ":(exclude)benchmarks/.runs/**",
-        ":(exclude)benchmarks/evidence/**",
-        "python/variopinta",
-        "requirements",
-        "rust",
-        "scripts/setup_benchmark_envs.py",
-        "pyproject.toml",
-    )
-    return {
-        "source_revision": revision if revision_code == 0 else None,
-        "source_dirty": None if dirty_code != 0 else bool(dirty),
-    }
 
 
 def compatibility_signature(metadata: dict[str, Any]) -> dict[str, Any]:

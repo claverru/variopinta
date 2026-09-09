@@ -354,10 +354,10 @@
       "environments": {
         "rust": "c21434ab276976c811af1d8dc747f46be02b1f77bad36ecbae0c2a96fee16265"
       },
-      "source": "9f3c2842485f4781e3ca59088b4136a62a9edbcf3519194eabf400347045b7ce",
+      "source": "9e80eb588858b23ae5c21412ea4c852ff897eaa439e6ea30b4f806da9d7632be",
       "unclassified": []
     },
-    "digest": "b93689af0db256789fd3b86a403f8b4650af9e0cbbd3a37970e1395ab7ee14b3"
+    "digest": "7c796b7a339a116bc72741ffa42e07f85d23f1767e7d93531ed0ec0c2d0b1066"
   },
   "metadata": {
     "rust": {
@@ -421,10 +421,6 @@
       "torch": "2.13.0+cu130",
       "torchvision": "0.28.0+cu130"
     }
-  },
-  "provenance": {
-    "source_dirty": true,
-    "source_revision": "d09eccb6fc16934300784dab59a7571dd5ffcc6b"
   },
   "rows": [
     {

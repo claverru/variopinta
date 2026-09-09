@@ -55,7 +55,8 @@
     "tags": [
       "output",
       "output:ReturnTensor",
-      "focused"
+      "focused",
+      "transform:ReturnTensor"
     ],
     "timing": {
       "block_size": null,
@@ -816,16 +817,16 @@
   ],
   "fingerprint": {
     "components": {
-      "definition": "ba5cc8024355884d684af63f64ddb6b4100964fe61b7a9c983725360a6b6512b",
+      "definition": "80488a56640f3e7e199d161a3830a54dacad0bf929e6c2f4f0cc7d484d7de59c",
       "environments": {
         "albumentationsx": "c68652efdc98b4f953edee17a91dd5f107161e689001d022527f0b0de3821b4b",
         "rust": "c21434ab276976c811af1d8dc747f46be02b1f77bad36ecbae0c2a96fee16265",
         "torchvision": "4163a62b3debabcb68117e468e8fb096bb52da3ebee73d24a0867b8d6b13d5db"
       },
-      "source": "22285cc59cfd50aa96a6abeda3d4804631265466ece7fe479002d24114d3d118",
+      "source": "31bd9efa20d416558cfd1283349dfbcbd8ab3d7ebdd05b2d050097fb8251434c",
       "unclassified": []
     },
-    "digest": "b1df7a4c6f0158332a6c3ecd6b4a589899f6fcc9497257b82360af2bdf29d6e6"
+    "digest": "39dca2fa103d54858ea7e9d7bce3b439861eb19f3119b446cbdcbb87f3c72fcd"
   },
   "metadata": {
     "albumentationsx": {
@@ -1013,10 +1014,6 @@
       "torch": "2.13.0",
       "torchvision": "0.28.0"
     }
-  },
-  "provenance": {
-    "source_dirty": true,
-    "source_revision": "d09eccb6fc16934300784dab59a7571dd5ffcc6b"
   },
   "rows": [
     {

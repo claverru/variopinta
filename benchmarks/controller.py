@@ -24,7 +24,7 @@ from benchmarks.evidence import (
     status_for,
     write_json_atomic,
 )
-from benchmarks.fingerprints import case_fingerprint, compatibility_signature, source_provenance
+from benchmarks.fingerprints import case_fingerprint, compatibility_signature
 from benchmarks.model import PlannedCase
 
 
@@ -232,7 +232,6 @@ def write_evidence(
     plan: tuple[PlannedCase, ...], payload: dict[str, Any], fingerprints: dict[str, Any]
 ) -> list[Path]:
     repetitions = int(payload["repetitions"])
-    provenance = source_provenance()
     paths = []
     for planned in plan:
         case_rows = [row for row in payload["rows"] if row["case_id"] == planned.case.id]
@@ -246,7 +245,6 @@ def write_evidence(
             "case_id": planned.case.id,
             "case": planned.case.normalized(),
             "fingerprint": fingerprints[planned.case.id],
-            "provenance": provenance,
             "compatibility": compatibility_signature(relevant_environments),
             "execution_order": [
                 entry for entry in payload["execution_order"] if planned.case.id in entry["cases"]

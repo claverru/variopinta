@@ -26,7 +26,9 @@
     "tags": [
       "io",
       "format:png",
-      "operation:pipeline-path-path"
+      "operation:pipeline-path-path",
+      "transform:Invert",
+      "transform:Resize"
     ],
     "timing": {
       "block_size": null,
@@ -241,14 +243,14 @@
   ],
   "fingerprint": {
     "components": {
-      "definition": "4b88486b7a12808326f41ea46ffaf755d591a729d6577d54421cbd677f7bebb0",
+      "definition": "76c06b2b66d1db41886e39a8259dcbac1c84b61fce25ce7a0830b0d7377e2e56",
       "environments": {
         "io": "7bdbeb0dfb9d88f9669a78230bc95c62aa895c2daade197b3a9c72d2595d322e"
       },
-      "source": "177ba892d2f225817e56c9ca468df1679cec6bac4306531ed33d9d142b8b1351",
+      "source": "6563cd136e8b083649055ac2389dc54301e0de09fee56e89710ed76d0953739f",
       "unclassified": []
     },
-    "digest": "5bd3b7bc25853c3e8b38de0d7e5a01a49b00a722b70c10c7ccc9658f08485266"
+    "digest": "1e150d102837492cccae1c810a7648351d19df486cb707f79acc580595662e6a"
   },
   "metadata": {
     "io": {
@@ -313,10 +315,6 @@
       "torch": "2.13.0",
       "torchvision": "0.28.0"
     }
-  },
-  "provenance": {
-    "source_dirty": true,
-    "source_revision": "d09eccb6fc16934300784dab59a7571dd5ffcc6b"
   },
   "rows": [
     {

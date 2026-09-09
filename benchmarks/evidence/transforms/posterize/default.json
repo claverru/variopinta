@@ -822,10 +822,10 @@
         "rust": "c21434ab276976c811af1d8dc747f46be02b1f77bad36ecbae0c2a96fee16265",
         "torchvision": "4163a62b3debabcb68117e468e8fb096bb52da3ebee73d24a0867b8d6b13d5db"
       },
-      "source": "22285cc59cfd50aa96a6abeda3d4804631265466ece7fe479002d24114d3d118",
+      "source": "b791cb0a1af70668dd6ccd0766add4ae7db16d7c52c6d00766b002920585b847",
       "unclassified": []
     },
-    "digest": "7c96ac012193159dbeae20341bd10426d587018cd8d738657a7dc8c010fef82f"
+    "digest": "43bacd9a804f00cb837caa91c8a626c7f3c69f0135ce351dfd7b1e2d559d43d8"
   },
   "metadata": {
     "albumentationsx": {
@@ -1013,10 +1013,6 @@
       "torch": "2.13.0",
       "torchvision": "0.28.0"
     }
-  },
-  "provenance": {
-    "source_dirty": true,
-    "source_revision": "d09eccb6fc16934300784dab59a7571dd5ffcc6b"
   },
   "rows": [
     {

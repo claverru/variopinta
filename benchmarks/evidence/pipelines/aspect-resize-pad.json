@@ -55,7 +55,9 @@
     "tags": [
       "pipeline",
       "pipeline:LongestMaxSize",
-      "focused"
+      "focused",
+      "transform:LongestMaxSize",
+      "transform:PadIfNeeded"
     ],
     "timing": {
       "block_size": null,
@@ -752,16 +754,16 @@
   ],
   "fingerprint": {
     "components": {
-      "definition": "ce08a4e4015246ba9ccd69a6c3ac723ba9940004be9f909be1d22345c077281e",
+      "definition": "e3cdfc1f308b84712b3804df666cf891184b1fcc140ec86f5ad3e71350d50e7d",
       "environments": {
         "albumentationsx": "c68652efdc98b4f953edee17a91dd5f107161e689001d022527f0b0de3821b4b",
         "io": "7bdbeb0dfb9d88f9669a78230bc95c62aa895c2daade197b3a9c72d2595d322e",
         "rust": "c21434ab276976c811af1d8dc747f46be02b1f77bad36ecbae0c2a96fee16265"
       },
-      "source": "22285cc59cfd50aa96a6abeda3d4804631265466ece7fe479002d24114d3d118",
+      "source": "072609553377125ed9dd6e266358d7b69a3248fd0392bdcc7b252fc9a7a1c99a",
       "unclassified": []
     },
-    "digest": "7936737b16e888427b916f0d15924d457649db1844cbc8aaaf7896486107be21"
+    "digest": "8dd2784f92904caf00ab42b17a9d12ae24b9e448f5e4db83f10194be197fe26c"
   },
   "metadata": {
     "albumentationsx": {
@@ -951,10 +953,6 @@
       "torch": "2.13.0+cu130",
       "torchvision": "0.28.0+cu130"
     }
-  },
-  "provenance": {
-    "source_dirty": true,
-    "source_revision": "d09eccb6fc16934300784dab59a7571dd5ffcc6b"
   },
   "rows": [
     {

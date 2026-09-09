@@ -84,9 +84,7 @@ def render(plan: tuple[PlannedCase, ...], output: Path | None = None) -> Path:
     output = output or RUNS_ROOT / "rendered"
     output.mkdir(parents=True, exist_ok=True)
     statuses = {planned.case.id: status_for(planned.case) for planned in plan}
-    available = [
-        planned for planned in plan if statuses[planned.case.id].state in {"current", "dirty"}
-    ]
+    available = [planned for planned in plan if statuses[planned.case.id].state == "current"]
     summaries = []
     shards = []
     for planned in available:

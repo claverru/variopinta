@@ -26,7 +26,9 @@
     "tags": [
       "io",
       "format:png",
-      "operation:pipeline-array-encoded"
+      "operation:pipeline-array-encoded",
+      "transform:Invert",
+      "transform:Resize"
     ],
     "timing": {
       "block_size": null,
@@ -241,14 +243,14 @@
   ],
   "fingerprint": {
     "components": {
-      "definition": "b3e38079146eb89487a548615ce25bcd7b5a1da6eb3ac59094686642e805f804",
+      "definition": "d8fcb3766105b171e06ddd11d0ceab75395f57f65c2c30cb43019391cb3562af",
       "environments": {
         "io": "7bdbeb0dfb9d88f9669a78230bc95c62aa895c2daade197b3a9c72d2595d322e"
       },
-      "source": "177ba892d2f225817e56c9ca468df1679cec6bac4306531ed33d9d142b8b1351",
+      "source": "6563cd136e8b083649055ac2389dc54301e0de09fee56e89710ed76d0953739f",
       "unclassified": []
     },
-    "digest": "988afff6ed7dccea4fe43ff4ad7084a30c594cb5325c6410cbc79e27c3fc7abc"
+    "digest": "784b41d88f4dc833a2328a538e991f113f9517df355060930398c5541de36e09"
   },
   "metadata": {
     "io": {
@@ -313,10 +315,6 @@
       "torch": "2.13.0",
       "torchvision": "0.28.0"
     }
-  },
-  "provenance": {
-    "source_dirty": true,
-    "source_revision": "d09eccb6fc16934300784dab59a7571dd5ffcc6b"
   },
   "rows": [
     {

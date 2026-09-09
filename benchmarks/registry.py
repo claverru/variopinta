@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import re
+from dataclasses import replace
 
 from benchmarks.common import FOCUSED_CASES, FOCUSED_LABELS, PIPELINES, TRANSFORMS
 from benchmarks.model import CaseSpec, RouteSpec, TimingPolicy
@@ -327,16 +328,103 @@ def _grayscale_cases() -> list[CaseSpec]:
     ]
 
 
+PIPELINE_TRANSFORMS = {
+    "classic": (
+        "RandomCrop",
+        "Resize",
+        "HorizontalFlip",
+        "ColorJitter",
+        "Affine",
+        "GaussianBlur",
+        "Normalize",
+    ),
+    "extended": (
+        "RandomCrop",
+        "Resize",
+        "HorizontalFlip",
+        "ColorJitter",
+        "Affine",
+        "GaussianBlur",
+        "VerticalFlip",
+        "Grayscale",
+        "Solarize",
+        "Posterize",
+        "Normalize",
+    ),
+    "pixel_policy": (
+        "CenterCrop",
+        "Resize",
+        "Grayscale",
+        "Invert",
+        "Solarize",
+        "Posterize",
+        "Normalize",
+    ),
+}
+GRAYSCALE_TRANSFORMS = {
+    "geometry": ("CenterCrop", "Resize"),
+    "aspect-resize-pad": ("LongestMaxSize", "PadIfNeeded"),
+    "filtering": ("GaussianBlur", "Sharpen"),
+    "normalized-tensor": ("Resize", "Normalize", "ReturnTensor"),
+}
+
+
+def case_transforms(case: CaseSpec) -> frozenset[str] | None:
+    if case.executor == "catalog":
+        return frozenset(case.factory.partition("|")[0].split("+"))
+    if case.executor == "layers":
+        kind, _, name = case.factory.partition(":")
+        if kind in {"transform", "transform-antialias"}:
+            return frozenset((name,))
+        if kind == "pipeline" and name in PIPELINE_TRANSFORMS:
+            return frozenset(PIPELINE_TRANSFORMS[name])
+        if kind == "focused":
+            if name == "aspect-resize-pad":
+                return frozenset(("LongestMaxSize", "PadIfNeeded"))
+            if name == "return-tensor":
+                return frozenset(("ReturnTensor",))
+            names = frozenset(
+                tag.removeprefix("transform:") for tag in case.tags if tag.startswith("transform:")
+            )
+            return names or None
+    if case.executor == "grayscale" and case.factory in GRAYSCALE_TRANSFORMS:
+        return frozenset(GRAYSCALE_TRANSFORMS[case.factory])
+    if case.executor == "contracts":
+        if case.factory == "augmentation-boundaries":
+            return frozenset(TRANSFORMS)
+        if case.factory == "aspect-resize-pad-parity":
+            return frozenset(("LongestMaxSize", "PadIfNeeded"))
+    if case.executor == "io-parity" and case.factory == "interoperability":
+        return frozenset()
+    if case.executor == "io-performance":
+        operation = case.factory.partition("|")[2]
+        if operation in IO_OPERATIONS:
+            return (
+                frozenset(("Resize", "Invert"))
+                if operation.startswith("pipeline-")
+                else frozenset()
+            )
+    return None
+
+
+def _with_transform_tags(case: CaseSpec) -> CaseSpec:
+    tags = {f"transform:{name}" for name in case_transforms(case) or ()}
+    return replace(case, tags=(*case.tags, *sorted(tags - set(case.tags))))
+
+
 CASES = tuple(
     sorted(
-        [
-            *_transform_cases(),
-            *_pipeline_cases(),
-            *_grayscale_cases(),
-            *_catalog_cases(),
-            *_io_cases(),
-            *_contract_cases(),
-        ],
+        (
+            _with_transform_tags(case)
+            for case in [
+                *_transform_cases(),
+                *_pipeline_cases(),
+                *_grayscale_cases(),
+                *_catalog_cases(),
+                *_io_cases(),
+                *_contract_cases(),
+            ]
+        ),
         key=lambda case: case.id,
     )
 )

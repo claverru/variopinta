@@ -26,7 +26,9 @@
       "contract",
       "geometry",
       "opencv",
-      "pixel-error"
+      "pixel-error",
+      "transform:LongestMaxSize",
+      "transform:PadIfNeeded"
     ],
     "timing": null
   },
@@ -109,14 +111,14 @@
   ],
   "fingerprint": {
     "components": {
-      "definition": "99d6433ae805df218e9812c8a28480f1b8e50f037a028d3fd051dc843510bd9b",
+      "definition": "195b5c00cc74897f802b22dbfb4437b355508468cdb0b7b79e578af3a864435a",
       "environments": {
         "io": "7bdbeb0dfb9d88f9669a78230bc95c62aa895c2daade197b3a9c72d2595d322e"
       },
-      "source": "0694f8314d8c95532e57b83f42242a422da8432ad1194ec3fbba324247b53633",
+      "source": "dfc585d6e8d8830cafa1b289c988e6acf78494a7058fa9406419be3502e833be",
       "unclassified": []
     },
-    "digest": "692b063201e31c3631deca77b10e6fe34cc315d5eb5851d519dfea34d19edb2d"
+    "digest": "628ab3051e4dde1e15956507839bb91deb4912b05aa164c7267a8393320a48a4"
   },
   "metadata": {
     "io": {
@@ -181,10 +183,6 @@
       "torch": "2.13.0",
       "torchvision": "0.28.0"
     }
-  },
-  "provenance": {
-    "source_dirty": true,
-    "source_revision": "d09eccb6fc16934300784dab59a7571dd5ffcc6b"
   },
   "rows": [
     {
