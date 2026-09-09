@@ -32,7 +32,7 @@
   },
   "case_id": "contracts.aspect-resize-pad-parity",
   "compatibility": {
-    "digest": "9191342a0ad28b9da749d653c0f36ba4f788fbd03c399b4931120481c300f2a1",
+    "digest": "283dbc3bbfebd2e1f73b9f1319f569c2586447e971f20540b4a05eecdf467618",
     "environments": {
       "io": {
         "architecture": "x86_64",
@@ -40,8 +40,8 @@
         "packages": {
           "numpy": "2.2.6",
           "opencv-python-headless": "5.0.0.93",
-          "torch": "2.13.0+cu130",
-          "torchvision": "0.28.0+cu130",
+          "torch": "2.13.0",
+          "torchvision": "0.28.0",
           "variopinta": "0.6.0"
         },
         "platform": "Linux-6.18.33.2-microsoft-standard-WSL2-x86_64-with-glibc2.39",
@@ -113,10 +113,10 @@
       "environments": {
         "io": "7bdbeb0dfb9d88f9669a78230bc95c62aa895c2daade197b3a9c72d2595d322e"
       },
-      "source": "c1dc5e300bfc5f820f2ba3dad9abde72b51f4d852ee5c1fe25faafffe0b4822f",
+      "source": "371f88df85d47b7b7b6342e10c40fcd9cada3975e1051e5022c9e7bb08a669ed",
       "unclassified": []
     },
-    "digest": "414dd5c3b4bb40c3adb6228ba89c06e79df11b4d97579a399b12981cee8780db"
+    "digest": "68216a983e72a5465beeea2adfedd4665bf7426d170fdda48037fdbc71cfc30c"
   },
   "metadata": {
     "io": {
@@ -126,8 +126,8 @@
       "packages": {
         "numpy": "2.2.6",
         "opencv-python-headless": "5.0.0.93",
-        "torch": "2.13.0+cu130",
-        "torchvision": "0.28.0+cu130",
+        "torch": "2.13.0",
+        "torchvision": "0.28.0",
         "variopinta": "0.6.0"
       },
       "platform": "Linux-6.18.33.2-microsoft-standard-WSL2-x86_64-with-glibc2.39",
@@ -178,13 +178,13 @@
         "torch_num_interop_threads": 1,
         "torch_num_threads": 1
       },
-      "torch": "2.13.0+cu130",
-      "torchvision": "0.28.0+cu130"
+      "torch": "2.13.0",
+      "torchvision": "0.28.0"
     }
   },
   "provenance": {
     "source_dirty": false,
-    "source_revision": "070045fd21b8e81786683b0ee42f0dd5da443178"
+    "source_revision": "fa6cf94b63732c251f5fda2181ee29633cac0bf7"
   },
   "rows": [
     {
