@@ -257,8 +257,13 @@ def run_correctness_checks(backend: str) -> list[dict[str, Any]]:
             failures.append(label)
 
     if "aspect_resize_pad" in operations:
+        if backend == "albumentationsx":
+            limitations.append(
+                "LongestMaxSize uses ties-to-even rounding: 3x6 to max_size=5 resizes to 2x5; "
+                "Variopinta uses nearest-half-up and resizes to 3x5."
+            )
         for (height, width), max_size, (output_height, output_width) in (
-            ((3, 6), 5, (3, 5)),
+            ((3, 6), 5, (2 if backend == "albumentationsx" else 3, 5)),
             ((2, 3), 8, (5, 8)),
             ((1, 1000), 8, (1, 8)),
         ):
@@ -505,7 +510,10 @@ def run_correctness_checks(backend: str) -> list[dict[str, Any]]:
             "limitations": limitations,
             "valid": not failures,
             "aspect_resize_pad_contract": {
-                "dimension_rounding": "nearest-half-up",
+                "dimension_rounding": {
+                    "rust": "nearest-half-up",
+                    "albumentationsx": "nearest-ties-to-even",
+                }.get(backend, "not checked"),
                 "shape_tolerance": "exact",
                 "pixel_tolerance": "max-absolute-error<=1 on constant-color resize and padding",
                 "cross_participant_pixel_identity": "not asserted",
